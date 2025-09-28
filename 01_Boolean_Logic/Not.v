@@ -9,6 +9,6 @@ module Not(
 	output out
 );
 
-	// Put your code here:
+	not(out,in); // verilog primitive
 
 endmodule
