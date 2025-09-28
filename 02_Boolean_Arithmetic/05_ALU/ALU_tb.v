@@ -53,24 +53,25 @@ module ALU_tb();
 			begin
 				x=$random;
 				y=$random;
-				zx=1;nx=0;zy=1;ny=0;f=1;no=0;check();// 0
-				zx=1;nx=1;zy=1;ny=1;f=1;no=1;check();// 1
-				zx=1;nx=1;zy=1;ny=0;f=1;no=0;check();// -1
-				zx=0;nx=0;zy=1;ny=1;f=0;no=0;check();// x
-				zx=1;nx=1;zy=0;ny=0;f=0;no=0;check();// y
-				zx=0;nx=0;zy=1;ny=1;f=0;no=1;check();// !x
-				zx=1;nx=1;zy=0;ny=0;f=0;no=1;check();// !y
-				zx=0;nx=0;zy=1;ny=1;f=1;no=1;check();// -x
-				zx=1;nx=1;zy=0;ny=0;f=1;no=1;check();// -y
-				zx=0;nx=1;zy=1;ny=1;f=1;no=1;check();// x+1
-				zx=1;nx=1;zy=0;ny=1;f=1;no=1;check();// y+1
-				zx=0;nx=0;zy=1;ny=1;f=1;no=0;check();// x-1
-				zx=1;nx=1;zy=0;ny=0;f=1;no=0;check();// y-1
-				zx=0;nx=0;zy=0;ny=0;f=1;no=0;check();// x+y
-				zx=0;nx=1;zy=0;ny=0;f=1;no=1;check();// x-y
-				zx=0;nx=0;zy=0;ny=1;f=1;no=1;check();// y-x
-				zx=0;nx=0;zy=0;ny=0;f=0;no=0;check();// x&y
-				zx=0;nx=1;zy=0;ny=1;f=0;no=1;check();// x|y
+				// only have to cover the comp bits the asm is capable of generating
+				zx=1;nx=0;zy=1;ny=0;f=1;no=0;check(); // 0 + 0 = 0
+				zx=1;nx=1;zy=1;ny=1;f=1;no=1;check(); // ~(-1 + -1) = 1
+				zx=1;nx=1;zy=1;ny=0;f=1;no=0;check(); // -1 + 0 = -1
+				zx=0;nx=0;zy=1;ny=1;f=0;no=0;check(); // x & FFFF = x
+				zx=1;nx=1;zy=0;ny=0;f=0;no=0;check(); // y & FFFF = y
+				zx=0;nx=0;zy=1;ny=1;f=0;no=1;check(); // ~(x & FFFF) = !x
+				zx=1;nx=1;zy=0;ny=0;f=0;no=1;check(); // ~(y & FFFF) = !y
+				zx=0;nx=0;zy=1;ny=1;f=1;no=1;check(); // ~(x + FFFF) = -x
+				zx=1;nx=1;zy=0;ny=0;f=1;no=1;check(); // ~(y + FFFF) = -y
+				zx=0;nx=1;zy=1;ny=1;f=1;no=1;check(); // ~(~x + FFFF) = x+1
+				zx=1;nx=1;zy=0;ny=1;f=1;no=1;check(); // ~(~y + FFFF) = y+1
+				zx=0;nx=0;zy=1;ny=1;f=1;no=0;check(); // x + FFFF = x-1
+				zx=1;nx=1;zy=0;ny=0;f=1;no=0;check(); // y + FFFF = y-1
+				zx=0;nx=0;zy=0;ny=0;f=1;no=0;check(); // x + y = x+y
+				zx=0;nx=1;zy=0;ny=0;f=1;no=1;check(); // ~(~x + y) = x-y
+				zx=0;nx=0;zy=0;ny=1;f=1;no=1;check(); // ~(x + ~y) = y-x
+				zx=0;nx=0;zy=0;ny=0;f=0;no=0;check(); // x & y = x&y
+				zx=0;nx=1;zy=0;ny=1;f=0;no=1;check(); // ~(~x + ~y) = x|y
 			end
 		
 		if (fail==0) $display("passed");
