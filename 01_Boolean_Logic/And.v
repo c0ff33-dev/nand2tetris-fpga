@@ -11,6 +11,6 @@ module And(
 	output out
 );
 
-	// Put your code here:
+	and(out,a,b); // verilog primitive
 
 endmodule
