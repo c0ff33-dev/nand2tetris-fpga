@@ -1,6 +1,6 @@
 /**
- * 16-bit bitwise And:
- * for i = 0..15: out[i] = (a[i] and b[i])
+ * 16-bit bitwise Or:
+ * for i = 0..15: out[i] = (a[i] or b[i])
  */
 
 `default_nettype none
@@ -10,6 +10,6 @@ module Or16(
 	output [15:0] out
 );
 
-	// Put your code here:
+	assign out = a|b; // bitwise OR
 
 endmodule
