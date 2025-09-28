@@ -12,11 +12,20 @@ module Bit(
 	output reg out
 );
 
-	// Load new input value into the register on clock edge
-	// else keep old value (no action needed)
-	always @(posedge clk) begin
-        if (load)
-            out <= in;
-    end
+	wire dff_in;
+    wire dff_out;
+
+    // Multiplexer for load functionality:
+    // If load=1, feed 'in' to DFF,
+	// else feed previous output to DFF to hold state
+    assign dff_in = load ? in : dff_out;
+
+    DFF dff (
+        .clk(clk),
+        .in(dff_in),
+        .out(dff_out)
+    );
+
+    assign out = dff_out;
 
 endmodule
