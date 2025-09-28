@@ -19,6 +19,15 @@ module RAM256(
 	always @(posedge clk)
 		if (load) regRAM[address[7:0]] <= in;
 
+		// TODO: Run some tests with concurrent read/write
+		// docs don't specify read-first/write-first when using inferred BRAM
+		// M=M+1 or similar requires read-first
+
+		// proposed code: sync read (needs to be typed as register)
+		// out <= regRAM[address[7:0]];
+
+	// original code: async read
+	// this feels like a hack to try and force read-first but BRAM is intended to have sync read
 	assign out = regRAM[address[7:0]];
 
 endmodule
