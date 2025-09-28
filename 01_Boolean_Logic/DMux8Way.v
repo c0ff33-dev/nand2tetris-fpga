@@ -20,6 +20,13 @@ module DMux8Way(
 	output h
 );
 
-	// Put your code here:
+	assign a = (sel==0) ? in : 0;
+	assign b = (sel==1) ? in : 0;
+	assign c = (sel==2) ? in : 0;
+	assign d = (sel==3) ? in : 0;
+	assign e = (sel==4) ? in : 0;
+	assign f = (sel==5) ? in : 0;
+	assign g = (sel==6) ? in : 0;
+	assign h = (sel==7) ? in : 0;
 
 endmodule
