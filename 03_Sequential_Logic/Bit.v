@@ -9,7 +9,7 @@ module Bit(
 	input clk,
 	input in,
 	input load,
-	output reg out
+	output out
 );
 
 	wire dff_in;

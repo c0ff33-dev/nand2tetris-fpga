@@ -13,6 +13,16 @@ module Register(
 	output [15:0] out
 );
 
-	// Put your code here:
+    genvar i;
+    generate
+        for (i = 0; i < 16; i = i + 1) begin : bit_array
+            Bit bit (
+                .clk(clk),
+                .in(in[i]),
+                .load(load),
+                .out(out[i])
+            );
+        end
+    endgenerate
 
 endmodule
