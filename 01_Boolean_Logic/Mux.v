@@ -12,6 +12,8 @@ module Mux(
 	output out
 );
 
-	// Put your code here:
+	// 3 inputs = no hw test (no top/pcf file)
+	// condition ? value_if_true : value_if_false
+	assign out = sel ? b : a;
 
 endmodule
