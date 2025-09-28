@@ -11,3 +11,4 @@ out.asm
 out.hack
 .*
 venv/*
+abc.history
