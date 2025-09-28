@@ -9,6 +9,6 @@ module Not16(
 	output [15:0] out
 );
 
-	assign out = ~in; // Bitwise NOT (verilog primitive is only 1 bit)
+	assign out = ~in; // bitwise NOT
 
 endmodule

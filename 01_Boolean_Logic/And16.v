@@ -10,6 +10,6 @@ module And16(
 	output [15:0] out
 );
 
-	// Put your code here:
+	assign out = a&b; // bitwise AND
 
 endmodule
