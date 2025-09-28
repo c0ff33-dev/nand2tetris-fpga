@@ -11,6 +11,6 @@ module Or(
 	output out
 );
 
-	// Put your code here:
+	or(out,a,b); // verilog primitive
 
 endmodule
