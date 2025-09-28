@@ -10,6 +10,6 @@ module Xor(
 	output out
 );
 
-	// Put your code here:
+	xor(out,a,b); // verilog primitive
 
 endmodule
