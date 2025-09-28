@@ -1,0 +1,65 @@
+# the iceprogduino program is targeting POSIX dependencies not available on windows
+
+# install python 3.12 (linux)
+sudo apt update
+sudo apt install software-properties-common
+sudo add-apt-repository ppa:deadsnakes/ppa
+sudo apt install python3.11 python3.11-venv
+
+# install git and clone repos
+sudo apt install git
+mkdir src && cd src
+git clone https://gitlab.com/x653/nand2tetris-fpga.git
+git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
+
+# install apio + dependencies
+cd nand2tetris-fpga
+python3 -m venv venv
+source venv/bin/activate
+python3 -m pip install apio
+apio install oss-cad-suite
+apio install examples
+sudo apt update
+sudo apt install gtkwave # apio artifact is windows only
+sudo apt install xvfb
+
+# build + install the programmer
+cd ../iCE40HX1K-EVB/programmer/iceprogduino
+sudo apt install build-essential
+make
+sudo make install
+
+# download linux 1.x version of arduino ide: https://www.arduino.cc/en/software/
+mkdir ~/src/arduino-1.8.19 && cd ~/src/arduino-1.8.19
+tar -xvf ~/Downloads/arduino-1.8.19-linux64.tar.tar -C ~/src
+sudo sh install.sh
+
+# prepare arduino dependencies
+# download https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip
+mkdir examples/iceprog
+cp ~/src/iCE40HX1K-EVB/programmer/olimexino-32u4\ firmware/iceprog.ino ./examples/iceprog/
+VM > Removable Devices > Arduino Leonardo > Connect # VMWare
+
+# flash the programmer
+sudo ./arduino
+File > Open > ~/src/arduino-1.8.19/examples/iceprog/iceprog.ino
+Tools > Board > Arduino Leonardo
+Tools > Port > /dev/ttyACM0 (Arduino Leonardo)
+Sketch > Include Library > Add ZIP Library > ~/Downloads/SPIMemory-2.2.0.zip
+Sketch > Verify/Compile
+Sketch > Upload
+
+# enable write perms on the serial port
+sudo chmod a+rw /dev/ttyACM0
+
+# enable headless display for ssh
+Xvfb :2 -screen 0 1024x768x24 &
+export DISPLAY=:2
+
+# upload test program
+cd ~/src/nand2tetris-fpga
+apio examples -d iCE40-HX1K-EVB/leds
+cd iCE40-HX1K-EVB/leds
+apio sim
+apio build
+apio upload
