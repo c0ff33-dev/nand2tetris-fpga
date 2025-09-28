@@ -14,6 +14,9 @@ module Mux4Way16(
 	output [15:0] out
 );
 	
-	// Put your code here:
+	assign out = (sel == 2'b00) ? a :
+			     (sel == 2'b01) ? b :
+			     (sel == 2'b10) ? c :
+			     d; // sel == 2'b11
 
 endmodule
