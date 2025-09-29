@@ -5,7 +5,6 @@
  */
 
 `default_nettype none
-
 module Register(
 	input clk,
 	input [15:0] in,

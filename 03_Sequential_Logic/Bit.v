@@ -9,7 +9,7 @@ module Bit(
 	input clk,
 	input in,
 	input load,
-	output out
+	output out // consumers of the DFF can use a wire though
 );
 
 	wire dff_in;
@@ -25,7 +25,5 @@ module Bit(
         .in(dff_in),
         .out(dff_out)
     );
-
-    assign out = dff_out;
 
 endmodule
