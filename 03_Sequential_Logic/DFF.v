@@ -7,7 +7,7 @@
 module DFF(
 		input clk,
 		input in,
-		output reg out // reg not wire
+		output reg out // probably expected to be able to redeclare as reg in body
 );
 
 	// No need to implement this chip

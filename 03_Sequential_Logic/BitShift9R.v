@@ -12,18 +12,14 @@ module BitShift9R(
 	input inMSB,
 	input load,
 	input shift,
-	output [8:0] out
+	output reg [8:0] out
 );
-
-	reg [8:0] _out;
 
 	always @(posedge clk) begin
 		if (load)
-			_out <= in;
+			out <= in;
 		else if (shift)
-			_out <= (_out >> 1) | (inMSB << 8);
+			out <= (out >> 1) | (inMSB << 8);
 	end
-
-	assign out = _out;
 
 endmodule
