@@ -9,6 +9,6 @@ module Buffer(
 	output out
 );
 
-	assign out = in; // combinatorial memory
+	assign out = in; // combinational memory
 
 endmodule

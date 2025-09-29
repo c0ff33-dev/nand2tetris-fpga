@@ -19,15 +19,15 @@ module RAM256(
 	always @(posedge clk)
 		if (load) regRAM[address[7:0]] <= in;
 
-		// TODO: Run some tests with concurrent read/write
-		// docs don't specify read-first/write-first when using inferred BRAM
-		// M=M+1 or similar requires read-first
-
-		// proposed code: sync read (needs to be typed as register)
+		// TODO: proposed code: syncronous read (needs to be typed as register)
+		// Note: this is implicit read-before-write, e.g. AM=M+1:
+		// - current regRAM[address] is read in
+		// - expression result (in) is eval'd in the same cycle (combinational)
+		// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
 		// out <= regRAM[address[7:0]];
 
 	// original code: async read
-	// this feels like a hack to try and force read-first but BRAM is intended to have sync read
+	// TODO: naieve way to guarantee read first? BRAM is intended to have syncronous read
 	assign out = regRAM[address[7:0]];
 
 endmodule
