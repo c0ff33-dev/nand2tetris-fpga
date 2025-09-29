@@ -35,6 +35,31 @@ module CPU(
     	output [15:0] pc			// address of next instruction
 );
 
-	// Put your code here:
+	// TODO: placeholder code from test bench
+	reg [15:0] _addressM=0;
+	reg [15:0] regD=0;
+	reg [15:0] _pc=0;
+	reg zx,nx,zy,ny,f,no;
+	wire [15:0] out;
+	wire [15:0] x,y;
+	wire zr,ng;
+	assign x = instruction[10]?(instruction[11]?~0:~regD):(instruction[11]?0:regD);
+	assign y = instruction[8]?(instruction[9]?~0:~(instruction[12]?inM:_addressM)):(instruction[9]?0:(instruction[12]?inM:_addressM));
+	assign out = instruction[6]?(instruction[7]?~(x+y):~(x&y)):(instruction[7]?(x+y):(x&y));
+	wire comp;
+	wire jmp;
+	assign comp = instruction[15] && instruction[14] && instruction[13];
+	assign zr = (out==0);
+	assign ng = out[15];
+	assign jmp = comp && ((ng&&instruction[2])||(zr&&instruction[1])||(~(ng|zr)&&instruction[0]));
+	always @(posedge clk) begin
+		_addressM <= comp?(instruction[5]?out:_addressM) : instruction;
+		regD <= comp?(instruction[4]?out:regD) : regD;
+		_pc <= reset?0 : (jmp?_addressM:_pc+1);
+	end
+
+	assign writeM = comp?instruction[3]:0;
+	assign pc = _pc;
+	assign addressM = _addressM;
 
 endmodule
