@@ -23,7 +23,7 @@ module HACK_tb();
   		$dumpfile("HACK_tb.vcd");
   		$dumpvars(0, HACK_tb);
 
-		#4000
+		#12000
 		$finish;
 	end
 
