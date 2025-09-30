@@ -21,8 +21,8 @@ module RAM256(
 
 		// TODO: proposed code: syncronous read (needs to be typed as register)
 		// Note: this is implicit read-before-write, e.g. AM=M+1:
-		// - current regRAM[address] is read in
-		// - expression result (in) is eval'd in the same cycle (combinational)
+		// - current regRAM[address] is read in [t-1]
+		// - expression result (in) is eval'd in the same cycle [t] (combinational)
 		// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
 		// out <= regRAM[address[7:0]];
 
