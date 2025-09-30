@@ -107,8 +107,8 @@ The test bench of `04_HACK` will:
 * finally upload the complete HACK design with `leds.asm` preloaded into instruction ROM and run in real hardware!
   
   ```
-  $ cd ../04_Machine_Language/01_leds
-  $ make
+  $ cd ../04_Machine_Language
+  $ make leds
   $ cd ../05_Computer_Architecture/04_HACK
   $ apio clean
   $ apio build

@@ -14,15 +14,15 @@ module ROM(
 
 	// No need to implement this chip
 	// ROM.hack is an ASCII encoded version of the binary
-	// $readmemb is only used in simulation / will implicitly decode
+	// $readmemb will decode ASCII encoded binary
 
-	// ROM.bin is the raw binary uploaded with iceprogduino
+	// ROM.bin is the raw binary if uploading with iceprogduino
 	// `hexdump -C` will show the canonical representation of the binary
 	// (after each line has been converted to int and split into 2 bytes)
 	parameter ROMFILE = "ROM.hack";
 	
 	reg [15:0] mem [0:255];
-	assign instruction = mem[pc[7:0]]; // read in one byte?
+	assign instruction = mem[pc[7:0]]; // only the lower 8 bits are needed to address 256 words
 	
 	initial begin
 		$readmemb(ROMFILE,mem);
