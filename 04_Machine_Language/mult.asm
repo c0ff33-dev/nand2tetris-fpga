@@ -43,8 +43,7 @@ D=M // D = num1
 @R2
 M=D+M // sum += num1
 @R3
-D=M
-M=D+1 // i++
+M=M+1 // i++
 
 // return to top of loop
 @LOOP

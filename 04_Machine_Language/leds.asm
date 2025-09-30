@@ -4,7 +4,7 @@
 
 (LOOP)
 @BUT // store button state (inverted)
-D=!M  // 0 = pushed down, 1 = released
+D=M  // 0 = pushed down, 1 = released
 
 @LED // update LED state
 M=D // 0 = LED off, 1 = LED on
