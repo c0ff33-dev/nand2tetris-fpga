@@ -19,7 +19,7 @@ M=M+1 // RAM[0] = 10
 // LED = 3 (wrong result)
 // and HALT
 D=M // D = RAM[0] (result)
-@10 (expected)
+@10 // (expected)
 D=D-A // D = result - expected
 @OK
 D;JEQ // OK if result == expected
