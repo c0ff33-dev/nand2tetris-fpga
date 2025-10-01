@@ -35,10 +35,10 @@ module RAM3840(
     RAM512 ram1 (.clk(clk), .address(local_address), .in(in), .load(load1), .out(out1));
     RAM512 ram2 (.clk(clk), .address(local_address), .in(in), .load(load2), .out(out2));
     RAM512 ram3 (.clk(clk), .address(local_address), .in(in), .load(load3), .out(out3));
-    // FIXME: ran out of BRAM?
-    // RAM512 ram4 (.clk(clk), .address(local_address), .in(in), .load(load4), .out(out4));
-    // RAM512 ram5 (.clk(clk), .address(local_address), .in(in), .load(load5), .out(out5));
-    // RAM512 ram6 (.clk(clk), .address(local_address), .in(in), .load(load6), .out(out6));
+    RAM512 ram4 (.clk(clk), .address(local_address), .in(in), .load(load4), .out(out4));
+    RAM512 ram5 (.clk(clk), .address(local_address), .in(in), .load(load5), .out(out5));
+    RAM512 ram6 (.clk(clk), .address(local_address), .in(in), .load(load6), .out(out6));
+    // FIXME: ran out of BRAM (possibly only when using ROM in BRAM?)
     // RAM512 ram7 (.clk(clk), .address(local_address), .in(in), .load(load7), .out(out7));
 
     // Demux based on selected bank
