@@ -1,9 +1,9 @@
 // memory.asm
-// test consecutive memory writes
+// test consecutive memory read/writes
 
-@0 
+@0
 M=A // RAM[0] = 0 (init)
-M=M+1
+M=M+1 // RAM[0]++
 M=M+1
 M=M+1
 M=M+1

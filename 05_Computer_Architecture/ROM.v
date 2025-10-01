@@ -16,7 +16,7 @@ module ROM(
 	// ROM.hack is an ASCII encoded version of the binary
 	// $readmemb will decode ASCII encoded binary
 
-	// ROM.bin is the raw binary if uploading with iceprogduino
+	// ROM.bin is the raw binary when uploading with iceprogduino
 	// `hexdump -C` will show the canonical representation of the binary
 	// (after each line has been converted to int and split into 2 bytes)
 	parameter ROMFILE = "ROM.hack";
