@@ -15,15 +15,26 @@ module RAM256(
 	
 	// No need to implement this chip
 	// RAM is implemented using BRAM of iCE40
-	reg [15:0] regRAM [0:255]; 
-	always @(posedge clk) begin
-		if (load) regRAM[address[7:0]] <= in;
+	wire rclk;
+	wire wclk;
+	reg [15:0] regRAM [0:255];
 
-		// new code: syncronous read (needs to be typed as register)
-		// Note: this is implicit read-before-write, e.g. M=M+1:
-		// - current regRAM[address] is read in [t-1]
-		// - expression result (in) is eval'd in the same cycle [t] (combinational)
-		// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
+	// new code: syncronous read (needs to be typed as register)
+	// Note: HACK requires read-before-write behaviour, e.g. M=M+1:
+	// - current regRAM[address] is read in [t-1]
+	// - expression result (in) is eval'd in the same cycle [t] (combinational)
+	// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
+
+	// Dual port pattern required at 100 MHz
+	// Additionally only this specific clock assignment for read/write works on hardware
+	// No permutation of assignments worked in same clock domain for single port
+	assign wclk = clk;
+	always @(posedge wclk) begin
+		if (load) regRAM[address[7:0]] <= in;
+	end
+
+	assign rclk = ~clk;
+	always @(posedge rclk) begin
 		out <= regRAM[address[7:0]];
 	end
 
