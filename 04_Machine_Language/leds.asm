@@ -2,6 +2,7 @@
 // execute an infinite loop to
 // read the button state and output to led
 
+// tldr; LED1/2 on when BUT1/2 released & off when pushed respectively
 // LED and BUT are 2 bit wires that will split into their 
 // respective physical pins for LED1/2 and BUT1/2
 // BUT = high when released, low when pushed

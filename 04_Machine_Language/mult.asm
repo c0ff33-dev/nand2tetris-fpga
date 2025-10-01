@@ -2,8 +2,8 @@
 // calculate R2 = R0 * R1
 // and check the result.
 
-// Load test data: R0 = 13, R1 = 55
-// and set LED to 1 (nothing calculated yet!)
+// Load test data: R0=13, R1=55
+// and set LED=1
 @13
 D=A
 @R0
@@ -14,8 +14,8 @@ D=A
 @R1
 M=D // R1 (num2) = 55
 
-@LED
-M=1 // LED = 1
+@LED // likely not visible on hardware unless really clocked down
+M=2 // LED=2 (10 = LED1 on/LED2 off, program has started)
 
 // Put your code here:
 
@@ -54,7 +54,7 @@ M=M+1 // i++
 // till here!
 
 // Check result according to
-// LED = 2 (correct result)
+// LED = 1 (correct result)
 // LED = 3 (wrong result)
 // and HALT
 @R2
@@ -68,7 +68,7 @@ D;JEQ // OK if R2 == 715
 @3
 D=A // D=3
 @LED
-M=D // LED=3 (error)
+M=D // LED=3 (11 = LED1/2 on, error)
 @HALT
 0;JMP // end
 
@@ -76,7 +76,7 @@ M=D // LED=3 (error)
 @2
 D=A // D = 2
 @LED
-M=D // LED = 2
+M=D // LED=1 (01 = LED1 off/LED2 on, success)
 
 (HALT)
 @HALT
