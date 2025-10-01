@@ -20,14 +20,15 @@ module RAM256(
 		if (load) regRAM[address[7:0]] <= in;
 
 		// new code: syncronous read (needs to be typed as register)
-		// Note: this is implicit read-before-write, e.g. AM=M+1:
+		// Note: this is implicit read-before-write, e.g. M=M+1:
 		// - current regRAM[address] is read in [t-1]
 		// - expression result (in) is eval'd in the same cycle [t] (combinational)
 		// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
 		out <= regRAM[address[7:0]];
 	end
 
-	// original code: async read -- this is unstable at 100 MHz!
+	// original code: async read - this is unstable at 100 MHz on
+	// hardware but not in simulation so likely BRAM latency issue
 	// assign out = regRAM[address[7:0]];
 
 endmodule
