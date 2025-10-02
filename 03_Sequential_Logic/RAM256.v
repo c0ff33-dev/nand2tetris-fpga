@@ -25,6 +25,8 @@ module RAM256(
 	// - expression result (in) is eval'd in the same cycle [t] (combinational)
 	// - write new regRAM[address] (out) and A register simultaneously at conclusion of the block [t+1]
 
+	// FIXME: memory passing / mult failing on hardware @ 100 MHz (!clk and negedge)
+
 	// Dual port pattern required at 100 MHz
 	// Additionally only this specific clock assignment for read/write works on hardware
 	always @(posedge clk) begin
