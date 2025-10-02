@@ -27,14 +27,15 @@ module RAM256(
 
 	// Dual port pattern required at 100 MHz
 	// Additionally only this specific clock assignment for read/write works on hardware
-	// No permutation of assignments worked in same clock domain for single port
-	assign wclk = clk;
-	always @(posedge wclk) begin
+	always @(posedge clk) begin
+		// write during rising edge (1st half of cycle)
+		// counter-intuitively this is READ_FIRST behaviour (out is latched until [t+1])
+		// even though on the waveform the write is happening first!
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
-	assign rclk = ~clk;
-	always @(posedge rclk) begin
+	always @(negedge clk) begin
+		// out [t-1] is read during falling edge (2nd half of cycle)
 		out <= regRAM[address[7:0]];
 	end
 
