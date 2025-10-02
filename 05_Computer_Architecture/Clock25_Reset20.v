@@ -16,11 +16,8 @@ module Clock25_Reset20(
 	
 	// scale down 100MHz to 25MHz (1/4)
 	// 2 bits = 2^2 = 4 ticks x 2 per cycle = 2^3 for 4 cycles
-	// Buffer clock(.in(psout[2]),.out(clk)); // demux the 3rd bit
+	Buffer clock(.in(psout[2]),.out(clk)); // demux the 3rd bit
 	
-	// EXPERIMENTAL: disable clock() and run at full speed 🔥
-	assign clk = CLK;
-
 	// Reset high for first 20us @ 100 MHz
 	// 1 cycle = 100 million / second or 10ns (ns = 1 billion / second)
 	// 1000ns = 1 us (microsecond = 1 million / second)
