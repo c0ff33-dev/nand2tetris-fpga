@@ -2,8 +2,7 @@
 // calculate R2 = R0 * R1
 // and check the result.
 
-// Load test data: R0=13, R1=55
-// and set LED=1
+// Load test data: R0=13, R1=55, LED=1
 @13
 D=A
 @R0
@@ -14,10 +13,10 @@ D=A
 @R1
 M=D // R1 (num2) = 55
 
-@LED // likely not visible on hardware unless really clocked down
-@2
+@1
 D=A
-M=D // LED=2 (10 = LED1 on/LED2 off, program has started)
+@LED // likely not visible on hardware unless really clocked down
+M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
 
 // Put your code here:
 
@@ -78,7 +77,7 @@ M=D // LED=3 (11 = LED1/2 on, error)
 @2
 D=A // D = 2
 @LED
-M=D // LED=1 (01 = LED1 off/LED2 on, success)
+M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
 (HALT)
 @HALT
