@@ -14,7 +14,7 @@ module UartTX(
 	input load, // 1 = initiate the transmission
 	input [15:0] in, // [7:0] byte to send
 	output TX, // transmission wire (serial)
-	output [15:0] out // [15] 1 = busy, 0 = ready // TODO: why 16 bit?
+	output [15:0] out // [15] 1 = busy, 0 = ready (memory mapped)
 );
 
 	wire stop;
@@ -63,7 +63,7 @@ module UartTX(
 		.out(txCount) // track number of bits sent
 	);
 
-	// send the 10th bit + wait before setting stop signal
+	// send the 10th bit + wait out the cycle before setting stop signal
 	assign stop = (txCount==9 & is216);
 	assign load_stop = (load | stop);
 

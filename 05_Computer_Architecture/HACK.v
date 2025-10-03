@@ -22,10 +22,23 @@ module HACK(
 	wire [15:0] addressM,pc,outM,inM,instruction;
 
 	// 25 MHz internal clock w/ 20us initial reset period
-	Clock25_Reset20 clock(.CLK(CLK),.clk(clk),.reset(RST));
+	Clock25_Reset20 clock(
+		.CLK(CLK),
+		.clk(clk),
+		.reset(RST)
+	);
 
 	// CPU (ALU, A, D, PC)
-	CPU cpu(.clk(clk),.inM(inM),.instruction(instruction),.reset(RST),.outM(outM),.writeM(writeM),.addressM(addressM),.pc(pc));
+	CPU cpu(
+		.clk(clk),
+		.inM(inM),
+		.instruction(instruction),
+		.reset(RST),
+		.outM(outM),
+		.writeM(writeM),
+		.addressM(addressM),
+		.pc(pc)
+	);
 
 	// Memory (map only)
 	Memory mem(
@@ -33,7 +46,7 @@ module HACK(
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
 		.inIO0(outLED), // LED (4096)
-		.inIO1(inIO1), // BUT2 (4097)
+		.inIO1(inIO1), // BUT (4097)
 		.inIO2(inIO2), // reserved [15:0]
 		.inIO3(inIO3), // reserved [15:0]
 		.inIO4(inIO4), // reserved [15:0]
@@ -49,9 +62,9 @@ module HACK(
 		.inIOE(inIOE), // DEBUG3 (4110)
 		.inIOF(inIOF), // DEBUG4 (4111)
 		.out(inM),
-		.loadRAM(loadRAM),
-		.loadIO0(loadIO0), // LED
-		.loadIO1(loadIO1), // BUT
+		.loadRAM(loadRAM), // RAM (0-3839)
+		.loadIO0(loadIO0), // LED (4096)
+		.loadIO1(loadIO1), // BUT (4097)
 		.loadIO2(loadIO2), // reserved
 		.loadIO3(loadIO3), // reserved
 		.loadIO4(loadIO4), // reserved
@@ -61,15 +74,18 @@ module HACK(
 		.loadIO8(loadIO8), // reserved
 		.loadIO9(loadIO9), // reserved
 		.loadIOA(loadIOA), // reserved
-		.loadIOB(loadIOB), // DEBUG0
-		.loadIOC(loadIOC), // DEBUG1
-		.loadIOD(loadIOD), // DEBUG2
-		.loadIOE(loadIOE), // DEBUG3
-		.loadIOF(loadIOF)  // DEBUG4
+		.loadIOB(loadIOB), // DEBUG0 (4107)
+		.loadIOC(loadIOC), // DEBUG1 (4108)
+		.loadIOD(loadIOD), // DEBUG2 (4109)
+		.loadIOE(loadIOE), // DEBUG3 (4110)
+		.loadIOF(loadIOF)  // DEBUG4 (4111)
 	);
 
 	// ROM (simulated), 256 x 16 bit words
-	ROM rom(.pc(pc),.instruction(instruction));
+	ROM rom(
+		.pc(pc),
+		.instruction(instruction)
+	);
 
 	// BRAM (0-3839 x 16 bit words)
 	RAM3840 ram(
