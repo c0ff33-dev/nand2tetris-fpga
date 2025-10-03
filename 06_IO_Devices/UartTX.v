@@ -33,7 +33,7 @@ module UartTX(
 		.load(load_stop), // update when new load or done
 		.out(busy)
 	);
-	assign out = {15'b0,busy}; // out[15] = busy
+	assign out = {busy,15'b0}; // out[15] = busy
 
 	// 115200 bits per second = 8.68us
 	// 217 cycles @ 25 MHz per bit
@@ -62,14 +62,16 @@ module UartTX(
 		.reset(load), // reset on new load
 		.out(txCount) // track number of bits sent
 	);
-	assign stop = (txCount==9);
+
+	// send the 10th bit + wait before setting stop signal
+	assign stop = (txCount==9 & is216);
 	assign load_stop = (load | stop);
 
 	// each shift cycles LSB out and MSB to the right
 	// so starting with data[0] every 217th cycle sends a new bit
 	BitShift9R shift(
 		.clk(clk),
-		.in({1'b0,in[7:0]}),
+		.in({in[7:0],1'b0}), // fill LSB so first TX bit is zero (start bit)
 		.inMSB(1'b1), // fill MSB with 1 post-shift (stop bit)
 		.load(load), // load new data (don't shift)
 		.shift(is216), // shift current data right
