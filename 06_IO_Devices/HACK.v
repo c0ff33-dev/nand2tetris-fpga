@@ -38,41 +38,54 @@ module HACK(
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7;
 	wire loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8;
-	wire [15:0] inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outLED,outRAM;
+	wire [15:0] inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction;
 
 	// 25 MHz internal clock w/ 20us initial reset period
-	Clock25_Reset20 clock(.CLK(CLK),.clk(clk),.reset(RST));
+	Clock25_Reset20 clock(
+		.CLK(CLK), // external 100 MHz clock (pin)
+		.clk(clk), // internal 25 MHz clock
+		.reset(RST)
+	);
 
 	// CPU (ALU, A, D, PC)
-	CPU cpu(.clk(clk),.inM(inM),.instruction(instruction),.reset(RST),.outM(outM),.writeM(writeM),.addressM(addressM),.pc(pc));
+	CPU cpu(
+		.clk(clk),
+		.inM(inM),
+		.instruction(instruction),
+		.reset(RST),
+		.outM(outM),
+		.writeM(writeM),
+		.addressM(addressM),
+		.pc(pc)
+	);
 
 	// Memory (map only)
 	Memory mem(
 		.address(addressM),
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
-		.inIO0(outLED), // LED (4096)
-		.inIO1(inIO1), // BUT2 (4097)
-		.inIO2(inIO2), // reserved [15:0]
-		.inIO3(inIO3), // reserved [15:0]
-		.inIO4(inIO4), // reserved [15:0]
-		.inIO5(inIO5), // reserved [15:0]
-		.inIO6(inIO6), // reserved [15:0]
-		.inIO7(inIO7), // reserved [15:0]
-		.inIO8(inIO8), // reserved [15:0]
-		.inIO9(inIO9), // reserved [15:0]
-		.inIOA(inIOA), // reserved [15:0]
-		.inIOB(inIOB), // DEBUG0 (4107)
-		.inIOC(inIOC), // DEBUG1 (4108)
-		.inIOD(inIOD), // DEBUG2 (4109)
-		.inIOE(inIOE), // DEBUG3 (4110)
-		.inIOF(inIOF), // DEBUG4 (4111)
+		.inIO0(LED),    // LED (4096)
+		.inIO1(inIO1),  // BUT (4097)
+		.inIO2(inIO2),  // UART_TX (4098)
+		.inIO3(inIO3),  // reserved [15:0]
+		.inIO4(inIO4),  // reserved [15:0]
+		.inIO5(inIO5),  // reserved [15:0]
+		.inIO6(inIO6),  // reserved [15:0]
+		.inIO7(inIO7),  // reserved [15:0]
+		.inIO8(inIO8),  // reserved [15:0]
+		.inIO9(inIO9),  // reserved [15:0]
+		.inIOA(inIOA),  // reserved [15:0]
+		.inIOB(inIOB),  // DEBUG0 (4107)
+		.inIOC(inIOC),  // DEBUG1 (4108)
+		.inIOD(inIOD),  // DEBUG2 (4109)
+		.inIOE(inIOE),  // DEBUG3 (4110)
+		.inIOF(inIOF),  // DEBUG4 (4111)
 		.out(inM),
-		.loadRAM(loadRAM),
-		.loadIO0(loadIO0), // LED
-		.loadIO1(loadIO1), // BUT
-		.loadIO2(loadIO2), // reserved
+		.loadRAM(loadRAM), // RAM (0-3839)
+		.loadIO0(loadIO0), // LED (4096)
+		.loadIO1(loadIO1), // BUT (4097)
+		.loadIO2(loadIO2), // UART_TX (4098)
 		.loadIO3(loadIO3), // reserved
 		.loadIO4(loadIO4), // reserved
 		.loadIO5(loadIO5), // reserved
@@ -81,15 +94,18 @@ module HACK(
 		.loadIO8(loadIO8), // reserved
 		.loadIO9(loadIO9), // reserved
 		.loadIOA(loadIOA), // reserved
-		.loadIOB(loadIOB), // DEBUG0
-		.loadIOC(loadIOC), // DEBUG1
-		.loadIOD(loadIOD), // DEBUG2
-		.loadIOE(loadIOE), // DEBUG3
-		.loadIOF(loadIOF)  // DEBUG4
+		.loadIOB(loadIOB), // DEBUG0 (4107)
+		.loadIOC(loadIOC), // DEBUG1 (4108)
+		.loadIOD(loadIOD), // DEBUG2 (4109)
+		.loadIOE(loadIOE), // DEBUG3 (4110)
+		.loadIOF(loadIOF)  // DEBUG4 (4111)
 	);
 
 	// ROM (simulated), 256 x 16 bit words
-	ROM rom(.pc(pc),.instruction(instruction));
+	ROM rom(
+		.pc(pc),
+		.instruction(instruction)
+	);
 
 	// BRAM (0-3839 x 16 bit words)
 	RAM3840 ram(
@@ -105,18 +121,28 @@ module HACK(
 		.clk(clk),
 		.in(outM),
 		.load(loadIO0),
-		.out(outLED)
+		.out(LED)
 	);
-	assign LED = outLED[1:0];
 
-	// BUT2 (4097)
+	// BUT (4097)
 	Register but(
 		.clk(clk),
-		.in({14'd0, BUT}), // concat 14 bits for padding
+		.in({14'd0, BUT}), // pin
 		.load(1'b1),
-		.out(inIO1)
+		.out(inIO1) // memory map
 	);
 
+	// UART_TX (4098)
+	// W = send byte, R = busy signal
+	UartTX uartTX(
+		.clk(clk),
+		.load(loadIO2),
+		.in(outM), // only reads [7:0]
+		.TX(UART_TX), // serial tx bit (pin)
+		.out(inIO2) // [15] 1 = busy, 0 = ready (memory map)
+	);
+
+	// additional registers
 	// DEBUG0 (4107)
 	Register debug0(
 		.clk(clk),
@@ -156,5 +182,5 @@ module HACK(
 		.load(loadIOF),
 		.out(inIOF)
 	);
-
+	
 endmodule

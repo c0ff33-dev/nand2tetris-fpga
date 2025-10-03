@@ -105,7 +105,7 @@ module HACK(
 	);
 	assign LED = outLED[1:0];
 
-	// BUT2 (4097)
+	// BUT (4097)
 	Register but(
 		.clk(clk),
 		.in({14'd0, BUT}), // concat 14 bits for padding
