@@ -9,7 +9,7 @@ module Bit(
 	input clk,
 	input in,
 	input load,
-	output out // consumers of the DFF can use a wire though
+	output out
 );
 
 	// Multiplexer for load functionality:
