@@ -77,6 +77,6 @@ module UartTX(
 		.shift(is216), // shift current data right
 		.out(data)
 	);
-	assign TX = data[0];
+	assign TX = data[0]; // send data[0] to pin
 
 endmodule
