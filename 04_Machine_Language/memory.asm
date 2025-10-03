@@ -1,6 +1,11 @@
 // memory.asm
 // test consecutive memory read/writes
 
+@1
+D=A
+@LED // likely not visible on hardware unless really clocked down
+M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
+
 @0
 M=A // RAM[0] = 0 (init)
 M=M+1 // RAM[0]++
@@ -14,10 +19,7 @@ M=M+1
 M=M+1
 M=M+1 // RAM[0] = 10
 
-// Check result according to
-// LED = 1 (correct result)
-// LED = 3 (wrong result)
-// and HALT
+// Check result and HALT
 D=M // D = RAM[0] (result)
 @10 // (expected)
 D=D-A // D = result - expected
@@ -36,7 +38,7 @@ M=D // LED=3 (11 = LED1/2 on, error)
 @2
 D=A // D = 2
 @LED
-M=D // LED=1 (01 = LED1 off/LED2 on, success)
+M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
 (HALT)
 @HALT
