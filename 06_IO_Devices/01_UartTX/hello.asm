@@ -23,6 +23,12 @@ D=A // D = "i"
 @UART_TX
 M=D // send "i"
 
+(wait2) // wait for tx (2170 cycles)
+@UART_TX
+D=M // check if ready
+@wait2
+D;JNE // loop if busy
+
 @2
 D=A
 @LED // likely not visible on hardware unless really clocked down
