@@ -13,6 +13,8 @@ module DFF(
 	// No need to implement this chip
 	// This chip is implemented in verilog using reg-variables
 	always @(posedge clk) begin
+		// in is sampled on posedge [t]
+		// out emits the state from [t-1]
 		if (in) out <= 1'b1;
 		else out <= 1'b0;
 	end

@@ -19,21 +19,23 @@ module RAM256(
 	wire wclk;
 	reg [15:0] regRAM [0:255];
 
-	// new code: syncronous read (needs to be typed as register)
-	// Note: HACK requires read-before-write behaviour, e.g. M=M+1:
-	// - current regRAM[address] is read in [t-1]
-	// - expression result (in) is eval'd in the same cycle [t] (combinational)
-	// - write new regRAM[address] (out) at conclusion of the block [t+1]
+	// Note: HACK requires read-before-write / READ_FIRST behaviour, e.g. M=M+1:
+	// - current regRAM[address] is read in from [t-1]
+	// - expression result (in) is combinationally eval'd [t]
+	// - write new regRAM[address] (out) at [t+1]
 
-	// Syncronized dual port pattern - only this specific wave pattern works (READ_FIRST)
+	// Syncronized dual port pattern - only this specific wave pattern works
 	always @(posedge clk) begin
-		// write scheduled during rising edge but don't express until [t+1]
+		// in is sampled on posedge edge [t]
+		// but won't be written to regRAM[address] until [t+1]
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
+	// new code: syncronous read
 	always @(negedge clk) begin
-		// read out [t-1] during falling edge but don't express until [t+1]
-		// DFF polls for updates at the following rising edge
+		// out is sampled on negedge edge [t]
+		// emits the value of regRAM[address] from [t-1]
+		// memory values are undefined until written to for the first time
 		out <= regRAM[address[7:0]];
 	end
 
