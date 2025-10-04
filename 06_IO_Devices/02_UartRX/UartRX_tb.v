@@ -43,6 +43,11 @@ module UartRX_tb();
 	always @(posedge clk)
 		out_tx <= load?1:((bits==10)?0:out_tx);
 	assign RX = uart[1];
+	
+	// debug
+	reg foo;
+	always @(posedge clk)
+		foo <= load&~out_tx;
 
 	reg [15:0] out_cmp 	=0;
 	always @(posedge clk)
@@ -65,7 +70,7 @@ module UartRX_tb();
 		$display("------------------------");
 		$display("Testbench: UartRX");
 
-		for (n=0; n<10000;n=n+1) 
+		for (n=0; n<24000;n=n+1) 
 				check();
 		
 		if (fail==0) $display("passed");
