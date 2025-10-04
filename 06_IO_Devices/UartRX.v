@@ -14,14 +14,16 @@ module UartRX(
 	input RX, // transmission wire (serial)
 	output [15:0] out
 );
-	
+
 	wire start, busy, rx, stop, start_clear, is108, is216;
 	wire [15:0] baudCount, rxCount, clear_data;
 	wire [8:0] data;
 
-	// start read when RX drops low (start bit)
-	assign start = (RX == 1'b0);
-	assign start_clear = (start | clear);
+	// set start when rx drops low (start bit) & ready to rx
+	// reset when rx finished (stop) or cleared
+	// note: stop is only high for 1 cycle
+	assign start = stop ? 1'b0 : (~rx & ~busy);
+	assign start_clear = (start | stop | clear);
 
 	// 0 = ready, 1 = busy
 	Bit state(
@@ -57,7 +59,7 @@ module UartRX(
 		.in(16'b0),
 		.reset(start), // reset on new read
 		.out(rxCount) // track number of bits read
-	);
+	); // FIXME: rxCount is correct but arrives 2 cycles too late
 
 	// store RX bit (sync RX to clk domain)
 	DFF dff(
@@ -70,7 +72,7 @@ module UartRX(
 	BitShift9R shift(
 		.clk(clk),
 		.in(9'b0),
-		.inMSB(rx), // load RX bit into MSB when sampled
+		.inMSB(rx), // load rx bit into MSB when sampled
 		.load(1'b0),
 		.shift(is108), // sample at midpoint & shift right
 		.out(data)
