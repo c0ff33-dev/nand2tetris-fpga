@@ -59,7 +59,7 @@ module UartRX(
 		.in(16'b0),
 		.reset(start), // reset on new read
 		.out(rxCount) // track number of bits read
-	); // FIXME: rxCount is correct but arrives 2 cycles too late
+	); 
 
 	// store RX bit (sync RX to clk domain)
 	DFF dff(
@@ -68,19 +68,33 @@ module UartRX(
 		.out(rx)
 	);
 
+	// FIXME: rx/shift looks right but still arrives 2 cycles late
+	
 	// each shift cycles LSB out and MSB to the right
+	//  tx/rx: 0xxxxxxxx1 (pre-shift)
+	//  shift: --------- // init
+	// shift0: 0-------- >> -0-------
+	// shift1: x0------- >> -x0------
+	// shift2: xx0------ >> -xx0-----
+	// shift3: xxx0----- >> -xxx0----
+	// shift4: xxxx0---- >> -xxxx0---
+	// shift5: xxxxx0--- >> -xxxxx0--
+	// shift6: xxxxx0--- >> -xxxxx0-- 
+	// shift7: xxxxxx0-- >> -xxxxxx0-
+	// shift8: xxxxxxx0- >> -xxxxxxx0 
+	// shift9: xxxxxxxx0 >> -xxxxxxxx
 	BitShift9R shift(
 		.clk(clk),
-		.in(9'b0),
+		.in(9'b111111111), // init
 		.inMSB(rx), // load rx bit into MSB when sampled
-		.load(1'b0),
+		.load(start), // init
 		.shift(is108), // sample at midpoint & shift right
 		.out(data)
 	);
 
 	// clear: reset register and set [15]=1 (waiting)
 	// else: pad data and set [15]=0 (done)
-	assign clear_data = clear ? 16'h8000 : {7'd0,data};
+	assign clear_data = clear ? 16'h8000 : {8'd0,data[7:0]};
 
 	// allow load when clearing or completed
 	assign stop = (clear | (rxCount==9 & is216));
