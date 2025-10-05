@@ -133,8 +133,8 @@ module HACK(
 	);
 
 	// UART_TX (4098)
-	// R = busy signal, [15]=1 busy, [15]=0 ready
-	// W = send byte
+	// R: busy signal, [15]=1 busy, [15]=0 ready
+	// W: send byte
 	UartTX uartTX(
 		.clk(clk),
 		.load(loadIO2),
@@ -144,8 +144,8 @@ module HACK(
 	);
 
 	// UART_RX (4099)
-	// R = out[15]=1 no data (0x8000), else out[7:0]=byte
-	// W = clear data register
+	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
+	// W: 1 = clear data register
 	UartRX uartRX(
 		.clk(clk),
 		.clear(loadIO3),
