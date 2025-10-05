@@ -68,7 +68,7 @@ module HACK(
 		.inIO0(LED),    // LED (4096)
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
-		.inIO3(inIO3),  // reserved [15:0]
+		.inIO3(inIO3),  // UART_RX (4099)
 		.inIO4(inIO4),  // reserved [15:0]
 		.inIO5(inIO5),  // reserved [15:0]
 		.inIO6(inIO6),  // reserved [15:0]
@@ -86,7 +86,7 @@ module HACK(
 		.loadIO0(loadIO0), // LED (4096)
 		.loadIO1(loadIO1), // BUT (4097)
 		.loadIO2(loadIO2), // UART_TX (4098)
-		.loadIO3(loadIO3), // reserved
+		.loadIO3(loadIO3), // UART_RX (4099)
 		.loadIO4(loadIO4), // reserved
 		.loadIO5(loadIO5), // reserved
 		.loadIO6(loadIO6), // reserved
@@ -133,13 +133,24 @@ module HACK(
 	);
 
 	// UART_TX (4098)
-	// W = send byte, R = busy signal
+	// R = busy signal, [15]=1 busy, [15]=0 ready
+	// W = send byte
 	UartTX uartTX(
 		.clk(clk),
 		.load(loadIO2),
-		.in(outM), // only reads [7:0]
+		.in(outM), // transmit outM[7:0]
 		.TX(UART_TX), // serial tx bit (pin)
-		.out(inIO2) // [15] 1 = busy, 0 = ready (memory map)
+		.out(inIO2) // memory map
+	);
+
+	// UART_RX (4099)
+	// R = out[15]=1 no data (0x8000), else out[7:0]=byte
+	// W = clear data register
+	UartRX uartRX(
+		.clk(clk),
+		.clear(loadIO3),
+		.RX(UART_RX), // serial rx bit (pin)
+		.out(inIO3) // memory map 
 	);
 
 	// additional registers
