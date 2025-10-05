@@ -65,7 +65,7 @@ module HACK(
 		.address(addressM),
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
-		.inIO0(LED),    // LED (4096)
+		.inIO0({14'd0, LED}), // LED (4096)
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)

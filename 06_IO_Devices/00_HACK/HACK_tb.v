@@ -51,7 +51,7 @@ module HACK_tb();
 	);
 
 	// Simulate
-	always #0.5 CLK = ~CLK;
+	always #0.5 CLK = ~CLK; // 100 MHz
 	integer n=0;
 	always @(posedge CLK) n=n+1;
 
@@ -59,11 +59,14 @@ module HACK_tb();
 	reg [9:0] uart=10'b1111111111;
 	reg [15:0] baudrate = 0;
 	always @(posedge CLK)
-		baudrate <= ((baudrate==866)?0:baudrate+1);
+		// inc every tick so 216 * 4 * 2 = 1728 for 25 MHz
+		baudrate <= ((baudrate==1728)?0:baudrate+1);
 	always @(posedge CLK) begin
-		uart <= (n==5000)?((82<<2)+1):(n==15000)?((88<<2)+1):((baudrate==866)?{1'b1,uart[9:1]}:uart);
+		// pack 82 (0x52) and 88 (0x58) into UART frames at 50/300µs respectively
+		uart <= (n==5000)?((82<<2)+1):(n==30000)?((88<<2)+1):((baudrate==1728)?{1'b1,uart[9:1]}:uart);
+		// uart <= (n==5000)?((82<<2)+1):((baudrate==1728)?{1'b1,uart[9:1]}:uart); // debug: single rx
 	end
-	wire shift = (baudrate==866);
+	wire shift = (baudrate==1728);
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI
@@ -114,7 +117,7 @@ module HACK_tb();
 		$display("------------------------");
 		$display("Testbench: Hack");
 
-		#60000
+		#75000
 		$finish;
 	end
 
