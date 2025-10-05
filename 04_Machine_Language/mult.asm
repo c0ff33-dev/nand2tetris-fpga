@@ -15,7 +15,7 @@ M=D // R1 (num2) = 55
 
 @1
 D=A
-@LED // likely not visible on hardware unless really clocked down
+@LED
 M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
 
 // Put your code here:

@@ -4,7 +4,7 @@
 
 @1
 D=A
-@LED // likely not visible on hardware unless really clocked down
+@LED
 M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
 
 @72
@@ -31,8 +31,8 @@ D;JNE // loop if busy
 
 @2
 D=A
-@LED // likely not visible on hardware unless really clocked down
-M=D // LED=2 (10 = LED1 on/LED2 off, program has started)
+@LED
+M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
 (HALT)
 @HALT
