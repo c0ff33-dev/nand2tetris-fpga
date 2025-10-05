@@ -19,16 +19,11 @@ module UartRX(
 	wire [15:0] baudCount, rxCount, clear_data;
 	wire [8:0] data;
 
-	// foo negates 1 cycle of rx latency, ~busy stops it staying high
-	// reg based timers (rx/baud) add 1 cycle of latency each compared to test bench (maybe not a problem)
-	// FIXME: combinational version of baudCount should do for the rest
-	wire foo; // load == ~RX (when load is high RX drops low the next cycle)
-	assign foo = ~RX ? ((baudCount==16'd0 & ~busy) ? 1'b1 : 1'b0) : 1'b0;
-	
-	// set start when rx drops low (start bit) & ready to rx
-	// reset when rx finished (stop) or cleared
-	// note: stop is only high for 1 cycle
-	assign start = stop ? 1'b0 : (foo | (~rx & ~busy));
+	// set start high when rx drops low (start bit) & ready to rx
+	// set busy low when rx finished (stop) or cleared
+	// syncronize start with cycle of first bit recv'd
+	// start/stop are high for one cycle only
+	assign start = ~RX & ~busy; 
 	assign start_clear = (start | stop | clear);
 	
 	// 0 = ready, 1 = busy
@@ -44,7 +39,7 @@ module UartRX(
 	// cycle through 0-216 to maintain the baud rate
 	PC baud(
 		.clk(clk),
-		.inc(busy), // count while busy
+		.inc(start | busy), // count while rx being read
 		.load(1'b0),
 		.in(16'b0),
 		.reset(is216), // reset on 216 (max count)
@@ -67,15 +62,14 @@ module UartRX(
 		.out(rxCount) // track number of bits read
 	); 
 
+	// TODO: not sure this is actually needed in practice? (only used on shift which is clocked)
 	// store RX bit (sync RX to clk domain)
-	DFF dff(
-		.clk(clk),
-		.in(RX), // read data from pin
-		.out(rx)
-	);
+	// DFF dff(
+	// 	.clk(clk),
+	// 	.in(RX), // read data from pin
+	// 	.out(rx)
+	// );
 
-	// FIXME: rx/shift looks right but still arrives 2 cycles late
-	
 	// each shift cycles LSB out and MSB to the right
 	//  tx/rx: 0xxxxxxxx1 (pre-shift)
 	//  shift: --------- // init
@@ -92,7 +86,7 @@ module UartRX(
 	BitShift9R shift(
 		.clk(clk),
 		.in(9'b111111111), // init
-		.inMSB(rx), // load rx bit into MSB when sampled
+		.inMSB(RX), // load rx bit into MSB when sampled
 		.load(start), // init
 		.shift(is108), // sample at midpoint & shift right
 		.out(data)
@@ -102,14 +96,18 @@ module UartRX(
 	// else: pad data and set [15]=0 (done)
 	assign clear_data = clear ? 16'h8000 : {8'd0,data[7:0]};
 
-	// allow load when clearing or completed
-	assign stop = (clear | (rxCount==16'd9 & is216));
+	
+	// syncronize stop with cycle of last bit recv'd
+	// stop = high on 10th cycle (stop bit)
+	assign stop = (rxCount==16'd9) & is216;
 
 	// buffer the output so only complete results are emitted
+	// out emitted on 11th+ cycle from first bit recv'd
+	// and stays there until new byte is written or cleared
 	Register buffer(
 		.clk(clk),
 		.in(clear_data),
-		.load(stop),
+		.load(stop | clear),
 		.out(out)
 	);
 
