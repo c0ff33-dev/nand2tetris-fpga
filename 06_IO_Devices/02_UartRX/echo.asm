@@ -16,14 +16,9 @@ D=M // D=buffer
 @R0
 M=D // R0=buffer
 @32768 // 0x8000 (note: outside of original HACK address range)
-D=D-A
+D=A-D
 @read // wait for buffer to be written
 D;JEQ
-
-@R0 // debug: dump the byte that was read
-D=M
-@DEBUG0
-M=D // D0=RX
 
 @UART_RX
 M=1 // clear the RX buffer once read
@@ -45,13 +40,9 @@ D=M // check if ready
 @wait
 D;JNE // loop if busy
 
-// FIXME: TX looks to be sending buffer correctly but buffer value looks wrong?
-// FIXME: why is 11 state so short?
-// rx/tx complete
-@3
+@3 // rx/tx complete
 D=A // D=3
 @LED
 M=D // LED=3 (11 = LED1/2 on, tx done)
-
 @read
 0;JMP // loop forever
