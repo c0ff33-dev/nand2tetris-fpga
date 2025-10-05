@@ -18,41 +18,41 @@
 module Memory(
 	input [15:0] address,
 	input load,
-	input [15:0] inRAM,
-	input [15:0] inIO0,
-	input [15:0] inIO1,
-	input [15:0] inIO2,
-	input [15:0] inIO3,
-	input [15:0] inIO4,
-	input [15:0] inIO5,
-	input [15:0] inIO6,
-	input [15:0] inIO7,
-	input [15:0] inIO8,
-	input [15:0] inIO9,
-	input [15:0] inIOA,
-	input [15:0] inIOB,
-	input [15:0] inIOC,
-	input [15:0] inIOD,
-	input [15:0] inIOE,
-	input [15:0] inIOF,
+	input [15:0] inRAM, // RAM (0-3839)
+	input [15:0] inIO0, // LED (4096)
+	input [15:0] inIO1, // BUT (4097)
+	input [15:0] inIO2, // UART_TX (4098)
+	input [15:0] inIO3, // UART_RX (4099)
+	input [15:0] inIO4, // reserved [15:0]
+	input [15:0] inIO5, // reserved [15:0]
+	input [15:0] inIO6, // reserved [15:0]
+	input [15:0] inIO7, // reserved [15:0]
+	input [15:0] inIO8, // reserved [15:0]
+	input [15:0] inIO9, // reserved [15:0]
+	input [15:0] inIOA, // reserved [15:0]
+	input [15:0] inIOB, // DEBUG0 (4107)
+	input [15:0] inIOC, // DEBUG1 (4108)
+	input [15:0] inIOD, // DEBUG2 (4109)
+	input [15:0] inIOE, // DEBUG3 (4110)
+	input [15:0] inIOF, // DEBUG4 (4111)
 	output [15:0] out,
-	output loadRAM,
-	output loadIO0,
-	output loadIO1,
-	output loadIO2,
-	output loadIO3,
-	output loadIO4,
-	output loadIO5,
-	output loadIO6,
-	output loadIO7,
-	output loadIO8,
-	output loadIO9,
-	output loadIOA,
-	output loadIOB,
-	output loadIOC,
-	output loadIOD,
-	output loadIOE,
-	output loadIOF
+	output loadRAM, // RAM (0-3839)
+	output loadIO0, // LED (4096)
+	output loadIO1, // BUT (4097)
+	output loadIO2, // UART_TX (4098)
+	output loadIO3, // UART_RX (4099)
+	output loadIO4, // reserved [15:0]
+	output loadIO5, // reserved [15:0]
+	output loadIO6, // reserved [15:0]
+	output loadIO7, // reserved [15:0]
+	output loadIO8, // reserved [15:0]
+	output loadIO9, // reserved [15:0]
+	output loadIOA, // reserved [15:0]
+	output loadIOB, // DEBUG0 (4107)
+	output loadIOC, // DEBUG1 (4108)
+	output loadIOD, // DEBUG2 (4109)
+	output loadIOE, // DEBUG3 (4110)
+	output loadIOF  // DEBUG4 (4111)
 );
 
 	// map adressses to wires for RAM3840 and the IO registers
