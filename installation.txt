@@ -21,7 +21,7 @@ apio install oss-cad-suite
 apio install examples
 sudo apt update
 sudo apt install gtkwave # apio artifact is windows only
-sudo apt install xvfb
+sudo apt install xvfb tio
 
 # build + install the programmer
 cd ../iCE40HX1K-EVB/programmer/iceprogduino

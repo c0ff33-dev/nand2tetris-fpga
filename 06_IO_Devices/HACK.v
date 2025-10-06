@@ -34,10 +34,7 @@ module HACK(
 	output RTP_SCK			// RTP serial clock
 );
 
-	// FIXME: why is RST triggered late in sim - its not even connected?
-	wire RST = 0;
-
-	wire clk,writeM,loadRAM;
+	wire clk,writeM,loadRAM,RST;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7;
 	wire loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8;
@@ -68,7 +65,7 @@ module HACK(
 		.address(addressM),
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
-		.inIO0({14'd0, LED}), // LED (4096)
+		.inIO0(LED), // LED (4096)
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)
@@ -130,7 +127,7 @@ module HACK(
 	// BUT (4097)
 	Register but(
 		.clk(clk),
-		.in({14'd0, BUT}), // pin
+		.in(BUT), // pin
 		.load(1'b1),
 		.out(inIO1) // memory map
 	);
