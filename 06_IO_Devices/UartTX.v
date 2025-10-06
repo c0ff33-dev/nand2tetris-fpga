@@ -77,6 +77,9 @@ module UartTX(
 		.shift(is216), // shift current data right
 		.out(data)
 	);
-	assign TX = data[0]; // send data[0] to pin
+
+	// send data[0] to pin when busy
+	// else keep line high so we don't transmit garbage
+	assign TX = (busy ? data[0] : 1'b1);
 
 endmodule
