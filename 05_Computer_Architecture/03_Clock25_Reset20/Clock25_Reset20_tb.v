@@ -21,6 +21,8 @@ module Clock25_Reset20_tb();
   	initial begin
   		$dumpfile("Clock25_Reset20_tb.vcd");
   		$dumpvars(0, Clock25_Reset20_tb);
+
+		// FIXME: This should have a test - clock.png shows 50 MHz timing diagram not 25 MHz?
 		
 		$display("------------------------");
 		$display("Testbench: Clock25_Reset10");

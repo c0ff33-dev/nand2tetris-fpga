@@ -16,6 +16,8 @@ module UartTX(
 	output TX, // transmission wire (serial)
 	output [15:0] out // [15] 1 = busy, 0 = ready (memory mapped)
 );
+	// FIXME: something is still deeply wrong either in this chip or the timing mechanisms
+	// FIXME: setting baud rate to 230400 in arduino reduces to 1 byte (which is still wrong)
 
 	wire stop;
 	wire load_stop;

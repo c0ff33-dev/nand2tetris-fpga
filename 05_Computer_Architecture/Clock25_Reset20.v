@@ -22,7 +22,7 @@ module Clock25_Reset20(
 	);
 	
 	// scale down 100MHz to 25MHz (1/4)
-	// 2 bits = 2^2 = 4 ticks x 2 per cycle = 2^3 for 4 cycles
+	// 2 bits = 2^2 = 4 ticks x 2 per cycle = 2^3 for 1/4 cycles
 	Buffer clock(
 		.in(psout[2]),
 		.out(clk)
