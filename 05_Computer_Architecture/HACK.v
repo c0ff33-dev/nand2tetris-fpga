@@ -1,6 +1,6 @@
 /**
  * The HACK computer, including CPU, ROM, RAM and the generator for
- * reset and clk (25MHz) signal. For approx. 20us HACK CPU resets.
+ * reset and clk (25MHz) signal. For approx. 20μs HACK CPU resets.
  * From this point onward the user is at the mercy of the software.
  * In particular, depending on the program's code, the LED may show
  * some output and the user may be able to interact with the computer
@@ -21,7 +21,7 @@ module HACK(
 	wire [15:0] inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outLED,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction;
 
-	// 25 MHz internal clock w/ 20us initial reset period
+	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
 		.CLK(CLK),
 		.clk(clk),

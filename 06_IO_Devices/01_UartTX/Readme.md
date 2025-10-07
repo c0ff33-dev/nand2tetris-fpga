@@ -5,7 +5,7 @@ The special function register `UartTX` mapped to memory address 4098 enables HAC
 ![](timing.jpg)
 
 During idle TX line is high (logic 1). Transmission of a byte (8 bits) is initiated by the so called start bit, which always is low (logic 0), followed by the 8 data bits, starting with the least significant bit. The transmission is finished by sending the stop bit, which always is high (logic 1).
-This protocoll is refered as 8N1 meaning (8 data bits, no parity bit, 1 stop bit). We use a transmission speed of 115200 baud (bits per second), meaning that each bit takes 1s/115200 = 8.68us or 217 cycles of the internal 25MHz clock clk.
+This protocoll is refered as 8N1 meaning (8 data bits, no parity bit, 1 stop bit). We use a transmission speed of 115200 baud (bits per second), meaning that each bit takes 1s/115200 = 8.68μs or 217 cycles of the internal 25MHz clock clk.
 
 ### Chip specification
 

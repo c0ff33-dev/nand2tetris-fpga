@@ -21,7 +21,7 @@ The chip `Memory.v`  maps all addresses 0 - 0x0FFF to RAM and the addresses 0x10
 
 The 100 MHz (CLK) of the clock generator on the iCE40HX1K-EVB is to fast to drive our HACK design. Therefore we must scale down the external clock (CLK) of 100 MHz to the internal clock (clk) of 25Mhz using a counter `PC` .
 
-HACK CPU needs a reset signal to have a proper start of the complete computer system. The fpga chip nees some time delay to preload the ROM with ROM.hack code. Therefore the reset signal at startup should have a minimal length of approximately 20us.
+HACK CPU needs a reset signal to have a proper start of the complete computer system. The fpga chip nees some time delay to preload the ROM with ROM.hack code. Therefore the reset signal at startup should have a minimal length of approximately 20μs.
 
 ### 04 HACK
 
@@ -69,11 +69,11 @@ The test bench of `04_HACK` will:
   $ apio sim
   ```
 
-- Check the frequency of the internal clk signal to be 25MHz. So one clock cylce takes 40us.
+- Check the frequency of the internal clk signal to be 25MHz. So one clock cycle takes 40μs.
   
   ![](03_Clock25_Reset20/clock.png)
 
-- Check the reset signal of HACK. You should see a reset signal of approximately 20 us.
+- Check the reset signal of HACK. You should see a reset signal of approximately 20μs.
   
   ![](03_Clock25_Reset20/reset.png)
 * Implement `HACK` and test with `leds.asm`:

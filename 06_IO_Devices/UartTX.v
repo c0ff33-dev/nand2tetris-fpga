@@ -35,7 +35,7 @@ module UartTX(
 	);
 	assign out = {busy,15'b0}; // out[15] = busy
 
-	// 115200 bits per second = 8.68us
+	// 115200 bits per second = 8.68μs
 	// 217 cycles @ 25 MHz per bit
 	// cycle through 0-216 to maintain the baud rate
 	PC baud(

@@ -1,13 +1,13 @@
 /**
 * Uses CLK of 100MHz to generate:
 * internal clock signal clk with 25MHz and
-* a reset signal of ~20us duration
+* a reset signal of ~20μs duration
 */
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,			// external clock 100 MHz	
 	output clk,			// internal clock 25 Mhz
-	output reset 		// reset signal ~20us
+	output reset 		// reset signal ~20μs
 );
 
 	// assign CLK to a counter
@@ -28,10 +28,10 @@ module Clock25_Reset20(
 	// 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)
 	assign clk = psout[1]; // demux the 2nd bit
 	
-	// Reset high for first 20us @ 100 MHz
+	// Reset high for first 20μs @ 100 MHz
 	// 1 cycle = 100 million / second or 10ns (ns = 1 billion / second)
-	// 1000ns = 1 us (microsecond = 1 million / second)
-	// therefore 20us = 20 x 1000 / 10 = 2000 cycles
+	// 1000ns = 1μs (microsecond = 1 million / second)
+	// therefore 20μs = 20 x 1000 / 10 = 2000 cycles
     assign low = (psout <= 16'd2000);
 
 	// latch start so it doesn't continue resetting when PC overflows

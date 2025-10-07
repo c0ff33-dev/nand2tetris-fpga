@@ -15,7 +15,7 @@ module HACK_tb();
 	);
 
 	// Simulate
-	always #500 BUT <= BUT+1;
+	always #500 BUT <= BUT+1; // inc button every 5μs
 
 	// Test
 	always #0.5 CLK = ~CLK; // 100 MHz

@@ -41,7 +41,7 @@ module HACK(
 	wire [15:0] inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction;
 
-	// 25 MHz internal clock w/ 20us initial reset period
+	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
 		.CLK(CLK), // external 100 MHz clock (pin)
 		.clk(clk), // internal 25 MHz clock
