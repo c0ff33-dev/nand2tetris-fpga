@@ -25,7 +25,7 @@ HACK HACK(
 	.RTP_SCK(RTP_SCK)
 );
 
-always #0.5 CLK = ~CLK;
+always #0.5 CLK = ~CLK; // 100 MHz
 
 //Simulate UART
 reg [9:0] uart = 10'b1111111111;

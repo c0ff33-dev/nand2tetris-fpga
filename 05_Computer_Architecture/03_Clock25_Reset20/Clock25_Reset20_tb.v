@@ -15,7 +15,7 @@ module Clock25_Reset20_tb();
 	);
 
 	// Simulation
-	always #0.5 CLK=~CLK;
+	always #0.5 CLK=~CLK; // 100 MHz
 	
 	// Test  
   	initial begin

@@ -20,7 +20,7 @@ module UartTX_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	assign trigger = (n==1000) || (n==5000) || (n==9000);
 	always @(posedge clk) begin

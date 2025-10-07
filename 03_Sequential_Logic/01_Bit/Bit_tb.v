@@ -15,7 +15,7 @@ module Bit_tb();
 	);
 
 	// Compare
-	always #1 clk=~clk;
+	always #1 clk=~clk; // no time scale
 	always @(posedge clk) begin
 		in <= $random;	
 		load <= $random;

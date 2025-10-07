@@ -18,7 +18,7 @@ module UartRX_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	reg load=0;
 	assign trigger = (n==1000) || (n==5000) || (n==9000);

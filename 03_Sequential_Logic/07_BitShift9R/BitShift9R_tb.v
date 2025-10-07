@@ -18,7 +18,7 @@ module BitShift9R_tb();
 	);
 
 	// Simulate
-	always #1 clk=~clk;
+	always #1 clk=~clk; // no time scale
 	always @(posedge clk) begin
 		in <= $random;
 		shift <= (n==0) || ((n>20) && (n<50));

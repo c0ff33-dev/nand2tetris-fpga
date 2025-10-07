@@ -24,7 +24,7 @@ module RTP_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	assign trigger = (n==20) || (n==420) || (n==820) || (n==1220) || (n==1620);
 	always @(posedge clk) begin

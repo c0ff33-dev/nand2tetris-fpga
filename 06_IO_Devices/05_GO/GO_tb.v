@@ -26,7 +26,7 @@ module GO_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	reg write;
 	assign trigger = (n==10);

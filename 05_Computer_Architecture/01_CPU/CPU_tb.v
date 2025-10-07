@@ -24,7 +24,7 @@ module CPU_tb();
 	);
 
 	// Simulation
-	always #1 clk=~clk;
+	always #1 clk=~clk; // no time scale
 	always @(posedge clk) begin
 		inM <= $random;
 		reset <= (n<=10) || ((n>20) && (n<40));

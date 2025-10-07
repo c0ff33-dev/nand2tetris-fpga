@@ -26,7 +26,7 @@ module SPI_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	assign trigger = (n==20) || (n==40) || (n==60) || (n==80) || (n==100);
 	always @(posedge clk) begin

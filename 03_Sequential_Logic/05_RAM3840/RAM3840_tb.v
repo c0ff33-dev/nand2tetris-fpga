@@ -18,7 +18,7 @@ module RAM3840_tb();
 	);
 
 	// Simulate
-	always #1 clk=~clk;
+	always #1 clk=~clk; // no time scale
 	always @(posedge clk) begin
 		in <= $random;	
 		address <= (n<3840)?n:n-3840;

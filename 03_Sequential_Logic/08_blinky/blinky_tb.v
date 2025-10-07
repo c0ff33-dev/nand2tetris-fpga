@@ -12,7 +12,7 @@ module blinky_tb();
 	);
 	
 	// Simulate
-	always #1 CLK=~CLK;
+	always #1 CLK=~CLK; // no time scale
 
   	initial begin
   		$dumpfile("blinky_tb.vcd");

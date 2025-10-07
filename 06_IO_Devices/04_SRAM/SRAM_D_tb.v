@@ -26,7 +26,7 @@ module SRAM_D_tb();
 	);
 	
 	// Simulate
-	always #2 clk=~clk;
+	always #2 clk=~clk; // 25 MHz
 	wire trigger;
 	reg write;
 	assign trigger = (n==4) || (n==8) || (n==12) || (n==16) || (n==20);
