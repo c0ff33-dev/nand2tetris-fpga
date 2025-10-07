@@ -22,9 +22,10 @@ module Clock25_Reset20(
 	);
 	
 	// scale down 100MHz to 25MHz (1/4)
-	// 2 bits = 2^2 = 4 ticks x 2 per cycle = 2^3 for 1/4 cycles
+	// PC itself is clocked so only one update per cycle
+	// 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)
 	Buffer clock(
-		.in(psout[2]),
+		.in(psout[1]),
 		.out(clk)
 	); // demux the 3rd bit
 	
