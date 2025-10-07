@@ -18,7 +18,7 @@ module HACK_tb();
 	always #500 BUT <= BUT+1;
 
 	// Test
-	always #1 CLK = ~CLK; // 50 MHz (half speed)
+	always #0.5 CLK = ~CLK; // 100 MHz
 	initial begin
   		$dumpfile("HACK_tb.vcd");
   		$dumpvars(0, HACK_tb);

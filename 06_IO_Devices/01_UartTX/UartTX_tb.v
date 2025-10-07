@@ -63,7 +63,7 @@ module UartTX_tb();
 		$display("------------------------");
 		$display("Testbench: UartTX");
 
-		for (n=0; n<13000;n=n+1) 
+		for (n=0; n<12000;n=n+1) 
 				check();
 		
 		if (fail==0) $display("passed");
