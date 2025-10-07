@@ -54,6 +54,8 @@ The programmer olimexino 32u4 works in two different mode:
 - Mode 1 (yellow led on): programmer of iCE40-board. Used with iceprogduino.
 - Mode 2 (green led on): UART Bridge to iCE40 chip. Use with terminal programm (e.g. tio or screen on linux).
 
+The LED is only illuminated when a client is connected to `/dev/ttyACM0`.
+
 To switch between the modes press the hardware button on olimexino 32u4 (HWB).
 
 Now iCE40HX1K is connected to RX,TX of olimexino 32u4 according to `iCE40HX1K-EVB.pcf`. (Check by comparing the schematic of iCE40HX1K-EVB).
@@ -101,7 +103,8 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * open Terminal on your computer
 
-* press reset button on iCE40HX1K-EVB and see if wou can recieve "Hi" on your Computer.
+* press reset button on iCE40HX1K-EVB and see if you can recieve "Hi" on your Computer.
+  * Hint: You may need to pulse the line with a single byte before payload to syncronize UART state with the 32u4. Pay close attention to any timing issues in the previous UART test benches.
   
   ```
   $ cd 00_HACK

@@ -12,16 +12,16 @@ M=1 // init the RX buffer
 
 (read)
 @UART_RX 
-D=M // D=buffer
+D=M // D=rx
 @R0
-M=D // R0=buffer
+M=D // R0=rx
 @32768 // 0x8000 (note: outside of original HACK address range)
 D=A-D
-@read // wait for buffer to be written
+@read // loop until rx written
 D;JEQ
 
 @UART_RX
-M=1 // clear the RX buffer once read
+M=1 // clear the RX buffer once read (now saved in R0)
 
 @2
 D=A
