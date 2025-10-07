@@ -60,12 +60,14 @@ module HACK_tb();
 	reg [15:0] baudrate = 0;
 	always @(posedge CLK)
 		// not downclocked so need (216 * 4 = 864) for 25 MHz
-		baudrate <= ((baudrate==864)?0:baudrate+1);
+		// not sure if intentional but 866 introduces a few cycles of RX drift
+		// but not enough to exceed the window for sampling during simulation (see shift wire)
+		baudrate <= ((baudrate==866)?0:baudrate+1);
 	always @(posedge CLK) begin
-		// pack 82 (0x52) and 88 (0x58) into UART frames at 50/15µs respectively
-		uart <= (n==5000)?((82<<2)+1):(n==15000)?((88<<2)+1):((baudrate==864)?{1'b1,uart[9:1]}:uart);
+		// pack 82 (0x52) and 88 (0x58) into UART frames at 50/150µs respectively
+		uart <= (n==5000)?((82<<2)+1):(n==15000)?((88<<2)+1):((baudrate==866)?{1'b1,uart[9:1]}:uart);
 	end
-	wire shift = (baudrate==864);
+	wire shift = (baudrate==866); // debug only
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI

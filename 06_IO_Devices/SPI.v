@@ -4,10 +4,11 @@
  * When load=1 transmission of byte in[7:0] is initiated. The byte is send to
  * MOSI (master out slave in) bitwise together with 8 clock signals on SCK.
  * At the same time the SPI recieves a byte at MISO (master in slave out).
- * Sampling of MISO is done at rising edge of SCK and shiftingis done at
+ * Sampling of MISO is done at rising edge of SCK and shifting is done at
+ * negative edge.
  */ 
-`default_nettype none
 
+`default_nettype none
 module SPI(
 	input clk,
 	input load,
