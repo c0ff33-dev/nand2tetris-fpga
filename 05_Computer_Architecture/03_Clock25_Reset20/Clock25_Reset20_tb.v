@@ -22,7 +22,7 @@ module Clock25_Reset20_tb();
   		$dumpfile("Clock25_Reset20_tb.vcd");
   		$dumpvars(0, Clock25_Reset20_tb);
 
-		// FIXME: This should have a test - clock.png shows 50 MHz timing diagram not 25 MHz?
+		// TODO: Ideally this would have a test (though UART will expose timing issues eventually)
 		
 		$display("------------------------");
 		$display("Testbench: Clock25_Reset10");
