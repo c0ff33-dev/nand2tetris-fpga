@@ -23,7 +23,7 @@ module Memory(
 	input [15:0] inIO1, // BUT (4097)
 	input [15:0] inIO2, // UART_TX (4098)
 	input [15:0] inIO3, // UART_RX (4099)
-	input [15:0] inIO4, // reserved [15:0]
+	input [15:0] inIO4, // SPI (4100)
 	input [15:0] inIO5, // reserved [15:0]
 	input [15:0] inIO6, // reserved [15:0]
 	input [15:0] inIO7, // reserved [15:0]
@@ -41,7 +41,7 @@ module Memory(
 	output loadIO1, // BUT (4097)
 	output loadIO2, // UART_TX (4098)
 	output loadIO3, // UART_RX (4099)
-	output loadIO4, // reserved [15:0]
+	output loadIO4, // SPI (4100)
 	output loadIO5, // reserved [15:0]
 	output loadIO6, // reserved [15:0]
 	output loadIO7, // reserved [15:0]

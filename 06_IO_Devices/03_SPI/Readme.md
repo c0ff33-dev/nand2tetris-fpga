@@ -54,7 +54,7 @@ According to the datasheet of spi flash rom chip W25Q16BV the commands needed to
 
 ### SPI in real hardware
 
-The board iCE40HX1K-EVB comes with a SPI flash rom chip W25Q16BV. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf).
+The board iCE40HX1K-EVB comes with a SPI flash rom chip W25Q16BV. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf)).
 
 ```
 set_io SPI_SDO 45 # iCE40-SDO

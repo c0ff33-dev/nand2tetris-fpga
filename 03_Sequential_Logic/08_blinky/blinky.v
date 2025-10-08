@@ -7,7 +7,7 @@ module blinky(
 );
 
 	// 100 MHz clock updating Buffer every time the 13th bit cycles or 2^12 bits,
-	// but it's only updated on the rising edge so its 2^13 = 8192 cycles.
+	// but it's only updated on the posedge so its 2^13 = 8192 cycles.
 	// 100 MHz / 8192 = 12.2 kHz pre-scaled clock
 	wire [15:0] prescaler;
 	wire clk;
