@@ -13,3 +13,4 @@ out.hack
 venv/*
 abc.history
 hardware.rpt
+*.gtkw

@@ -104,8 +104,11 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 * open Terminal on your computer
 
 * press reset button on iCE40HX1K-EVB and see if you can recieve "Hi" on your Computer.
-  * Hint: You may need to pulse the line with a single byte before payload to syncronize UART state with the 32u4. Pay close attention to any timing issues in the previous UART test benches.
-  
+
+Note: voltage will drop during reset which can introduce noise on the TX line if the 32u4 is already reading the UART line - this can be mitigated by making the arduino wait on some kind of signal from the FGPA before forwarding the UART traffic onward but this is left as an exercise for the reader.
+
+TODO: Revist this comment if UART is not actually used for anything else.
+
   ```
   $ cd 00_HACK
   $ apio clean
