@@ -14,90 +14,94 @@
 module SPI(
 	input clk,
 	input load,
-	input SDI, // serial data in (MISO) -- HACK block diagram is wrong
+	input SDI, // serial data in (MISO) -- HACK block diagram is wrong direction
 	input [15:0] in, // [7:0] byte to send (address/command)
-	output CSX, // chip select not (active low)
-	output SDO, // serial data out (MOSI) -- HACK block diagram is wrong
 	output SCK, // serial clock
+	output CSX, // chip select not (active low)
+	output SDO, // serial data out (MOSI) -- HACK block diagram is wrong direction
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
 );
-	assign SCK = clk;
-	// module Bit(
-	// input clk,
-	// input in,
-	// input load,
-	// output out
-	// );
-
-	// module PC(
-	// input clk,
-	// input [15:0] in,
-	// input load,
-	// input inc,
-	// input reset,
-	// output [15:0] out
-	// );
-
-	// 	module BitShift8L(
-	// 	input clk,
-	// 	input [7:0] in,
-	// 	input inLSB,
-	// 	input load,
-	// 	input shift,
-	// 	output reg [7:0] out
-	// );
-
-	reg sample, mosi;
-	reg [2:0] sample_counter; // 3 bits for counting 0–7
-	reg [15:0] inReg;
-	// assign CSX = ~load; // active low?
+	reg mosi;
+	wire csx, busy, reset, slaveMSB;
+	wire [7:0] shift;
+	wire [15:0] clkCount;
+	// reg [15:0] inReg;
 	// assign SDO = inReg[15]; // MSB first?
 
-	// save in for transmission in [t+1]
-	always @(posedge clk) begin
-		if (load)
-			inReg <= in;
-	end
+	// if in[8=0] and load=1 then CSX=0 (send byte)
+	// if in[8=1] and load=1 then CSX=1 (don't send byte)
+	// CSX remains unchanged in either case until next load
+	Bit cs (
+		.clk(clk),
+		.in(in[8]),
+		.load(load),
+		.out(csx)
+	);
 
-	// hold sample signal for 8 cycles from load [t] to [t+8]
-	always @(posedge clk) begin
-		// init sampling when load is high [t+1]
-		if (load) begin
-			sample <= 1;
-			sample_counter <= 3'd0;
-		end
-		else if (sample) begin
-			// stop sampling after 8 bits [t+8]
-			if (sample_counter == 3'd7) begin
-				sample <= 0;
-			end
-			sample_counter <= sample_counter + 1; // it will roll over after 7
-		end
-	end
+	// if in[8=0] and load=1 then busy=1 (transmission in progress)
+	// load on new byte or reset after 8 clock cycles
+	Bit busyBit (
+		.clk(clk),
+		.in(reset ? 1'b0 : ~in[8]),
+		.load(load | reset),
+		.out(busy)
+	);
+
+	// count cycles while busy
+	PC count(
+		.clk(clk),
+		.in(16'd0), // unused
+		.load(1'd0), // unused
+		.inc(busy), // inc while busy
+		.reset(1'd0), // unused // TODO: shouldn't this reset after 8 clock cycles?
+		.out(clkCount)
+	);
+
+	assign reset = (clkCount == 16'd15);
+	// always @(posedge clk) begin
+	// 	if (clkCount == 16'd7)
+	// 		reset <= 1; 
+	// 	else
+	// 		reset <= 0;
+	// end
+
+	// save in for transmission in [t+1]
+	// always @(posedge clk) begin
+	// 	if (load)
+	// 		inReg <= in;
+	// end
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
 	// dual clock edge == read-before-write pattern?
 	Bit miso (
-		.clk(clk),
+		.clk(clk), // sample SDI at posedge of clk
 		.in(SDI), // MISO (MSB from slave)
-		.load(sample), // sample on posedge for [t+8] after load
+		.load(busy), // sample for [t+8] after load
 		.out(slaveMSB)
 	);
 	BitShift8L shiftreg (
-		.clk(~clk), // invert clock to shift on negedge
+		.clk(~SCK), // sample on negedge of SCK (posedge clk)
 		.in(8'd0), // init on load
 		.inLSB(slaveMSB), // shift slaveMSB into masterLSB while sampling
 		.load(load), // don't shift on load
-		.shift(sample), // shift at negedge for [t+8] after load
-		.out(out[7:0]) // master byte
+		.shift(busy), // shift at negedge for [t+8] after load
+		.out(shift) // master byte
 	);
 	always @(posedge clk) begin
-		if (sample)
+		if (busy)
 			mosi <= out[7]; // MSB first
 	end
-	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
 
+	always @(posedge clk) begin
+		init <= 1;
+	end
+
+	reg init = 0; // ice40 supports init as zero, yosys will infer inversion if needed
+	assign CSX = init ? csx : 1'b1; // init CSX=1 to block any premture transactions
+	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
+	assign SCK = busy & ~clkCount[0]; // start clock when busy, half speed // TODO: why half speed?
+	assign out = {busy,7'd0,shift};
 
 endmodule

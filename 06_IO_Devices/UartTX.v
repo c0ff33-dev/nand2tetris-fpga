@@ -78,6 +78,7 @@ module UartTX(
 		.out(data)
 	);
 
+	// FIXME: busy will start undefined, see SPI for hw init notes
 	// send data[0] to pin when busy
 	// else keep line high so we don't transmit garbage
 	assign TX = (busy ? data[0] : 1'b1);

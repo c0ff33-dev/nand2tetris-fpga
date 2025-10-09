@@ -38,8 +38,10 @@ module SPI_tb();
 	// Compare
 	reg[4:0] bits=0;
 	always @(posedge clk)
+		// if load & in[8]=0 bits=1 (new byte)
+		// else if bits=16 reset, else if busy bits++ else bits=0
 		bits <= (load&~in[8])?1:((bits==16)?0:(busy?bits+1:0));
-	wire busy=|bits;
+	wire busy=|bits; // busy if bits>0
 	wire [15:0] out_cmp = {busy,7'd0,shift};
 	reg [7:0] shift=0;
 	reg miso_s;
