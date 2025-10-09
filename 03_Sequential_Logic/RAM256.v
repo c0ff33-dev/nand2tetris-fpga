@@ -15,8 +15,6 @@ module RAM256(
 	
 	// No need to implement this chip
 	// RAM is implemented using BRAM of iCE40
-	wire rclk;
-	wire wclk;
 	reg [15:0] regRAM [0:255];
 
 	// Note: HACK requires read-before-write / READ_FIRST behaviour, e.g. M=M+1:
@@ -31,6 +29,7 @@ module RAM256(
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
+	// TODO: works with mem/mult/uart on hw, needs some test bench updates
 	// new code: syncronous read
 	// always @(negedge clk) begin
 	// 	// out is sampled on negedge edge [t]

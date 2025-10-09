@@ -92,15 +92,20 @@ module SPI(
 	always @(posedge clk) begin
 		if (busy)
 			mosi <= out[7]; // MSB first
+		else
+			mosi <= 1'b0;
 	end
 
+	// generic init handler, should work with ice40 + yosys
+	reg init = 0;
 	always @(posedge clk) begin
-		init <= 1;
+		if (!init) begin
+			init <= 1;
+		end
 	end
 
-	reg init = 0; // ice40 supports init as zero, yosys will infer inversion if needed
 	assign CSX = init ? csx : 1'b1; // init CSX=1 to block any premture transactions
-	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
+	assign SDO = init ? mosi : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = busy & ~clkCount[0]; // start clock when busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift};
 
