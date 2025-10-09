@@ -27,20 +27,24 @@ module RAM512_tb();
 
 	// Compare
 	reg [15:0] regRAM [0:511];
+	reg [15:0] out_cmp;
 	always @(posedge clk)
 		if (load) regRAM[address[8:0]] <= in;
-	wire[15:0] out_cmp = regRAM[address[8:0]];
+	always @(negedge clk)
+		out_cmp <= regRAM[address[8:0]];
 	
 	reg fail = 0;
 	reg [15:0] n = 0;
 	task check;
-		#1
-		if (out != out_cmp) 
-			begin
-				$display("FAIL: clk=%1b, address=%9b, in=%16b, load=%1b, out=%16b",clk,address,in,load,out);
-				fail=1;
-			end
-	endtask
+    begin
+        @(negedge clk);
+        #1;
+        if (out != out_cmp) begin
+            $display("FAIL: clk=%1b, address=%9b, in=%16b, load=%1b, out=%16b",clk,address,in,load,out);
+            fail=1;
+        end
+    end
+    endtask
 	  
   	initial begin
   		$dumpfile("RAM512_tb.vcd");

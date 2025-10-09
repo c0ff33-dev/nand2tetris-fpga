@@ -10,7 +10,7 @@ module RAM256(
 	input [7:0] address,
 	input [15:0] in,
 	input load,
-	output [15:0] out
+	output reg [15:0] out
 );
 	
 	// No need to implement this chip
@@ -24,21 +24,20 @@ module RAM256(
 
 	// Syncronized dual port pattern - only this specific wave pattern works
 	always @(posedge clk) begin
-		// in is sampled on posedge edge [t]
+		// in is sampled on posedge [t]
 		// but won't be written to regRAM[address] until [t+1]
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
-	// TODO: works with mem/mult/uart on hw, needs some test bench updates
 	// new code: syncronous read
-	// always @(negedge clk) begin
-	// 	// out is sampled on negedge edge [t]
-	// 	// emits the value of regRAM[address] from [t-1]
-	// 	// memory values are undefined until written to for the first time
-	// 	out <= regRAM[address[7:0]];
-	// end
+	always @(negedge clk) begin
+		// out is sampled on negedge [t]
+		// emits the value of regRAM[address] from [t-1]
+		// memory values are undefined until written to for the first time
+		out <= regRAM[address[7:0]];
+	end
 
 	// original code: continous/combinational read
-	assign out = regRAM[address[7:0]];
+	// assign out = regRAM[address[7:0]];
 
 endmodule
