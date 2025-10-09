@@ -17,14 +17,10 @@ module UartTX(
 	output [15:0] out // [15] 1 = busy, 0 = ready (memory mapped)
 );
 
-	wire stop;
-	wire load_stop;
-	wire busy;
-	wire is216;
-	wire load_is216;
-	wire [15:0] baudCount;
-	wire [15:0] txCount;
+	reg r_busy;
+	wire stop, load_stop, busy, is216, load_is216;
 	wire [8:0] data;
+	wire [15:0] txCount, baudCount;	
 
 	// 0 = ready, 1 = busy
 	Bit state(
@@ -78,9 +74,17 @@ module UartTX(
 		.out(data)
 	);
 
-	// FIXME: busy will start undefined, see SPI for hw init notes
-	// send data[0] to pin when busy
-	// else keep line high so we don't transmit garbage
-	assign TX = (busy ? data[0] : 1'b1);
+	// generic init handler, should work with ice40 + yosys
+	reg init = 0;
+	always @(posedge clk) begin
+		if (!init) begin
+			init <= 1;
+		end
+	end
+
+	// if init set TX high
+	// else send data[0] to pin when busy (transmit)
+	// else keep line high at idle (still some noise at POR)
+	assign TX = (~init ? 1'b1 : (busy ? data[0] : 1'b1));
 
 endmodule

@@ -19,11 +19,20 @@ module UartRX(
 	wire [15:0] baudCount, rxCount, clear_data;
 	wire [8:0] data;
 
+	// generic init handler, should work with ice40 + yosys
+	reg init = 0;
+	always @(posedge clk) begin
+		if (!init) begin
+			init <= 1;
+		end
+	end
+
 	// set start high when rx drops low (start bit) & ready to rx
 	// set busy low when rx finished (stop) or cleared
 	// syncronize start with cycle of first bit recv'd
 	// start/stop are high for one cycle only
-	assign start = ~RX & ~busy; 
+	// prevent start being set during init so RX isn't read in
+	assign start = init ? (~RX & ~busy) : 1'b0; 
 	assign start_clear = (start | stop | clear);
 	
 	// 0 = ready, 1 = busy

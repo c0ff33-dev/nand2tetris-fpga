@@ -147,7 +147,7 @@ void loopBridge() {
     switch (inByte){
       case 0xDE: // start byte [0]
         if (s_count == 0 && !recv) {
-          // Serial.print("DEBUG: 0xDE");
+          Serial.print("DEBUG: 0xDE");
           s_count++;
           return;
         }
@@ -156,7 +156,7 @@ void loopBridge() {
       case 0xAD: // start byte [1]
         if (!recv) {
           if (s_count == 1) {
-            // Serial.println("AD"); // DEBUG
+            Serial.println("AD"); // DEBUG
             s_count=0;
             recv=true;
           } else {
@@ -170,7 +170,7 @@ void loopBridge() {
 
       case 0xBE: // end byte [0]
         if (e_count == 0 && recv) {
-          // Serial.print("DEBUG: 0xBE");
+          Serial.print("DEBUG: 0xBE");
           e_count++;
           return;
         }
@@ -179,7 +179,7 @@ void loopBridge() {
       case 0xEF: // end byte [1]
         if (recv) {
           if (e_count == 1) {
-            // Serial.println("EF"); // DEBUG
+            Serial.println("EF"); // DEBUG
           } else {
             // Serial.println("DEBUG: bad 0xEF");
           }
@@ -195,8 +195,11 @@ void loopBridge() {
           Serial.write(inByte);
         } else {
           if (inByte != 0) {
-            // Serial.print("DEBUG: 0x");
-            // Serial.println(inByte, HEX);
+            Serial.print("\r\nDEBUG: 0x");
+            Serial.print(inByte, HEX);
+            Serial.print(" (");
+            Serial.print((char)inByte);
+            Serial.println(")");
             e_count=0;
             s_count=0;
             recv=false;
