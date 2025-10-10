@@ -35,12 +35,10 @@ module HACK(
 	output RTP_SCK			// RTP serial clock
 );
 
-	wire clk,writeM,loadRAM,RST;
-	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7;
-	wire loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8;
-	wire [15:0] inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction;
+	wire clk,writeM,loadRAM,RST,inRes;
+	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+	wire [15:0] inIO1,inIO2,inIO3,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire [15:0] addressM,pc,outM,inM,instruction,loadRes;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -66,17 +64,17 @@ module HACK(
 		.address(addressM),
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
-		.inIO0(LED), // LED (4096)
+		.inIO0(LED),    // LED (4096)
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)
-		.inIO4(inIO4),  // reserved [15:0]
-		.inIO5(inIO5),  // reserved [15:0]
-		.inIO6(inIO6),  // reserved [15:0]
-		.inIO7(inIO7),  // reserved [15:0]
-		.inIO8(inIO8),  // reserved [15:0]
-		.inIO9(inIO9),  // reserved [15:0]
-		.inIOA(inIOA),  // reserved [15:0]
+		.inIO4(resIn),  // reserved (undefined)
+		.inIO5(resIn),  // reserved (undefined)
+		.inIO6(resIn),  // reserved (undefined)
+		.inIO7(resIn),  // reserved (undefined)
+		.inIO8(resIn),  // reserved (undefined)
+		.inIO9(resIn),  // reserved (undefined)
+		.inIOA(resIn),  // reserved (undefined)
 		.inIOB(inIOB),  // DEBUG0 (4107)
 		.inIOC(inIOC),  // DEBUG1 (4108)
 		.inIOD(inIOD),  // DEBUG2 (4109)
@@ -88,13 +86,13 @@ module HACK(
 		.loadIO1(loadIO1), // BUT (4097)
 		.loadIO2(loadIO2), // UART_TX (4098)
 		.loadIO3(loadIO3), // UART_RX (4099)
-		.loadIO4(loadIO4), // reserved
-		.loadIO5(loadIO5), // reserved
-		.loadIO6(loadIO6), // reserved
-		.loadIO7(loadIO7), // reserved
-		.loadIO8(loadIO8), // reserved
-		.loadIO9(loadIO9), // reserved
-		.loadIOA(loadIOA), // reserved
+		.loadIO4(resLoad), // reserved (undefined)
+		.loadIO5(resLoad), // reserved (undefined)
+		.loadIO6(resLoad), // reserved (undefined)
+		.loadIO7(resLoad), // reserved (undefined)
+		.loadIO8(resLoad), // reserved (undefined)
+		.loadIO9(resLoad), // reserved (undefined)
+		.loadIOA(resLoad), // reserved (undefined)
 		.loadIOB(loadIOB), // DEBUG0 (4107)
 		.loadIOC(loadIOC), // DEBUG1 (4108)
 		.loadIOD(loadIOD), // DEBUG2 (4109)

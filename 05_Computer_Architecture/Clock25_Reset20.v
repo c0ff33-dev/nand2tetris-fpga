@@ -3,6 +3,7 @@
 * internal clock signal clk with 25MHz and
 * a reset signal of ~20μs duration
 */
+
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,			// external clock 100 MHz	
@@ -42,6 +43,6 @@ module Clock25_Reset20(
     end
 
 	// ...but still assign immediately
-	assign reset = !start;
+	assign reset = ~start;
 
 endmodule

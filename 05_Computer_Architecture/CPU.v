@@ -30,7 +30,7 @@ module CPU(
                          			// the current program (reset==0).
 
     	output [15:0] outM,			// M value output
-    	output writeM,				// Write to M? 
+    	output writeM,				// Write to M
     	output [15:0] addressM,		// Address in data memory (of M) to read
     	output [15:0] pc			// address of next instruction
 );
@@ -44,6 +44,7 @@ module CPU(
 	// 0xxx xxxx xxxx xxxx = A instruction (original, 32k words)
 	// 110x xxxx xxxx xxxx = A instruction (new, 56k words)
 	// 111x xxxx xxxx xxxx = C instruction (original)
+	// 1--x xxxx xxxx xxxx = C instruction (new, same bits after first 3)
 
 	// [12] = A/M bit (0=A, 1=M)
 	// [11:6] = comp bits

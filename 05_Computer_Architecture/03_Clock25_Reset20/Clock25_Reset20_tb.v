@@ -22,7 +22,7 @@ module Clock25_Reset20_tb();
   		$dumpfile("Clock25_Reset20_tb.vcd");
   		$dumpvars(0, Clock25_Reset20_tb);
 
-		// TODO: Ideally this would have a test (though UART will expose timing issues eventually)
+		// TODO: Add test
 		
 		$display("------------------------");
 		$display("Testbench: Clock25_Reset10");
