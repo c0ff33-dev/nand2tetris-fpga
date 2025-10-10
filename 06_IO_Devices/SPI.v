@@ -22,7 +22,7 @@ module SPI(
 	output SDO, // serial data out (MOSI) -- HACK block diagram is wrong direction
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
 );
-	reg mosi;
+	reg mosi = 0;
 	wire csx, busy, reset, slaveMSB;
 	wire [7:0] shift;
 	wire [15:0] clkCount;
@@ -55,7 +55,7 @@ module SPI(
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
-		.reset(1'd0), // unused // TODO: shouldn't this reset after 8 clock cycles?
+		.reset(reset), // unused // TODO: shouldn't this reset after 8 clock cycles?
 		.out(clkCount)
 	);
 
@@ -92,10 +92,7 @@ module SPI(
 		.out(shift) // master byte
 	);
 	always @(posedge clk) begin
-		if (busy)
-			mosi <= out[7]; // MSB first
-		else
-			mosi <= 1'b0;
+		mosi <= shift[7]; // MSB first
 	end
 
 	// generic init handler, should work with ice40 + yosys
@@ -107,8 +104,8 @@ module SPI(
 	end
 
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
-	assign SDO = init ? mosi : 1'b0; // MOSI (masterMSB to slaveLSB)
-	assign SCK = busy & ~clkCount[0]; // start clock when busy, half speed // TODO: why half speed?
+	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
+	assign SCK = busy & clkCount[0]; // run SCK while busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift};
 
 endmodule
