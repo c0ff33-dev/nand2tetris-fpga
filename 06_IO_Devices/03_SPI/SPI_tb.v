@@ -12,10 +12,12 @@ module SPI_tb();
 	wire SDO;
 	reg SDI=0;
 	wire SCK;
+	reg CDONE = 1;
 
 	// Part
 	SPI SPI(
     	.clk(clk),
+		.CDONE(CDONE),
 		.load(load),
 		.in(in),
 		.out(out),

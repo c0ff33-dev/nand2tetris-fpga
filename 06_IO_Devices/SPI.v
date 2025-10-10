@@ -29,13 +29,14 @@ module SPI(
 	// reg [15:0] inReg;
 	// assign SDO = inReg[15]; // MSB first?
 
-	// if in[8=0] and load=1 then CSX=0 (send byte)
-	// if in[8=1] and load=1 then CSX=1 (don't send byte)
-	// CSX remains unchanged in either case until next load
+	// if in[8=0] and load=1 then csx=0 (send byte)
+	// if in[8=1] and load=1 then csx=1 (don't send byte)
+	// init csx=1 to block any premture transactions
+	// csx remains unchanged in either case until next load
 	Bit cs (
 		.clk(clk),
-		.in(in[8]),
-		.load(load),
+		.in(init ? in[8] : 1'b1),
+		.load(init ? load : 1'b1),
 		.out(csx)
 	);
 
@@ -105,7 +106,7 @@ module SPI(
 		end
 	end
 
-	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 to block any premture transactions
+	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
 	assign SDO = init ? mosi : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = busy & ~clkCount[0]; // start clock when busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift};
