@@ -8,8 +8,9 @@
 
 `default_nettype none
 module ROM(
-	input [15:0] pc,
-	output [15:0] instruction		
+    input clk,
+    input [15:0] pc,
+    output reg [15:0] instruction
 );
 
 	// No need to implement this chip
@@ -20,10 +21,14 @@ module ROM(
 	// `hexdump -C` will show the canonical representation of the binary
 	// (after each line has been converted to int and split into 2 bytes)
 	parameter ROMFILE = "ROM.hack";
-	
 	reg [15:0] mem [0:255];
-	assign instruction = mem[pc[7:0]]; // only the lower 8 bits are needed to address 256 words
 	
+	// Synchronous read
+    always @(posedge clk) begin
+        instruction <= mem[pc[7:0]];
+    end
+	
+	// init BRAM with values read in from ROMFILE at build time
 	initial begin
 		$readmemb(ROMFILE,mem);
 	end
