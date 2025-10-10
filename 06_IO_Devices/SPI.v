@@ -10,6 +10,8 @@
  * More helpful diagrams @ https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
  */ 
 
+// TODO: out emitted after first load with no prior busy?
+
 `default_nettype none
 module SPI(
 	input clk,
@@ -86,8 +88,8 @@ module SPI(
 	BitShift8L shiftreg (
 		.clk(~SCK), // sample on negedge of SCK (posedge clk)
 		.in(8'd0), // init on load
-		.inLSB(slaveMSB), // shift slaveMSB into masterLSB while sampling
-		.load(load), // don't shift on load
+		.inLSB(init ? slaveMSB : 1'b0), // shift slaveMSB into masterLSB while sampling
+		.load(init ? load : 1'b1), // don't shift on load
 		.shift(busy), // shift at negedge for [t+8] after load
 		.out(shift) // master byte
 	);
@@ -105,7 +107,7 @@ module SPI(
 
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
 	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
-	assign SCK = busy & clkCount[0]; // run SCK while busy, half speed // TODO: why half speed?
+	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift};
 
 endmodule
