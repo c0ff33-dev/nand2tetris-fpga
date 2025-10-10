@@ -10,7 +10,7 @@ The special function register `SPI`  memory mapped to address 4100 enables HACK 
 | ------ | -------- | --------------------------------------------------- |
 | IN     | in[7:0]  | byte to be sent.                                    |
 | IN     | in[8]    | =0 (and load=1) send byte and set CSX low           |
-| IN     | in[8]    | =1 (and load =1) pull CSX high without sending byte |
+| IN     | in[8]    | =1 (and load=1) pull CSX high without sending byte |
 | IN     | load     | =1 initiates the transmission, when in[8]=0         |
 | OUT    | out[15]  | =1 chip is busy, =0 chip is ready                   |
 | OUT    | out[7:0] | received byte (when out[15]=0)                      |
@@ -29,7 +29,7 @@ When load=1 and in[8]=1 CSX goes high without transmission of any bit.
 
 ### Proposed Implementation
 
-Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` to count from 0 to 15. Finally we need a `BitShift8L`. This will be loaded with the byte in[7:0] to be send.  Another `Bit` will sample the SDI wire when SCK=0 and shift the stored bit into the `BitShift8L` when SCK=1. After 8 bits are transmitted the module cleares out[15] and outputs the received byte to out[7:0].
+Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` to count from 0 to 15. Finally we need a `BitShift8L`. This will be loaded with the byte in[7:0] to be send.  Another `Bit` will sample the SDI wire when SCK=0 and shift the stored bit into the `BitShift8L` when SCK=1. After 8 bits are transmitted the module clears out[15] and outputs the received byte to out[7:0].
 
 ![](SPI.png)
 

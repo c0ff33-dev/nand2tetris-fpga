@@ -7,10 +7,8 @@
  * Sampling of MISO is done at posedge of SCK and shifting is done at
  * negative edge.
  *
- * More helpful diagrams @ https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
+ * https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
  */ 
-
-// TODO: out emitted after first load with no prior busy?
 
 `default_nettype none
 module SPI(
@@ -24,13 +22,11 @@ module SPI(
 	output SDO, // serial data out (MOSI) -- HACK block diagram is wrong direction
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
 );
-	reg mosi = 0;
-	wire csx, busy, reset, slaveMSB;
+	reg miso;
+	wire csx, busy, reset;
 	wire [7:0] shift;
 	wire [15:0] clkCount;
-	// reg [15:0] inReg;
-	// assign SDO = inReg[15]; // MSB first?
-
+	
 	// if in[8=0] and load=1 then csx=0 (send byte)
 	// if in[8=1] and load=1 then csx=1 (don't send byte)
 	// init csx=1 to block any premture transactions
@@ -43,7 +39,7 @@ module SPI(
 	);
 
 	// if in[8=0] and load=1 then busy=1 (transmission in progress)
-	// load on new byte or reset after 8 clock cycles
+	// load on new byte or reset when complete
 	Bit busyBit (
 		.clk(clk),
 		.in(reset ? 1'b0 : ~in[8]),
@@ -57,45 +53,28 @@ module SPI(
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
-		.reset(reset), // unused // TODO: shouldn't this reset after 8 clock cycles?
+		.reset(reset), // cycle 0 to max clkCount
 		.out(clkCount)
 	);
 
-	assign reset = (clkCount == 16'd15);
-	// always @(posedge clk) begin
-	// 	if (clkCount == 16'd7)
-	// 		reset <= 1; 
-	// 	else
-	// 		reset <= 0;
-	// end
+	assign reset = (clkCount == 16'd15); // TODO: shouldn't this reset after 8 clock cycles?
 
-	// save in for transmission in [t+1]
-	// always @(posedge clk) begin
-	// 	if (load)
-	// 		inReg <= in;
-	// end
+	// miso = SDI at [t+1]
+	always @(posedge clk)
+		miso <= SDI;
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
-	// dual clock edge == read-before-write pattern?
-	Bit miso (
-		.clk(clk), // sample SDI at posedge of clk
-		.in(SDI), // MISO (MSB from slave)
-		.load(busy), // sample for [t+8] after load
-		.out(slaveMSB)
-	);
+	// init=0 before initial load, shift with SCK
 	BitShift8L shiftreg (
-		.clk(~SCK), // sample on negedge of SCK (posedge clk)
-		.in(8'd0), // init on load
-		.inLSB(init ? slaveMSB : 1'b0), // shift slaveMSB into masterLSB while sampling
+		.clk(clk),
+		.in(init ? in[7:0] : 8'd0), // init on load
+		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB while sampling
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(busy), // shift at negedge for [t+8] after load
-		.out(shift) // master byte
+		.shift(SCK),
+		.out(shift)
 	);
-	always @(posedge clk) begin
-		mosi <= shift[7]; // MSB first
-	end
 
 	// generic init handler, should work with ice40 + yosys
 	reg init = 0;
@@ -106,8 +85,8 @@ module SPI(
 	end
 
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
-	assign SDO = mosi; // MOSI (masterMSB to slaveLSB)
+	assign SDO = shift[7]; // MOSI (masterMSB to slaveLSB)
 	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed // TODO: why half speed?
-	assign out = {busy,7'd0,shift};
+	assign out = {busy,7'd0,shift}; // out[15]=busy, out[7:0]=received byte
 
 endmodule

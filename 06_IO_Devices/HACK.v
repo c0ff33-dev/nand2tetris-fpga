@@ -154,6 +154,8 @@ module HACK(
 		.out(inIO3) // memory map 
 	);
 
+	// TODO: SPI (4100)
+
 	// additional registers
 	// DEBUG0 (4107)
 	Register debug0(
