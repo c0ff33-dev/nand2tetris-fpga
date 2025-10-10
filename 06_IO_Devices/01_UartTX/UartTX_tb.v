@@ -9,10 +9,12 @@ module UartTX_tb();
 	reg [15:0] in = 0;
 	wire TX;
 	wire [15:0] out;
+	wire CDONE = 1;
 
 	// Part
 	UartTX UartTX(
     	.clk(clk),
+		.CDONE(CDONE),
 		.load(load),
 		.in(in),
 		.TX(TX),

@@ -13,6 +13,7 @@
 `default_nettype none
 module SPI(
 	input clk,
+	input CDONE, // configuration done (ice40 only)
 	input load,
 	input SDI, // serial data in (MISO) -- HACK block diagram is wrong direction
 	input [15:0] in, // [7:0] byte to send (address/command)
@@ -104,7 +105,7 @@ module SPI(
 		end
 	end
 
-	assign CSX = init ? csx : 1'b1; // init CSX=1 to block any premture transactions
+	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 to block any premture transactions
 	assign SDO = init ? mosi : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = busy & ~clkCount[0]; // start clock when busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift};

@@ -11,3 +11,4 @@ set_io BUT[1] 42
 set_io LED[0] 40
 set_io LED[1] 51
 
+set_io CDONE 20 # iCE40-CDONE > PIO3_10A

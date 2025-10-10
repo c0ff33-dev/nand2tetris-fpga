@@ -161,7 +161,7 @@ void loopBridge() {
             recv=true;
           } else {
             // reset (noise)
-            // Serial.println("DEBUG: bad 0xAD");
+            Serial.println("DEBUG: bad 0xAD");
             s_count=0;
           }
           return;
@@ -181,7 +181,7 @@ void loopBridge() {
           if (e_count == 1) {
             Serial.println("EF"); // DEBUG
           } else {
-            // Serial.println("DEBUG: bad 0xEF");
+            Serial.println("DEBUG: bad 0xEF");
           }
           // reset/disable in either case
           e_count=0;
@@ -204,7 +204,7 @@ void loopBridge() {
             s_count=0;
             recv=false;
           } else {
-            // Serial.println("DEBUG: 0x0 (sync)");
+            Serial.println("DEBUG: 0x0 (sync)");
           }
         }
         break;

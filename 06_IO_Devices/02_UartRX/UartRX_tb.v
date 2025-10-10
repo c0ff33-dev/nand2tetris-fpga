@@ -8,10 +8,12 @@ module UartRX_tb();
 	reg clear = 0;
 	wire RX;
 	wire [15:0] out;
+	wire CDONE = 1;
 
 	// Part
 	UartRX UARTRX(
     	.clk(clk),
+		.CDONE(CDONE),
 		.clear(clear),
 		.RX(RX),
 		.out(out)

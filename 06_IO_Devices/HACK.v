@@ -13,6 +13,7 @@
 module HACK( 
     input  CLK,				// external clock 100 MHz	
 	input  [1:0] BUT,		// user button  ("pushed down" == 0) ("up" == 1)
+	input  CDONE,			// configuration done (ice40 only)
 	output [1:0] LED,		// leds (0 off, 1 on)
 	input  UART_RX,			// UART recieve
 	output UART_TX,			// UART transmit
@@ -137,6 +138,7 @@ module HACK(
 	// W: send byte
 	UartTX uartTX(
 		.clk(clk),
+		.CDONE(CDONE), // configuration done (ice40 only)
 		.load(loadIO2),
 		.in(outM), // transmit outM[7:0]
 		.TX(UART_TX), // serial tx bit (pin)
@@ -148,6 +150,7 @@ module HACK(
 	// W: 1 = clear data register
 	UartRX uartRX(
 		.clk(clk),
+		.CDONE(CDONE), // configuration done (ice40 only)
 		.clear(loadIO3),
 		.RX(UART_RX), // serial rx bit (pin)
 		.out(inIO3) // memory map 
