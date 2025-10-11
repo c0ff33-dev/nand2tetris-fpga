@@ -6,13 +6,12 @@
 // pre-flash the data to read on W25Q16BV
 // echo SPI! > spi.txt
 // iceprogduino -o 256k -w spi.txt
-
-// FIXME: try without manipulating power states first
-// TODO: send wake command (0xAB), wait 3μs
-// TODO: send read data command @ 0x40000 [256k] (0x03, 0x04, 0x00, 0x00) x 4 consecutive bytes
-// TODO: send sleep command (0xB9)
+// 
+// read command is 0x03 followed by 3 x address bytes
+// e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
 
 // TODO: Use a loop where index is R0-15?
+// TODO: big gap between when available (immediately after read cycles) + when emitted?
 
 @3 // send command (0x03=read)
 D=A
@@ -78,30 +77,111 @@ D=A
 @SPI
 M=D // send 0x00
 
-@end_read // set next address
+@read // set next address
 D=A
 @R0
-M=D // R0=end_read
+M=D // R0=read
 
 @wait
 0;JMP // wait for current byte to send
 
 // ------------------------------------
 
-(end_read)
+(read) // send dummy byte to keep SCK rolling
+@0
+D=A
 @SPI
-D=M // read the result (stable until next write)
+M=D // send 0x00 (MOSI is now ignored while CSX remains low)
 
+@read0 // set next address
+D=A
+@R0
+M=D // R0=read0
+
+@wait
+0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(read0)
+@SPI // read emitted byte (char)
+D=M 
 @DEBUG0
-M=D // debug: save the result
+M=D
 
+@0
+D=A
+@SPI
+M=D // send 0x00
+
+@read1 // set next address
+D=A
+@R0
+M=D // R0=read1
+
+@wait
+0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(read1)
+@SPI // read emitted byte (char)
+D=M 
+@DEBUG0
+M=D
+
+@0
+D=A
+@SPI
+M=D // send 0x00
+
+@read2 // set next address
+D=A
+@R0
+M=D // R0=read2
+
+@wait
+0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(read2)
+@SPI // read emitted byte (char)
+D=M 
+@DEBUG0
+M=D
+
+@0
+D=A
+@SPI
+M=D // send 0x00
+
+@read3 // set next address
+D=A
+@R0
+M=D // R0=read3
+
+@wait
+0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(read3)
+@SPI // read emitted byte (char)
+D=M 
+@DEBUG0
+M=D
+
+// ------------------------------------
+
+// FIXME: CSX doesn't stay low and instead falls into some kind of feedback loop
 @256 // send 0x100 (CSX=1) to end the read
 D=A
 @SPI
-M=D // CSX=1 runs SCK and overwrites out
+M=D
 
 // ------------------------------------
 
 (HALT)
 @HALT
-0;JMP // end
+0;JMP // end // FIXME: PC=0x6C, EA87 (jmp) to 0x6B, seems to go off the rails for some reason

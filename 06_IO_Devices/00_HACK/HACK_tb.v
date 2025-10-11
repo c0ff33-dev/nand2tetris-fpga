@@ -73,21 +73,21 @@ module HACK_tb();
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI
-	reg spi_sleep=0; // TODO: enable sleep mode
+	reg spi_sleep=0; // TODO: enable sleep mode + deviceid
 	reg [31:0] spi_cmd=0;
-	reg [95:0] spi=0;
+	reg [95:0] spi=0; // 96 = size of largest value in tests
 	assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95];
 	always @(posedge (SPI_SCK))
-		spi <= {spi[95:0],1'b0};
+		spi <= {spi[95:0],1'b0}; // BitShift8L
 	always @(posedge (SPI_SCK))
 		spi_cmd <= {spi_cmd[30:0],SPI_SDO};
 	always @(negedge (SPI_CSX))
 		spi_cmd <= 0;
 	always @(spi_cmd) begin
-		// if (spi_cmd==32'h000000AB) spi_sleep <= 0;
-		// if (spi_cmd==32'h000000B9) spi_sleep <= 1;
-		if (spi_cmd==32'h03040000) spi <= "SPI! 123";
-		// if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87;
+		// if (spi_cmd==32'h000000AB) spi_sleep <= 0; // wake
+		// if (spi_cmd==32'h000000B9) spi_sleep <= 1; // sleep
+		if (spi_cmd==32'h03040000) spi <= {"SPI! 123", 32'd0}; // pad to the right so there aren't leading zeroes
+		// if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87; // deviceid
 	end
 
 	//Simulate SRAM
