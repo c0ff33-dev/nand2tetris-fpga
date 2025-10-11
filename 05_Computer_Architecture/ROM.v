@@ -24,7 +24,7 @@ module ROM(
 	reg [15:0] mem [0:255];
 	
 	// Synchronous read
-    always @(posedge clk) begin
+    always @(negedge clk) begin
         instruction <= mem[pc[7:0]];
     end
 	

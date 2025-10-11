@@ -29,6 +29,8 @@ module RAM256(
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
+	// note: Timing changes here also need to propogate to ROM chip + RAM/ROM test benches.
+
 	// new code: explicit syncronous read - its very likely the synthesis result for the 
 	// original code was injecting a register to make it syncronous anyway
 	always @(negedge clk) begin

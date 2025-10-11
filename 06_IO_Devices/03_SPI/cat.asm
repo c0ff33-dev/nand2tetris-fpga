@@ -174,7 +174,6 @@ M=D
 
 // ------------------------------------
 
-// FIXME: CSX doesn't stay low and instead falls into some kind of feedback loop
 @256 // send 0x100 (CSX=1) to end the read
 D=A
 @SPI
