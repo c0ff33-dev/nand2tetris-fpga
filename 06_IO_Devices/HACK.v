@@ -9,6 +9,8 @@
  * with the computer via the BUT.
  */
 
+ // TODO: sync 5/6/7 HACK files
+
 `default_nettype none
 module HACK( 
     input  CLK,				// external clock 100 MHz	
@@ -35,10 +37,10 @@ module HACK(
 	output RTP_SCK			// RTP serial clock
 );
 
-	wire clk,writeM,loadRAM,RST,inRes;
+	wire clk,writeM,loadRAM,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction,loadRes;
+	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -64,7 +66,7 @@ module HACK(
 		.address(addressM),
 		.load(writeM),
 		.inRAM(outRAM), // RAM (0-3839)
-		.inIO0(LED),    // LED (4096)
+		.inIO0(outLED), // LED (4096)
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)
@@ -102,6 +104,7 @@ module HACK(
 
 	// ROM (BRAM buffer), 256 x 16 bit words
 	ROM rom(
+		.clk(clk),
 		.pc(pc),
 		.instruction(instruction)
 	);
@@ -120,13 +123,14 @@ module HACK(
 		.clk(clk),
 		.in(outM),
 		.load(loadIO0),
-		.out(LED)
+		.out(outLED) // 16 bit output going back to memory
 	);
+	assign LED = outLED[1:0]; // 2 bit output (pin)
 
 	// BUT (4097)
 	Register but(
 		.clk(clk),
-		.in(BUT), // pin
+		.in({14'd0, BUT}), // concat 14 bits for padding
 		.load(1'b1),
 		.out(inIO1) // memory map
 	);
@@ -162,12 +166,12 @@ module HACK(
 		.clk(clk),
 		.CDONE(CDONE), // configuration done (ice40 only)
 		.in(outM), // [7:0] byte to send (address/command)
-		.load(loadIO4),
+		.out(inIO4), // memory map
+		.load(loadIO4), // SPI_* outputs wired to pins
 		.SDI(SPI_SDI), // serial data in (MISO)
 		.SCK(SPI_SCK), // serial clock
 		.CSX(SPI_CSX), // chip select not (active low)
-		.SDO(SPI_SDO), // serial data out (MOSI)
-		.out(inIO4) 
+		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
 
 	// additional registers
@@ -210,5 +214,5 @@ module HACK(
 		.load(loadIOF),
 		.out(inIOF)
 	);
-	
+
 endmodule

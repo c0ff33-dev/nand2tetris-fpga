@@ -28,7 +28,7 @@ module SPI(
 	wire [15:0] clkCount;
 	
 	// if in[8=0] and load=1 then csx=0 (send byte)
-	// if in[8=1] and load=1 then csx=1 (don't send byte)
+	// if in[8=1] and load=1 then csx=1 (drive CSX high without sending byte)
 	// init csx=1 to block any premture transactions
 	// csx remains unchanged in either case until next load
 	Bit cs (

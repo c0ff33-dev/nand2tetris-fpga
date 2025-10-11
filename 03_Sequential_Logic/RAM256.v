@@ -29,7 +29,8 @@ module RAM256(
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
-	// new code: syncronous read
+	// new code: explicit syncronous read - its very likely the synthesis result for the 
+	// original code was injecting a register to make it syncronous anyway
 	always @(negedge clk) begin
 		// out is sampled on negedge [t]
 		// emits the value of regRAM[address] from [t-1]
@@ -37,7 +38,7 @@ module RAM256(
 		out <= regRAM[address[7:0]];
 	end
 
-	// original code: continous/combinational read
+	// original code: continous/combinational read (not supported in BRAM)
 	// assign out = regRAM[address[7:0]];
 
 endmodule

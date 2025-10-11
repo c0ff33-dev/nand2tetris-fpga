@@ -30,9 +30,13 @@ module SPI_tb();
 	// Simulate
 	always #2 clk=~clk; // 25 MHz
 	wire trigger;
-	assign trigger = (n==20) || (n==40) || (n==60) || (n==80) || (n==100);
+	assign trigger = (n==16) || (n==33) || (n==53) || (n==73);
 	always @(posedge clk) begin
-		in <= $random;
+		// send 3 random bytes with CSX=0, then 1 random byte with CSX=1
+		in <= trigger ? (
+            (n>=70) ? (16'h100 | ($random & 8'hFF)) :
+                      (16'h0 | ($random & 8'hFF))
+		) : $random;
 		load <= trigger;
 		SDI <= $random;
 	end

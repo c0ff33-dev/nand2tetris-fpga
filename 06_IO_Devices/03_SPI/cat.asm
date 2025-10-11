@@ -78,13 +78,27 @@ D=A
 @SPI
 M=D // send 0x00
 
-@HALT // set next address
+@end_read // set next address
 D=A
 @R0
-M=D // R0=HALT
+M=D // R0=end_read
 
 @wait
 0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(end_read)
+@SPI
+D=M // read the result (stable until next write)
+
+@DEBUG0
+M=D // debug: save the result
+
+@256 // send 0x100 (CSX=1) to end the read
+D=A
+@SPI
+M=D // CSX=1 runs SCK and overwrites out
 
 // ------------------------------------
 

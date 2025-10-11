@@ -25,7 +25,7 @@ FIXME: W25Q16BV transmission takes 8 cycles, not 16 and supports up to 50 MHz re
 
 When load=1 and in[8]=1 CSX goes high without transmission of any bit.
 
-**Attention:** Sampling of SDO is done at rising edge of SCK and shifting is done at falling edge of SCK.
+**Attention:** In W25Q16BV sampling of SDO is done at rising edge of SCK and shifting is done at falling edge of SCK.
 
 ### Proposed Implementation
 
