@@ -5,6 +5,7 @@ module HACK_tb();
 	// IN,OUT
 	reg CLK = 1;
 	reg [1:0] BUT = 3;
+	reg CDONE = 1;
 	wire [1:0] LED;
 	wire UART_TX;
 	wire UART_RX;
@@ -28,6 +29,7 @@ module HACK_tb();
 	// Part
 	HACK HACK(
     	.CLK(CLK),					// external clock 100 MHz	
+		.CDONE(CDONE),				// configuration done (ice40 only)
 		.BUT(BUT),					// user button  ("pushed down" == 0) ("up" == 1)
 		.LED(LED),					// leds (0 off, 1 on)
 		.UART_RX(UART_RX),			// UART receive
@@ -71,7 +73,7 @@ module HACK_tb();
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI
-	reg spi_sleep=1;
+	reg spi_sleep=0; // TODO: enable sleep mode
 	reg [31:0] spi_cmd=0;
 	reg [95:0] spi=0;
 	assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95];
@@ -82,10 +84,10 @@ module HACK_tb();
 	always @(negedge (SPI_CSX))
 		spi_cmd <= 0;
 	always @(spi_cmd) begin
-		if (spi_cmd==32'h000000AB) spi_sleep <= 0;
-		if (spi_cmd==32'h000000B9) spi_sleep <= 1;
+		// if (spi_cmd==32'h000000AB) spi_sleep <= 0;
+		// if (spi_cmd==32'h000000B9) spi_sleep <= 1;
 		if (spi_cmd==32'h03040000) spi <= "SPI! 123";
-		if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87;
+		// if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87;
 	end
 
 	//Simulate SRAM
