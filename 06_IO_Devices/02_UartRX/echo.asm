@@ -15,7 +15,8 @@ M=1 // init the RX buffer
 D=M // D=rx
 @R0
 M=D // R0=rx
-@32768 // 0x8000 (note: outside of original HACK address range)
+
+@32768 // check out[15] (0x8000)
 D=A-D
 @read // loop until rx written
 D;JEQ
@@ -33,6 +34,8 @@ M=D // LED=2 (10 = LED1 off/LED2 on, rx done)
 D=M // D=buffer
 @UART_TX
 M=D // send buffer
+
+// TODO: check out[15] (32768) only not whole value
 
 (wait) // wait for tx (2170 cycles)
 @UART_TX

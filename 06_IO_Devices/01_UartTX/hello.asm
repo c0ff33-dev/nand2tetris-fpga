@@ -13,6 +13,9 @@ D=A // D=null
 @UART_TX
 M=D // send null (clear the line)
 
+// TODO: check out[15] (32768) only not whole value
+// TODO: use repeatable wait function
+
 (wait0) // wait for tx (2170 cycles)
 @UART_TX
 D=M // check if ready

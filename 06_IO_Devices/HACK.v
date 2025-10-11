@@ -36,8 +36,8 @@ module HACK(
 );
 
 	wire clk,writeM,loadRAM,RST,inRes;
-	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,loadRes;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
@@ -68,7 +68,7 @@ module HACK(
 		.inIO1(inIO1),  // BUT (4097)
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)
-		.inIO4(resIn),  // reserved (undefined)
+		.inIO4(inIO4),  // SPI (4100)
 		.inIO5(resIn),  // reserved (undefined)
 		.inIO6(resIn),  // reserved (undefined)
 		.inIO7(resIn),  // reserved (undefined)
@@ -86,7 +86,7 @@ module HACK(
 		.loadIO1(loadIO1), // BUT (4097)
 		.loadIO2(loadIO2), // UART_TX (4098)
 		.loadIO3(loadIO3), // UART_RX (4099)
-		.loadIO4(resLoad), // reserved (undefined)
+		.loadIO4(loadIO4), // SPI (4100)
 		.loadIO5(resLoad), // reserved (undefined)
 		.loadIO6(resLoad), // reserved (undefined)
 		.loadIO7(resLoad), // reserved (undefined)
@@ -100,7 +100,7 @@ module HACK(
 		.loadIOF(loadIOF)  // DEBUG4 (4111)
 	);
 
-	// ROM (simulated), 256 x 16 bit words
+	// ROM (BRAM buffer), 256 x 16 bit words
 	ROM rom(
 		.pc(pc),
 		.instruction(instruction)
@@ -154,7 +154,21 @@ module HACK(
 		.out(inIO3) // memory map 
 	);
 
-	// TODO: SPI (4100)
+	// SPI interface for W25Q16BV w/ 2MB flash (4100)
+	// R: out[15]=1 if busy, out[7:0] received byte
+	// W: command byte outM[7:0] +
+	// W: outM[8]=1 pull CSX high (no send), outM[8]=0 send (CSX=0)
+	SPI spi(
+		.clk(clk),
+		.CDONE(CDONE), // configuration done (ice40 only)
+		.in(outM), // [7:0] byte to send (address/command)
+		.load(loadIO4),
+		.SDI(SPI_SDI), // serial data in (MISO)
+		.SCK(SPI_SCK), // serial clock
+		.CSX(SPI_CSX), // chip select not (active low)
+		.SDO(SPI_SDO), // serial data out (MOSI)
+		.out(inIO4) 
+	);
 
 	// additional registers
 	// DEBUG0 (4107)
