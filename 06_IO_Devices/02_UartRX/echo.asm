@@ -1,6 +1,8 @@
 // echo.asm
 // receive byte over UART_RX and transmit the received byte to UART_TX
-// repeat in an endless loop
+// repeat in an endless loop.
+// out[15]=1 (ready), write any data to clear
+// out[7:0] (byte), latched to only be in either state
 
 @1
 D=A

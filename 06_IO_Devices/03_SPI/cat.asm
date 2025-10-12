@@ -1,14 +1,16 @@
 // cat.asm
 //
-// load spi flash rom starting at address 0x040000 and write the
-// data to UART_TX
+// load spi flash rom starting at address 0x040000 and write the data to UART_TX
+// read command is 0x03 followed by 3 x address bytes
+// e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
 //
-// pre-flash the data to read on W25Q16BV
+// # pre-flash the data to read on W25Q16BV
 // echo SPI! > spi.txt
 // iceprogduino -o 256k -w spi.txt
 // 
-// read command is 0x03 followed by 3 x address bytes
-// e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
+// # dump flash & check data
+// iceprogduino -r flash.bin
+// hexdump -C -n 4 -s 0x40000 flash.bin
 
 // FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (probably SPI timing issue)
 // TODO: Use a loop where index is R0-15?

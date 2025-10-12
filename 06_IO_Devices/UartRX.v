@@ -70,15 +70,7 @@ module UartRX(
 		.in(16'b0),
 		.reset(start), // reset on new read
 		.out(rxCount) // track number of bits read
-	); 
-
-	// TODO: not sure this is actually needed in practice? (only used on shift which is clocked)
-	// store RX bit (sync RX to clk domain)
-	// DFF dff(
-	// 	.clk(clk),
-	// 	.in(RX), // read data from pin
-	// 	.out(rx)
-	// );
+	);
 
 	// each shift cycles LSB out and MSB to the right
 	//  tx/rx: 0xxxxxxxx1 (pre-shift)

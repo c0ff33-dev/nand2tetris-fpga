@@ -30,7 +30,7 @@ module ALU(
     input zy, 			// zero the y input?
     input ny, 			// negate the y input?
     input f,  			// compute out = x + y (if 1) or x & y (if 0)
-    input no, 			// negate the out output?
+    input no, 			// negate out
     output [15:0] out, 	// 16-bit output
     output zr, 			// 1 if (out == 0), 0 otherwise
     output ng 			// 1 if (out < 0),  0 otherwise

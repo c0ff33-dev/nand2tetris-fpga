@@ -15,6 +15,7 @@ module BitShift8L(
 	output reg [7:0] out
 );
 
+	// FIXME: works on either edge in both tb but not in hw
 	always @(negedge clk) begin
 		if (load)
 			out <= in;

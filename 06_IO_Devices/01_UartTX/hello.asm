@@ -1,9 +1,6 @@
 // hello.asm
 // Outputs "Hi\r\n" on UART_TX
-// 
-// Pulse single byte to clear the line
-// And 0xDEAD / 0xBEEF as message header/footer
-// Filtering applied at arduino (iceprog2.ino)
+// out[15]=1 (busy) or out[15]=0 (ready)
 
 // ===============================
 // sync / send message header

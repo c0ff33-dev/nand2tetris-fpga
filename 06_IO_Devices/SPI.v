@@ -64,7 +64,8 @@ module SPI(
 	assign reset = (clkCount == 16'd15); // TODO: shouldn't this reset after 8 clock cycles?
 
 	// miso = SDI in [t+1]
-	always @(posedge SCK)
+	// clk domain in spi_tb
+	always @(posedge clk)
 		miso <= SDI;
 
 	// circular buffer to enable duplex comms with slave where:
