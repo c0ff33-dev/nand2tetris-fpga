@@ -15,7 +15,7 @@ module BitShift8L(
 	output reg [7:0] out
 );
 
-	always @(posedge clk) begin
+	always @(negedge clk) begin
 		if (load)
 			out <= in;
 		else if (shift)

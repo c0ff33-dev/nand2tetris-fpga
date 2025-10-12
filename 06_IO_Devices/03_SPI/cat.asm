@@ -12,7 +12,6 @@
 
 // FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (probably SPI timing issue)
 // TODO: Use a loop where index is R0-15?
-// TODO: big gap between when available (immediately after read cycles) + when emitted?
 
 // ====================================
 // send command bytes
