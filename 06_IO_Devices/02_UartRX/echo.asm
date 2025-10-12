@@ -35,8 +35,6 @@ D=M // D=buffer
 @UART_TX
 M=D // send buffer
 
-// TODO: check out[15] (32768) only not whole value
-
 (wait) // wait for tx (2170 cycles)
 @UART_TX
 D=M // check if ready

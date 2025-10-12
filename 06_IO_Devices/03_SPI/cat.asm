@@ -10,6 +10,7 @@
 // read command is 0x03 followed by 3 x address bytes
 // e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
 
+// FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (probably SPI timing issue)
 // TODO: Use a loop where index is R0-15?
 // TODO: big gap between when available (immediately after read cycles) + when emitted?
 

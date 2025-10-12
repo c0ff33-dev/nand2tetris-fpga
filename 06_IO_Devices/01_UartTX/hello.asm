@@ -1,5 +1,6 @@
 // hello.asm
 // Outputs "Hi\r\n" on UART_TX
+// 
 // Pulse single byte to clear the line
 // And 0xDEAD / 0xBEEF as message header/footer
 // Filtering applied at arduino (iceprog2.ino)
@@ -8,45 +9,42 @@
 // sync / send message header
 // ===============================
 
-@0
-D=A // D=null
-@UART_TX
-M=D // send null (clear the line)
+// @0
+// D=A // D=null
+// @UART_TX
+// M=D // send null (clear the line)
 
-// TODO: check out[15] (32768) only not whole value
-// TODO: use repeatable wait function
-
-(wait0) // wait for tx (2170 cycles)
-@UART_TX
-D=M // check if ready
-@wait0
-D;JNE // loop if busy
+// (wait0) // wait for tx (2170 cycles)
+// @UART_TX
+// D=M // check if ready
+// @wait0
+// D;JNE // loop if busy
 
 // -------------------------------
 
-@222
-D=A // D=0xDE
-@UART_TX
-M=D // send 0xDE
+// @222
+// D=A // D=0xDE
+// @UART_TX
+// M=D // send 0xDE
 
-(wait1) // wait for tx (2170 cycles)
-@UART_TX
-D=M // check if ready
-@wait1
-D;JNE // loop if busy
+// (wait1) // wait for tx (2170 cycles)
+// @UART_TX
+// D=M // check if ready
+// @wait1
+// D;JNE // loop if busy
 
 // -------------------------------
 
-@173
-D=A // D=0xAD
-@UART_TX
-M=D // send 0xAD
+// @173
+// D=A // D=0xAD
+// @UART_TX
+// M=D // send 0xAD
 
-(wait2) // wait for tx (2170 cycles)
-@UART_TX
-D=M // check if ready
-@wait2
-D;JNE // loop if busy
+// (wait2) // wait for tx (2170 cycles)
+// @UART_TX
+// D=M // check if ready
+// @wait2
+// D;JNE // loop if busy
 
 // ===============================
 // send message
@@ -106,29 +104,29 @@ D;JNE // loop if busy
 // send message footer
 // ===============================
 
-@190
-D=A // D=0xBE
-@UART_TX
-M=D // send 0xBE
+// @190
+// D=A // D=0xBE
+// @UART_TX
+// M=D // send 0xBE
 
-(wait7) // wait for tx (2170 cycles)
-@UART_TX
-D=M // check if ready
-@wait7
-D;JNE // loop if busy
+// (wait7) // wait for tx (2170 cycles)
+// @UART_TX
+// D=M // check if ready
+// @wait7
+// D;JNE // loop if busy
 
 // -------------------------------
 
-@239
-D=A // D=0xEF
-@UART_TX
-M=D // send 0xEF
+// @239
+// D=A // D=0xEF
+// @UART_TX
+// M=D // send 0xEF
 
-(wait8) // wait for tx (2170 cycles)
-@UART_TX
-D=M // check if ready
-@wait8
-D;JNE // loop if busy
+// (wait8) // wait for tx (2170 cycles)
+// @UART_TX
+// D=M // check if ready
+// @wait8
+// D;JNE // loop if busy
 
 // ===============================
 // end
