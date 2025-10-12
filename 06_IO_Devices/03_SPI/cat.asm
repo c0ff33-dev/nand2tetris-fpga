@@ -13,6 +13,10 @@
 // TODO: Use a loop where index is R0-15?
 // TODO: big gap between when available (immediately after read cycles) + when emitted?
 
+// ====================================
+// send command bytes
+// ====================================
+
 @3 // send command (0x03=read)
 D=A
 @SPI
@@ -85,7 +89,9 @@ M=D // R0=read
 @wait
 0;JMP // wait for current byte to send
 
-// ------------------------------------
+// ====================================
+// read bytes
+// ====================================
 
 (read) // send dummy byte to keep SCK rolling
 @0
@@ -108,6 +114,14 @@ M=D // R0=read0
 D=M 
 @DEBUG0
 M=D
+@UART_TX
+M=D // transmit byte
+
+(tx0) // wait for tx (2170 cycles)
+@UART_TX
+D=M // check if ready
+@tx0
+D;JNE // loop if busy
 
 @0
 D=A
@@ -129,6 +143,14 @@ M=D // R0=read1
 D=M 
 @DEBUG0
 M=D
+@UART_TX
+M=D // transmit byte
+
+(tx1) // wait for tx (2170 cycles)
+@UART_TX
+D=M // check if ready
+@tx1
+D;JNE // loop if busy
 
 @0
 D=A
@@ -150,6 +172,14 @@ M=D // R0=read2
 D=M 
 @DEBUG0
 M=D
+@UART_TX
+M=D // transmit byte
+
+(tx2) // wait for tx (2170 cycles)
+@UART_TX
+D=M // check if ready
+@tx2
+D;JNE // loop if busy
 
 @0
 D=A
@@ -171,8 +201,18 @@ M=D // R0=read3
 D=M 
 @DEBUG0
 M=D
+@UART_TX
+M=D // transmit byte
 
-// ------------------------------------
+(tx3) // wait for tx (2170 cycles)
+@UART_TX
+D=M // check if ready
+@tx3
+D;JNE // loop if busy
+
+// ====================================
+// close the transaction
+// ====================================
 
 @256 // send 0x100 (CSX=1) to end the read
 D=A
@@ -183,4 +223,4 @@ M=D
 
 (HALT)
 @HALT
-0;JMP // end // FIXME: PC=0x6C, EA87 (jmp) to 0x6B, seems to go off the rails for some reason
+0;JMP // end
