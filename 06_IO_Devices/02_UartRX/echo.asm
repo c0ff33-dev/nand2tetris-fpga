@@ -18,6 +18,8 @@ D=M // D=rx
 @R0
 M=D // R0=rx
 
+// warning: this only works because its diff'd against itself
+// >15 bit numbers can overflow the ALU (see cat.asm)
 @32768 // check out[15] (0x8000)
 D=A-D
 @read // loop until rx written

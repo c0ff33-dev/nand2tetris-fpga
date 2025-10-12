@@ -1,9 +1,8 @@
-// cat.asm
-//
 // load spi flash rom starting at address 0x040000 and write the data to UART_TX
 // read command is 0x03 followed by 3 x address bytes
 // e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
-//
+// out[15]=1 (busy), [7:0] continues shifting while busy
+// 
 // # pre-flash the data to read on W25Q16BV
 // echo SPI! > spi.txt
 // iceprogduino -o 256k -w spi.txt
@@ -12,7 +11,7 @@
 // iceprogduino -r flash.bin
 // hexdump -C -n 4 -s 0x40000 flash.bin
 
-// FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (probably SPI timing issue)
+// FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (SPI timing issue?)
 // TODO: Use a loop where index is R0-15?
 
 // ====================================
@@ -33,10 +32,11 @@ M=D // R0=send_addr_0
 
 (wait) // wait for spi (16 cycles)
 @SPI
-D=M // check if ready
-@32768 // 0x100 = 1 0000 0000
-D=D-A // if D >= 0 busy bit set
-@wait
+D=M // check if ready (out[15] != 0x8000)
+@32767 // >15 bit = signed overflow in ALU
+D=D-A // sub max positive signed value (0x7FFF)
+D=D-1 // sub one more for true diff (32768)
+@wait // if D >= A busy bit set
 D;JGE // loop while busy
 
 @R0 // &<next_address>
@@ -116,6 +116,23 @@ M=D // R0=read0
 D=M 
 @DEBUG0
 M=D
+
+// DEBUG: confirmed SPI is still emitting zero byte on hw
+// DEBUG: confirmed UART is transmitting correct bits in sim
+@83 // S=83 (0x53)
+D=A-D
+@DEBUG1
+M=D
+@incorrect
+D;JNE
+@3
+D=A
+@LED // correct
+M=D
+(incorrect)
+@DEBUG0
+D=M // restore D
+
 @UART_TX
 M=D // transmit byte
 
