@@ -76,14 +76,14 @@ module HACK_tb();
 	reg spi_sleep=0; // TODO: enable sleep mode + deviceid
 	reg [31:0] spi_cmd=0;
 	reg [95:0] spi=0; // 96 = size of largest value in tests
-	assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95];
-	always @(posedge (SPI_SCK))
+	assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95]; // FIXME: unclocked SDI
+	always @(posedge (SPI_SCK)) // FIXME: negedge?
 		spi <= {spi[95:0],1'b0}; // BitShift8L
 	always @(posedge (SPI_SCK))
 		spi_cmd <= {spi_cmd[30:0],SPI_SDO};
 	always @(negedge (SPI_CSX))
 		spi_cmd <= 0;
-	always @(spi_cmd) begin
+	always @(spi_cmd) begin // FIXME: multi-edge?
 		// if (spi_cmd==32'h000000AB) spi_sleep <= 0; // wake
 		// if (spi_cmd==32'h000000B9) spi_sleep <= 1; // sleep
 		if (spi_cmd==32'h03040000) spi <= {"SPI! 123", 32'd0}; // pad to the right so there aren't leading zeroes

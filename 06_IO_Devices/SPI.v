@@ -8,8 +8,10 @@
  * negative edge.
  * 
  * For W25Q16BV the command & address bytes are latched on posedge of SCK
- * but CSX must be driven low before the first SCK posedge.
- *
+ * but CSX must be driven low before the first SCK posedge. The data returned
+ * by the command is shifted to MISO on the negedge of SCK and increments
+ * address automatically on the completion of each byte until CSX is driven high.
+ * 
  * https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
  */ 
 
@@ -71,13 +73,14 @@ module SPI(
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
-	// init=0 before initial load, shift with SCK
+	// init=0 before initial load
+	// shift on SCK falling edge (not clk which is 2x faster)
 	BitShift8L shiftreg (
 		.clk(clk), // needs to be on clk domain for load
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB while sampling
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(SCK), // driven by SCK but shifts on negedge
+		.shift(SCK & clkCount[0]), // prime SCK posedge so it shifts on SCK negedge
 		.out(shift)
 	);
 
@@ -89,6 +92,8 @@ module SPI(
 		end
 	end
 
+	// spi_tb requires SDO to transmit from the preceding SCK low which looks a bit strange but shouldn't effect sampling
+	// FIXME: hack_tb SDI waveform looks a bit funky as well and is shifting on SCK posedge not negedge
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
 	assign SDO = shift[7]; // MOSI (masterMSB to slaveLSB)
 	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed // TODO: why half speed?

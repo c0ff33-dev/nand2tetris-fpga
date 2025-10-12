@@ -31,6 +31,8 @@ When load=1 and in[8]=1 CSX goes high without transmission of any bit.
 
 Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` to count from 0 to 15. Finally we need a `BitShift8L`. This will be loaded with the byte in[7:0] to be send.  Another `Bit` will sample the SDI wire when SCK=0 and shift the stored bit into the `BitShift8L` when SCK=1. After 8 bits are transmitted the module clears out[15] and outputs the received byte to out[7:0].
 
+// FIXME: ^ This seems inverted from every other description where data is sampled on SCK high and shifted on SCK low.
+
 ![](SPI.png)
 
 ### Memory map
