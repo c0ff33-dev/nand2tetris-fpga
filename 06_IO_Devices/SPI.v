@@ -26,6 +26,7 @@ module SPI(
 	output CSX, // chip select not (active low)
 	output SDO, // serial data out (MOSI)
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
+	// output [1:0] debug // FIXME: debug
 );
 	reg miso;
 	wire csx, busy, reset;
@@ -91,6 +92,12 @@ module SPI(
 			init <= 1;
 		end
 	end
+
+	// reg led = 0;
+	// always @(posedge clk) // hits both sides of SCK
+	// 	if (CDONE & !led)
+	// 		led <= {1'b0, SDI};
+	// assign debug = led; // FIXME: debugging
 
 	// spi_tb requires SDO to transmit from the preceding SCK low which looks a bit strange but shouldn't effect sampling
 	// FIXME: hack_tb SDI waveform looks a bit funky as well and is shifting on SCK posedge not negedge
