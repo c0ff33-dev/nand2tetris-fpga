@@ -18,6 +18,25 @@
 // send command bytes
 // ====================================
 
+@171 // send command (0xAB=wake)
+D=A
+@SPI
+M=D // send 0xAB
+
+@256 // send CSX=1 (execute)
+D=A
+@SPI
+M=D
+
+@150 // loop 500 cycles (total): 500 = 20µs @ 25MHz
+D=A
+(delay_loop)
+D=D-1 // D--
+@delay_loop
+D;JGE // loop
+
+// ------------------------------------
+
 @3 // send command (0x03=read)
 D=A
 @SPI
@@ -237,6 +256,18 @@ D;JNE // loop if busy
 D=A
 @SPI
 M=D
+
+@185 // send command (0xB9=sleep)
+D=A
+@SPI
+M=D // send 0xAB
+
+@256 // send CSX=1 (execute)
+D=A
+@SPI
+M=D
+
+// takes 3µs (75 cycles) to go to sleep
 
 // ------------------------------------
 
