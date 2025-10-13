@@ -25,8 +25,8 @@ module SPI(
 	output SCK, // serial clock
 	output CSX, // chip select not (active low)
 	output SDO, // serial data out (MOSI)
-	output [15:0] out, // out[15]=1 if busy, out[7:0] received byte
-	output [1:0] debug // FIXME: debug
+	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
+	// output [1:0] debug // FIXME: debug
 );
 	reg miso;
 	wire csx, busy, reset;
@@ -93,12 +93,11 @@ module SPI(
 		end
 	end
 
-	// FIXME: debugging
 	reg led = 0;
 	always @(posedge clk) // hits both sides of SCK
 		if (CDONE & !led)
 			led <= {1'b0, SDI};
-	assign debug = led;
+	// assign debug = led; // FIXME: debugging
 
 	// FIXME: waveform looks better but spi_tb & hw fails
 	// spi_tb requires SDO to transmit from the preceding SCK low which looks a bit strange but shouldn't effect sampling
