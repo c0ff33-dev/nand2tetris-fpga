@@ -22,7 +22,7 @@
 // @222
 // D=A // D=0xDE
 // @UART_TX
-// M=D // send 0xDE
+// M=D // send byte
 
 // (wait1) // wait for tx (2170 cycles)
 // @UART_TX
@@ -35,7 +35,7 @@
 // @173
 // D=A // D=0xAD
 // @UART_TX
-// M=D // send 0xAD
+// M=D // send byte
 
 // (wait2) // wait for tx (2170 cycles)
 // @UART_TX
@@ -48,9 +48,12 @@
 // ===============================
 
 @72
-D=A // D = "H"
+D=A // D = "H" (0x48)
 @UART_TX
-M=D // send "H"
+M=D // send byte
+
+@DEBUG0
+M=D // accumulate
 
 (wait3) // wait for tx (2170 cycles)
 @UART_TX
@@ -61,9 +64,12 @@ D;JNE // loop if busy
 // -------------------------------
 
 @105
-D=A // D = "i"
+D=A // D = "i" (0x69)
 @UART_TX
-M=D // send "i"
+M=D // send byte
+
+@DEBUG0
+M=D+M // accumulate
 
 (wait4) // wait for tx (2170 cycles)
 @UART_TX
@@ -74,9 +80,12 @@ D;JNE // loop if busy
 // -------------------------------
 
 @13
-D=A // D = "\r"
+D=A // D = "\r" (0x0D)
 @UART_TX
-M=D // send "\r"
+M=D // send byte
+
+@DEBUG0
+M=D+M // accumulate
 
 (wait5) // wait for tx (2170 cycles)
 @UART_TX
@@ -87,9 +96,12 @@ D;JNE // loop if busy
 // -------------------------------
 
 @10
-D=A // D = "\n"
+D=A // D = "\n" (0x0A)
 @UART_TX
-M=D // send "\n"
+M=D // send byte
+
+@DEBUG0
+M=D+M // accumulate
 
 (wait6) // wait for tx (2170 cycles)
 @UART_TX
@@ -104,7 +116,7 @@ D;JNE // loop if busy
 // @190
 // D=A // D=0xBE
 // @UART_TX
-// M=D // send 0xBE
+// M=D // send byte
 
 // (wait7) // wait for tx (2170 cycles)
 // @UART_TX
@@ -117,7 +129,7 @@ D;JNE // loop if busy
 // @239
 // D=A // D=0xEF
 // @UART_TX
-// M=D // send 0xEF
+// M=D // send byte
 
 // (wait8) // wait for tx (2170 cycles)
 // @UART_TX
@@ -128,6 +140,31 @@ D;JNE // loop if busy
 // ===============================
 // end
 // ===============================
+
+// Check result and HALT
+@DEBUG0
+D=M // read accumulated result
+@UART_TX
+M=D // send debug result for good measure
+
+@200 // expected (0xC8)
+D=D-A // D = result - expected
+@OK
+D;JEQ // OK if result == expected
+
+// ERROR
+@3
+D=A // D=3
+@LED
+M=D // LED=3 (11 = LED1/2 on, error)
+@HALT
+0;JMP // end
+
+(OK)
+@2
+D=A // D=2
+@LED
+M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
 (HALT)
 @HALT

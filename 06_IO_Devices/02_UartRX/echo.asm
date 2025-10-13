@@ -37,7 +37,7 @@ M=D // LED=2 (10 = LED1 off/LED2 on, rx done)
 @R0
 D=M // D=buffer
 @UART_TX
-M=D // send buffer
+M=D // send byte
 
 (wait) // wait for tx (2170 cycles)
 @UART_TX

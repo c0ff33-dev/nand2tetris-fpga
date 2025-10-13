@@ -149,8 +149,6 @@ D=A
 @LED // correct
 M=D
 (incorrect)
-@DEBUG0
-D=M // restore D
 
 @UART_TX
 M=D // transmit byte
@@ -182,7 +180,7 @@ D=M
 @DEBUG0
 M=D
 @UART_TX
-M=D // transmit byte
+M=D // send byte
 
 (tx1) // wait for tx (2170 cycles)
 @UART_TX
@@ -211,7 +209,7 @@ D=M
 @DEBUG0
 M=D
 @UART_TX
-M=D // transmit byte
+M=D // send byte
 
 (tx2) // wait for tx (2170 cycles)
 @UART_TX
@@ -240,7 +238,7 @@ D=M
 @DEBUG0
 M=D
 @UART_TX
-M=D // transmit byte
+M=D // send byte
 
 (tx3) // wait for tx (2170 cycles)
 @UART_TX
