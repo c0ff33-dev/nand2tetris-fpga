@@ -64,25 +64,24 @@ module SPI(
 		.out(clkCount)
 	);
 
-	assign reset = (clkCount == 16'd15);
+	assign reset = (clkCount == 16'd15); // TODO: shouldn't this reset after 8 clock cycles?
 
-	// sample MISO at posedge of SCK
+	// miso = SDI in [t+1]
 	// clk domain in spi_tb
 	always @(posedge clk)
-		// clkCount[0] = odd cycles (SCK=1)
-		if (clkCount[0] & clkCount!=0) 
-        	miso <= SDI;
+		miso <= SDI;
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
-	// shift on negedge of SCK
+	// init=0 before initial load
+	// shift on SCK falling edge (not clk which is 2x faster)
 	BitShift8L shiftreg (
 		.clk(clk), // needs to be on clk domain for load
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB while sampling
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(~clkCount[0] & clkCount!=0), // ~clkCount[0] = even cycles (SCK=0)
+		.shift(SCK & clkCount[0]), // prime SCK posedge so it shifts on SCK negedge
 		.out(shift)
 	);
 
@@ -102,9 +101,11 @@ module SPI(
 	assign debug = led;
 
 	// FIXME: waveform looks better but spi_tb & hw fails
+	// spi_tb requires SDO to transmit from the preceding SCK low which looks a bit strange but shouldn't effect sampling
+	// FIXME: hack_tb SDI waveform looks a bit funky as well and is shifting on SCK posedge not negedge
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
-	assign SDO = busy & shift[7]; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed
+	assign SDO = shift[7]; // MOSI (masterMSB to slaveLSB)
+	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed // TODO: why half speed?
 	assign out = {busy,7'd0,shift}; // out[15]=busy, out[7:0]=received byte
 
 endmodule
