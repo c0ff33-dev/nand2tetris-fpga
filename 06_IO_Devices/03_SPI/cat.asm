@@ -11,9 +11,6 @@
 // iceprogduino -r flash.bin
 // hexdump -C -n 4 -s 0x40000 flash.bin
 
-// FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (SPI timing issue?)
-// TODO: Use a loop where index is R0-15?
-
 // ====================================
 // send command bytes
 // ====================================
@@ -45,7 +42,7 @@ M=D
 @DEBUG0
 M=D+M // accumulate
 
-@200 // loop 500+ cycles (total): 500 = 20µs @ 25MHz
+@30 // wait for for 3µs (75 cycles) for wake to execute
 D=A
 (delay_loop)
 D=D-1 // D--

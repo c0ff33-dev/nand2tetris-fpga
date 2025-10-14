@@ -54,7 +54,7 @@ According to the datasheet of spi flash rom chip W25Q16BV the commands needed to
 | ------------------- | ---------------------------------------------------------------------- |
 | 0xAB                | wake up from deep power down (wait 3μs) before launching next command. |
 | 0x03 0x04 0x00 0x00 | read data (command 0x03) starting at address 0x040000 (256k)           |
-| 0xB9                | enter deep power down mode                                                  |
+| 0xB9                | enter deep power down mode (wait 3μs)                                  |
 
 ### SPI in real hardware
 
