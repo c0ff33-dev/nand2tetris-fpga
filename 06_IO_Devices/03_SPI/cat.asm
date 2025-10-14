@@ -11,9 +11,6 @@
 // iceprogduino -r flash.bin
 // hexdump -C -n 4 -s 0x40000 flash.bin
 
-// FIXME: DEBUG0 has right value in sim but emits 4 x null bytes on hw (SPI timing issue?)
-// TODO: Use a loop where index is R0-15?
-
 // ====================================
 // send command bytes
 // ====================================
@@ -23,12 +20,29 @@ D=A
 @SPI
 M=D // send 0xAB
 
+@DEBUG0
+M=D // accumulate
+
+@send_csx // set next address
+D=A
+@R0
+M=D // R0=send_csx
+
+@wait
+0;JMP // wait for current byte to send
+
+// ------------------------------------
+
+(send_csx)
 @256 // send CSX=1 (execute)
 D=A
 @SPI
 M=D
 
-@150 // loop 500 cycles (total): 500 = 20µs @ 25MHz
+@DEBUG0
+M=D+M // accumulate
+
+@30 // wait for for 3µs (75 cycles) for wake to execute
 D=A
 (delay_loop)
 D=D-1 // D--
@@ -41,6 +55,9 @@ D;JGE // loop
 D=A
 @SPI
 M=D // send 0x03
+
+@DEBUG0
+M=D+M // accumulate
 
 @send_addr_0 // set next address
 D=A
@@ -70,6 +87,9 @@ D=A
 @SPI
 M=D // send 0x04
 
+@DEBUG0
+M=D+M // accumulate
+
 @send_addr_1 // set next address
 D=A
 @R0
@@ -86,6 +106,9 @@ D=A
 @SPI
 M=D // send 0x00
 
+@DEBUG0
+M=D+M // accumulate
+
 @send_addr_2 // set next address
 D=A
 @R0
@@ -101,6 +124,9 @@ M=D // R0=send_addr_2
 D=A
 @SPI
 M=D // send 0x00
+
+@DEBUG0
+M=D+M // accumulate
 
 @read // set next address
 D=A
@@ -132,23 +158,10 @@ M=D // R0=read0
 
 (read0)
 @SPI // read emitted byte (char)
-D=M 
-@DEBUG0
-M=D
+D=M
 
-// DEBUG: confirmed SPI is still emitting zero byte on hw
-// DEBUG: confirmed UART is transmitting correct bits in sim
-@83 // S=83 (0x53)
-D=A-D
 @DEBUG1
-M=D
-@incorrect
-D;JNE
-@3
-D=A
-@LED // correct
-M=D
-(incorrect)
+M=D // emit char
 
 @UART_TX
 M=D // transmit byte
@@ -176,9 +189,11 @@ M=D // R0=read1
 
 (read1)
 @SPI // read emitted byte (char)
-D=M 
-@DEBUG0
-M=D
+D=M
+
+@DEBUG1
+M=D // emit char
+
 @UART_TX
 M=D // send byte
 
@@ -205,9 +220,11 @@ M=D // R0=read2
 
 (read2)
 @SPI // read emitted byte (char)
-D=M 
-@DEBUG0
-M=D
+D=M
+
+@DEBUG1
+M=D // emit char
+
 @UART_TX
 M=D // send byte
 
@@ -234,9 +251,11 @@ M=D // R0=read3
 
 (read3)
 @SPI // read emitted byte (char)
-D=M 
-@DEBUG0
-M=D
+D=M
+
+@DEBUG1
+M=D // emit char
+
 @UART_TX
 M=D // send byte
 
@@ -255,17 +274,48 @@ D=A
 @SPI
 M=D
 
+@DEBUG0
+M=D+M // accumulate
+
+// takes 3µs (75 cycles) to go to sleep
 @185 // send command (0xB9=sleep)
 D=A
 @SPI
 M=D // send 0xAB
+
+@DEBUG0
+M=D+M // accumulate
 
 @256 // send CSX=1 (execute)
 D=A
 @SPI
 M=D
 
-// takes 3µs (75 cycles) to go to sleep
+@DEBUG0
+M=D+M // accumulate
+
+// Check result and HALT
+@DEBUG0
+D=M // read accumulated result
+
+@1131 // expected (0x046B)
+D=D-A // D = result - expected
+@OK
+D;JEQ // OK if result == expected
+
+// ERROR
+@3
+D=A // D=3
+@LED
+M=D // LED=3 (11 = LED1/2 on, error)
+@HALT
+0;JMP // end
+
+(OK)
+@2
+D=A // D=2
+@LED
+M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
 // ------------------------------------
 

@@ -105,9 +105,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * press reset button on iCE40HX1K-EVB and see if you can recieve "Hi" on your Computer.
 
-Note: voltage will drop during reset which can introduce noise on the TX line if the 32u4 is already reading the UART line - this can be mitigated by making the arduino wait on some kind of signal from the FGPA before forwarding the UART traffic onward but this is left as an exercise for the reader.
-
-TODO: Revist this comment if UART is not actually used for anything else.
+Note: If the TX line is read during FGPA initialization (e.g. after reset) there is a high chance of undefined signals being interpreted as UART traffic so you may see some random bytes in addition to "Hi". The general principle for solving this is to use a control signal to indicate when transmission is valid. For iCE40HX1K-EVB + 32u4 the simplest way is probably to modify the arduino sketch so it only forwards the bytes when CDONE is high though there are several other ways a signal could be sent via hardware or software to achieve the same effect.
 
   ```
   $ cd 00_HACK

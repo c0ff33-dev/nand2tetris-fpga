@@ -144,8 +144,6 @@ D;JNE // loop if busy
 // Check result and HALT
 @DEBUG0
 D=M // read accumulated result
-@UART_TX
-M=D // send debug result for good measure
 
 @200 // expected (0xC8)
 D=D-A // D = result - expected

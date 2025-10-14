@@ -31,7 +31,7 @@ always #0.5 CLK = ~CLK; // 100 MHz
 reg [9:0] uart = 10'b1111111111;
 reg [15:0] baudrate = 0;
 always @(posedge CLK)
-	baudrate <= (baudrate==866)?0:baudrate+1;
+	baudrate <= (baudrate==864)?0:baudrate+1;
 always @(posedge CLK)
 	if (baudrate==0) uart <= {1'b1,uart[9:1]};
 assign RX = uart[0];

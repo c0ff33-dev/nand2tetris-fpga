@@ -21,17 +21,13 @@ The special function register `SPI`  memory mapped to address 4100 enables HACK 
 
 When load=1 and in[8]=0 transmission of byte in[7:0] is initiated. CSX goes low (and stays low even when transmission is completed). The byte is send to SDO bitwise together with 8 clock signals on SCK. At the same time the SPI receives a byte at SDI. During transmission out[15] is 1. After 16 clock cycles the transmission of one byte is completed. out[15] goes low and SPI outputs the received byte to out[7:0].
 
-FIXME: W25Q16BV transmission takes 8 cycles, not 16 and supports up to 50 MHz read?
-
 When load=1 and in[8]=1 CSX goes high without transmission of any bit.
 
-**Attention:** In W25Q16BV sampling of SDO is done at rising edge of SCK and shifting is done at falling edge of SCK.
+**Attention:** Sampling of SDO is done at rising edge of SCK and shifting is done at falling edge of SCK.
 
 ### Proposed Implementation
 
 Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` to count from 0 to 15. Finally we need a `BitShift8L`. This will be loaded with the byte in[7:0] to be send.  Another `Bit` will sample the SDI wire when SCK=0 and shift the stored bit into the `BitShift8L` when SCK=1. After 8 bits are transmitted the module clears out[15] and outputs the received byte to out[7:0].
-
-// FIXME: ^ This seems inverted from every other description where data is sampled on SCK high and shifted on SCK low.
 
 ![](SPI.png)
 
@@ -54,7 +50,7 @@ According to the datasheet of spi flash rom chip W25Q16BV the commands needed to
 | ------------------- | ---------------------------------------------------------------------- |
 | 0xAB                | wake up from deep power down (wait 3μs) before launching next command. |
 | 0x03 0x04 0x00 0x00 | read data (command 0x03) starting at address 0x040000 (256k)           |
-| 0xB9                | enter deep power down mode                                                  |
+| 0xB9                | enter deep power down mode (wait 3μs)                                  |
 
 ### SPI in real hardware
 
