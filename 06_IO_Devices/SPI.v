@@ -26,7 +26,6 @@ module SPI(
 	output CSX, // chip select not (active low)
 	output SDO, // serial data out (MOSI)
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
-	// output [1:0] debug // FIXME: debug
 );
 	reg miso;
 	wire csx, busy, reset;
@@ -64,12 +63,13 @@ module SPI(
 		.out(clkCount)
 	);
 
-	assign reset = (clkCount == 16'd15); // TODO: shouldn't this reset after 8 clock cycles?
+	// TODO: W25Q16BV only needs 8 cycles and supports up to 50 MHz read, why is SCK half speed? (reset + clkCount[0])
+	assign reset = (clkCount == 16'd15);
 
 	// miso = SDI in [t+1]
 	// clk domain in spi_tb
 	always @(posedge clk)
-		miso <= SDI;
+		miso <= SDI; // FIXME: weird sample timing
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
@@ -93,17 +93,9 @@ module SPI(
 		end
 	end
 
-	// reg led = 0;
-	// always @(posedge clk) // hits both sides of SCK
-	// 	if (CDONE & !led)
-	// 		led <= {1'b0, SDI};
-	// assign debug = led; // FIXME: debugging
-
-	// spi_tb requires SDO to transmit from the preceding SCK low which looks a bit strange but shouldn't effect sampling
-	// FIXME: hack_tb SDI waveform looks a bit funky as well and is shifting on SCK posedge not negedge
 	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
 	assign SDO = shift[7]; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed // TODO: why half speed?
+	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed
 	assign out = {busy,7'd0,shift}; // out[15]=busy, out[7:0]=received byte
 
 endmodule

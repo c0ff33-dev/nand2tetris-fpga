@@ -125,7 +125,7 @@ module HACK(
 		.load(loadIO0),
 		.out(outLED) // 16 bit output going back to memory
 	);
-	assign LED = outLED[1:0]; // 2 bit output (pin) // FIXME: debugging
+	assign LED = outLED[1:0]; // 2 bit output (pin)
 
 	// BUT (4097)
 	Register but(
@@ -172,7 +172,6 @@ module HACK(
 		.SCK(SPI_SCK), // serial clock
 		.CSX(SPI_CSX), // chip select not (active low)
 		.SDO(SPI_SDO) // serial data out (MOSI)
-		// .debug(LED) // FIXME: debugging
 	);
 
 	// additional registers
