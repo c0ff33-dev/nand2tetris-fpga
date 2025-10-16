@@ -10,7 +10,7 @@
 module ROM(
     input clk,
     input [15:0] pc,
-    output [15:0] instruction
+    output reg [15:0] instruction
 );
 
 	// No need to implement this chip
@@ -24,12 +24,12 @@ module ROM(
 	reg [15:0] mem [0:255];
 	
 	// new: synchronous read
-    // always @(negedge clk) begin
-    //     instruction <= mem[pc[7:0]];
-    // end
+    always @(negedge clk) begin
+        instruction <= mem[pc[7:0]];
+    end
 
 	// original: asyncronous read
-	assign instruction = mem[pc[7:0]];
+	// assign instruction = mem[pc[7:0]];
 	
 	// init BRAM with values read in from ROMFILE at build time
 	initial begin

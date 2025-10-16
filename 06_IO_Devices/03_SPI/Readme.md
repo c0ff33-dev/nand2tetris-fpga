@@ -19,7 +19,7 @@ The special function register `SPI`  memory mapped to address 4100 enables HACK 
 | OUT    | SCK      | serial clock                                        |
 | IN     | SDI      | serial data in                                      |
 
-When load=1 and in[8]=0 transmission of byte in[7:0] is initiated. CSX goes low (and stays low even when transmission is completed). The byte is send to SDO bitwise together with 8 clock signals on SCK. At the same time the SPI receives a byte at SDI. During transmission out[15] is 1. After 16 clock cycles the transmission of one byte is completed. out[15] goes low and SPI outputs the received byte to out[7:0].
+When load=1 and in[8]=0 transmission of byte in[7:0] is initiated. CSX goes low (and stays low even when transmission is completed). The byte is send to SDO bitwise together with 8 clock signals on SCK. At the same time the SPI receives a byte at SDI. During transmission out[15] is 1. After 8 clock cycles the transmission of one byte is completed. out[15] goes low and SPI outputs the received byte to out[7:0].
 
 When load=1 and in[8]=1 CSX goes high without transmission of any bit.
 

@@ -1,5 +1,5 @@
 /**
- * SPI controller for W25Q16BV
+ * SPI controller for W25Q16BV (flash ROM)
  * 
  * When load=1 transmission of byte in[7:0] is initiated. The byte is sent to
  * MOSI (master out slave in) bitwise together with 8 clock signals on SCK.
@@ -8,8 +8,8 @@
  * negative edge.
  * 
  * For W25Q16BV the command & address bytes are latched on posedge of SCK
- * but CSX must be driven low before the first SCK posedge. The data returned
- * by the command is shifted to MISO on the negedge of SCK and increments
+ * but CSX must be driven low at least 5ns before the first SCK posedge. The data 
+ * returned by the command is shifted to MISO on the negedge of SCK and increments
  * address automatically on the completion of each byte until CSX is driven high.
  * 
  * https://en.wikipedia.org/wiki/Serial_Peripheral_Interface
@@ -27,9 +27,9 @@ module SPI(
 	output SDO, // serial data out (MOSI)
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
 );
-	reg miso;
+	reg miso = 0;
 	wire csx, busy, reset;
-	wire [7:0] shift;
+	wire [7:0] shiftOut;
 	wire [15:0] clkCount;
 	
 	// if in[8=0] and load=1 then csx=0 (send byte)
@@ -53,7 +53,7 @@ module SPI(
 	);
 
 	// increment SCK while busy
-	// 1 cycle to set load, 16 clk (8 SCK) cycles to shift 8 bits
+	// 1 cycle to set load, 8 cycles to shift 8 bits
 	PC count(
 		.clk(clk),
 		.in(16'd0), // unused
@@ -62,27 +62,28 @@ module SPI(
 		.reset(reset), // cycle 0 to max clkCount
 		.out(clkCount)
 	);
+	assign reset = (clkCount == 16'd7);
 
-	// TODO: W25Q16BV only needs 8 cycles and supports up to 50 MHz read, why is SCK half speed? (reset + clkCount[0])
-	assign reset = (clkCount == 16'd15);
+	// MISO = SDI in [t+1]
+	// sample on posedge SCK
+	always @(posedge SCK)
+		miso <= SDI;
 
-	// miso = SDI in [t+1]
-	// clk domain in spi_tb
-	always @(posedge clk)
-		miso <= SDI; // FIXME: weird sample timing
+	// this timing is very sensitive at 8 cycles/byte
+	// in practice as long as SDO has the right bit
+	// before SCK rising edge it should work out
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
-	// init=0 before initial load
-	// shift on SCK falling edge (not clk which is 2x faster)
+	// init=0 before load, no shift on first cycle
 	BitShift8L shiftreg (
 		.clk(clk), // needs to be on clk domain for load
-		.in(init ? in[7:0] : 8'd0), // init on load
+		.in(init ? in[7:0] : 8'd0), // init on load (combinational input from CPU)
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB while sampling
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(SCK & clkCount[0]), // prime SCK posedge so it shifts on SCK negedge
-		.out(shift)
+		.shift(SCK & busy), // shift MISO from [t-1] through in [t+1]
+		.out(shiftOut) // input value latched on rising edge, shifted out on falling edge
 	);
 
 	// generic init handler, should work with ice40 + yosys
@@ -93,9 +94,9 @@ module SPI(
 		end
 	end
 
-	assign CSX = (init & CDONE) ? csx : 1'b1; // init CSX=1 as well
-	assign SDO = shift[7]; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? (busy & clkCount[0]) : 1'b0; // run SCK while busy, half speed
-	assign out = {busy,7'd0,shift}; // out[15]=busy, out[7:0]=received byte
+	assign CSX = (init & CDONE) ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
+	assign SDO = shiftOut[7] & busy; // MOSI (masterMSB to slaveLSB)
+	assign SCK = init ? (busy & ~clk) : 1'b0; // run SCK while busy, start low
+	assign out = {busy,7'd0,shiftOut}; // out[15]=busy, out[7:0]=received byte
 
 endmodule

@@ -71,17 +71,47 @@ module HACK_tb();
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI
-	reg spi_sleep=1;
+	reg spi_sleep=1; // SDI is floating (z) when sleep enabled
 	reg [31:0] spi_cmd=0;
 	reg [95:0] spi=0; // 96 = size of largest value in tests
 	assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95];
-	always @(posedge (SPI_SCK))
-		spi <= {spi[95:0],1'b0}; // BitShift8L
-	always @(posedge (SPI_SCK))
-		spi_cmd <= {spi_cmd[30:0],SPI_SDO};
-	always @(negedge (SPI_CSX))
+	
+	// simulate the SPI busy signal
+	reg [2:0] busyCount=0;
+	reg reset=0;
+	reg init=1;
+	wire busy;
+	assign busy = ~init;
+	always @(posedge CLK) // override init state
+		if (n<10) begin
+			busyCount <= 0; 
+			init <= 1;
+		end
+	always @(negedge (SPI_SCK)) begin
+		if (init==1) begin
+			init <= 0; // don't inc
+			busyCount <= busyCount + 3'd1;
+		end
+		else if (busyCount==3'd7) begin
+			init <= 1;
+			busyCount <= 0;
+		end
+		else
+			busyCount <= busyCount + 3'd1;
+	end
+	
+	always @(posedge (SPI_SCK)) begin
+		if (busy|busyCount==0) begin
+			spi <= {spi[95:0],1'b0}; // << 1 (BitShift8L(1))
+			spi_cmd <= {spi_cmd[30:0],SPI_SDO}; // inject LSB (BitShift8L(2))
+		end
+	end
+
+	// simulate the slave SPI buffer
+	always @(posedge (SPI_CSX))
 		spi_cmd <= 0;
 	always @(spi_cmd) begin
+		// should match after last SCK update is read in
 		if (spi_cmd==32'h000000AB) spi_sleep <= 0; // wake
 		if (spi_cmd==32'h000000B9) spi_sleep <= 1; // sleep
 		if (spi_cmd==32'h03040000) spi <= {"SPI! 123", 32'd0}; // pad to the right so there aren't leading zeroes
@@ -118,7 +148,7 @@ module HACK_tb();
 		$display("------------------------");
 		$display("Testbench: Hack");
 
-		#45000
+		#45000 // 45000
 		$finish;
 	end
 
