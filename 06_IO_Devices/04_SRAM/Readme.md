@@ -10,7 +10,7 @@ The evaluation board iCE40HX1K-EVB includes an 512KB static ram chip K6R4016V1D.
 
 To read and write to the SRAM chip we will add two special function register to HACK:
 
-1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_ADDR controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
+1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_A controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
 
 2. SRAM_D is a special function register mapped at memory location 4103. SRAM_D controls the bidirectional data bus and the control wires CSX, OEX and WEX.
 
@@ -49,7 +49,7 @@ SRAM_CSX can be set to low all the time.
 
 ### Proposed Implementation ADDR_A
 
-Use a `Register` to store the lower 16 bit of SRAM_ADDR (The two most significant bits are hardwired to 0).
+Use a `Register` to store the lower 16 bit of SRAM_A (The two most significant bits are hardwired to 0).
 
 ### Proposed Implementation ADDR_D
 
@@ -61,8 +61,8 @@ The special function register `SRAM_A` and `SRAM_D`  are mapped to memory map of
 
 | address | I/O device | R/W | function                       |
 | ------- | ---------- | --- | ------------------------------ |
-| 4102    | SRAM_A     | R   | return SRAM_ADDR value [15:0]  |
-| 4102    | SRAM_A     | W   | update SRAM_ADDR value [15:0]  |
+| 4102    | SRAM_A     | R   | return SRAM_A value [15:0]     |
+| 4102    | SRAM_A     | W   | update SRAM_A value [15:0]     |
 | 4103    | SRAM_D     | R   | read data from SRAM            |
 | 4103    | SRAM_D     | W   | initiate a write cycle to SRAM |
 

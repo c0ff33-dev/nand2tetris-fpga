@@ -9,9 +9,9 @@ Build the following special function register to connect HACK to I/O-devices: `U
 | 4098    | UART_TX   | transmit byte to UART with 115200 baud 8N1         |
 | 4099    | UART_RX   | receive byte from UART with 115200 baud 8N1        |
 | 4100    | SPI       | read/write spi flash memory chip                   |
-| 4101    | SRAM_ADDR | address of external SRAM chip                      |
-| 4102    | SRAM_DATA | read/write data from/to external SRAM chip         |
-| 4103    | GO        | Start execution of instructions from external SRAM |
+| 4101    | GO        | Start execution of instructions from external SRAM |
+| 4102    | SRAM_A    | address of external SRAM chip                      |
+| 4103    | SRAM_D    | read/write data from/to external SRAM chip         |
 | 4104    | LCD8      | write 8bit command/data to LCD screen              |
 | 4105    | LCD16     | write 16bit data to LCD screen                     |
 | 4106    | RTP       | read/write byte from/to resistive touch panel      |
