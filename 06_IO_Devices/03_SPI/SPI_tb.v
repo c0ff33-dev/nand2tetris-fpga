@@ -44,7 +44,7 @@ module SPI_tb();
 
 	// Compare
 	reg[4:0] bits=0;
-	always @(posedge clk)
+	always @(negedge clk) // counter
 		// if load & in[8]=0 bits=1 (new byte)
 		// else if bits=8 reset, else if busy bits++ else bits=0
 		bits <= (load&~in[8])?1:((bits==8)?0:(busy?bits+1:0));
@@ -54,9 +54,9 @@ module SPI_tb();
 	reg miso_s;
 	always @(posedge SCK)
 		miso_s <= SDI;
-	always @(posedge clk)
-		shift <= load?in[7:0]:((busy&SCK_cmp)?{shift[6:0],miso_s}:shift);
-	wire SCK_cmp=busy&~clk;
+	always @(negedge clk)
+		shift <= load?in[7:0]:((busy&~clk)?{shift[6:0],miso_s}:shift);
+	wire SCK_cmp=busy&clk;
 	reg CSX_cmp=1;
 	always @(posedge clk) begin
 		if (trigger)

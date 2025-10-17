@@ -1,23 +1,22 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Oct 16 07:31:36 2025
+[*] Fri Oct 17 04:48:35 2025
 [*]
 [dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.vcd"
-[dumpfile_mtime] "Thu Oct 16 07:31:00 2025"
-[dumpfile_size] 1126595
+[dumpfile_mtime] "Fri Oct 17 04:44:41 2025"
+[dumpfile_size] 25024915
 [savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.gtkw"
-[timestart] 14590000
-[size] 1920 963
-[pos] 2852 241
-*-21.246302 20340000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[timestart] 20137400
+[size] 1278 1360
+[pos] 1281 35
+*-16.809891 20249900 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
-[treeopen] HACK_tb.HACK.debug1.
 [treeopen] HACK_tb.HACK.spi.
 [sst_width] 281
 [signals_width] 180
 [sst_expanded] 1
-[sst_vpaned_height] 259
+[sst_vpaned_height] 389
 @200
 -GPIO
 @28
@@ -34,18 +33,19 @@ HACK_tb.UART_RX
 HACK_tb.SPI_CSX
 HACK_tb.SPI_SDI
 HACK_tb.SPI_SDO
-HACK_tb.init
-HACK_tb.busy
-@29
-HACK_tb.busyCount[2:0]
-@22
+@23
 HACK_tb.HACK.spi.clkCount[15:0]
 @28
 HACK_tb.SPI_SCK
 HACK_tb.HACK.clock.clk
 HACK_tb.spi_sleep
+HACK_tb.HACK.spi.busy
+HACK_tb.HACK.spi.start
 HACK_tb.HACK.spi.shiftreg.load
 @22
+HACK_tb.HACK.spi.in[15:0]
+HACK_tb.HACK.spi.shiftOut[7:0]
+HACK_tb.HACK.spi.out[15:0]
 HACK_tb.spi[95:0]
 HACK_tb.spi_cmd[31:0]
 @200

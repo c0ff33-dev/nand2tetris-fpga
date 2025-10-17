@@ -16,7 +16,7 @@ module BitShift8L(
 );
 
 	// See SPI for timing explanation
-	always @(posedge clk) begin
+	always @(negedge clk) begin
 		if (load)
 			out <= in;
 		else if (shift)

@@ -31,8 +31,8 @@ module SPI(
 	wire csx, busy, reset;
 	wire [7:0] shiftOut;
 	wire [15:0] clkCount;
-	
-	// if in[8=0] and load=1 then csx=0 (send byte)
+
+	// if in[8=0] and load=1 then csx=0 (drive CSX low, send byte)
 	// if in[8=1] and load=1 then csx=1 (drive CSX high without sending byte)
 	// init csx=1 to block any premture transactions
 	// csx remains unchanged in either case until next load
@@ -43,10 +43,14 @@ module SPI(
 		.out(csx)
 	);
 
+	// remaing registers are aligned to leading negedge
+	// so shift can happen first then sample later in same cycle
+	// busy bit is still set at load [t+1]
+
 	// if in[8=0] and load=1 then busy=1 (transmission in progress)
 	// load on new byte or reset when complete
 	Bit busyBit (
-		.clk(clk),
+		.clk(~clk),
 		.in(reset ? 1'b0 : ~in[8]),
 		.load(load | reset),
 		.out(busy)
@@ -55,7 +59,7 @@ module SPI(
 	// increment SCK while busy
 	// 1 cycle to set load, 8 cycles to shift 8 bits
 	PC count(
-		.clk(clk),
+		.clk(~clk),
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
@@ -69,34 +73,30 @@ module SPI(
 	always @(posedge SCK)
 		miso <= SDI;
 
-	// this timing is very sensitive at 8 cycles/byte
-	// in practice as long as SDO has the right bit
-	// before SCK rising edge it should work out
-
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
 	// init=0 before load, no shift on first cycle
 	BitShift8L shiftreg (
-		.clk(clk), // needs to be on clk domain for load
-		.in(init ? in[7:0] : 8'd0), // init on load (combinational input from CPU)
-		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB while sampling
+		.clk(clk), // negedge latch
+		.in(init ? in[7:0] : 8'd0), // init on load
+		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(SCK & busy), // shift MISO from [t-1] through in [t+1]
-		.out(shiftOut) // input value latched on rising edge, shifted out on falling edge
+		.shift(busy), // shift continuously while sampling
+		.out(shiftOut) // availble for sampling by posedge for SDO
 	);
 
 	// generic init handler, should work with ice40 + yosys
 	reg init = 0;
 	always @(posedge clk) begin
-		if (!init) begin
+		if (~init) begin
 			init <= 1;
 		end
 	end
 
 	assign CSX = (init & CDONE) ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
-	assign SDO = shiftOut[7] & busy; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? (busy & ~clk) : 1'b0; // run SCK while busy, start low
-	assign out = {busy,7'd0,shiftOut}; // out[15]=busy, out[7:0]=received byte
+	assign SDO = init ? (busy & shiftOut[7]) : 1'b0; // MOSI (masterMSB to slaveLSB)
+	assign SCK = init ? (busy & clk) : 1'b0; // run SCK while busy, start low
+	assign out = init ? {busy,7'd0,shiftOut} : 1'b0; // out[15]=busy, out[7:0]=received byte
 
 endmodule
