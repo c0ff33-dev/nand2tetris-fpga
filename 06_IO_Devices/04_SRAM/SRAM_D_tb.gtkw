@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed Dec 28 09:52:04 2022
+[*] Fri Oct 17 13:28:08 2025
 [*]
-[dumpfile] "/home/micha/gitlab/nand2tetris-fpga/06_IO_Devices/04_SRAM/SRAM_D_tb.vcd"
-[dumpfile_mtime] "Wed Dec 28 09:50:13 2022"
-[dumpfile_size] 42940
-[savefile] "/home/micha/gitlab/nand2tetris-fpga/06_IO_Devices/04_SRAM/SRAM_D_tb.gtkw"
+[dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/04_SRAM/SRAM_D_tb.vcd"
+[dumpfile_mtime] "Fri Oct 17 13:27:57 2025"
+[dumpfile_size] 11809
+[savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/04_SRAM/SRAM_D_tb.gtkw"
 [timestart] 0
 [size] 1920 963
-[pos] -51 -51
-*-18.000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] -1 -1
+*-17.037764 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [sst_width] 281
 [signals_width] 160
 [sst_expanded] 1
@@ -38,7 +38,7 @@ SRAM_D_tb.WEX_cmp
 SRAM_D_tb.out_cmp[15:0]
 @200
 -Test
-@29
+@28
 SRAM_D_tb.fail
 [pattern_trace] 1
 [pattern_trace] 0

@@ -9,7 +9,8 @@
  * with the computer via the BUT.
  */
 
- // TODO: sync 5/6/7 HACK files
+// TODO: sync 5/6/7 HACK files
+// TODO: remove CDONE implementation
 
 `default_nettype none
 module HACK( 
@@ -23,7 +24,7 @@ module HACK(
 	input  SPI_SDI,			// SPI data in
 	output SPI_SCK,			// SPI serial clock
 	output SPI_CSX,			// SPI chip select not
-	output [17:0] SRAM_ADDR,// SRAM address 18 Bit = 256K
+	output [17:0] SRAM_ADDR,// SRAM address 18 Bit = 256KB (64KB addressable)
 	inout [15:0] SRAM_DATA,	// SRAM data 16 Bit
 	output SRAM_WEX,		// SRAM write_enable_not
 	output SRAM_OEX,		// SRAM output_enable_not
@@ -38,8 +39,8 @@ module HACK(
 );
 
 	wire clk,writeM,loadRAM,RST,resLoad;
-	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
@@ -61,7 +62,7 @@ module HACK(
 		.pc(pc)
 	);
 
-	// Memory (map only)
+	// Memory (map + combinational routing only)
 	Memory mem(
 		.address(addressM),
 		.load(writeM),
@@ -72,8 +73,8 @@ module HACK(
 		.inIO3(inIO3),  // UART_RX (4099)
 		.inIO4(inIO4),  // SPI (4100)
 		.inIO5(resIn),  // reserved (undefined)
-		.inIO6(inIO5),  // SRAM_ADDR (4102)
-		.inIO7(inIO6),  // SRAM_ADDR (4103)
+		.inIO6(inIO6),  // SRAM_ADDR (4102)
+		.inIO7(inIO7),  // SRAM_DATA (4103)
 		.inIO8(resIn),  // reserved (undefined)
 		.inIO9(resIn),  // reserved (undefined)
 		.inIOA(resIn),  // reserved (undefined)
@@ -90,8 +91,8 @@ module HACK(
 		.loadIO3(loadIO3), // UART_RX (4099)
 		.loadIO4(loadIO4), // SPI (4100)
 		.loadIO5(resLoad), // reserved (undefined)
-		.loadIO6(loadIO5), // SRAM_ADDR (4102)
-		.loadIO7(loadIO6), // SRAM_ADDR (4103)
+		.loadIO6(loadIO6), // SRAM_ADDR (4102)
+		.loadIO7(loadIO7), // SRAM_DATA (4103)
 		.loadIO8(resLoad), // reserved (undefined)
 		.loadIO9(resLoad), // reserved (undefined)
 		.loadIOA(resLoad), // reserved (undefined)
@@ -102,14 +103,14 @@ module HACK(
 		.loadIOF(loadIOF)  // DEBUG4 (4111)
 	);
 
-	// ROM (BRAM buffer), 256 x 16 bit words
+	// ROM (BRAM buffer), 256 x 16 bit words (512 bytes)
 	ROM rom(
 		.clk(clk),
 		.pc(pc),
 		.instruction(instruction)
 	);
 
-	// BRAM (0-3839 x 16 bit words)
+	// BRAM (0-3839), 3840 x 16 bit words (7KB) 
 	RAM3840 ram(
 		.clk(clk),
 		.address(addressM[11:0]),
@@ -118,7 +119,7 @@ module HACK(
 		.out(outRAM)
 	);
 
-	// LED (4096)
+	// LED 1/2 (4096), sharing 1 x 2 bit register
 	Register led(
 		.clk(clk),
 		.in(outM),
@@ -127,15 +128,15 @@ module HACK(
 	);
 	assign LED = outLED[1:0]; // 2 bit output (pin)
 
-	// BUT (4097)
+	// BUT 1/2 (4097), sharing 1 x 2 bit register
 	Register but(
 		.clk(clk),
-		.in({14'd0, BUT}), // concat 14 bits for padding
+		.in({14'd0, BUT}),
 		.load(1'b1),
 		.out(inIO1) // memory map
 	);
 
-	// UART_TX (4098)
+	// UART_TX (4098) @ 115200 baud (~14KB/sec)
 	// R: busy signal, [15]=1 busy, [15]=0 ready
 	// W: send byte
 	UartTX uartTX(
@@ -147,7 +148,7 @@ module HACK(
 		.out(inIO2) // memory map
 	);
 
-	// UART_RX (4099)
+	// UART_RX (4099) @ 115200 baud (~14KB/sec)
 	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
 	// W: 1 = clear data register
 	UartRX uartRX(
@@ -158,7 +159,7 @@ module HACK(
 		.out(inIO3) // memory map 
 	);
 
-	// SPI interface for W25Q16BV w/ 2MB flash (4100)
+	// SPI interface for W25Q16BV (4100) w/ 2MB flash 
 	// R: out[15]=1 if busy, out[7:0] received byte
 	// W: command byte outM[7:0] +
 	// W: outM[8]=1 pull CSX high (no send), outM[8]=0 send (CSX=0)
@@ -174,14 +175,32 @@ module HACK(
 		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
 
-	// SRAM_ADDR: address register for K6R4016V1D
-	// lower 16 bits of SRAM_ADDR ([17:16]=0)
+	// TODO: GO (4101), inIO5/loadIO5
+	// TODO: document latency for SRAM
+
+	// SRAM_ADDR: 16 bit address register for K6R4016V1D w/ 64KB (addressable)
+	// W: update address
+	// R: return stored address
 	Register sram_addr (
         .clk(clk),
-        .in(outM),
-        .load(loadIO5),
-        .out(inIO5)
+        .load(loadIO6),
+		.in(outM), // SRAM_ADDR (least significant 16 bits of 18)
+        .out(inIO6) // return SRAM_ADDR
     );
+
+	// SRAM_DATA: 16 bit data register for K6R4016V1 Dw/ 64KB (addressable)
+	// W: send data to SRAM_ADDR address
+	// R: read data from SRAM_ADDR address
+	SRAM_D sram_data (
+		.clk(clk),
+		.load(loadIO7), // 1=write enabled, else read enabled
+        .in(outM), // input data (ignored on read)
+		.out(inIO7), // output data (ignored on write)
+		.DATA(SRAM_DATA), // data line // FIXME: undefined in tb?
+		.CSX(SRAM_CSX), // chip select not
+		.OEX(SRAM_OEX), // output enable not
+		.WEX(SRAM_WEX)  // write enable not
+	);
 
 	// additional registers
 	// DEBUG0 (4107)

@@ -61,9 +61,10 @@ The special function register `SRAM_A` and `SRAM_D`  are mapped to memory map of
 
 | address | I/O device | R/W | function                       |
 | ------- | ---------- | --- | ------------------------------ |
-| 4102    | SRAM_A     | R   | address of SRAM                |
+| 4102    | SRAM_A     | R   | return SRAM_ADDR value [15:0]  |
+| 4102    | SRAM_A     | W   | update SRAM_ADDR value [15:0]  |
 | 4103    | SRAM_D     | R   | read data from SRAM            |
-| 4103    | SRAM_D     | W   | initiate a write cylce to SRAM |
+| 4103    | SRAM_D     | W   | initiate a write cycle to SRAM |
 
 ### buffer.asm
 
