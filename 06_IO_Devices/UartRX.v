@@ -88,6 +88,7 @@ module UartRX(
 	BitShift9R shift(
 		.clk(clk),
 		.in(9'b111111111), // init
+		// TODO: use a DFF when screening raw input wires
 		.inMSB(RX), // load rx bit into MSB when sampled
 		.load(start), // init
 		.shift(is108), // sample at midpoint & shift right

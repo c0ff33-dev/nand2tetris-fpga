@@ -38,8 +38,8 @@ module HACK(
 );
 
 	wire clk,writeM,loadRAM,RST,resLoad;
-	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
@@ -72,8 +72,8 @@ module HACK(
 		.inIO3(inIO3),  // UART_RX (4099)
 		.inIO4(inIO4),  // SPI (4100)
 		.inIO5(resIn),  // reserved (undefined)
-		.inIO6(resIn),  // reserved (undefined)
-		.inIO7(resIn),  // reserved (undefined)
+		.inIO6(inIO5),  // SRAM_ADDR (4102)
+		.inIO7(inIO6),  // SRAM_ADDR (4103)
 		.inIO8(resIn),  // reserved (undefined)
 		.inIO9(resIn),  // reserved (undefined)
 		.inIOA(resIn),  // reserved (undefined)
@@ -90,8 +90,8 @@ module HACK(
 		.loadIO3(loadIO3), // UART_RX (4099)
 		.loadIO4(loadIO4), // SPI (4100)
 		.loadIO5(resLoad), // reserved (undefined)
-		.loadIO6(resLoad), // reserved (undefined)
-		.loadIO7(resLoad), // reserved (undefined)
+		.loadIO6(loadIO5), // SRAM_ADDR (4102)
+		.loadIO7(loadIO6), // SRAM_ADDR (4103)
 		.loadIO8(resLoad), // reserved (undefined)
 		.loadIO9(resLoad), // reserved (undefined)
 		.loadIOA(resLoad), // reserved (undefined)
@@ -173,6 +173,15 @@ module HACK(
 		.CSX(SPI_CSX), // chip select not (active low)
 		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
+
+	// SRAM_ADDR: address register for K6R4016V1D
+	// lower 16 bits of SRAM_ADDR ([17:16]=0)
+	Register sram_addr (
+        .clk(clk),
+        .in(outM),
+        .load(loadIO5),
+        .out(inIO5)
+    );
 
 	// additional registers
 	// DEBUG0 (4107)

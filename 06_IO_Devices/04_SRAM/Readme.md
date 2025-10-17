@@ -1,6 +1,6 @@
 ## 04 SRAM
 
-The evaluation board iCE40HX1K-EVB includes an 512kbyte static ram chip K6R4016V1D. The SRAM chip connects to iCE40HX1K with 37 wires;
+The evaluation board iCE40HX1K-EVB includes an 512KB static ram chip K6R4016V1D. The SRAM chip connects to iCE40HX1K with 37 wires;
 
 - SRAM_ADDR 18 bit
 - SRAM_DATA 16 bit (bidiretional inout)
@@ -10,9 +10,9 @@ The evaluation board iCE40HX1K-EVB includes an 512kbyte static ram chip K6R4016V
 
 To read and write to the SRAM chip we will add two special function register to HACK:
 
-1. SRAM_A is a 16 bit register mapped at memory location 4104. SRAM_ADDR controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access  64k x 16 bit words of SRAM chip.
+1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_ADDR controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
 
-2. SRAM_D is a special function register mapped at memory location 4105. SRAM_D controls the bidirectional data bus and the control wires CSX, OEX and WEX.
+2. SRAM_D is a special function register mapped at memory location 4103. SRAM_D controls the bidirectional data bus and the control wires CSX, OEX and WEX.
 
 **Note:** the 16 bit data bus is bidirectional and has therefore to be connected over a tristate buffer. This is done with `InOut.v` which is considered primitive and must not be implemented.
 
@@ -61,9 +61,9 @@ The special function register `SRAM_A` and `SRAM_D`  are mapped to memory map of
 
 | address | I/O device | R/W | function                       |
 | ------- | ---------- | --- | ------------------------------ |
-| 4101    | SRAM_A     | R   | address of SRAM                |
-| 4102    | SRAM_D     | R   | read data from SRAM            |
-| 4102    | SRAM_D     | W   | initiate a write cylce to SRAM |
+| 4102    | SRAM_A     | R   | address of SRAM                |
+| 4103    | SRAM_D     | R   | read data from SRAM            |
+| 4103    | SRAM_D     | W   | initiate a write cylce to SRAM |
 
 ### buffer.asm
 
@@ -71,7 +71,7 @@ To test HACK with SRAM we need a little machine language programm `buffer.asm`, 
 
 ### SRAM in real hardware
 
-The board iCE40HX1K-EVB comes with a static ram chip K6R4016V1D. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf).
+The board iCE40HX1K-EVB comes with a static ram chip K6R4016V1D. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf)).
 
 ```
 set_io SRAM_ADDR[0] 79 # SA0
