@@ -9,9 +9,13 @@
 //
 // SRAM_A = SRAM address register, updates in [t+1]
 // SRAM_D = SRAM data register, updates in [t+1], persists last result from [t+1]
+//
+// R0=jmp address for SPI loops
+// R1-4=SPI (ROM) bytes, R5-8=SRAM bytes
+// DEBUG0=checksum, DEBUG1-2=SPI/SRAM bytes
 
 // ====================================
-// send command bytes
+// SPI: send command bytes
 // ====================================
 
 @171 // send command (0xAB=wake)
@@ -136,7 +140,7 @@ M=D // R0=read
 0;JMP // wait for current byte to send
 
 // ====================================
-// read bytes
+// SPI: read bytes
 // ====================================
 
 (read) // send dummy byte to keep SCK rolling
@@ -159,8 +163,27 @@ M=D // R0=read0
 @SPI // read emitted byte (char)
 D=M
 
+// ~~~~~~~~~~~~~~~~TODO~~~~~~~~~~~~~~~~
+@R1 // save SPI char
+M=D
 @DEBUG1
-M=D // emit char
+M=D // emit SPI char to DEBUG1
+
+@100 // start at SRAM_ADDR=0x64
+D=A
+@SRAM_A // write SRAM_A 
+M=D
+@DEBUG2
+M=D
+
+@R1
+D=M // restore SPI char
+@SRAM_D // write char to SRAM
+M=D
+D=M // read char back from SRAM
+@DEBUG3
+M=D // emit to DEBUG3
+// ~~~~~~~~~~~~~~~~TODO~~~~~~~~~~~~~~~~
 
 @UART_TX
 M=D // transmit byte
@@ -265,7 +288,7 @@ D=M // check if ready
 D;JNE // loop if busy
 
 // ====================================
-// close the transaction
+// SPI: close the transaction
 // ====================================
 
 @256 // send 0x100 (CSX=1) to end the read
@@ -293,6 +316,10 @@ M=D
 @DEBUG0
 M=D+M // accumulate
 
+// ====================================
+// SPI: error checking
+// ====================================
+
 // Check result and HALT
 @DEBUG0
 D=M // read accumulated result
@@ -316,7 +343,9 @@ D=A // D=2
 @LED
 M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
-// ------------------------------------
+// ====================================
+// end
+// ====================================
 
 (HALT)
 @HALT
