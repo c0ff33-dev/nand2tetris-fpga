@@ -17,9 +17,9 @@ To test input and output capability of HACK we will write an endless loop, in wh
 | UART_TX         | 4098        | send byte over UART                      |
 | UART_RX         | 4099        | receive byte from UART                   |
 | SPI             | 4100        | read/write to SPI flash rom              |
-| GO              | 4101        | switch from BOOT to RUN                  |
-| SRAM_A          | 4102        | address of SRAM chip for next read/write |
-| SRAM_D          | 4103        | read/write data from/to SRAM chip        |
+| SRAM_A          | 4101        | address of SRAM chip for next read/write |
+| SRAM_D          | 4102        | read/write data from/to SRAM chip        |
+| GO              | 4103        | switch from BOOT to RUN                  |
 | LCD8            | 4104        | write 8bit to LCD                        |
 | LCD16           | 4105        | write 16bit to LCD                       |
 | RTP             | 4106        | read/write 8bit to RTP                   |

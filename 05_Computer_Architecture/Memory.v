@@ -24,9 +24,9 @@ module Memory(
 	input [15:0] inIO2, // UART_TX (4098)
 	input [15:0] inIO3, // UART_RX (4099)
 	input [15:0] inIO4, // SPI (4100)
-	input [15:0] inIO5, // reserved [15:0]
-	input [15:0] inIO6, // SRAM_A (4102)
-	input [15:0] inIO7, // SRAM_D (4103)
+	input [15:0] inIO5, // SRAM_A (4101)
+	input [15:0] inIO6, // SRAM_D (4102)
+	input [15:0] inIO7, // reserved [15:0]
 	input [15:0] inIO8, // reserved [15:0]
 	input [15:0] inIO9, // reserved [15:0]
 	input [15:0] inIOA, // reserved [15:0]
@@ -42,9 +42,9 @@ module Memory(
 	output loadIO2, // UART_TX (4098)
 	output loadIO3, // UART_RX (4099)
 	output loadIO4, // SPI (4100)
-	output loadIO5, // reserved [15:0]
-	output loadIO6, // SRAM_A (4102)
-	output loadIO7, // SRAM_D (4103)
+	output loadIO5, // SRAM_A (4101)
+	output loadIO6, // SRAM_D (4102)
+	output loadIO7, // reserved [15:0]
 	output loadIO8, // reserved [15:0]
 	output loadIO9, // reserved [15:0]
 	output loadIOA, // reserved [15:0]

@@ -72,9 +72,9 @@ module HACK(
 		.inIO2(inIO2),  // UART_TX (4098)
 		.inIO3(inIO3),  // UART_RX (4099)
 		.inIO4(inIO4),  // SPI (4100)
-		.inIO5(resIn),  // reserved (undefined)
-		.inIO6(inIO6),  // SRAM_A (4102)
-		.inIO7(inIO7),  // SRAM_D (4103)
+		.inIO5(inIO5),  // SRAM_A (4101)
+		.inIO6(inIO6),  // SRAM_D (4102)
+		.inIO7(inIO7),  // reserved (undefined)
 		.inIO8(resIn),  // reserved (undefined)
 		.inIO9(resIn),  // reserved (undefined)
 		.inIOA(resIn),  // reserved (undefined)
@@ -90,9 +90,9 @@ module HACK(
 		.loadIO2(loadIO2), // UART_TX (4098)
 		.loadIO3(loadIO3), // UART_RX (4099)
 		.loadIO4(loadIO4), // SPI (4100)
-		.loadIO5(resLoad), // reserved (undefined)
-		.loadIO6(loadIO6), // SRAM_A (4102)
-		.loadIO7(loadIO7), // SRAM_D (4103)
+		.loadIO5(loadIO5), // SRAM_A (4101)
+		.loadIO6(loadIO6), // SRAM_D (4102)
+		.loadIO7(loadIO7), // reserved (undefined)
 		.loadIO8(resLoad), // reserved (undefined)
 		.loadIO9(resLoad), // reserved (undefined)
 		.loadIOA(resLoad), // reserved (undefined)
@@ -175,17 +175,14 @@ module HACK(
 		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
 
-	// TODO: GO (4101), inIO5/loadIO5
-	// TODO: document latency for SRAM
-
 	// SRAM_A: 16 bit address register for K6R4016V1D w/ 64KB (addressable)
 	// W: update address
 	// R: return stored address
 	Register sram_addr (
         .clk(clk),
-        .load(loadIO6),
+        .load(loadIO5),
 		.in(outM), // SRAM_A (least significant 16 bits of 18)
-        .out(inIO6) // return SRAM_A
+        .out(inIO5) // return SRAM_A
     );
 
 	// SRAM_D: 16 bit data register for K6R4016V1 Dw/ 64KB (addressable)
@@ -193,9 +190,9 @@ module HACK(
 	// R: read data from SRAM[SRAM_A]
 	SRAM_D sram_data (
 		.clk(clk),
-		.load(loadIO7), // 1=write enabled, else read enabled
+		.load(loadIO6), // 1=write enabled, else read enabled
         .in(outM), // input data (ignored on read)
-		.out(inIO7), // output data (ignored on write)
+		.out(inIO6), // output data (ignored on write)
 		.DATA(SRAM_DATA), // data line // FIXME: undefined in tb?
 		.CSX(SRAM_CSX), // chip select not
 		.OEX(SRAM_OEX), // output enable not
