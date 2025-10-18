@@ -74,7 +74,7 @@ M=D // R0=send_addr_0
 D=M // check if ready (out[15] != 0x8000)
 @32767 // >15 bit = signed overflow in ALU
 D=D-A // sub max positive signed value (0x7FFF)
-D=D-1 // sub one more for true diff (32768)
+D=D-1 // sub one more for true diff (0x8000)
 @wait // if D >= A busy bit set
 D;JGE // loop while busy
 
@@ -169,12 +169,12 @@ M=D
 @DEBUG1
 M=D // emit SPI char to DEBUG1
 
-@100 // start at SRAM_ADDR=0x64
+@0 // start at SRAM_ADDR=0x0
 D=A
-@SRAM_A // write SRAM_A 
+@SRAM_A // write SRAM_A
 M=D
 @DEBUG2
-M=D
+M=D // emit SRAM_ADDR to DEBUG2
 
 @R1
 D=M // restore SPI char
@@ -213,8 +213,23 @@ M=D // R0=read1
 @SPI // read emitted byte (char)
 D=M
 
+@R1 // save SPI char
+M=D
 @DEBUG1
-M=D // emit char
+M=D // emit SPI char to DEBUG1
+
+@SRAM_A // write SRAM_A (++)
+M=M+1
+D=M // read SRAM_A
+@DEBUG2
+M=D // emit SRAM_ADDR to DEBUG2
+
+@R1
+D=M // restore SPI char
+@SRAM_D // write char to SRAM
+M=D
+@DEBUG3
+M=D // emit to DEBUG3
 
 @UART_TX
 M=D // send byte
@@ -244,8 +259,23 @@ M=D // R0=read2
 @SPI // read emitted byte (char)
 D=M
 
+@R1 // save SPI char
+M=D
 @DEBUG1
-M=D // emit char
+M=D // emit SPI char to DEBUG1
+
+@SRAM_A // write SRAM_A (++)
+M=M+1
+D=M // read SRAM_A
+@DEBUG2
+M=D // emit SRAM_ADDR to DEBUG2
+
+@R1
+D=M // restore SPI char
+@SRAM_D // write char to SRAM
+M=D
+@DEBUG3
+M=D // emit to DEBUG3
 
 @UART_TX
 M=D // send byte
@@ -275,8 +305,23 @@ M=D // R0=read3
 @SPI // read emitted byte (char)
 D=M
 
+@R1 // save SPI char
+M=D
 @DEBUG1
-M=D // emit char
+M=D // emit SPI char to DEBUG1
+
+@SRAM_A // write SRAM_A (++)
+M=M+1
+D=M // read SRAM_A
+@DEBUG2
+M=D // emit SRAM_ADDR to DEBUG2
+
+@R1
+D=M // restore SPI char
+@SRAM_D // write char to SRAM
+M=D
+@DEBUG3
+M=D // emit to DEBUG3
 
 @UART_TX
 M=D // send byte

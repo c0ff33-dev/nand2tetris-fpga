@@ -193,7 +193,7 @@ module HACK(
 		.load(loadIO6), // 1=write enabled, else read enabled
         .in(outM), // input data (ignored on read)
 		.out(inIO6), // output data (ignored on write)
-		.DATA(SRAM_DATA), // data line // FIXME: undefined in tb?
+		.DATA(SRAM_DATA), // data line
 		.CSX(SRAM_CSX), // chip select not
 		.OEX(SRAM_OEX), // output enable not
 		.WEX(SRAM_WEX)  // write enable not
@@ -240,4 +240,4 @@ module HACK(
 		.out(inIOF)
 	);
 
-endmodule
+	endmodule
