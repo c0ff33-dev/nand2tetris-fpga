@@ -12,7 +12,7 @@
 //
 // R0=jmp address for SPI loops
 // R1-4=SPI (ROM) bytes, R5-8=SRAM bytes
-// DEBUG0=checksum, DEBUG1-2=SPI/SRAM bytes
+// DEBUG0=checksum, DEBUG1-3=SPI/SRAM (ADDR/DATA) bytes
 
 // ====================================
 // SPI: send command bytes

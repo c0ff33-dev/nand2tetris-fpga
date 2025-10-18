@@ -12,7 +12,6 @@ module UartRX_tb();
 	// Part
 	UartRX UARTRX(
     	.clk(clk),
-		.CDONE(1'b1),
 		.clear(clear),
 		.RX(RX),
 		.out(out)

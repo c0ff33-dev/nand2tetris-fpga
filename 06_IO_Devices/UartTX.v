@@ -11,7 +11,6 @@
 `default_nettype none
 module UartTX(
 	input clk,
-	input CDONE, // configuration done (ice40 only)
 	input load, // 1 = initiate the transmission
 	input [15:0] in, // [7:0] byte to send
 	output TX, // transmission wire (serial)
@@ -86,6 +85,6 @@ module UartTX(
 	// if init set TX high
 	// else send data[0] to pin when busy (transmit)
 	// else keep line high at idle (still some noise at POR)
-	assign TX = ((~init | ~CDONE) ? 1'b1 : (busy ? data[0] : 1'b1));
+	assign TX = (~init ? 1'b1 : (busy ? data[0] : 1'b1));
 
 endmodule

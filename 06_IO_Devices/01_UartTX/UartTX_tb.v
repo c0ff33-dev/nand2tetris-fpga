@@ -13,7 +13,6 @@ module UartTX_tb();
 	// Part
 	UartTX UartTX(
     	.clk(clk),
-		.CDONE(1'b1),
 		.load(load),
 		.in(in),
 		.TX(TX),

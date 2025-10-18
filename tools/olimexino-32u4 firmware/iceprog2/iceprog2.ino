@@ -120,9 +120,9 @@ void setup() {
 }
 
 // HACK customizations for bridge mode (loopBridge())
-int s_count = 0;
-int e_count = 0;
-bool recv = false;
+// int s_count = 0;
+// int e_count = 0;
+// bool recv = false;
 
 void loop(){
   if (isProg) loopProg();
@@ -138,6 +138,7 @@ void loop(){
 // Enable recv after 0xDEAD and disable after 0xBEEF
 // Handshake/hangup signal is not carried forward if interrupted
 void loopBridge() {
+  int cdone = digitalRead(CDONE);
   // Serial1=FGPA, Serial=USB
   if (Serial1.available()) {
     int inByte = Serial1.read();
@@ -145,68 +146,71 @@ void loopBridge() {
     // 0xDEAD = start
     // 0xBEEF = end
     switch (inByte){
-      case 0xDE: // start byte [0]
-        if (s_count == 0 && !recv) {
-          Serial.print("DEBUG: 0xDE");
-          s_count++;
-          return;
-        }
-        break;
+      // case 0xDE: // start byte [0]
+      //   if (s_count == 0 && !recv) {
+      //     Serial.print("DEBUG: 0xDE");
+      //     s_count++;
+      //     return;
+      //   }
+      //   break;
 
-      case 0xAD: // start byte [1]
-        if (!recv) {
-          if (s_count == 1) {
-            Serial.println("AD"); // DEBUG
-            s_count=0;
-            recv=true;
-          } else {
-            // reset (noise)
-            Serial.println("DEBUG: bad 0xAD");
-            s_count=0;
-          }
-          return;
-        }
-        break;
+      // case 0xAD: // start byte [1]
+      //   if (!recv) {
+      //     if (s_count == 1) {
+      //       Serial.println("AD"); // DEBUG
+      //       s_count=0;
+      //       recv=true;
+      //     } else {
+      //       // reset (noise)
+      //       Serial.println("DEBUG: bad 0xAD");
+      //       s_count=0;
+      //     }
+      //     return;
+      //   }
+      //   break;
 
-      case 0xBE: // end byte [0]
-        if (e_count == 0 && recv) {
-          Serial.print("DEBUG: 0xBE");
-          e_count++;
-          return;
-        }
-        break;
+      // case 0xBE: // end byte [0]
+      //   if (e_count == 0 && recv) {
+      //     Serial.print("DEBUG: 0xBE");
+      //     e_count++;
+      //     return;
+      //   }
+      //   break;
 
-      case 0xEF: // end byte [1]
-        if (recv) {
-          if (e_count == 1) {
-            Serial.println("EF"); // DEBUG
-          } else {
-            Serial.println("DEBUG: bad 0xEF");
-          }
-          // reset/disable in either case
-          e_count=0;
-          recv=false;
-          return;
-        }
-        break;
+      // case 0xEF: // end byte [1]
+      //   if (recv) {
+      //     if (e_count == 1) {
+      //       Serial.println("EF"); // DEBUG
+      //     } else {
+      //       Serial.println("DEBUG: bad 0xEF");
+      //     }
+      //     // reset/disable in either case
+      //     e_count=0;
+      //     recv=false;
+      //     return;
+      //   }
+      //   break;
 
       default:
-        if (recv) {
+        if (cdone) {
           Serial.write(inByte);
-        } else {
-          if (inByte != 0) {
-            Serial.print("\r\nDEBUG: 0x");
-            Serial.print(inByte, HEX);
-            Serial.print(" (");
-            Serial.print((char)inByte);
-            Serial.println(")");
-            e_count=0;
-            s_count=0;
-            recv=false;
-          } else {
-            Serial.println("DEBUG: 0x0 (sync)");
-          }
         }
+        // if (recv) {
+        //   Serial.write(inByte);
+        // } else {
+        //   if (inByte != 0) {
+        //     Serial.print("\r\nDEBUG: 0x");
+        //     Serial.print(inByte, HEX);
+        //     Serial.print(" (");
+        //     Serial.print((char)inByte);
+        //     Serial.println(")");
+        //     e_count=0;
+        //     s_count=0;
+        //     recv=false;
+        //   } else {
+        //     Serial.println("DEBUG: 0x0 (sync)");
+        //   }
+        // }
         break;
     } // switch
   } // if Serial1...

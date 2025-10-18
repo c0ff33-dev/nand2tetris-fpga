@@ -18,7 +18,6 @@
 `default_nettype none
 module SPI(
 	input clk,
-	input CDONE, // configuration done (ice40 only)
 	input load,
 	input SDI, // serial data in (MISO)
 	input [15:0] in, // [7:0] byte to send (address/command)
@@ -94,7 +93,7 @@ module SPI(
 		end
 	end
 
-	assign CSX = (init & CDONE) ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
+	assign CSX = init ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
 	assign SDO = init ? (busy & shiftOut[7]) : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = init ? (busy & clk) : 1'b0; // run SCK while busy, start low
 	assign out = init ? {busy,7'd0,shiftOut} : 1'b0; // out[15]=busy, out[7:0]=received byte

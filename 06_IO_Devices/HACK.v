@@ -10,12 +10,10 @@
  */
 
 // TODO: sync 5/6/7 HACK files
-// TODO: remove CDONE implementation
 
 `default_nettype none
 module HACK( 
     input  CLK,				// external clock 100 MHz	
-	input  CDONE,			// configuration done (ice40 only)
 	input  [1:0] BUT,		// user button  ("pushed down" == 0) ("up" == 1)
 	output [1:0] LED,		// leds (0 off, 1 on)
 	input  UART_RX,			// UART recieve
@@ -141,7 +139,6 @@ module HACK(
 	// W: send byte
 	UartTX uartTX(
 		.clk(clk),
-		.CDONE(CDONE), // configuration done (ice40 only)
 		.load(loadIO2),
 		.in(outM), // transmit outM[7:0]
 		.TX(UART_TX), // serial tx bit (pin)
@@ -153,19 +150,20 @@ module HACK(
 	// W: 1 = clear data register
 	UartRX uartRX(
 		.clk(clk),
-		.CDONE(CDONE), // configuration done (ice40 only)
 		.clear(loadIO3),
 		.RX(UART_RX), // serial rx bit (pin)
 		.out(inIO3) // memory map 
 	);
 
-	// SPI interface for W25Q16BV (4100) w/ 2MB flash 
+	// In the following component descriptions only 64KB or 
+	// 32K x 16 bit words is addressable in current spec.
+
+	// SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
 	// R: out[15]=1 if busy, out[7:0] received byte
 	// W: command byte outM[7:0] +
 	// W: outM[8]=1 pull CSX high (no send), outM[8]=0 send (CSX=0)
 	SPI spi(
 		.clk(clk),
-		.CDONE(CDONE), // configuration done (ice40 only)
 		.in(outM), // [7:0] byte to send (address/command)
 		.out(inIO4), // memory map
 		.load(loadIO4), // SPI_* outputs wired to pins
@@ -175,7 +173,8 @@ module HACK(
 		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
 
-	// SRAM_A: 16 bit address register for K6R4016V1D w/ 64KB (addressable)
+	// SRAM_A (4101): 16 bit address register for 
+	// K6R4016V1D (512KB SRAM @ 100 MHz read/write)
 	// W: update address
 	// R: return stored address
 	Register sram_addr (
@@ -185,7 +184,7 @@ module HACK(
         .out(inIO5) // return SRAM_A
     );
 
-	// SRAM_D: 16 bit data register for K6R4016V1 Dw/ 64KB (addressable)
+	// SRAM_D (4102): 16 bit data register for K6R4016V1D (512KB SRAM)
 	// W: write data to SRAM[SRAM_A]
 	// R: read data from SRAM[SRAM_A]
 	SRAM_D sram_data (

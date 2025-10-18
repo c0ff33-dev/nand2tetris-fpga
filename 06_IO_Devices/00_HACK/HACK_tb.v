@@ -5,7 +5,6 @@ module HACK_tb();
 	// IN,OUT
 	reg CLK = 1;
 	reg [1:0] BUT = 3;
-	reg CDONE = 1;
 	wire [1:0] LED;
 	wire UART_TX;
 	wire UART_RX;
@@ -29,7 +28,6 @@ module HACK_tb();
 	// Part
 	HACK HACK(
     	.CLK(CLK),					// external clock 100 MHz	
-		.CDONE(CDONE),				// configuration done (ice40 only)
 		.BUT(BUT),					// user button  ("pushed down" == 0) ("up" == 1)
 		.LED(LED),					// leds (0 off, 1 on)
 		.UART_RX(UART_RX),			// UART receive

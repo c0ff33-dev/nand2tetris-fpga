@@ -10,7 +10,6 @@
 `default_nettype none
 module UartRX(
 	input clk,
-	input CDONE, // configuration done (ice40 only)
 	input clear,
 	input RX, // transmission wire (serial)
 	output [15:0] out
@@ -33,7 +32,7 @@ module UartRX(
 	// syncronize start with cycle of first bit recv'd
 	// start/stop are high for one cycle only
 	// prevent start being set during init so RX isn't read in
-	assign start = (init & CDONE) ? (~RX & ~busy) : 1'b0; 
+	assign start = init ? (~RX & ~busy) : 1'b0; 
 	assign start_clear = (start | stop | clear);
 	
 	// 0 = ready, 1 = busy
