@@ -1,5 +1,5 @@
 /**
- * SRAM_DATA controller:
+ * SRAM_DATA controller for K6R4016V1D:
  * If load[t] == 1 then out[t+1] = in[t]
  *                      OEX[t+1] = 1
  *                      WEX[t+1] = 0
@@ -7,8 +7,10 @@
  * At any other time:
  *   out = DATA (DATA is configured as input)
  *   WEX=1, OEX=0
+ * Always: CSX=0
  *
- * CSX=0 (always)
+ * K6R4016V1D read/write latency is 5-10ns so at 25 MHz bus should be
+ * stable for reading well before the end of [t+1].
  */
  
 `default_nettype none
@@ -16,14 +18,14 @@ module SRAM_D(
 	input clk,
 	input load,
 	input [15:0] in,   // SRAM_DATA (write)
-	output [15:0] out, // SRAM_DATA (read)
+	output reg [15:0] out, // SRAM_DATA (read)
 	inout [15:0] DATA, // SRAM_DATA data line
 	output CSX,        // SRAM_CSX chip_enable_not
 	output OEX,        // SRAM_OEX output_enable_not
 	output WEX         // SRAM_WEX write_enable_not
 );
 	wire _load, dffLoad;
-	wire [15:0] _out, _DATA, addrA, data;
+	wire [15:0] _DATA, _dataOut, addrA, data, dataOut;
 
 	// repeat load in [t+1] for InOut
 	DFF dff_load (
@@ -68,7 +70,7 @@ module SRAM_D(
 	InOut io (
 		.PIN(_DATA), // inout=dataW when dir=1, else 16'bz
 		.dataW(data), // outgoing data
-		.dataR(_out), // incoming data
+		.dataR(_dataOut), // incoming data
 		.dir(dffLoad) // 1=write data to SRAM, else read
 	);
 	assign OEX = oex;
@@ -77,6 +79,15 @@ module SRAM_D(
 	assign DATA = init ? _DATA : 16'bzzzzzzzzzzzzzzzz;
 
 	assign _load = init ? load : 1'b0;
-	assign out = init ? _out : 16'bzzzzzzzzzzzzzzzz;
+	assign dataOut = init ? _dataOut : 16'bzzzzzzzzzzzzzzzz;
+
+	// original design: wire straight to out without latching (combinational read)
+	// new design: latch output to negedge (syncronous read, same as BRAM)
+	always @(negedge clk) begin
+		if (dffLoad)
+			out <= dataOut;
+		else
+			out <= init ? out : 16'bzzzzzzzzzzzzzzzz;
+	end
 	
 endmodule

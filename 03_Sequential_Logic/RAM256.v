@@ -32,7 +32,7 @@ module RAM256(
 	// note: Timing changes here also need to propogate to ROM chip + RAM/ROM test benches.
 
 	// new code: explicit syncronous read - its very likely the synthesis result for the 
-	// original code was inferring syncronous reads with the iCE40 BRAM primitives
+	// original code was also inferring syncronous negedge read with the iCE40 BRAM primitives
 	always @(negedge clk) begin
 		// out is sampled on negedge [t]
 		// emits the value of regRAM[address] from [t-1]
