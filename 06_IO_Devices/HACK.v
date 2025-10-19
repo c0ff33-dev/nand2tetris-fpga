@@ -1,10 +1,9 @@
 /**
  * The HACK computer, including CPU, ROM and RAM.
- * When RST is 1, the program stored in the computer's ROM executes.
- * When RST is 0, the execution of the program restarts. 
- * Thus, to start a program's execution, reset must be pushed "down" (0)
- * and "up" (1). From this point onward the user is at the mercy of 
- * the software. In particular, depending on the program's code, the 
+ * When RST is 0, the program stored in the computer's ROM executes.
+ * When RST is 1, the execution of the program restarts. 
+ * From this point onward the user is at the mercy of the software. 
+ * In particular, depending on the program's code, the 
  * LED may show some output and the user may be able to interact 
  * with the computer via the BUT.
  */
@@ -12,7 +11,9 @@
 // TODO: sync 5/6/7 HACK files
 
 `default_nettype none
-module HACK( 
+module HACK(
+	// inputs/outputs at this layer = wires to interfaces external to FGPA die
+	// see .pcf files for mapping
     input  CLK,				// external clock 100 MHz	
 	input  [1:0] BUT,		// user button  ("pushed down" == 0) ("up" == 1)
 	output [1:0] LED,		// leds (0 off, 1 on)
@@ -36,7 +37,7 @@ module HACK(
 	output RTP_SCK			// RTP serial clock
 );
 
-	wire clk,writeM,loadRAM,RST,resLoad;
+	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM;
@@ -45,8 +46,11 @@ module HACK(
 	Clock25_Reset20 clock(
 		.CLK(CLK), // external 100 MHz clock (pin)
 		.clk(clk), // internal 25 MHz clock
-		.reset(RST)
+		.reset(clkRST)
 	);
+
+	// reset PC during init & after bootloader is done
+	assign RST = clkRST | loadIO7;
 
 	// CPU (ALU, A, D, PC)
 	CPU cpu(
@@ -207,7 +211,7 @@ module HACK(
 		.rom_data(outROM),
 		.sram_addr(inIO5),
 		.sram_data(inIO6),
-		.SRAM_ADDR(inIO5),
+		.SRAM_ADDR(SRAM_ADDR),
 		.instruction(instruction)
 	);
 

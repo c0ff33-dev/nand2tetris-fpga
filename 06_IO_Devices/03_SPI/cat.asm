@@ -66,7 +66,7 @@ M=D // R0=send_addr_0
 
 // ------------------------------------
 
-(wait) // wait for spi (16 cycles)
+(wait) // wait for spi
 @SPI
 D=M // check if ready (out[15] != 0x8000)
 @32767 // >15 bit = signed overflow in ALU
