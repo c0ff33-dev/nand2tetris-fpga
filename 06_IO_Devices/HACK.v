@@ -39,7 +39,7 @@ module HACK(
 	wire clk,writeM,loadRAM,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED;
+	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -105,7 +105,7 @@ module HACK(
 	ROM rom(
 		.clk(clk),
 		.pc(pc),
-		.instruction(instruction)
+		.instruction(outROM)
 	);
 
 	// BRAM (0-3839), 3840 x 16 bit words (7KB) 
@@ -196,6 +196,19 @@ module HACK(
 		.CSX(SRAM_CSX), // chip select not
 		.OEX(SRAM_OEX), // output enable not
 		.WEX(SRAM_WEX)  // write enable not
+	);
+
+	// GO (4103): emit instruction from BRAM/SRAM
+	// switch when load=1 after bootloader has run
+	GO go(
+		.clk(clk),
+		.load(loadIO7),
+		.pc(pc),
+		.rom_data(outROM),
+		.sram_addr(inIO5),
+		.sram_data(inIO6),
+		.SRAM_ADDR(inIO5),
+		.instruction(instruction)
 	);
 
 	// additional registers

@@ -9,7 +9,7 @@ module GO_tb();
 	reg [15:0] sram_addr=0;
 	reg [15:0] pc=0;
 	wire [15:0] SRAM_ADDR;
-	reg [15:0] ROM_data=0;
+	reg [15:0] rom_data=0;
 	reg [15:0] sram_data=0;
 	wire [15:0] instruction;
 
@@ -20,7 +20,7 @@ module GO_tb();
 		.sram_addr(sram_addr),
 		.pc(pc),
 		.SRAM_ADDR(SRAM_ADDR),
-		.ROM_data(ROM_data),
+		.rom_data(rom_data),
 		.sram_data(sram_data),
 		.instruction(instruction)
 	);
@@ -33,7 +33,7 @@ module GO_tb();
 	always @(posedge clk) begin
 		sram_addr <= $random;	
 		pc <= $random;	
-		ROM_data <= $random;	
+		rom_data <= $random;	
 		sram_data <= $random;	
 		load <= trigger;
 	end
@@ -45,7 +45,7 @@ module GO_tb();
 	always @(posedge clk)
 		if (load) run <=1;
 	wire [15:0] SRAM_ADDR_cmp=run?pc:sram_addr;
-	wire [15:0] instruction_cmp=run?sram_data:ROM_data;
+	wire [15:0] instruction_cmp=run?sram_data:rom_data;
 	task check;
 		#4
 		if ((SRAM_ADDR!=SRAM_ADDR_cmp) || (instruction!=instruction_cmp))

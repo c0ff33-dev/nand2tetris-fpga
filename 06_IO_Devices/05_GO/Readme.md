@@ -1,14 +1,14 @@
 ## 05 GO
 
-The instrucition memory ROM of HACK is limited to 256 words. In order to run bigger programs written in JACK (e.g. tetris) we will store the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
+The instruction memory ROM of HACK is limited to 256 words. In order to run bigger programs written in JACK (e.g. tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
 
-1. A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) hack binary program previously stored on SPI memory chip starting at address 0x010000 and stores it to SRAM.
+1. A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) hack binary program previously stored on SPI memory chip starting at address 0x10000 and stores it to SRAM.
 
 2. A multiplexer, that switches instruction memory from ROM to SRAM.
 
 ### Chip specification
 
-When load=1 `GO` switches HACK operation from boot mode to run mode. In boot mode instruction=ROM_data and SRAM_ADDR=sram_a. In run mode instruction=sram_data and SRAM_ADDR=pc.
+When load=1 `GO` switches HACK operation from boot mode to run mode. In boot mode instruction=ROM_data and SRAM_ADDR=sram_addr. In run mode instruction=sram_data and SRAM_ADDR=pc.
 
 ### Memory map
 
@@ -20,17 +20,19 @@ The special function register `GO` is memory mapped to address 4103
 
 ### boot.asm
 
-bootloader that reads 64k words from SPI flash memory starting from address 0x010000 and writes them to SRAM. FInally it resets the CPU and starts program execution from SRAM.
+// TODO: why offset?
+
+bootloader that reads 64k words from SPI flash memory starting from address 0x10000 and writes them to SRAM. FInally it resets the CPU and starts program execution from SRAM.
 
 To run the testbench it's sufficient to read only the first 6 words. The SPI in the testbench is preloaded with the following 6 assembler instructions of the program `leds.asm` translated into HACK machine language:
 
 ```
-@BUT
-D=M
-@LED
-M=D
-@0
-0;JMP
+@BUT  // 0001000000000001 (0x1001)
+D=M   // 1111110000010000 (0xFC10)
+@LED  // 0001000000000000 (0x1000)
+M=D   // 1110001100001000 (0xE308)
+@0    // 0000000000000000 (0x0)
+0;JMP // 1110101010000111 (0xEA87)
 ```
 
 ***
@@ -53,7 +55,7 @@ M=D
 
 * Check, if HACK reads 6 instrucions from SPI and writes them to SRAM.
 
-* Check, if HACK can switch from instruction memory ROM (bootloader= to instruction memory SRAM (application) when loadGO=1.
+* Check, if HACK can switch from instruction memory via ROM (bootloader) to SRAM (application) when loadGO=1.
 
 * Check, if HACK runs `leds.asm` after switching from boot to run.
 

@@ -32,7 +32,7 @@ $ make
 $ make upload
 ```
 
-This will compile all classes in the test folder and upload the binary file to SPI flash rom starting at address 64k (0x010000), where the bootloader can find it.
+This will compile all classes in the test folder and upload the binary file to SPI flash rom starting at address 64k (0x10000), where the bootloader can find it.
 
 **Attention:** All used classes must be linked to the folder in which you run the compiler. To add the class `<JACK-OS class>.jack` simply make a soft link in the working directory:
 

@@ -163,7 +163,6 @@ M=D // R0=read0
 @SPI // read emitted byte (char)
 D=M
 
-// ~~~~~~~~~~~~~~~~TODO~~~~~~~~~~~~~~~~
 @R1 // save SPI char
 M=D
 @DEBUG1
@@ -183,7 +182,6 @@ M=D
 D=M // read char back from SRAM
 @DEBUG3
 M=D // emit to DEBUG3
-// ~~~~~~~~~~~~~~~~TODO~~~~~~~~~~~~~~~~
 
 @UART_TX
 M=D // transmit byte
