@@ -159,9 +159,14 @@ module HACK(
 		.out(inIO3) // memory map 
 	);
 
-	// TODO: what was the change in spec from original HACK which also used 15 bits for addr?
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
+	
+	// TODO: Document new spec in interpreter
+		// original A instructions: 0x0-7FFF (32K words)
+		// original C instructions: 0x8000-0xFFFF (32K words, 8K reserved)
+		// new A instructions: 0x0-0xDFFF (56k words)
+		// new C instructions: 0xE000-FFFF (8K words)
 
 	// SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
 	// R: out[15]=1 if busy, out[7:0] received byte
