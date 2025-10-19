@@ -1,6 +1,19 @@
 // Bootloader: loads 64K words of HACK code starting at SPI address 0x10000 (64K) into SRAM.
 // R0=jmp_target, R1=spi_bytes, R2=read_idx, R3=write_idx, R4=odd_even
-// DEBUG0= DEBUG1=spi_bytes DEBUG2=
+// DEBUG1=spi_bytes
+// FIXME: SRAM_ADDR looks good in sim, hits reset and kicks over (haven't examined program logic yet)
+// FIXME: SRAM_DATA is wrong method, need to shl (<<) 8 times or multiply by 256
+// this will overflow the ALU when shifting values at 128+ but might still work
+// hi256 = hi + hi;         // 2 * hi
+// hi256 = hi256 + hi256;   // 4 * hi
+// hi256 = hi256 + hi256;   // 8 * hi
+// hi256 = hi256 + hi256;   // 16 * hi
+// hi256 = hi256 + hi256;   // 32 * hi
+// hi256 = hi256 + hi256;   // 64 * hi
+// hi256 = hi256 + hi256;   // 128 * hi
+// hi256 = hi256 + hi256;   // 256 * hi
+// TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
+// TODO: change R2 to debug, doesn't appear to be necessary
 
 // ====================================
 // SPI: send command bytes
@@ -63,12 +76,9 @@ A=M // *<next_address>
 
 // ------------------------------------
 
-// TODO: modify initial offset address
 (send_addr_0)
-@4
-D=A
 @SPI
-M=D // send 0x04
+M=1 // send 0x01
 
 @send_addr_1 // set next address
 D=A
@@ -159,16 +169,16 @@ D;JEQ // only write every 2nd byte
 @R3
 D=M // D=write_idx
 @SRAM_A 
-M=D // write SRAM_A[write_idx]
+M=D // SRAM_A=write_idx
 
-@R2
+@R1
 D=M // D=spi_bytes
 @SRAM_D 
-M=D // write byte to SRAM
+M=D // SRAM[write_idx]=spi_bytes
 
 @R3
 M=M+1 // write_idx++
-D=M // save write_idx
+D=M // copy write_idx
 
 @6 // word limit // TODO: 64K (multiple loops etc)
 D=D-A
@@ -193,7 +203,6 @@ M=M+1 // odd_even++
 @R2
 M=M+1 // read_idx++
 
-// TODO: optimize @[0|1|-1] > D=A instructions
 D=0
 @SPI
 M=D // send dummy byte to keep SCK rolling

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Sun Oct 19 10:13:33 2025
+[*] Sun Oct 19 10:42:33 2025
 [*]
 [dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.vcd"
-[dumpfile_mtime] "Sun Oct 19 10:09:13 2025"
-[dumpfile_size] 12520894
+[dumpfile_mtime] "Sun Oct 19 10:41:34 2025"
+[dumpfile_size] 12268722
 [savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.gtkw"
-[timestart] 44300900
+[timestart] 44012300
 [size] 2560 1369
 [pos] 2560 23
-*-16.809891 47900000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.389910 44791100 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [treeopen] HACK_tb.HACK.sram_addr.
@@ -36,9 +36,8 @@ HACK_tb.SPI_SDO
 HACK_tb.SPI_SCK
 @200
 -SRAM
-@23
-HACK_tb.HACK.SRAM_ADDR[17:0]
 @22
+HACK_tb.HACK.SRAM_ADDR[17:0]
 HACK_tb.HACK.SRAM_DATA[15:0]
 @28
 HACK_tb.SRAM_CSX
@@ -47,8 +46,9 @@ HACK_tb.SRAM_WEX
 @200
 -GO
 -DEBUG
+@29
+HACK_tb.HACK.clock.clk
 @28
-HACK_tb.HACK.CLK
 HACK_tb.HACK.RST
 @22
 HACK_tb.HACK.pc[15:0]

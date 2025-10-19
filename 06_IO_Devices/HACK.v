@@ -159,6 +159,7 @@ module HACK(
 		.out(inIO3) // memory map 
 	);
 
+	// TODO: what was the change in spec from original HACK which also used 15 bits for addr?
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
 
@@ -204,6 +205,7 @@ module HACK(
 
 	// GO (4103): emit instruction from BRAM/SRAM
 	// switch when load=1 after bootloader has run
+	wire [15:0] w_sram_addr;
 	GO go(
 		.clk(clk),
 		.load(loadIO7),
@@ -211,9 +213,10 @@ module HACK(
 		.rom_data(outROM),
 		.sram_addr(inIO5),
 		.sram_data(inIO6),
-		.SRAM_ADDR(SRAM_ADDR),
+		.SRAM_ADDR(w_sram_addr),
 		.instruction(instruction)
 	);
+	assign SRAM_ADDR = {2'd0, w_sram_addr};
 
 	// additional registers
 	// DEBUG0 (4107)
