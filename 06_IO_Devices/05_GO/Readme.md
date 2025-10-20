@@ -20,9 +20,7 @@ The special function register `GO` is memory mapped to address 4103
 
 ### boot.asm
 
-// TODO: why offset?
-
-bootloader that reads 64k words from SPI flash memory starting from address 0x10000 and writes them to SRAM. FInally it resets the CPU and starts program execution from SRAM.
+A bootloader that reads 64K words from SPI flash memory starting from address 0x10000 and writes them to SRAM (the first 64KB page is reserved for the FPGA configuration data). FInally it resets the CPU and starts program execution from SRAM.
 
 To run the testbench it's sufficient to read only the first 6 words. The SPI in the testbench is preloaded with the following 6 assembler instructions of the program `leds.asm` translated into HACK machine language:
 

@@ -216,7 +216,7 @@ module HACK(
 		.pc(pc),
 		.rom_data(outROM),
 		.sram_addr(inIO5),
-		.sram_data(inIO6),
+		.sram_data(SRAM_DATA),
 		.SRAM_ADDR(w_sram_addr),
 		.instruction(instruction)
 	);

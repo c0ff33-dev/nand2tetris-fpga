@@ -267,7 +267,5 @@ M=D
 // GO: switch to boot mode!
 // ====================================
 
-// FIXME: CPU is reading instruction from SRAM_DATA [t-1]
-
 @GO // writing any data to GO will trigger a PC reset and a
 M=1 // bank switch to begin reading from SRAM instead of ROM!
