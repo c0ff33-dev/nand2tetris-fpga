@@ -25,12 +25,12 @@ A bootloader that reads 64K words from SPI flash memory starting from address 0x
 To run the testbench it's sufficient to read only the first 6 words. The SPI in the testbench is preloaded with the following 6 assembler instructions of the program `leds.asm` translated into HACK machine language:
 
 ```
-@BUT  // 0001000000000001 (0x1001)
-D=M   // 1111110000010000 (0xFC10)
-@LED  // 0001000000000000 (0x1000)
-M=D   // 1110001100001000 (0xE308)
-@0    // 0000000000000000 (0x0)
-0;JMP // 1110101010000111 (0xEA87)
+@BUT  // 0x1001
+D=M   // 0xFC10
+@LED  // 0x1000
+M=D   // 0xE308
+@0    // 0x0
+0;JMP // 0xEA87
 ```
 
 ***
