@@ -30,7 +30,7 @@ module Memory_tb();
 	reg [15:0] inIO4;
 	reg [15:0] inIO5;
 	reg [15:0] inIO6;
-	reg [15:0] inIO7;
+	// reg [15:0] inIO7;
 	reg [15:0] inIO8;
 	reg [15:0] inIO9;
 	reg [15:0] inIOA;
@@ -70,7 +70,7 @@ module Memory_tb();
 		.inIO4(inIO4),
 		.inIO5(inIO5),
 		.inIO6(inIO6),
-		.inIO7(inIO7),
+		// .inIO7(inIO7),
 		.inIO8(inIO8),
 		.inIO9(inIO9),
 		.inIOA(inIOA),
@@ -91,7 +91,7 @@ module Memory_tb();
   				      (address==4100)?inIO4:
   				      (address==4101)?inIO5:
  				      (address==4102)?inIO6:
-				      (address==4103)?inIO7:
+				      // (address==4103)?inIO7:
 				      (address==4104)?inIO8:
 				      (address==4105)?inIO9:
 				      (address==4106)?inIOA:
@@ -150,7 +150,7 @@ module Memory_tb();
 		inIO4=$random;
 		inIO5=$random;
 		inIO6=$random;
-		inIO7=$random;
+		// inIO7=$random;
 		inIO8=$random;
 		inIO9=$random;
 		inIOA=$random;
