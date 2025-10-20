@@ -40,7 +40,7 @@ module HACK(
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM;
+	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,w_sram_addr;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -76,7 +76,7 @@ module HACK(
 		.inIO4(inIO4),  // SPI (4100)
 		.inIO5(inIO5),  // SRAM_A (4101)
 		.inIO6(inIO6),  // SRAM_D (4102)
-		.inIO7(inIO7),  // reserved (undefined)
+		.inIO7(inIO7),  // GO (4103)
 		.inIO8(resIn),  // reserved (undefined)
 		.inIO9(resIn),  // reserved (undefined)
 		.inIOA(resIn),  // reserved (undefined)
@@ -94,7 +94,7 @@ module HACK(
 		.loadIO4(loadIO4), // SPI (4100)
 		.loadIO5(loadIO5), // SRAM_A (4101)
 		.loadIO6(loadIO6), // SRAM_D (4102)
-		.loadIO7(loadIO7), // reserved (undefined)
+		.loadIO7(loadIO7), // GO (4103)
 		.loadIO8(resLoad), // reserved (undefined)
 		.loadIO9(resLoad), // reserved (undefined)
 		.loadIOA(resLoad), // reserved (undefined)
@@ -210,7 +210,6 @@ module HACK(
 
 	// GO (4103): emit instruction from BRAM/SRAM
 	// switch when load=1 after bootloader has run
-	wire [15:0] w_sram_addr;
 	GO go(
 		.clk(clk),
 		.load(loadIO7),

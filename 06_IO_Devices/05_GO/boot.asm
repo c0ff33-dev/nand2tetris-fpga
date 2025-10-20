@@ -1,17 +1,7 @@
 // Bootloader: loads 64K words of HACK code starting at SPI address 0x10000 (64K) into SRAM.
-// R0=jmp_target, R1=spi_bytes, R2=read_idx, R3=write_idx, R4=odd_even
-// DEBUG1=spi_bytes
-// FIXME: SRAM_ADDR looks good in sim, hits reset and kicks over (haven't examined program logic yet)
-// FIXME: SRAM_DATA is wrong method, need to shl (<<) 8 times or multiply by 256
-// this will overflow the ALU when shifting values at 128+ but might still work
-// hi256 = hi + hi;         // 2 * hi
-// hi256 = hi256 + hi256;   // 4 * hi
-// hi256 = hi256 + hi256;   // 8 * hi
-// hi256 = hi256 + hi256;   // 16 * hi
-// hi256 = hi256 + hi256;   // 32 * hi
-// hi256 = hi256 + hi256;   // 64 * hi
-// hi256 = hi256 + hi256;   // 128 * hi
-// hi256 = hi256 + hi256;   // 256 * hi
+// R0=jmp_target, R1=spi_byte, R2=read_idx, R3=write_idx, R4=odd_even, R5=spi_sum
+// DEBUG1=spi_byte, DEBUG2=spi_sum
+
 // TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
 // TODO: change R2 to debug, doesn't appear to be necessary
 
@@ -123,7 +113,6 @@ M=D // R0=read
 // SPI: read bytes
 // ====================================
 
-// TODO: read 6 words/12 bytes (testbench)
 // TODO: read 64K words/128K bytes (0x0-7FFF=32768 x 4)
 
 (read)
@@ -136,16 +125,16 @@ D=A
 @R0
 M=D // R0=read0
 
-@255
-D=A // D=0xFF
 @R1
-M=D // init spi_bytes=0xFF
+M=0 // init spi_byte=0x0
 @R2
 M=0 // init read_idx, start at 0x0 (offset from 0x10000)
 @R3
 M=0 // init write_idx, start at 0x0 
 @R4
 M=0 // init odd_even
+@R5
+M=0 // init spi_sum
 
 @wait
 0;JMP // wait for SPI
@@ -153,28 +142,78 @@ M=0 // init odd_even
 // ------------------------------------
 
 (read0)
-@SPI // read spi_bytes
+@SPI // read spi_byte
 D=M
-@R1
-M=D+M // R1=spi_bytes (even=high byte, odd=low+high byte)
+
+@R1 
+M=D // R1=spi_byte (original)
+
 @DEBUG1
-M=D // DEBUG1=spi_bytes
+M=D // DEBUG1=spi_byte
 
 @R4
 D=M // D=odd_even
-@even
-D;JEQ // only write every 2nd byte
+@odd
+D;JNE // only shift even bytes and write odd bytes
 
-// odd ~~~~~~~~~~~~~~~~
+// even ~~~~~~~~~~~~~~~~
+
+// shift first byte (hi_byte) left by 8
+// even with ALU overflow this should still work
+@R1
+D=M   // D=spi_byte[0]
+@R5
+M=D   // spi_sum=spi_byte   
+D=D+M // D=2 x spi_byte
+M=D   // spi_sum=2 x spi_byte
+D=D+M // D=4 x spi_byte
+M=D   // spi_sum=4 x spi_byte
+D=D+M // D=8 x spi_byte
+M=D   // spi_sum=8 x spi_byte
+D=D+M // D=16 x spi_byte
+M=D   // spi_sum=16 x spi_byte
+D=D+M // D=32 x spi_byte
+M=D   // spi_sum=32 x spi_byte
+D=D+M // D=64 x spi_byte
+M=D   // spi_sum=64 x spi_byte
+D=D+M // D=128 x spi_byte
+M=D   // spi_sum=128 x spi_byte
+D=D+M // D=256 x spi_byte
+M=D   // spi_sum=256 x spi_byte
+
+@DEBUG2
+M=D // DEBUG2=spi_sum
+
+@R4
+M=M+1 // odd_even++
+
+@next
+0;JMP
+
+(odd) // ~~~~~~~~~~~~~~~~
+
+@R1
+D=M // D=spi_byte[1]
+
+@DEBUG1
+M=D // DEBUG1=spi_byte
+
+@R5
+M=D+M // spi_sum=hi_byte:low_byte
+D=M // D=spi_sum
+
+@DEBUG2
+M=D // DEBUG2=spi_sum
+
 @R3
 D=M // D=write_idx
 @SRAM_A 
 M=D // SRAM_A=write_idx
 
-@R1
-D=M // D=spi_bytes
+@R5
+D=M // D=spi_sum
 @SRAM_D 
-M=D // SRAM[write_idx]=spi_bytes
+M=D // SRAM[write_idx]=spi_sum
 
 @R3
 M=M+1 // write_idx++
@@ -188,17 +227,10 @@ D;JEQ
 @R4
 M=M-1 // odd_even-- (reset)
 
-@255
-D=A // D=0xFF
 @R1
-M=D // spi_bytes=0xFF (reset)
+M=0 // spi_byte=0x0 (reset)
 
-(even) // ~~~~~~~~~~~~~~~~
-
-@R4
-M=M+1 // odd_even++
-
-// next ~~~~~~~~~~~~~~~~
+(next) // ~~~~~~~~~~~~~~~~
 
 @R2
 M=M+1 // read_idx++
@@ -234,6 +266,8 @@ M=D
 // ====================================
 // GO: switch to boot mode!
 // ====================================
+
+// FIXME: CPU is reading instruction from SRAM_DATA [t-1]
 
 @GO // writing any data to GO will trigger a PC reset and a
 M=1 // bank switch to begin reading from SRAM instead of ROM!
