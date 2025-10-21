@@ -35,21 +35,19 @@ module SRAM_D_tb();
 		load <= trigger;
 		write <= load;
 	end
-	reg [15:0] DATA_cmp = 16'bzzzzzzzzzzzzzzzz;
-	reg [15:0] out_cmp = 16'bzzzzzzzzzzzzzzzz;
+	reg [15:0] data;
 	always @(posedge clk)
-		if (load) DATA_cmp <= in;
-	always @(negedge clk)
-		out_cmp <= (~CSX_cmp&~OEX_cmp)?16'bzzzzzzzzzzzzzzzz:DATA_cmp; 
+		if (load) data <= in;
 	// Compare
 	wire CSX_cmp = 0;
 	wire OEX_cmp = write;
 	wire WEX_cmp = ~write;
+	wire [15:0] out_cmp = (~CSX_cmp&~OEX_cmp)?16'bzzzzzzzzzzzzzzzz:data; 
 	reg fail = 0;
 	reg [31:0] n = 0;
 	task check;
 		#4
-		if ((out!=out_cmp)||(DATA!=DATA_cmp)||(CSX!=CSX_cmp)||(OEX!=OEX_cmp)||(WEX!=WEX_cmp))
+		if ((out!=out_cmp)||(CSX!=CSX_cmp)||(OEX!=OEX_cmp)||(WEX!=WEX_cmp))
 			begin
 				$display("FAIL: clk=%1b, load=%1b, in=%16b, out=%16b, CSX=%1b, OEX=%1b, SEX=%1b, DATA=%16b",clk,load,in,out,CSX,OEX,WEX,DATA);
 				fail=1;

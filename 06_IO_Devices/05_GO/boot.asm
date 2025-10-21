@@ -4,7 +4,7 @@
 
 // FIXME: SPI/SRAM definitely works, some kind of timing issue on hw with GO though
 // FIXME: tried both edges for load, end of boot.asm definitely being reached
-// FIXME: with posedge ROM read it seems to make it to leds.asm which probably confirms cadence theory
+// FIXME: didn't work with original ROM/RAM timings either
 
 // TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
 // TODO: change R2 to debug, doesn't appear to be necessary

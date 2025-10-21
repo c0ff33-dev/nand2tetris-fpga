@@ -18,19 +18,19 @@ module SRAM_D(
 	input clk,
 	input load,
 	input [15:0] in,   // SRAM_DATA (write)
-	output reg [15:0] out, // SRAM_DATA (read)
+	output [15:0] out, // SRAM_DATA (read)
 	inout [15:0] DATA, // SRAM_DATA data line
 	output CSX,        // SRAM_CSX chip_enable_not
 	output OEX,        // SRAM_OEX output_enable_not
 	output WEX         // SRAM_WEX write_enable_not
 );
-	wire _load, dffLoad;
-	wire [15:0] _DATA, _dataOut, addrA, data, dataOut;
+	wire dffLoad;
+	wire [15:0] _DATA, data, _out;
 
 	// repeat load in [t+1] for InOut
 	DFF dff_load (
         .clk(clk),
-        .in(_load),
+        .in(load),
         .out(dffLoad)
     );
 
@@ -38,7 +38,7 @@ module SRAM_D(
 	Register reg_data (
         .clk(clk),
         .in(in),
-        .load(_load),
+        .load(load),
         .out(data)
     );
 
@@ -47,7 +47,7 @@ module SRAM_D(
 	reg oex=0; // output enable not
 	reg wex=1; // write enable not
 	always @(posedge clk) begin
-		if (_load) begin
+		if (load) begin
 			// enable write
 			oex <= 1'b1;
 			wex <= 1'b0;
@@ -70,24 +70,14 @@ module SRAM_D(
 	InOut io (
 		.PIN(_DATA), // inout=dataW when dir=1, else 16'bz
 		.dataW(data), // outgoing data
-		.dataR(_dataOut), // incoming data
-		.dir(dffLoad) // 1=write data to SRAM, else read
+		.dataR(_out), // incoming data
+		.dir(dffLoad) // 1=write to SRAM in [t+1] from load
 	);
+
 	assign OEX = oex;
 	assign WEX = wex;
 	assign CSX = csx;
 	assign DATA = init ? _DATA : 16'bzzzzzzzzzzzzzzzz;
+	assign out = init ? _out : 16'bzzzzzzzzzzzzzzzz;
 
-	assign _load = init ? load : 1'b0;
-	assign dataOut = init ? _dataOut : 16'bzzzzzzzzzzzzzzzz;
-
-	// original design: wire straight to out without latching (combinational read)
-	// new design: latch output to negedge (syncronous read, same as BRAM)
-	always @(negedge clk) begin
-		if (dffLoad)
-			out <= dataOut;
-		else
-			out <= init ? out : 16'bzzzzzzzzzzzzzzzz;
-	end
-	
 endmodule
