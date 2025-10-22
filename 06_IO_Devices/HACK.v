@@ -187,8 +187,8 @@ module HACK(
 
 	// SRAM_A (4101): 16 bit address register for 
 	// K6R4016V1D (512KB SRAM @ 100 MHz read/write)
-	// W: update address
-	// R: return stored address
+	// W: update address in [t+1]
+	// R: return stored address in [t+1]
 	Register sram_addr (
         .clk(clk),
         .load(loadIO5),
@@ -197,8 +197,8 @@ module HACK(
     );
 
 	// SRAM_D (4102): 16 bit data register for K6R4016V1D (512KB SRAM)
-	// W: write data to SRAM[SRAM_A]
-	// R: read data from SRAM[SRAM_A]
+	// W: write data to SRAM[SRAM_A] in [t+1]
+	// R: read data from SRAM[SRAM_A] in [t+1]
 	SRAM_D sram_data (
 		.clk(clk),
 		.load(loadIO6), // 1=write enabled, else read enabled

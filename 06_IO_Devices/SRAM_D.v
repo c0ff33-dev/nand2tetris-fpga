@@ -7,10 +7,11 @@
  * At any other time:
  *   out = DATA (DATA is configured as input)
  *   WEX=1, OEX=0
- * Always: CSX=0
+ *   CSX=1 (disabled) during init then 0 (enabled) afterwards
  *
  * K6R4016V1D read/write latency is 5-10ns so at 25 MHz bus should be
- * stable for reading well before it is sampled in [t+1].
+ * stable well before it is sampled (same cycle as emitted or [t+1] 
+ * from initial load=1 signal).
  */
  
 `default_nettype none
@@ -18,21 +19,21 @@ module SRAM_D(
 	input clk,
 	input load,
 	input [15:0] in,   // SRAM_DATA (write)
-	output [15:0] out, // SRAM_DATA (read)
+	output reg [15:0] out, // SRAM_DATA (read)
 	inout [15:0] DATA, // SRAM_DATA data line
 	output CSX,        // SRAM_CSX chip_enable_not
 	output OEX,        // SRAM_OEX output_enable_not
 	output WEX         // SRAM_WEX write_enable_not
 );
-	wire dffLoad;
-	wire [15:0] _DATA, data, _out;
+	wire _load, dffLoad;
+	wire [15:0] _dataOut, data, dataOut;
 
 	// register outgoing data to clk domain
 	// latch the write data on first cycle load is high
 	Register reg_data (
         .clk(clk),
         .in(in),
-        .load(load),
+        .load(_load),
         .out(data)
     );
 
@@ -45,11 +46,11 @@ module SRAM_D(
     );
 
 	// register control wires to clk domain
-	reg csx=0; // chip select not (remains low)
+	reg csx=1; // chip select not (remains low after init)
 	reg oex=0; // output enable not
 	reg wex=1; // write enable not
 	always @(posedge clk) begin
-		if (load) begin
+		if (_load) begin
 			// enable write
 			oex <= 1'b1;
 			wex <= 1'b0;
@@ -65,6 +66,7 @@ module SRAM_D(
 	always @(posedge clk) begin
 		if (~init) begin
 			init <= 1;
+			csx <= 0;
 		end
 	end
 
@@ -73,13 +75,25 @@ module SRAM_D(
 	InOut io (
 		.PIN(DATA), // inout=dataW when dir=1, else 16'bz
 		.dataW(data), // outgoing data
-		.dataR(_out), // incoming data
-		.dir(dffLoad) // 1=write to SRAM in [t+1] from load
+		.dataR(dataOut), // incoming data
+		.dir(dffLoad) // 1=write data to SRAM, else read
 	);
-
 	assign OEX = oex;
 	assign WEX = wex;
 	assign CSX = csx;
-	assign out = init ? _out : 16'bzzzzzzzzzzzzzzzz;
 
+	// original design: wire straight to out without latching (combinational read)
+	// assign out = init ? out : 16'bzzzzzzzzzzzzzzzz;
+
+	assign _load = init ? load : 1'b0;
+
+	// new design: latch output to negedge (syncronous read, same as BRAM)
+	// but never the inout port itself
+	always @(negedge clk) begin
+		if (dffLoad)
+			out <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+		else
+			out <= init ? out : 16'bzzzzzzzzzzzzzzzz;
+	end
+	
 endmodule
