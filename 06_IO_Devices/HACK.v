@@ -49,19 +49,21 @@ module HACK(
 		.reset(clkRST)
 	);
 
-	// reset PC during init & after bootloader is done
+	// reset PC during init & in [t+1] when GO load=1, both the load
+	// and reset signal will shift high when the instruction is read 
 	assign RST = clkRST | loadIO7;
 
 	// CPU (ALU, A, D, PC)
+	// ALU outputs are combinational, rest are clocked
 	CPU cpu(
 		.clk(clk),
 		.inM(inM),
 		.instruction(instruction),
 		.reset(RST),
-		.outM(outM),
-		.writeM(writeM),
-		.addressM(addressM),
-		.pc(pc)
+		.outM(outM), // combinational
+		.writeM(writeM), // combinational
+		.addressM(addressM), // clocked
+		.pc(pc) // clocked
 	);
 
 	// Memory (map + combinational routing only)
@@ -202,14 +204,15 @@ module HACK(
 		.load(loadIO6), // 1=write enabled, else read enabled
         .in(outM), // input data (ignored on read)
 		.out(inIO6), // output data (ignored on write)
-		.DATA(SRAM_DATA), // data line
+		.DATA(SRAM_DATA), // data line (inout)
 		.CSX(SRAM_CSX), // chip select not
 		.OEX(SRAM_OEX), // output enable not
 		.WEX(SRAM_WEX)  // write enable not
 	);
 
 	// GO (4103): emit instruction from BRAM/SRAM
-	// switch when load=1 after bootloader has run
+	// switch to run_mode & reset pc in [t+1] after load=1
+	// routes inputs to outputs combinationally
 	GO go(
 		.clk(clk),
 		.load(loadIO7),

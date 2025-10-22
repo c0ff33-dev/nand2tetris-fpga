@@ -38,9 +38,9 @@ set_io SRAM_ADDR[15] 97		# SA15
 set_io SRAM_ADDR[16] 99		# SA16
 set_io SRAM_ADDR[17] 100	# SA17
 
-set_io SRAM_CEN 78		# SRAM_#CS
-set_io SRAM_OEN 74		# SRAM_#OE
-set_io SRAM_WEN 73		# SRAM_#WE
+set_io SRAM_CSX 78		# SRAM_#CS // originally CEN/OEN/WEN?
+set_io SRAM_OEX 74		# SRAM_#OE
+set_io SRAM_WEX 73		# SRAM_#WE
 
 set_io SRAM_DATA[0] 62	# SD0
 set_io SRAM_DATA[1] 63	# SD1

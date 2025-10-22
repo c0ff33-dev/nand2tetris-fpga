@@ -10,7 +10,7 @@
  * Always: CSX=0
  *
  * K6R4016V1D read/write latency is 5-10ns so at 25 MHz bus should be
- * stable for reading well before the end of [t+1].
+ * stable for reading well before it is sampled in [t+1].
  */
  
 `default_nettype none
@@ -27,19 +27,21 @@ module SRAM_D(
 	wire dffLoad;
 	wire [15:0] _DATA, data, _out;
 
-	// repeat load in [t+1] for InOut
-	DFF dff_load (
-        .clk(clk),
-        .in(load),
-        .out(dffLoad)
-    );
-
 	// register outgoing data to clk domain
+	// latch the write data on first cycle load is high
 	Register reg_data (
         .clk(clk),
         .in(in),
         .load(load),
         .out(data)
+    );
+
+	// emit the latched write data on 2nd cycle
+	// repeat load in [t+1] for InOut
+	DFF dff_load (
+        .clk(clk),
+        .in(load),
+        .out(dffLoad)
     );
 
 	// register control wires to clk domain
@@ -67,8 +69,9 @@ module SRAM_D(
 	end
 
 	// bidirectional data bus (combinational)
+	// disconnected (high impedence) when dir=0
 	InOut io (
-		.PIN(_DATA), // inout=dataW when dir=1, else 16'bz
+		.PIN(DATA), // inout=dataW when dir=1, else 16'bz
 		.dataW(data), // outgoing data
 		.dataR(_out), // incoming data
 		.dir(dffLoad) // 1=write to SRAM in [t+1] from load
@@ -77,7 +80,6 @@ module SRAM_D(
 	assign OEX = oex;
 	assign WEX = wex;
 	assign CSX = csx;
-	assign DATA = init ? _DATA : 16'bzzzzzzzzzzzzzzzz;
 	assign out = init ? _out : 16'bzzzzzzzzzzzzzzzz;
 
 endmodule

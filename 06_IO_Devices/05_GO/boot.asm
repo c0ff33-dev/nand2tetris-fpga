@@ -2,10 +2,6 @@
 // R0=jmp_target, R1=spi_byte, R2=read_idx, R3=write_idx, R4=odd_even, R5=spi_sum
 // DEBUG1=spi_byte, DEBUG2=spi_sum
 
-// FIXME: SPI/SRAM definitely works, some kind of timing issue on hw with GO though
-// FIXME: tried both edges for load, end of boot.asm definitely being reached
-// FIXME: didn't work with original ROM/RAM timings either
-
 // TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
 // TODO: change R2 to debug, doesn't appear to be necessary
 

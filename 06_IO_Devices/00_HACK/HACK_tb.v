@@ -113,7 +113,7 @@ module HACK_tb();
 		if (spi_cmd==32'h000000AB) spi_sleep <= 0; // wake
 		if (spi_cmd==32'h000000B9) spi_sleep <= 1; // sleep
 		if (spi_cmd==32'h03040000) spi <= {"SPI! 123", 32'd0}; // pad to the right so there aren't leading zeroes
-		if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87; // deviceid
+		if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87; // leds.asm binary
 	end
 
 	//Simulate SRAM
