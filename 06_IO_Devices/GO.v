@@ -10,9 +10,9 @@ module GO(
 	input load,
 	input [15:0] pc,
 	input [15:0] rom_data,
-	input [15:0] sram_addr,
+	input [15:0] sram_addr_in,
 	input [15:0] sram_data,
-	output [15:0] SRAM_ADDR,
+	output [15:0] sram_addr_out,
 	output [15:0] instruction,
 	output [15:0] out
 );
@@ -28,6 +28,7 @@ module GO(
 
 	// in run mode CPU takes over driving SRAM_ADDR via pc
 	// but in boot mode SRAM_ADDR is driven by the bootloader (boot.asm)
-	assign SRAM_ADDR = run_mode ? pc : sram_addr;
+	// in both cases the update is made syncronously via posedge clk
+	assign sram_addr_out = run_mode ? pc : sram_addr_in;
 
 endmodule

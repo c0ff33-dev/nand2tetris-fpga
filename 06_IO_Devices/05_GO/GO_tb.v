@@ -12,17 +12,19 @@ module GO_tb();
 	reg [15:0] rom_data=0;
 	reg [15:0] sram_data=0;
 	wire [15:0] instruction;
+	wire [15:0] out;
 
 	// Part
 	GO GO(
     	.clk(clk),
 		.load(load),
-		.sram_addr(sram_addr),
+		.sram_addr_in(sram_addr),
 		.pc(pc),
-		.SRAM_ADDR(SRAM_ADDR),
+		.sram_addr_out(SRAM_ADDR),
 		.rom_data(rom_data),
 		.sram_data(sram_data),
-		.instruction(instruction)
+		.instruction(instruction),
+		.out(out)
 	);
 	
 	// Simulate
@@ -41,14 +43,14 @@ module GO_tb();
 	// Compare
 	reg fail = 0;
 	reg [31:0] n = 0;
-	reg run=0;
+	reg [15:0] run=0;
 	always @(posedge clk)
 		if (load) run <=1;
 	wire [15:0] SRAM_ADDR_cmp=run?pc:sram_addr;
 	wire [15:0] instruction_cmp=run?sram_data:rom_data;
 	task check;
 		#4
-		if ((SRAM_ADDR!=SRAM_ADDR_cmp) || (instruction!=instruction_cmp))
+		if ((SRAM_ADDR!=SRAM_ADDR_cmp) || (instruction!=instruction_cmp) || (out!=run))
 			begin
 				$display("FAIL: clk=%1b, load=%1b",clk,load);
 				fail=1;

@@ -21,6 +21,7 @@ module SRAM_D(
 	input [15:0] in,   // SRAM_DATA (write)
 	output reg [15:0] out, // SRAM_DATA (read)
 	inout [15:0] DATA, // SRAM_DATA data line
+	input [15:0] mode, // run_mode
 	output CSX,        // SRAM_CSX chip_enable_not
 	output OEX,        // SRAM_OEX output_enable_not
 	output WEX         // SRAM_WEX write_enable_not
@@ -72,6 +73,7 @@ module SRAM_D(
 
 	// bidirectional data bus (combinational)
 	// disconnected (high impedence) when dir=0
+	// SRAM_DATA PIN should never be driven from any other module
 	InOut io (
 		.PIN(DATA), // inout=dataW when dir=1, else 16'bz
 		.dataW(data), // outgoing data
@@ -88,9 +90,9 @@ module SRAM_D(
 	assign _load = init ? load : 1'b0;
 
 	// new design: latch output to negedge (syncronous read, same as BRAM)
-	// but never the inout port itself
+	// in run_mode dataOut is emitted every cycle
 	always @(negedge clk) begin
-		if (dffLoad)
+		if (dffLoad | mode)
 			out <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
 		else
 			out <= init ? out : 16'bzzzzzzzzzzzzzzzz;

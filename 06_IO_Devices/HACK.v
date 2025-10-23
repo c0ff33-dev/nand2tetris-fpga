@@ -12,7 +12,7 @@
 
 `default_nettype none
 module HACK(
-	// inputs/outputs at this layer = wires to interfaces external to FGPA die
+	// inputs/outputs at this layer = wires to interfaces external to lattice
 	// see .pcf files for mapping
     input  CLK,				// external clock 100 MHz	
 	input  [1:0] BUT,		// user button  ("pushed down" == 0) ("up" == 1)
@@ -40,7 +40,7 @@ module HACK(
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,w_sram_addr;
+	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -50,7 +50,8 @@ module HACK(
 	);
 
 	// reset PC during init & in [t+1] when GO load=1, both the load
-	// and reset signal will shift high when the instruction is read 
+	// and reset signal will shift high when the instruction is read
+	// this mimics but is not the same as the iCE40 POR signal
 	assign RST = clkRST | loadIO7;
 
 	// CPU (ALU, A, D, PC)
@@ -192,8 +193,8 @@ module HACK(
 	Register sram_addr (
         .clk(clk),
         .load(loadIO5),
-		.in(outM), // SRAM_A (least significant 16 bits of 18)
-        .out(inIO5) // return SRAM_A
+		.in(outM),
+        .out(inIO5)
     );
 
 	// SRAM_D (4102): 16 bit data register for K6R4016V1D (512KB SRAM)
@@ -204,6 +205,7 @@ module HACK(
 		.load(loadIO6), // 1=write enabled, else read enabled
         .in(outM), // input data (ignored on read)
 		.out(inIO6), // output data (ignored on write)
+		.mode(inIO7), // run_mode
 		.DATA(SRAM_DATA), // data line (inout)
 		.CSX(SRAM_CSX), // chip select not
 		.OEX(SRAM_OEX), // output enable not
@@ -213,19 +215,19 @@ module HACK(
 	// GO (4103): emit instruction from BRAM/SRAM
 	// switch to run_mode & reset pc in [t+1] after load=1
 	// routes inputs to outputs combinationally
-	// i.e. in run_mode the internal SRAM_D registers are bypassed
 	GO go(
 		.clk(clk),
 		.load(loadIO7),
 		.pc(pc),
 		.rom_data(outROM),
-		.sram_addr(inIO5),
-		.sram_data(SRAM_DATA),
-		.SRAM_ADDR(w_sram_addr),
+		.sram_addr_in(inIO5),
+		.sram_data(inIO6),
+		.sram_addr_out(go_sram_addr),
 		.instruction(instruction),
 		.out(inIO7)
 	);
-	assign SRAM_ADDR = {2'd0, w_sram_addr};
+	// K6R4016V1D uses 18 bits but we address 16 LSB
+	assign SRAM_ADDR = {2'd0, go_sram_addr};
 
 	// additional registers
 	// DEBUG0 (4107)
