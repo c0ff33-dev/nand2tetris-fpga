@@ -13,14 +13,16 @@ module GO(
 	input [15:0] sram_addr,
 	input [15:0] sram_data,
 	output [15:0] SRAM_ADDR,
-	output [15:0] instruction
+	output [15:0] instruction,
+	output [15:0] out
 );
 	
 	// 0 = boot mode (flash), 1 = run mode (sram)
-	reg run_mode = 0;
+	reg [15:0] run_mode = 0;
 	always @(posedge clk)
 		if (load)
-			run_mode <= 1;
+			run_mode <= 16'd1;
+	assign out = run_mode;
 
 	assign instruction = run_mode ? sram_data : rom_data;
 

@@ -26,7 +26,7 @@ module Memory(
 	input [15:0] inIO4, // SPI (4100)
 	input [15:0] inIO5, // SRAM_A (4101)
 	input [15:0] inIO6, // SRAM_D (4102)
-	// input [15:0] inIO7, // GO (4103)
+	input [15:0] inIO7, // GO (4103)
 	input [15:0] inIO8, // reserved [15:0]
 	input [15:0] inIO9, // reserved [15:0]
 	input [15:0] inIOA, // reserved [15:0]
@@ -65,7 +65,7 @@ module Memory(
   		(address==4100) ? inIO4 :
   		(address==4101) ? inIO5 :
  		(address==4102) ? inIO6 :
-		// (address==4103) ? inIO7 :
+		(address==4103) ? inIO7 :
 		(address==4104) ? inIO8 :
 		(address==4105) ? inIO9 :
 		(address==4106) ? inIOA :

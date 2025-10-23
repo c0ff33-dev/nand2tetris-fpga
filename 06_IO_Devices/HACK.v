@@ -39,7 +39,7 @@ module HACK(
 
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,w_sram_addr;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
@@ -78,7 +78,7 @@ module HACK(
 		.inIO4(inIO4),  // SPI (4100)
 		.inIO5(inIO5),  // SRAM_A (4101)
 		.inIO6(inIO6),  // SRAM_D (4102)
-		// .inIO7(resIn),  // GO (4103), unused
+		.inIO7(inIO7),  // GO (4103)
 		.inIO8(resIn),  // reserved (undefined)
 		.inIO9(resIn),  // reserved (undefined)
 		.inIOA(resIn),  // reserved (undefined)
@@ -213,15 +213,17 @@ module HACK(
 	// GO (4103): emit instruction from BRAM/SRAM
 	// switch to run_mode & reset pc in [t+1] after load=1
 	// routes inputs to outputs combinationally
+	// i.e. in run_mode the internal SRAM_D registers are bypassed
 	GO go(
 		.clk(clk),
 		.load(loadIO7),
 		.pc(pc),
 		.rom_data(outROM),
 		.sram_addr(inIO5),
-		.sram_data(SRAM_DATA), // TODO: this should really be inIO6 (latched) but creates timing issues
+		.sram_data(SRAM_DATA),
 		.SRAM_ADDR(w_sram_addr),
-		.instruction(instruction)
+		.instruction(instruction),
+		.out(inIO7)
 	);
 	assign SRAM_ADDR = {2'd0, w_sram_addr};
 
