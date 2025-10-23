@@ -15,12 +15,13 @@ module UartRX(
 	output [15:0] out
 );
 
-	wire start, busy, rx, stop, start_clear, is108, is216;
+	wire start, busy, stop, start_clear, is108, is216;
 	wire [15:0] baudCount, rxCount, clear_data;
 	wire [8:0] data;
+	reg rx = 0;
+	reg init = 0;
 
 	// generic init handler, should work with ice40 + yosys
-	reg init = 0;
 	always @(posedge clk) begin
 		if (!init) begin
 			init <= 1;
@@ -71,6 +72,16 @@ module UartRX(
 		.out(rxCount) // track number of bits read
 	);
 
+	// filter RX through a DFF to clean up the signal 
+	// & register it to clk domain - this this 1 cycle of latency
+	// is well within tolerance for 115200 timing window @ 25 MHz
+	always @(posedge clk) begin
+		if (RX)
+			rx <= 1'b1;
+		else
+			rx <= 1'b0;
+	end
+
 	// each shift cycles LSB out and MSB to the right
 	//  tx/rx: 0xxxxxxxx1 (pre-shift)
 	//  shift: --------- // init
@@ -87,8 +98,7 @@ module UartRX(
 	BitShift9R shift(
 		.clk(clk),
 		.in(9'b111111111), // init
-		// TODO: use a DFF when screening raw input wires
-		.inMSB(RX), // load rx bit into MSB when sampled
+		.inMSB(rx), // load rx bit into MSB when sampled
 		.load(start), // init
 		.shift(is108), // sample at midpoint & shift right
 		.out(data)

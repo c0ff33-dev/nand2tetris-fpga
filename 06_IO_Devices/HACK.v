@@ -219,7 +219,7 @@ module HACK(
 		.pc(pc),
 		.rom_data(outROM),
 		.sram_addr(inIO5),
-		.sram_data(SRAM_DATA),
+		.sram_data(SRAM_DATA), // TODO: this should really be inIO6 (latched) but creates timing issues
 		.SRAM_ADDR(w_sram_addr),
 		.instruction(instruction)
 	);

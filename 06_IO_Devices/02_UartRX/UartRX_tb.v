@@ -43,7 +43,7 @@ module UartRX_tb();
 	always @(posedge clk)
 		out_tx <= load?1:((bits==10)?0:out_tx);
 	assign RX = uart[1];
-	
+
 	reg [15:0] out_cmp 	=0;
 	always @(posedge clk)
 		out_cmp <= clear?16'b1000000000000000:((baudrate==216)&(bits==9)?in& 16'h00ff:out_cmp);
