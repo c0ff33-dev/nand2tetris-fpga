@@ -36,6 +36,18 @@ module HACK(
 	output RTP_SDO,			// RTP data out 
 	output RTP_SCK			// RTP serial clock
 );
+	
+	// timing index
+	// clk: posedge CLK
+	// Register (A/D/PC/BUT/LED/DEBUG0-4): posedge clk
+	// CPU/ALU/Memory: combinational
+	// ROM: read negedge clk
+	// RAM: write posedge clk, read negedge clk
+	// UartTX/RX: sample/shift posedge clk
+	// SPI: sample posedge clk, shift negedge clk // TODO: fix ~clk refs
+	// SRAM_ADDR: posedge clk
+	// SRAM_DATA: update posedge clk, read negedge clk
+	// GO: mode update posedge clk else combinational
 
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
