@@ -20,9 +20,9 @@ When load=1 transmission of byte in[7:0] is initiated. The byte is send to SDO b
 
 ### Proposed Implementation
 
-Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` that counts from 0 to 511. Finally we need a `BitShift8L`. It will be loaded with the byte in[7:0] to be send.  Use a `Bit` to sample the SDI line. After 8 bits are transmitted/received `RTP` cleares out[15] and outputs the received byte to in[7:0].
+Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Use a counter `PC` that counts from 0 to 511. Finally we need a `BitShift8L`. It will be loaded with the byte in[7:0] to be send.  Use a `Bit` to sample the SDI line. After 8 bits are transmitted/received `RTP` clears out[15] and outputs the received byte to in[7:0].
 
-**Attention:** sample on rising edge of SCK and shift on falling edge of SCK.
+**Attention:** sample on falling edge of SCK and shift on rising edge of SCK.
 
 ![](RTP.png)
 
@@ -32,12 +32,12 @@ The special function register `RTP` is mapped to memory map of HACK according to
 
 | address | I/O device | R/W | function                                                    |
 | ------- | ---------- | --- | ----------------------------------------------------------- |
-| 4106    | LCD        | W   | start transmittion of byte in[7:0]                          |
-| 4106    | LCD        | R   | out[15]=1 busy, out[15]=0 idle, out[7:0] last received byte |
+| 4106    | RTP        | W   | start transmittion of byte in[7:0]                          |
+| 4106    | RTP        | R   | out[15]=1 busy, out[15]=0 idle, out[7:0] last received byte |
 
 ### RTP in real hardware
 
-The board MOD-LCD2.8RTP comes with a resistive touch panel controlled by a controller chip AR1021. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../doc/MOD-LCD2.8RTP_RevB.pdf).
+The board MOD-LCD2.8RTP comes with a resistive touch panel controlled by a controller chip AR1021. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../doc/MOD-LCD2.8RTP_RevB.pdf)).
 
 ```
 set_io RTP_SDI 7        # PIO3_3A connected to pin 13 of GPIO1
@@ -57,13 +57,13 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 | RTP_SDO | 15                    | 6 SDA                              |
 | RTP_SCK | 17                    | 5 SCL                              |
 
-**Attention:** To enable SPI communication on the RTP controller chip AR1021 we must modify two solder jumpers. (Compare with schematic of MOD-LCD2.8RTP together with Datasheet of AR1021).
+**Attention:** To enable SPI communication on the RTP controller chip AR1021 we must modify two solder jumpers. (Compare with schematic of MOD-LCD2.8RTP together with Datasheet of AR1021). The latest iteration of MOD-LCD2.8RTP is Rev D which has a different layout than pictured (Rev B) but same modifications apply.
 
-1. Cut connection SJ1-GND with a sharp cutter knife. (green)
+1. Cut connection SJ1-GND with a sharp cutter knife (green)
 
-2. Connect SJ1 to +3.3V to activate SPI mode of AR1021 (yellow)
+2. Connect M1 to VDD (+3.3V) by soldering SJ1-VDD to activate SPI mode of AR1021 (yellow)
 
-3. Connect SJ3 (UEXT pin4 with SDO) (yellow)
+3. Connect UEXT pin 4 (IRQ/SDO) by soldering SJ3 (yellow)
 
 ![](jumper_rtp.jpg)
 

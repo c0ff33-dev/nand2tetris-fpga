@@ -14,7 +14,7 @@ module InOut(
 );
 	// No need to implement this chip.
 	// This chip is implemented using tristate value z
-	// Never attempt to drive the inout PIN in any other chips!
+	// Never attempt to drive this inout PIN in any other modules!
 	assign PIN = dir ? dataW: 16'bzzzzzzzzzzzzzzzz;
 	assign dataR = PIN;
 	

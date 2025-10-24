@@ -13,18 +13,22 @@
  * When load16=1 transmission of word in[15:0] is initiated. CSX is goes low
  * (and stays low even when transmission is completed). DCX is set to 1 (data).
  * After 32 clock cycles transmission is completed and out[15] is set to 0.
+ *
+ * 240x320 display, 256K colours
+ * DCX flips before the SCK posedge of the 8th command bit (always) and data bit (write)
+ * CSX must be driven low before 1st SCK posedge and high no earlier than 8th SCK negedge
 */
 `default_nettype none
 module LCD(
-		input clk,			//clock 25 MHz
-		input load,		    //start send command/byte over SPI
-		input load16,		//start send data (16 bits)
-		input [15:0] in,	//data to be send
-		output [15:0] out,	//data to be send
-		output DCX,			//SPI data/command not
-		output CSX,			//SPI chip select not
-		output SDO,			//SPI serial data out
-		output SCK			//SPI serial clock
+		input clk,			// clock 25 MHz
+		input load,		    // start send command/byte over SPI
+		input load16,		// start send data (16 bits)
+		input [15:0] in,	// data to be sent
+		output [15:0] out,	// data to be sent
+		output DCX,			// SPI data/command not (0=command, 1=data)
+		output CSX,			// SPI chip select not
+		output SDO,			// SPI serial data out
+		output SCK			// SPI serial clock
 );
 
 	// Put your code here:	
