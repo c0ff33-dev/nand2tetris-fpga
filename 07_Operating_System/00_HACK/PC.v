@@ -13,10 +13,9 @@ module PC(
 	input load,
 	input inc,
 	input reset,
-	output [15:0] out
+	output reg [15:0] out = 0
 );	
 	
-	reg [15:0] out = 0;
 	always @(posedge clk)
 		out <= reset?0:(load?in:(inc?out+1:out));
 endmodule

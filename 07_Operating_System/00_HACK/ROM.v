@@ -8,6 +8,7 @@
 
 `default_nettype none
 module ROM(
+	input clk, // unused in this version but required for compat
 	input [15:0] pc,
 	output [15:0] instruction		
 );

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Dec 19 17:25:20 2022
+[*] Sat Oct 25 04:55:39 2025
 [*]
-[dumpfile] "/home/micha/gitlab/nand2tetris/07_JACK_OS/00_HACK/HACK_tb.vcd"
-[dumpfile_mtime] "Mon Dec 19 17:24:51 2022"
-[dumpfile_size] 116364543
-[savefile] "/home/micha/gitlab/nand2tetris/07_JACK_OS/00_HACK/HACK_tb.gtkw"
-[timestart] 0
+[dumpfile] "/home/the_admin/src/nand2tetris-fpga/07_Operating_System/00_HACK/HACK_tb.vcd"
+[dumpfile_mtime] "Sat Oct 25 04:55:06 2025"
+[dumpfile_size] 105804727
+[savefile] "/home/the_admin/src/nand2tetris-fpga/07_Operating_System/00_HACK/HACK_tb.gtkw"
+[timestart] 22380000
 [size] 1920 963
 [pos] 0 40
-*-28.000000 353135000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-22.726658 353135000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [sst_width] 281
@@ -41,12 +41,7 @@ HACK_tb.HACK.RTP_SDO
 HACK_tb.HACK.RTP_SCK
 @200
 -DEBUG
-@821
-HACK_tb.HACK.outDEBUG0[15:0]
-@420
-HACK_tb.HACK.outDEBUG1[15:0]
-HACK_tb.HACK.outDEBUG2[15:0]
-HACK_tb.HACK.outDEBUG3[15:0]
-HACK_tb.HACK.outDEBUG4[15:0]
+@23
+HACK_tb.HACK.debug0.out[15:0]
 [pattern_trace] 1
 [pattern_trace] 0

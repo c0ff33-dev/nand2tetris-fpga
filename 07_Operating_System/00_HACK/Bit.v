@@ -9,10 +9,9 @@ module Bit(
 	input clk,
 	input in,
 	input load,
-	output out
+	output reg out = 0
 );
 
-	reg out = 0;
 	always @(posedge clk)
 		out <= load?in:out;
 

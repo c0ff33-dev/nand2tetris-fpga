@@ -1,8 +1,16 @@
-// Boilerplate
 class Main {
+    static int DEBUG0;
+
+    method void init() {
+        let DEBUG0 = 4106;
+        return;
+    }
+
     function void main() {
-        var int x;
-        let x = 1337;
+        var int d;
+        do init();
+        let DEBUG0[0] = 1337; // implicit poke
+        let d = DEBUG0[0]; // implicit peek
         return;
     }
 }

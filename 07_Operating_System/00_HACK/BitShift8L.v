@@ -12,10 +12,9 @@ module BitShift8L(
 	input inLSB,
 	input load,
 	input shift,
-	output [7:0] out
+	output reg [7:0] out = 0
 );
 
-	reg [7:0] out=0;
 	always @(posedge clk)
 		out <= load?in:(shift?{out[6:0],inLSB}:out);
 

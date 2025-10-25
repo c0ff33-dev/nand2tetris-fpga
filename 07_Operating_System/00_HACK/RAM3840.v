@@ -7,7 +7,7 @@
 `default_nettype none
 module RAM3840(
 	input clk,
-	input [15:0] address,
+	input [11:0] address,
 	input [15:0] in,
 	input load,
 	output [15:0] out

@@ -10,10 +10,9 @@ module Switch(
 	input clk,
 	input on,
 	input off,
-	output out
+	output reg out = 0
 );
 
-	reg out = 0;
 	always @(posedge clk)
 		out <= (on&off)?(~out):(on?1:(off?0:(out?1:0)));
 

@@ -10,9 +10,8 @@ module Counter(
 	input clk,
 	input inc,
 	input reset,
-	output [15:0] out
+	output reg [15:0] out = 0
 );
-	reg [15:0] out=0;
 	always @(posedge clk)
 		out <= reset?0:(inc?out+1:out);
 

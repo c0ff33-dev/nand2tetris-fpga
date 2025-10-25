@@ -13,6 +13,6 @@ module Clock25_Reset20(
 	reg resetx=0;
 	always @(posedge clk)
 		resetx <= n[11]?1:resetx;	
-	wire reset=~resetx;	
+	assign reset = ~resetx;	
 
 endmodule	

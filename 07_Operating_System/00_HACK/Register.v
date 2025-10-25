@@ -10,10 +10,8 @@ module Register(
 	input clk,
 	input [15:0] in,
 	input load,
-	output [15:0] out
+	output reg [15:0] out = 0
 );
-	reg [15:0] out = 0;
 	always @(posedge clk)
 		out <= load?in:out;
-	initial out = 0;
 endmodule

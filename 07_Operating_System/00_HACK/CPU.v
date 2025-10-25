@@ -6,14 +6,12 @@ module CPU(
 	input reset,
     output [15:0] outM,
     output writeM,
-    output [15:0] addressM,
-    output [15:0] pc
+    output reg [15:0] addressM = 0,
+    output reg [15:0] pc = 0
 );
 
 	// Compare	
-	reg [15:0] addressM=0;
 	reg [15:0] regD=0;
-	reg [15:0] pc=0;
 	wire [15:0] x,y;
 	wire zr,ng;
 	assign x = instruction[10]?(instruction[11]?~0:~regD):(instruction[11]?0:regD);
@@ -31,7 +29,6 @@ module CPU(
 		regD <= comp?(instruction[4]?outM:regD) : regD;
 		pc <= reset?0 : (jmp?addressM:pc+1);
 	end
-	wire writeM;
 	assign writeM = comp?instruction[3]:0;
 	
 endmodule

@@ -7,12 +7,11 @@
 module DFF(
 		input clk,
 		input in,
-		output out
+		output reg out = 0
 );
 
 	// No need to implement this module
 	// This module is implemented in verilog using reg-variables
-	reg out=0;
 	always @(posedge clk)
 		if (in) out <= 1'b1;
 		else out <= 1'b0;
