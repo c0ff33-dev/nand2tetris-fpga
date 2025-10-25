@@ -10,18 +10,14 @@ class Main {
     function void main() {
         var int x;
         do init();
-        let DEBUG0[0] = 80; // implicit poke
-        let DEBUG0[1] = 65;
-        let DEBUG0[2] = 80;
-        let DEBUG0[3] = 65;
         
+        let DEBUG0[0] = 80; // implicit poke
         let x = DEBUG0[0]; // implicit peek
+        
         if (x=80) {
-            let LED[0] = 1;
-            let LED[1] = 0;
+            let LED[0] = 2; // 10
         } else {
-            let LED[0] = 1;
-            let LED[1] = 1;
+            let LED[0] = 3; // 11
         }
         return;
     }
