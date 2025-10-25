@@ -1,16 +1,28 @@
 class Main {
-    static int DEBUG0;
+    static int DEBUG0, LED;
 
     method void init() {
-        let DEBUG0 = 4106;
+        let DEBUG0 = 4107;
+        let LED = 4096;
         return;
     }
 
     function void main() {
-        var int d;
+        var int x;
         do init();
-        let DEBUG0[0] = 1337; // implicit poke
-        let d = DEBUG0[0]; // implicit peek
+        let DEBUG0[0] = 80; // implicit poke
+        let DEBUG0[1] = 65;
+        let DEBUG0[2] = 80;
+        let DEBUG0[3] = 65;
+        
+        let x = DEBUG0[0]; // implicit peek
+        if (x=80) {
+            let LED[0] = 1;
+            let LED[1] = 0;
+        } else {
+            let LED[0] = 1;
+            let LED[1] = 1;
+        }
         return;
     }
 }

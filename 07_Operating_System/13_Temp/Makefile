@@ -12,6 +12,7 @@ bin:
 	$(PYTHON) ../../tools/AsciiToBin.py out.hack
 sim:
 	cp out.hack ../00_HACK/ROM.hack
+	cp out.hack ../../06_IO_Devices/00_HACK/ROM.hack
 upload:
 	iceprogduino -o 64k -w out.bin
 clean:
