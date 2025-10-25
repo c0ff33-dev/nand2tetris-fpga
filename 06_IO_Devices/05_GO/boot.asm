@@ -1,9 +1,8 @@
 // Bootloader: loads 64K words of HACK code starting at SPI address 0x10000 (64K) into SRAM.
-// R0=jmp_target, R1=spi_byte, R2=read_idx, R3=write_idx, R4=odd_even, R5=spi_sum
+// R0=jmp_target, R1=spi_byte, R2=outer_loop, R3=write_idx, R4=odd_even, R5=spi_sum, R6=inner_idx
 // DEBUG1=spi_byte, DEBUG2=spi_sum
 
 // TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
-// TODO: change R2 to debug, doesn't appear to be necessary
 
 // ====================================
 // SPI: send command bytes
@@ -50,6 +49,16 @@ D=A
 M=D // R0=send_addr_0
 
 // ------------------------------------
+
+// special note on ALU overflows
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// 0x8000 is interpreted as -32768 (max neg) so addition 
+// actually works and keeps going "higher" back towards zero
+// - this 16 bit value is fine for M/D assignment ops as well
+//
+// but subtraction (2s complement addition) will break when the
+// subtracting value is larger than 32767 (0x7FFF) but using multiple
+// rounds of subtraction with a value <= 32767 will work
 
 (wait) // wait for SPI
 @SPI
@@ -113,8 +122,6 @@ M=D // R0=read
 // SPI: read bytes
 // ====================================
 
-// TODO: read 64K words/128K bytes (0x0-7FFF=32768 x 4)
-
 (read)
 D=0 // send dummy byte to keep SCK rolling
 @SPI
@@ -128,9 +135,10 @@ M=D // R0=read0
 @R1
 M=0 // init spi_byte=0x0
 @R2
-M=0 // init read_idx, start at 0x0 (offset from 0x10000)
+M=1
+M=M+1 // init outer_loop=2
 @R3
-M=0 // init write_idx, start at 0x0 
+M=0 // init write_idx, start at 0x0
 @R4
 M=0 // init odd_even
 @R5
@@ -215,14 +223,11 @@ D=M // D=spi_sum
 @SRAM_D 
 M=D // SRAM[write_idx]=spi_sum
 
-@R3
-M=M+1 // write_idx++
-D=M // copy write_idx
-
-@6 // word limit // TODO: 64K (multiple loops etc)
-D=D-A
-@break
-D;JEQ
+@R3 // will overflow ALU so don't use in cmp
+M=M+1 // write_idx++ (still works all the way to 0xFFFF)
+@R6 // reset at 0x7FFF (15 bits for ALU cmp)
+M=M+1 // inner_idx++
+D=M // copy inner_idx
 
 @R4
 M=M-1 // odd_even-- (reset)
@@ -230,14 +235,15 @@ M=M-1 // odd_even-- (reset)
 @R1
 M=0 // spi_byte=0x0 (reset)
 
+@32767 // inner loop word limit (0x7FFF)
+D=D-A // inner_idx
+@break_inner
+D;JEQ
+
 (next) // ~~~~~~~~~~~~~~~~
 
-@R2
-M=M+1 // read_idx++
-
-D=0
 @SPI
-M=D // send dummy byte to keep SCK rolling
+M=0 // send dummy byte to keep SCK rolling
 
 @wait
 0;JMP // wait for SPI (R0=read0)
@@ -246,7 +252,15 @@ M=D // send dummy byte to keep SCK rolling
 // SPI: close the transaction
 // ====================================
 
-(break)
+(break_inner)
+@R6
+M=0 // reset to prevent overflow
+@R2
+MD=M-1 // outer_loop--
+@next // run 32768 x 2 times
+D;JNE // 1 write per word = exactly 64K words
+
+// break ~~~~~~~~~~~~~~~~
 @256 // send 0x100 (CSX=1) to end the read
 D=A
 @SPI

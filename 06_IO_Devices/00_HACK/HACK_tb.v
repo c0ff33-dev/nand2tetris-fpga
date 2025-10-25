@@ -146,7 +146,7 @@ module HACK_tb();
 		$display("------------------------");
 		$display("Testbench: Hack");
 
-		#45000 // 45000
+		#45000
 		$finish;
 	end
 
