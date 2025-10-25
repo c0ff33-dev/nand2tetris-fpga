@@ -2,7 +2,7 @@
 
 The special function register `RTP`  memory mapped to addresses 4106 enables HACK to read bytes from the resistive touch panel controller chip AR1021 situated on MOD-LCD2.8RTP. The communication is protocol is SPI.
 
-**Attention:** The specification of AR1200 requires, that SCK is inverted (compare `03_SPI/Readme.md` with CPOL=1) and a slower transfer rate of max. 900kHz
+**Attention:** The specification of AR1200 requires, that SCK is inverted (compare `03_SPI/Readme.md` with CPOL=1) and a slower transfer rate of max ~900kHz.
 
 ### Chip specification
 
@@ -16,7 +16,7 @@ The special function register `RTP`  memory mapped to addresses 4106 enables HAC
 | OUT    | SDO      | serial data out               |
 | OUT    | SCK      | serial clock                  |
 
-When load=1 transmission of byte in[7:0] is initiated. The byte is send to SDO bitwise together with 8 clock signals on SCK. At the same time `RTP` receives a byte at SDI. During transmission out[15] is 1. The transmission of a byte takes 256 clock cycles (32 cycles for each bit to achieve a slower transfer rate). Every 32 clock cycles one bit is shifted out. In the middle of each bit at counter number 31 the bit SDI is sampled. When transmission is completed out[15]=0 and `RTP` outputs the received byte to out[7:0].
+When load=1 transmission of byte in[7:0] is initiated. The byte is send to SDO bitwise together with 8 clock signals on SCK. At the same time `RTP` receives a byte at SDI. During transmission out[15] is 1. The transmission of a byte takes 256 clock cycles (32 cycles for each bit to achieve a slower transfer rate). Every 32 clock cycles one bit is shifted out. In the middle of each bit at counter number 15 the bit SDI is sampled. When transmission is completed out[15]=0 and `RTP` outputs the received byte to out[7:0].
 
 ### Proposed Implementation
 

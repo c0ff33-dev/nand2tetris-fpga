@@ -42,7 +42,7 @@ module SPI(
 		.out(csx)
 	);
 
-	// remaing registers are aligned to leading negedge
+	// remaining registers are aligned to leading negedge
 	// so shift can happen first then sample later in same cycle
 	// busy bit is still set at load [t+1]
 

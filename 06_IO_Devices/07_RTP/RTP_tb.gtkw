@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Jan  2 15:25:24 2023
+[*] Fri Oct 24 23:43:24 2025
 [*]
-[dumpfile] "/home/micha/gitlab/nand2tetris-fpga/06_IO_Devices/07_RTP/RTP_tb.vcd"
-[dumpfile_mtime] "Mon Jan  2 15:24:52 2023"
-[dumpfile_size] 898324
-[savefile] "/home/micha/gitlab/nand2tetris-fpga/06_IO_Devices/07_RTP/RTP_tb.gtkw"
+[dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07_RTP/RTP_tb.vcd"
+[dumpfile_mtime] "Fri Oct 24 23:42:49 2025"
+[dumpfile_size] 122073
+[savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07_RTP/RTP_tb.gtkw"
 [timestart] 0
 [size] 1920 963
 [pos] -1 -1
-*-22.000000 2190000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-17.418583 848800 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] RTP_tb.
 [sst_width] 281
 [signals_width] 160
@@ -32,11 +32,12 @@ RTP_tb.RTP.SDO
 RTP_tb.RTP.SCK
 @22
 RTP_tb.out[15:0]
+@29
+RTP_tb.RTP.busy
 @200
 -CMP
-@29
-RTP_tb.SDO_cmp
 @28
+RTP_tb.SDO_cmp
 RTP_tb.SCK_cmp
 @22
 RTP_tb.out_cmp[15:0]
