@@ -1,0 +1,8 @@
+// Boilerplate
+class Main {
+    function void main() {
+        var int x;
+        let x = 1337;
+        return;
+    }
+}
