@@ -83,7 +83,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
   
   ![](rtp_tb.png)
 
-* Add special function register`RTP` to `HACK` at memory addresses 4106 and upload to iCE40HX1K-EVB with bootloader boot.asm preloaded into ROM.
+* Add special function register`RTP` to `HACK` at memory addresses 4106 and upload to iCE40HX1K-EVB with bootloader boot.asm preloaded into ROM (build test only, no test bench data for RTP).
   
   ```
   $ cd ../05_GO

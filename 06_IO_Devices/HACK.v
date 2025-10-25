@@ -32,7 +32,7 @@ module HACK(
 	output LCD_SDO,			// LCD data out 
 	output LCD_SCK,			// LCD serial clock
 	output LCD_CSX,			// LCD chip select not
-	input  RTP_SDI,			// RTP data in s
+	input  RTP_SDI,			// RTP data in
 	output RTP_SDO,			// RTP data out 
 	output RTP_SCK			// RTP serial clock
 );
@@ -50,8 +50,8 @@ module HACK(
 	// GO: mode update posedge clk else combinational
 
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
-	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
@@ -92,9 +92,9 @@ module HACK(
 		.inIO5(inIO5),  // SRAM_A (4101)
 		.inIO6(inIO6),  // SRAM_D (4102)
 		.inIO7(inIO7),  // GO (4103)
-		.inIO8(resIn),  // reserved (undefined)
-		.inIO9(resIn),  // reserved (undefined)
-		.inIOA(resIn),  // reserved (undefined)
+		.inIO8(inIO8),  // LCD8 (4104)
+		.inIO9(inIO9),  // LCD16 (4105)
+		.inIOA(inIOA),  // RTP (4106)
 		.inIOB(inIOB),  // DEBUG0 (4107)
 		.inIOC(inIOC),  // DEBUG1 (4108)
 		.inIOD(inIOD),  // DEBUG2 (4109)
@@ -110,9 +110,9 @@ module HACK(
 		.loadIO5(loadIO5), // SRAM_A (4101)
 		.loadIO6(loadIO6), // SRAM_D (4102)
 		.loadIO7(loadIO7), // GO (4103)
-		.loadIO8(resLoad), // reserved (undefined)
-		.loadIO9(resLoad), // reserved (undefined)
-		.loadIOA(resLoad), // reserved (undefined)
+		.loadIO8(loadIO8), // LCD8 (4104)
+		.loadIO9(loadIO9), // LCD16 (4105)
+		.loadIOA(loadIOA), // RTP (4106)
 		.loadIOB(loadIOB), // DEBUG0 (4107)
 		.loadIOC(loadIOC), // DEBUG1 (4108)
 		.loadIOD(loadIOD), // DEBUG2 (4109)
@@ -240,6 +240,17 @@ module HACK(
 	);
 	// K6R4016V1D uses 18 bits but we address 16 LSB
 	assign SRAM_ADDR = {2'd0, go_sram_addr};
+
+	// RTP (4106) controller for Resistive Touch Panel AR1021
+	RTP rtp(
+		.clk(clk),
+		.load(loadIOA),
+		.in(outM),
+		.out(inIOA),
+		.SDO(RTP_SDO),
+		.SDI(RTP_SDI),
+		.SCK(RTP_SCK)
+	);
 
 	// additional registers
 	// DEBUG0 (4107)
