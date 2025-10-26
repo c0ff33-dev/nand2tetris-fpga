@@ -24,9 +24,13 @@ class Sys {
         return;
     }
 
-    // TODO: timing @ 25 MHz
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
+        // ~255 total instructions
+        // ~86 instructions before/after loops
+        // outer = ~97 * duration (excl inner) // ~4ms @ 1000
+        // inner = ~72 * count = 28800 // 1.152s @ 1000
+        // total = (outer * inner) + 86
         var int count;
 
         if (duration < 0) {
@@ -35,17 +39,22 @@ class Sys {
 
         // repeat outer loop duration times
         while (duration > 0) {
-            let count = 50;
+            // ~56 cycles from outer to inner loop
+            let count = 400;
 
             // repeat inner loop 50 times per outer loop
             while (count > 0) {
+                // push count/zero = 17 cycles
+                // loop logic = 19 cycles
+                // count-- = 36 cycles
                 let count = count - 1;
             }
 
-            let duration = duration - 1;
+            // duration-- 36 cycles
+            let duration = duration - 1; 
         }
 
-        return;
+        return; // 9 cycles
     }
 
     /** Displays the given error code in the form "ERR<errorCode>",

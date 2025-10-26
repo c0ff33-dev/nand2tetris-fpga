@@ -8,16 +8,18 @@ class Main {
     }
 
     function void main() {
-        var int x;
         do init();
         
-        let DEBUG0[0] = 80; // implicit poke
-        let x = DEBUG0[0]; // implicit peek
-        
-        if (x=80) {
-            let LED[0] = 2; // 10
-        } else {
-            let LED[0] = 3; // 11
+        while (true) {
+            // blink test
+            let LED[0] = 1;
+            do Sys.wait(1000);
+            let LED[0] = 2;
+            do Sys.wait(1000);
+            let LED[0] = 3;
+            do Sys.wait(1000);
+            let LED[0] = 0;
+            do Sys.wait(1000);
         }
         return;
     }
