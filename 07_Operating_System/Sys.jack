@@ -11,6 +11,7 @@ class Sys {
         // do Screen.init();
         // do Output.init();
         // do Keyboard.init();
+        do UART.init();
         do Main.main();
         do Sys.halt();
         return;

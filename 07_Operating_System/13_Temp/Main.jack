@@ -1,26 +1,24 @@
 class Main {
-    static int DEBUG0, LED;
+    static int LED, RTP, UART_TX, UART_RX, DEBUG0;
 
     method void init() {
-        let DEBUG0 = 4107;
         let LED = 4096;
+        let UART_TX = 4098;
+        let UART_RX = 4099;
+        let RTP = 4106;
+        let DEBUG0 = 4107;
         return;
     }
 
     function void main() {
         do init();
-        
-        while (true) {
-            // blink test
-            let LED[0] = 1;
-            do Sys.wait(1000);
-            let LED[0] = 2;
-            do Sys.wait(1000);
-            let LED[0] = 3;
-            do Sys.wait(1000);
-            let LED[0] = 0;
-            do Sys.wait(1000);
-        }
-        return;
+
+        // UART_TX test
+        do UART.writeChar(80);
+        do UART.writeChar(65);
+        do UART.writeChar(80);
+        do UART.writeChar(65);
+        let LED[0] = 3;
+       return;
     }
 }
