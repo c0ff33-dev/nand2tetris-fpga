@@ -27,6 +27,7 @@ class Sys {
         return;
     }
 
+    // TODO: can fine tune with sim
     /** Waits approximately duration milliseconds and returns.  */
     function void wait(int duration) {
         // ~255 total instructions

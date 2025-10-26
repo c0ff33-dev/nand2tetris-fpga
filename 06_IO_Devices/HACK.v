@@ -288,8 +288,8 @@ module HACK(
 	// DEBUG4 (4111)
 	Register debug4(
 		.clk(clk),
-		.in(outM),
-		.load(loadIOF),
+		.in(RTP_SDI), // FIXME: DEBUG
+		.load(1'b1),  // FIXME: DEBUG
 		.out(inIOF)
 	);
 

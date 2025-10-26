@@ -17,6 +17,7 @@
 // DISABLE_TOUCH = 0x55, 0x01, 0x13 // response = 0x55, 0x02, 0x00, 0x13
 // recommended to send DISABLE_TOUCH and wait 50ms before sending commands
 // command timeout after ~100 ms (minimum 4 byte response)
+// sleep cycle will commence after 10000ms but should wake on its own with input/cmd
 
 class Touch{
     static int RTP, LED;
@@ -34,7 +35,13 @@ class Touch{
         // busy=0x8000(+), else byte=0x0-0xFF
         var int rx;
         let RTP[0] = c; // start tx
-        while (RTP[0] < 0) {} // pass
+        while (RTP[0] < 0) {
+            // blink 1 while transmitting
+            let LED[0] = 1; 
+            do Sys.wait(250);
+            let LED[0] = 0;
+            do Sys.wait(250);
+        }
         let rx = RTP[0];
         do Sys.wait(1); // wait before clocking next byte
         return rx;

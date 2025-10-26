@@ -10,7 +10,7 @@
  * of each bit at counter number 31 the bit SDI is sampled. When transmission
  * is completed out[15]=0 and RTP outputs the received byte to out[7:0].
  *
- * AR1021 shifts on posedge, samples middle/negedge (CPHA=0, CPOL=1) with a maximum
+ * AR1021 shifts on posedge, samples negedge (CPHA=0, CPOL=1) with a maximum
  * bit rate of ~900kHz (~28 cycles @ 25 MHz clock) and requires an inter-byte delay
  * of ~50μs (1250 cycles) however this latter implementation detail is currently 
  * handled in software.
@@ -26,8 +26,9 @@ module RTP(
 	output SDO,
 	input SDI,
 	output SCK
-);
 	// CSX is optional for AR1021
+);
+	
 	reg miso = 0;
 	wire busy, reset, sckReset;
 	wire [7:0] shiftOut;
@@ -71,18 +72,24 @@ module RTP(
 	assign reset = (clkCount == 16'd255);
 
 	// MISO = SDI in [t+1]
-	// sample in the middle of negedge SCK
-	// because SCK is 16 cycles now use clk domain
-	always @(posedge clk)
-		if (sckCount == 16'd15)
+	// sample during SCK negedge (but not too close to edge)
+	// valid until following SCK negedge
+	// must be negedge if sckCount==31 but this is probably
+	// an artifact of tb using a posedge register for input
+	always @(negedge clk)
+		// wait at least 150ns after SCK low before sampling
+		// anywhere along current SCK negedge will satisfy the sim
+		if (sckCount==31)
 			miso <= SDI;
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
 	// init=0 before load, no shift on first cycle
+	// shift late in SCK negedge so it emits posedge
+	// valid until next posedge for sampling by AR1021
 	BitShift8L shiftreg (
-		.clk(~clk), // posedge latch
+		.clk(~clk), // negate for posedge latch
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load : 1'b1), // don't shift on load
@@ -98,8 +105,8 @@ module RTP(
 		end
 	end
 
-	assign SDO = init ? (shiftOut[7]) : 1'b0; // broadcast MOSI continuously
+	assign SDO = init ? (busy & shiftOut[7]) : 1'b0; // broadcast MOSI while busy
 	assign SCK = init ? (busy & (sckCount <= 16'd15)) : 1'b0; // SCK high/low 16 cycles each
-	assign out = init ? {busy,7'd0,shiftOut} : 1'b0; // out[15]=busy, out[7:0]=received byte
+	assign out = init ? {busy,7'd0,shiftOut} : 16'd0; // out[15]=busy, out[7:0]=received byte
 
 endmodule

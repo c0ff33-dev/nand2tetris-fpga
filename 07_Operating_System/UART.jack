@@ -9,7 +9,7 @@ class UART {
     function void init(){ // int addr
         let UART_TX = 4098;
         let UART_RX = 4099;
-        let UART_TX[0] = 0; // init tx buffer
+        // don't init TX or it will transmit
         let UART_RX[0] = -1; // init rx buffer
         return;
     }
@@ -17,10 +17,10 @@ class UART {
     /** wait for UART_TX to be ready to send next byte and send c. */
     function void writeChar(int c){
         // 0x0=ready, 0x8000=busy
+        let UART_TX[0] = c; // assume wire clear for first tx
         while (~(UART_TX[0] = 0)) {
             do Sys.wait(1); // wait until ready to send
         }
-        let UART_TX[0] = c; // send async / don't wait for completion
         return;
     }
 

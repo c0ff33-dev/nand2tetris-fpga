@@ -51,7 +51,7 @@ module RTP_tb();
 	always @(posedge clk)
 		SCK_cmp <= load?1:(tr&busy&~bits[8])?~SCK_cmp:SCK_cmp;
 	wire SDO_cmp;
-	assign SDO_cmp = shift[7];	
+	assign SDO_cmp = shift[7] & busy; // no point pinning SDO	
 	reg fail = 0;
 	reg [31:0] n = 0;
 	task check;

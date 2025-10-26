@@ -96,6 +96,6 @@ module SPI(
 	assign CSX = init ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
 	assign SDO = init ? (busy & shiftOut[7]) : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = init ? (busy & clk) : 1'b0; // run SCK while busy, start low
-	assign out = init ? {busy,7'd0,shiftOut} : 1'b0; // out[15]=busy, out[7:0]=received byte
+	assign out = init ? {busy,7'd0,shiftOut} : 16'd0; // out[15]=busy, out[7:0]=received byte
 
 endmodule
