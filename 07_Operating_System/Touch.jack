@@ -10,37 +10,54 @@
 // X_hi [7:0]: 000XXXXX, X11-X7
 // Y_lo [7:0]: 0YYYYYYY, X6-X0
 // Y_hi [7:0]: 000YYYYY, X11-X7
-// command format: header, size, data, ... // size = bytes after this byte
-// response: header, size, status, command, data, ...
+// command format: header, size, data, [...] // size = bytes after this byte
+// response: header, size, status, command, [data], [...]
 // status: 0x00 success, 0x01 bad command, 0x03 bad header, 0x04 timeout, 0xFC cancel calibration
 // ENABLE_TOUCH = 0x55, 0x01, 0x12 // response = 0x55, 0x02, 0x00, 0x12
 // DISABLE_TOUCH = 0x55, 0x01, 0x13 // response = 0x55, 0x02, 0x00, 0x13
 // recommended to send DISABLE_TOUCH and wait 50ms before sending commands
+// command timeout after ~100 ms (minimum 4 byte response)
 
 class Touch{
+    static int RTP, LED;
 
     function void init(int addr){
+        let RTP = 4106;
+        let LED = 4096;
+        let LED[0] = 0;
+        return;
     }
 
     /** writes 8 bits of c to RTP and returns the response of RTP.
-     *  also responsable for the inter byte delay of approx. 50 us */
+     *  also responsible for the inter byte delay of ~50μs */
     function int writeRTP(int c){
+        // busy=0x8000(+), else byte=0x0-0xFF
+        var int rx;
+        let RTP[0] = c; // start tx
+        while (RTP[0] < 0) {} // pass
+        let rx = RTP[0];
+        do Sys.wait(1); // wait before clocking next byte
+        return rx;
     }
 
-    /** trys to read a valid touch event report. returns true on success.
-     *  returns false, if no valid touch event is available. */
-    function boolean getEvent(){
-    }
+    // /** trys to read a valid touch event report. returns true on success.
+    //  *  returns false, if no valid touch event is available. */
+    // function boolean getEvent(){
+    //     return -1;
+    // }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
-    function int getX(){
-    }
+    // /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    // function int getX(){
+    //     return -1;
+    // }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
-    function int getY(){
-    }
+    // /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    // function int getY(){
+    //     return -1;
+    // }
 
-    /** returns the pen value (1 = down, 0 = up) of the last touch event report */
-    function boolean getPen(){
-    }
+    // /** returns the pen value (1 = down, 0 = up) of the last touch event report */
+    // function boolean getPen(){
+    //     return -1;
+    // }
 }

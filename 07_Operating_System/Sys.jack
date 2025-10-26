@@ -2,6 +2,7 @@
  * A library that supports various program execution services.
  */
 class Sys {
+    static int LED;
 
     /** Performs all the initializations required by the OS. */
     function void init() {
@@ -12,6 +13,7 @@ class Sys {
         // do Output.init();
         // do Keyboard.init();
         do UART.init();
+        do Touch.init();
         do Main.main();
         do Sys.halt();
         return;
@@ -66,7 +68,14 @@ class Sys {
         // do Output.printChar(82); // R
         // do Output.printChar(82); // R
         // do Output.printInt(errorCode);
-        do Sys.halt();
+        // do Sys.halt();
+        
+        while (true) { // unknown state
+            let LED[0] = 1; 
+            do Sys.wait(125);
+            let LED[0] = 2;
+            do Sys.wait(125);
+        }
         return;
     }
 }

@@ -13,7 +13,7 @@
  * AR1021 shifts on posedge, samples middle/negedge (CPHA=0, CPOL=1) with a maximum
  * bit rate of ~900kHz (~28 cycles @ 25 MHz clock) and requires an inter-byte delay
  * of ~50μs (1250 cycles) however this latter implementation detail is currently 
- * handled in software. // TODO: reserve a bit for inter-byte counter?
+ * handled in software.
  */
 
 `default_nettype none
@@ -49,7 +49,7 @@ module RTP(
 	// increment SCK while busy at 16 cycles per high/low
 	// 1 cycle to set load, 32 cycles per bit
 	// 256 cycles to shift 8 bits
-	PC count(
+	PC count_32(
 		.clk(clk),
 		.in(16'd0), // unused
 		.load(1'd0), // unused
@@ -60,7 +60,7 @@ module RTP(
 	assign sckReset = (sckCount == 16'd31);
 
 	// reset busy signal after 256 cycles
-	PC sck_count(
+	PC count_256(
 		.clk(clk),
 		.in(16'd0), // unused
 		.load(1'd0), // unused

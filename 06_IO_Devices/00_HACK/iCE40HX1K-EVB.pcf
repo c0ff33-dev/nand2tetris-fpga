@@ -64,6 +64,6 @@ set_io LCD_SDO 2		# PIO3_1B connected to pin 7 of GPIO1
 set_io LCD_SCK 3		# PIO3_2A connected to pin 9 of GPIO1
 set_io LCD_CSX 4		# PIO3_2B connected to pin 11 of GPIO1
 
-set_io RTP_SDI 7		# PIO3_3A connected to pin 13 of GPIO1
-set_io RTP_SDO 8		# PIO3_3B connected to pin 15 of GPIO1
-set_io RTP_SCK 9		# PIO3_5A connected to pin 17 of GPIO1
+set_io RTP_SDI 7		# PIO3_3A connected to pin 13 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
+set_io RTP_SDO 8		# PIO3_3B connected to pin 15 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
+set_io RTP_SCK 9		# PIO3_5A connected to pin 17 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP

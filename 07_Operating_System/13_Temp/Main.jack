@@ -1,25 +1,62 @@
 class Main {
-    static int LED, RTP, UART_TX, UART_RX, DEBUG0;
+    static int LED, RTP, UART_TX, UART_RX;
+    static int DEBUG0,DEBUG1,DEBUG2,DEBUG3,DEBUG4;
 
     method void init() {
         let LED = 4096;
+        let LED[0] = 0;
         let UART_TX = 4098;
         let UART_RX = 4099;
         let RTP = 4106;
         let DEBUG0 = 4107;
+        let DEBUG1 = 4108;
+        let DEBUG2 = 4109;
+        let DEBUG3 = 4110;
+        let DEBUG4 = 4111;
         return;
     }
 
     function void main() {
-        var int rx;
+        var int rtp;
         do init();
 
-        // UART echo test
-        while (true) {
-            let rx = UART.readChar();
-            do UART.writeChar(rx);
-            let LED[0] = 3;
+        // command format: header, size, data, [...] // size = bytes after this byte
+        // response: header, size, status, command, [data], [...]
+
+        // FIXME: first byte 0x0, subsequent bytes 0xFF - maybe I2C IRQ signal?
+        // FIXME: SDO is not high until response in SPI mode but at least SJ3 is open
+        // FIXME: also no error header so its definitely scuffed
+
+        // send command byte DISABLE_TOUCH
+        let rtp = Touch.writeRTP(85); // 0x55
+        do UART.writeChar(rtp);
+        let rtp = Touch.writeRTP(1);  // 0x01
+        do UART.writeChar(rtp);
+        let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
+        do UART.writeChar(rtp);
+
+        // read command response
+        let rtp = Touch.writeRTP(0); // 1
+        do UART.writeChar(rtp);
+
+        if (rtp = 85) { // 0x55
+            let LED[0] = 1;
+        } else {
+            if (rtp = 77) { // 0x4D (no data)
+                let LED[0] = 2;
+            } else {
+                let LED[0] = 3;
+            }
         }
+
+        let rtp = Touch.writeRTP(0); // 2
+        do UART.writeChar(rtp);
+        
+        let rtp = Touch.writeRTP(0); // 3
+        do UART.writeChar(rtp);
+
+        let rtp = Touch.writeRTP(0); // 4
+        do UART.writeChar(rtp);
         return;
     }
 }
