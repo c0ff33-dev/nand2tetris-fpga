@@ -11,14 +11,15 @@ class Main {
     }
 
     function void main() {
+        var int rx;
         do init();
 
-        // UART_TX test
-        do UART.writeChar(80);
-        do UART.writeChar(65);
-        do UART.writeChar(80);
-        do UART.writeChar(65);
-        let LED[0] = 3;
-       return;
+        // UART echo test
+        while (true) {
+            let rx = UART.readChar();
+            do UART.writeChar(rx);
+            let LED[0] = 3;
+        }
+        return;
     }
 }

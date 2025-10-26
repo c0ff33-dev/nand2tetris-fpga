@@ -2,8 +2,7 @@
  * Library that provides character based access to UART_TX and UART_RX
  */
 class UART {
-    // static int UART_TX, UART_RX;
-    static int LED, RTP, UART_TX, UART_RX, DEBUG0;
+    static int UART_TX, UART_RX;
 
     /** initializes UART. UART_TX is memory mapped at addr.
      *  UART_RX is memory mapped at addr+1 */
@@ -12,8 +11,6 @@ class UART {
         let UART_RX = 4099;
         let UART_TX[0] = 0; // init tx buffer
         let UART_RX[0] = -1; // init rx buffer
-        let LED = 4096;
-        let LED[0] = 0;
         return;
     }
 
@@ -21,7 +18,6 @@ class UART {
     function void writeChar(int c){
         // 0x0=ready, 0x8000=busy
         while (~(UART_TX[0] = 0)) {
-            let LED[0] = 1;
             do Sys.wait(1); // wait until ready to send
         }
         let UART_TX[0] = c; // send async / don't wait for completion
@@ -33,7 +29,6 @@ class UART {
         // ready=0x8000, else byte=0x0-0xFF
         var int rx;
         while (UART_RX[0] < 0) {
-            let LED[0] = 2;
             do Sys.wait(1); // wait until byte recv'd
         }
         let rx = UART_RX[0];
