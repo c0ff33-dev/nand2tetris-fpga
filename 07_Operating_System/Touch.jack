@@ -20,7 +20,7 @@
 // sleep cycle will commence after 10000ms but should wake on its own with input/cmd
 
 class Touch{
-    static int RTP, LED;
+    static int RTP, LED, x, y, pen;
 
     function void init(int addr){
         let RTP = 4106;
@@ -34,37 +34,78 @@ class Touch{
     function int writeRTP(int c){
         // busy=0x8000(+), else byte=0x0-0xFF
         var int rx;
-        let RTP[0] = c; // start tx
-        while (RTP[0] < 0) {
-            // blink 1 while transmitting
-            let LED[0] = 1; 
-            do Sys.wait(250);
-            let LED[0] = 0;
-            do Sys.wait(250);
+        let RTP[0] = c; // start RTP_SCK
+        while (RTP[0] < 0) { 
+            do Touch.blink(250); 
         }
         let rx = RTP[0];
         do Sys.wait(1); // wait before clocking next byte
         return rx;
     }
 
-    // /** trys to read a valid touch event report. returns true on success.
-    //  *  returns false, if no valid touch event is available. */
-    // function boolean getEvent(){
-    //     return -1;
-    // }
+    /** trys to read a valid touch event report. returns true on success.
+     *  returns false, if no valid touch event is available. */
+    function boolean getEvent(){
+        // read in 5 bytes and update internal fields if valid
+        // else last report is retained
+        var int loX, hiX, loY, hiY, initial;
+        
+        // screen initial byte for 0x4D (no data)
+        let initial = Touch.writeRTP(0);
+        if (initial = 77) {
+            // TODO: not sure the remaining 4 bytes need to be cycled
+            return false;
+        }
+        let loX = Touch.writeRTP(0);
+        let hiX = Touch.writeRTP(0);
+        let loY = Touch.writeRTP(0);
+        let hiY = Touch.writeRTP(0);
+        
+        let pen = initial - 128; // 1------P
+        let x = Touch.shiftByteLeft(loX, hiX);
+        let y = Touch.shiftByteLeft(loY, hiY);
+        return true;
+    }
 
-    // /** returns the x coordinate in the range [0..4095] of the last touch event report */
-    // function int getX(){
-    //     return -1;
-    // }
+    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    function int getX(){
+        return x;
+    }
 
-    // /** returns the x coordinate in the range [0..4095] of the last touch event report */
-    // function int getY(){
-    //     return -1;
-    // }
+    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    function int getY(){
+        return y;
+    }
 
-    // /** returns the pen value (1 = down, 0 = up) of the last touch event report */
-    // function boolean getPen(){
-    //     return -1;
-    // }
+    /** returns the pen value (1 = down, 0 = up) of the last touch event report */
+    function boolean getPen(){
+        return pen;
+    }
+
+    // TODO: is there somewhere for utility functions?
+    // take two bytes and return a 16 bit word
+    function int shiftByteLeft(int loByte, int hiByte) {
+        var int sum;
+        // shift the left hiByte by 8 (2^8=256)
+        let sum = hiByte + hiByte; // 2
+        let sum = sum + sum; // 4
+        let sum = sum + sum; // 8
+        let sum = sum + sum; // 16
+        let sum = sum + sum; // 32
+        let sum = sum + sum; // 64
+        let sum = sum + sum; // 128
+        let sum = sum + sum; // 256
+        let sum = sum + loByte; // remaining byte
+        return sum;
+    }
+
+    // TODO: utility function
+    // Cycle LED[1] once
+    function void blink(int interval) {
+        let LED[0] = 1; 
+        do Sys.wait(interval);
+        let LED[0] = 0;
+        do Sys.wait(interval);
+        return;
+    } 
 }
