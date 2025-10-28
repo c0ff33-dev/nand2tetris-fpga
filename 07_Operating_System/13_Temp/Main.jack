@@ -28,14 +28,10 @@ class Main {
         // FIXME: SDO is not meant to be high until response in SPI mode but at least SJ3 is open
         // FIXME: also no error header so its definitely scuffed
         // FIXME: tb is probably wrong / no mention of using SDO idle high in AR1021 docs
-        // FIXME: but RTP signals look ok in sim (as expected)
-        // FIXME: DEBUG4=RTP_SDI, already flipped by the time Jack code starts
+        // FIXME: but RTP signals look ok in 06/07 sims (as expected)
+        // FIXME: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
         // FIXME: tried up to 8 times slower (~100kHz) with no change
-        // FIXME: RTP.v fully meets all timing constraints / don't think that is the problem
-        
-        // FIXME: try generating Hack file for 07_OS to run RTP_SCK
-        // FIXME: current file looks ok for 0x80 in / 0x55 out
-        // FIXME: reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
+        // FIXME: RTP.v fully meets all timing constraints
 
         // send command byte DISABLE_TOUCH
         let rtp = Touch.writeRTP(85); // 0x55
