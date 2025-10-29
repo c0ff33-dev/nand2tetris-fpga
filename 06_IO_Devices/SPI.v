@@ -55,7 +55,7 @@ module SPI(
 		.out(busy)
 	);
 
-	// increment SCK while busy
+	// run SCK while busy
 	// 1 cycle to set load, 8 cycles to shift 8 bits
 	PC count(
 		.clk(~clk), // negedge
@@ -82,7 +82,7 @@ module SPI(
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load : 1'b1), // don't shift on load
 		.shift(busy), // shift continuously while sampling
-		.out(shiftOut) // availble for sampling by posedge for SDO
+		.out(shiftOut) // available for sampling by posedge for SDO
 	);
 
 	// generic init handler, should work with ice40 + yosys

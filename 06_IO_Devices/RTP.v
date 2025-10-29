@@ -94,7 +94,7 @@ module RTP(
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load : 1'b1), // don't shift on load
 		.shift(sckCount==31), // shift once per 32 cycles
-		.out(shiftOut) // availble for sampling by negedge for SDO
+		.out(shiftOut) // available for sampling by negedge for SDO
 	);
 
 	// generic init handler, should work with ice40 + yosys

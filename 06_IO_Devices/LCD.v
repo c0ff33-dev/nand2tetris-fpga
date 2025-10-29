@@ -14,11 +14,14 @@
  * (and stays low even when transmission is completed). DCX is set to 1 (data).
  * After 32 clock cycles transmission is completed and out[15] is set to 0.
  *
- * 240x320 display, 256K colours
+ * 240x320x18 display, 256K colours (65K addressable)
  * DCX updates on the 7th negedge e.g. asserts on posedge of last command/data bit 
- * CSX must be driven low before 1st SCK posedge and high no earlier than 8th SCK negedge
+ * CSX must be driven low 1 cycle before SCK posedge and high no earlier than 8th SCK negedge
 */
-// sample posedge, shift negedge?
+
+// Note: 2 cycles @ 25 MHz meets SCL pulse width requirements for write (twrh/twrl) 
+// but not total time (twc) - at best it will be 1/2 speed compared to SPI part.
+
 `default_nettype none
 module LCD(
 		input clk,			// clock 25 MHz
@@ -32,7 +35,7 @@ module LCD(
 		output SCK			// SPI serial clock
 );
 
-	wire csx, dcx, busy, busy16, reset;
+	wire csx, dcx, busy, busy16, reset, reset16;
 	wire [7:0] shiftOut, shiftOut16;
 	wire [15:0] clkCount;
 
@@ -47,10 +50,11 @@ module LCD(
 		.out(csx)
 	);
 
-	// TODO
+	// dcx gets set whenever load=1 regardless of CSX/byte transmission
+	// if load16 dcx=1 (data), else dcx=in[9] (either)
 	Bit dc (
 		.clk(clk),
-		.in(init ? in[8] : 1'b1),
+		.in(init ? (load16 ? 1'b1 : in[9]) : 1'b0),
 		.load(init ? load : 1'b1),
 		.out(dcx)
 	);
@@ -61,6 +65,9 @@ module LCD(
 
 	// if in[8=0] and load=1 then busy=1 (transmission in progress)
 	// load on new byte or reset when complete
+
+	// TODO: busy is jumping the gun
+	// run for 8 SCK/16 clk cycles
 	Bit busyBit (
 		.clk(~clk), // negedge
 		.in(reset ? 1'b0 : ~in[8]),
@@ -68,6 +75,7 @@ module LCD(
 		.out(busy)
 	);
 
+	// run for 16 SCK/32 clk cycles
 	Bit busy16Bit (
 		.clk(~clk), // negedge
 		.in(reset ? 1'b0 : ~in[8]),
@@ -75,18 +83,19 @@ module LCD(
 		.out(busy16)
 	);
 	
-	// increment SCK while busy
-	// 1 cycle to set load, 8 cycles to shift 8 bits
+	// run SCK while busy
+	// busy=1 cycle to set load, 16 cycles to shift 8 bits
+	// busy16=1 cycle to set load, 32 cycles to shift 16 bits
 	PC count(
 		.clk(~clk), // negedge
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy | busy16), // inc while busy
-		.reset(reset), // cycle 0 to max clkCount
+		.reset(busy16 ? reset16 : reset), // cycle 0 to max clkCount
 		.out(clkCount)
 	);
-	assign reset = (clkCount == 16'd7);
-	assign reset16 = (clkCount == 16'd15);
+	assign reset = (clkCount == 16'd15);
+	assign reset16 = (clkCount == 16'd31);
 
 	// circular buffer to enable duplex comms with slave where:
 	// slave MSB >= master LSB (MISO)
@@ -98,22 +107,22 @@ module LCD(
 	BitShift8L shiftReg (
 		.clk(clk), // negedge latch
 		.in(init ? in[7:0] : 8'd0), // init on load
-		.inLSB(1'b0), // no input, shiftReg will be empty after 8 cycles
+		.inLSB(1'b0), // no input, shiftReg will be empty after 8 shifts
 		.load(init ? load : 1'b1), // don't shift on load
-		.shift(busy | busy16), // shift continuously while sampling
-		.out(shiftOut) // availble for sampling by posedge for SDO
+		.shift(SCK & clkCount[0]), // once per negedge SCK (1/2 clk)
+		.out(shiftOut) // available for sampling by posedge for SDO
 	);
 
 	// if load=1 shiftReg16 is ignored
 	// if load16=1 shiftReg16 gets cycled through SDO
-	//   and then after 8 cycles it will be where shiftReg started
+	//   and then after 8 shifts it will be where shiftReg started
 	BitShift8L shiftReg16 (
 		.clk(clk), // negedge latch
 		.in(init ? in[15:8] : 8'd0), // init on load
 		.inLSB(init ? shiftOut[7] : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load16 : 1'b1), // don't shift on load
-		.shift(busy16), // shift continuously while sampling
-		.out(shiftOut16) // availble for sampling by posedge for SDO
+		.shift(SCK & clkCount[0]), // once per negedge SCK (1/2 clk)
+		.out(shiftOut16) // available for sampling by posedge for SDO
 	);
 
 	// generic init handler, should work with ice40 + yosys
@@ -126,7 +135,7 @@ module LCD(
 
 	assign CSX = init ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
 	assign SDO = init ? (busy16 ? (busy & shiftOut16[7]) : (busy & shiftOut[7])) : 1'b0; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? ((busy | busy16) & clk) : 1'b0; // run SCK while busy, start low
+	assign SCK = init ? ((busy | busy16) & clkCount[0]) : 1'b0; // run SCK while busy, start low, 1/2 clk speed
 	assign DCX = init ? (dcx) : 1'b0; // TODO
 	assign out = init ? (busy16 ? {busy,shiftOut16[14:0]} : {busy,7'd0,shiftOut}) : 16'd0; // out[15]=busy, out[7:0]=received byte
 
