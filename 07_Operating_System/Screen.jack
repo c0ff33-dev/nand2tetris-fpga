@@ -21,7 +21,7 @@ class Screen {
     function void setPenColor(int color){
     }
 
-    /** Sets the current back ground color, to be used for clearScreen()
+    /** Sets the current background color, to be used for clearScreen()
      *  and drawBitMap() commands.
      *  Colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
     function void setBackColor(int color){

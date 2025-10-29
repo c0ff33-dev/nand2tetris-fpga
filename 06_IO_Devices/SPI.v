@@ -49,7 +49,7 @@ module SPI(
 	// if in[8=0] and load=1 then busy=1 (transmission in progress)
 	// load on new byte or reset when complete
 	Bit busyBit (
-		.clk(~clk),
+		.clk(~clk), // negedge
 		.in(reset ? 1'b0 : ~in[8]),
 		.load(load | reset),
 		.out(busy)
@@ -58,7 +58,7 @@ module SPI(
 	// increment SCK while busy
 	// 1 cycle to set load, 8 cycles to shift 8 bits
 	PC count(
-		.clk(~clk),
+		.clk(~clk), // negedge
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
@@ -76,7 +76,7 @@ module SPI(
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
 	// init=0 before load, no shift on first cycle
-	BitShift8L shiftreg (
+	BitShift8L shiftReg (
 		.clk(clk), // negedge latch
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
