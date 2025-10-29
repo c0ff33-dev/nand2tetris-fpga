@@ -1,4 +1,5 @@
 // Attempt to trap SDI regardless of timing
+// Confirmed this works with real signals
 @LED
 M=1
 
