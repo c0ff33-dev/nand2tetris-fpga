@@ -28,7 +28,7 @@ module LCD(
 		input load,		    // start send command/byte over SPI
 		input load16,		// start send data (16 bits)
 		input [15:0] in,	// data to be sent
-		output [15:0] out,	// data to be sent
+		output [15:0] out,	// out[15]=1 if busy, else 0
 		output DCX,			// SPI data/command not (0=command, 1=data)
 		output CSX,			// SPI chip select not
 		output SDO,			// SPI serial data out
@@ -75,9 +75,10 @@ module LCD(
 	);
 
 	// run for 16 SCK/32 clk cycles
+	// unconditionally busy for data loads
 	Bit busy16Bit (
 		.clk(clk), // negedge
-		.in(reset ? 1'b0 : ~in[8]),
+		.in(reset ? 1'b0 : 1'b1),
 		.load(load16 | reset16),
 		.out(busy16)
 	);
@@ -112,6 +113,8 @@ module LCD(
 		.out(shiftOut) // available for sampling by posedge for SDO
 	);
 
+	// FIXME: shiftReg isn't shifting into shiftReg16 as expected
+
 	// if load=1 shiftReg16 is ignored
 	// if load16=1 shiftReg16 gets cycled through SDO
 	//   and then after 8 shifts it will be where shiftReg started
@@ -133,9 +136,9 @@ module LCD(
 	end
 
 	assign CSX = init ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
-	assign SDO = init ? (busy16 ? (busy & shiftOut16[7]) : (busy & shiftOut[7])) : 1'b0; // MOSI (masterMSB to slaveLSB)
-	assign SCK = init ? ((busy | busy16) & clkCount[0]) : 1'b0; // run SCK while busy, start low, 1/2 clk speed
-	assign DCX = init ? (dcx) : 1'b0;
-	assign out = init ? (busy16 ? {busy,shiftOut16[14:0]} : {busy,7'd0,shiftOut}) : 16'd0; // out[15]=busy, out[7:0]=received byte
+	assign SDO = init ? (busy16 ? (busy16 & shiftOut16[7]) : (busy & shiftOut[7])) : 1'b0; // MOSI (masterMSB to slaveLSB)
+	assign SCK = init ? ((busy16 | busy) & clkCount[0]) : 1'b0; // run SCK while busy, start low, 1/2 clk speed
+	assign DCX = init ? dcx : 1'b0;
+	assign out = init ? {(busy16|busy),15'd0} : 1'b0; // out[15]=busy
 
 endmodule
