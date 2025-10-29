@@ -42,14 +42,14 @@ module LCD_tb();
 	// Compare
 	reg[5:0] bits=0;
 	reg d16=0;
-	always @(negedge clk)
+	always @(posedge clk)
 		d16 <= load16?1:(load)?0:d16;	
-	always @(negedge clk)
+	always @(posedge clk)
 		bits <= (load&~in[8]|load16)?1:(((bits[4]&~d16)|bits[5])?0:(busy?bits+1:0));
 	wire busy=|bits;
 	wire out_cmp = busy;
 	reg [15:0] shift=0;
-	always @(negedge clk)
+	always @(posedge clk)
 		shift <= (load|load16)?in:(~SCK_cmp?shift:{shift[14:0],1'b0});
 	wire SCK_cmp=busy&~bits[0];
 	reg ce_cmp=0;

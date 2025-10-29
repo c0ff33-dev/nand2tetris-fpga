@@ -66,10 +66,9 @@ module LCD(
 	// if in[8=0] and load=1 then busy=1 (transmission in progress)
 	// load on new byte or reset when complete
 
-	// TODO: busy is jumping the gun
 	// run for 8 SCK/16 clk cycles
 	Bit busyBit (
-		.clk(~clk), // negedge
+		.clk(clk), // negedge
 		.in(reset ? 1'b0 : ~in[8]),
 		.load(load | reset),
 		.out(busy)
@@ -77,7 +76,7 @@ module LCD(
 
 	// run for 16 SCK/32 clk cycles
 	Bit busy16Bit (
-		.clk(~clk), // negedge
+		.clk(clk), // negedge
 		.in(reset ? 1'b0 : ~in[8]),
 		.load(load16 | reset16),
 		.out(busy16)
@@ -87,7 +86,7 @@ module LCD(
 	// busy=1 cycle to set load, 16 cycles to shift 8 bits
 	// busy16=1 cycle to set load, 32 cycles to shift 16 bits
 	PC count(
-		.clk(~clk), // negedge
+		.clk(clk), // negedge
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy | busy16), // inc while busy
@@ -105,7 +104,7 @@ module LCD(
 	// if load=1 shiftReg gets cycled through SDO
 	// if load16=1 shiftReg gets cycled through shiftReg16
 	BitShift8L shiftReg (
-		.clk(clk), // negedge latch
+		.clk(~clk), // posedge latch
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(1'b0), // no input, shiftReg will be empty after 8 shifts
 		.load(init ? load : 1'b1), // don't shift on load
@@ -117,7 +116,7 @@ module LCD(
 	// if load16=1 shiftReg16 gets cycled through SDO
 	//   and then after 8 shifts it will be where shiftReg started
 	BitShift8L shiftReg16 (
-		.clk(clk), // negedge latch
+		.clk(~clk), // posedge latch
 		.in(init ? in[15:8] : 8'd0), // init on load
 		.inLSB(init ? shiftOut[7] : 1'b0), // shift slaveMSB into masterLSB
 		.load(init ? load16 : 1'b1), // don't shift on load
@@ -136,7 +135,7 @@ module LCD(
 	assign CSX = init ? (load ? 1'b0 : csx) : 1'b1; // init CSX=1, drive low on load (CS setup time)
 	assign SDO = init ? (busy16 ? (busy & shiftOut16[7]) : (busy & shiftOut[7])) : 1'b0; // MOSI (masterMSB to slaveLSB)
 	assign SCK = init ? ((busy | busy16) & clkCount[0]) : 1'b0; // run SCK while busy, start low, 1/2 clk speed
-	assign DCX = init ? (dcx) : 1'b0; // TODO
+	assign DCX = init ? (dcx) : 1'b0;
 	assign out = init ? (busy16 ? {busy,shiftOut16[14:0]} : {busy,7'd0,shiftOut}) : 16'd0; // out[15]=busy, out[7:0]=received byte
 
 endmodule
