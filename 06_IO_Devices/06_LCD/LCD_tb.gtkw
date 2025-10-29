@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Wed Oct 29 10:52:54 2025
+[*] Wed Oct 29 11:30:25 2025
 [*]
 [dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/06_LCD/LCD_tb.vcd"
-[dumpfile_mtime] "Wed Oct 29 10:52:34 2025"
-[dumpfile_size] 59231
+[dumpfile_mtime] "Wed Oct 29 11:28:59 2025"
+[dumpfile_size] 39082
 [savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/06_LCD/LCD_tb.gtkw"
 [timestart] 0
 [size] 2560 1369
@@ -21,9 +21,7 @@ LCD_tb.clk
 -INPUT
 @28
 LCD_tb.load
-LCD_tb.LCD.busy
 LCD_tb.load16
-LCD_tb.LCD.busy16
 @22
 LCD_tb.in[15:0]
 @200
@@ -33,11 +31,18 @@ LCD_tb.CSX
 LCD_tb.DCX
 LCD_tb.SDO
 LCD_tb.SCK
+LCD_tb.LCD.busy
+@29
+LCD_tb.LCD.busy16
 @22
 LCD_tb.LCD.out[15:0]
+@24
 LCD_tb.LCD.clkCount[15:0]
+@22
 LCD_tb.LCD.shiftOut16[7:0]
 LCD_tb.LCD.shiftOut[7:0]
+@28
+(0)LCD_tb.LCD.out[15:0]
 @200
 -CMP
 @28
@@ -45,8 +50,7 @@ LCD_tb.CSX_cmp
 LCD_tb.DCX_cmp
 LCD_tb.SDO_cmp
 LCD_tb.SCK_cmp
-@22
-LCD_tb.out_cmp[15:0]
+LCD_tb.out_cmp
 @200
 -Test
 @28

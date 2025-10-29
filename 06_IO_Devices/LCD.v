@@ -68,7 +68,7 @@ module LCD(
 
 	// run for 8 SCK/16 clk cycles
 	Bit busyBit (
-		.clk(clk), // negedge
+		.clk(clk),
 		.in(reset ? 1'b0 : ~in[8]),
 		.load(load | reset),
 		.out(busy)
@@ -77,8 +77,8 @@ module LCD(
 	// run for 16 SCK/32 clk cycles
 	// unconditionally busy for data loads
 	Bit busy16Bit (
-		.clk(clk), // negedge
-		.in(reset ? 1'b0 : 1'b1),
+		.clk(clk),
+		.in(reset16 ? 1'b0 : 1'b1),
 		.load(load16 | reset16),
 		.out(busy16)
 	);
@@ -87,7 +87,7 @@ module LCD(
 	// busy=1 cycle to set load, 16 cycles to shift 8 bits
 	// busy16=1 cycle to set load, 32 cycles to shift 16 bits
 	PC count(
-		.clk(clk), // negedge
+		.clk(clk),
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy | busy16), // inc while busy
@@ -108,12 +108,10 @@ module LCD(
 		.clk(~clk), // posedge latch
 		.in(init ? in[7:0] : 8'd0), // init on load
 		.inLSB(1'b0), // no input, shiftReg will be empty after 8 shifts
-		.load(init ? load : 1'b1), // don't shift on load
+		.load(init ? (load | load16) : 1'b1), // don't shift on load
 		.shift(SCK & clkCount[0]), // once per negedge SCK (1/2 clk)
 		.out(shiftOut) // available for sampling by posedge for SDO
 	);
-
-	// FIXME: shiftReg isn't shifting into shiftReg16 as expected
 
 	// if load=1 shiftReg16 is ignored
 	// if load16=1 shiftReg16 gets cycled through SDO
