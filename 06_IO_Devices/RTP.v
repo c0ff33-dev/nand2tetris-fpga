@@ -32,7 +32,7 @@ module RTP(
 	reg miso = 0;
 	wire busy, reset, sckReset;
 	wire [7:0] shiftOut;
-	wire [15:0] clkCount, sckCount;
+	wire [15:0] busyCount, sckCount;
 
 	// remaining registers are aligned to leading posedge (opposite of SPI)
 	// so shift can happen first then sample later in same cycle
@@ -55,7 +55,7 @@ module RTP(
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
-		.reset(sckReset), // cycle 0 to max clkCount
+		.reset(sckReset), // cycle 0 to max sckCount
 		.out(sckCount)
 	);
 	assign sckReset = (sckCount == 16'd31);
@@ -66,10 +66,10 @@ module RTP(
 		.in(16'd0), // unused
 		.load(1'd0), // unused
 		.inc(busy), // inc while busy
-		.reset(reset), // cycle 0 to max clkCount
-		.out(clkCount)
+		.reset(reset), // cycle 0 to max busyCount
+		.out(busyCount)
 	);
-	assign reset = (clkCount == 16'd255);
+	assign reset = (busyCount == 16'd255);
 
 	// MISO = SDI in [t+1]
 	// sample during SCK negedge (but not too close to edge)

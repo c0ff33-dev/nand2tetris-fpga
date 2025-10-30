@@ -73,7 +73,12 @@ class Main {
         // }
 
         let LED[0] = 3;
-        do UART.writeChar(173); // 0xDE
+        do UART.writeChar(173); // 0xAD
+        
+        // FIXME: Jack (not asm) programs are looping without this
+        // FIXME: VM/asm code for Sys.halt() looks fine
+        while (true) {}
+
         return;
     }
 }
