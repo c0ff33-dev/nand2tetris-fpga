@@ -4,7 +4,6 @@ class Main {
 
     method void init() {
         let LED = 4096;
-        let LED[0] = 0;
         let UART_TX = 4098;
         let UART_RX = 4099;
         let RTP = 4106;
@@ -19,6 +18,7 @@ class Main {
     function void main() {
         var int rtp;
         do init();
+        do UART.writeChar(222); // 0xDE
 
         // command format: header, size, data, [...] // size = bytes after this byte
         // response: header, size, status, command, [data], [...]
@@ -35,44 +35,45 @@ class Main {
 
         // send command byte DISABLE_TOUCH
         let rtp = Touch.writeRTP(85); // 0x55
-        do UART.writeChar(rtp);
 
-        let rtp = Touch.writeRTP(1);  // 0x01
-        do UART.writeChar(rtp);
+        // let rtp = Touch.writeRTP(1);  // 0x01
+        // do UART.writeChar(rtp);
 
-        let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
-        do UART.writeChar(rtp);
+        // let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
+        // do UART.writeChar(rtp);
 
-        // read command response
-        let rtp = Touch.writeRTP(0); // 1, 0x55
-        do UART.writeChar(rtp);
-        if (rtp = 85) {
-            do Sys.error(0); // trap on expected byte
-        }
-        if (~(rtp = 255)) {
-            do Sys.error(0); // trap on any new byte
-        }
+        // // read command response
+        // let rtp = Touch.writeRTP(0); // 1, 0x55
+        // do UART.writeChar(rtp);
+        // if (rtp = 85) {
+        //     do Sys.error(0); // trap on expected byte
+        // }
+        // if (~(rtp = 255)) {
+        //     do Sys.error(0); // trap on any new byte
+        // }
 
-        let rtp = Touch.writeRTP(0); // 2, 0x02
-        do UART.writeChar(rtp);
-        if (rtp = 2) {
-            do Sys.error(0); // trap on expected byte
-        }
+        // let rtp = Touch.writeRTP(0); // 2, 0x02
+        // do UART.writeChar(rtp);
+        // if (rtp = 2) {
+        //     do Sys.error(0); // trap on expected byte
+        // }
         
-        let rtp = Touch.writeRTP(0); // 3, 0x0
-        do UART.writeChar(rtp);
-        if (rtp = 0) {
-            do Sys.error(0); // trap on expected byte
-        }
+        // let rtp = Touch.writeRTP(0); // 3, 0x0
+        // do UART.writeChar(rtp);
+        // if (rtp = 0) {
+        //     do Sys.error(0); // trap on expected byte
+        // }
 
-        let rtp = Touch.writeRTP(0); // 4, 0x10
-        do UART.writeChar(rtp);
-        if (rtp = 16) { // command type
-            do Sys.error(0); // trap on expected byte
-        } else {
-            let LED[0] = 3;
-        }
+        // let rtp = Touch.writeRTP(0); // 4, 0x10
+        // do UART.writeChar(rtp);
+        // if (rtp = 16) { // command type
+        //     do Sys.error(0); // trap on expected byte
+        // } else {
+        //     let LED[0] = 3;
+        // }
 
+        let LED[0] = 3;
+        do UART.writeChar(173); // 0xDE
         return;
     }
 }

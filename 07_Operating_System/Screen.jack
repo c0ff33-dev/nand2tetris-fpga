@@ -6,64 +6,79 @@
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 */
 class Screen {
+    static int LCD, LED;
 
     /** Initializes the Screen. */
-    function void init(int addr){
+    function void init(){
+        let LED = 4096;
+        return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen(){
+        return;
     }
 
     /** Sets the current pen color, to be used for all subsequent drawXXX
      *  commands. Colors are represented by 16 bit RGB values with
      *  binary representation: rrrrrggggggbbbbb */
     function void setPenColor(int color){
+        return;
     }
 
     /** Sets the current background color, to be used for clearScreen()
      *  and drawBitMap() commands.
      *  Colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
     function void setBackColor(int color){
+        return;
     }
 
     /** Draws the (x,y) pixel, using the current pen color. */
     function void drawPixel(int x,int y){
+        return;
     }
 
     /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current
      *  pen color. */
     function void drawLine(int x1,int y1,int x2,int y2){
+        return;
     }
 
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current pen color. */
     function void drawRectangle(int x1, int y1, int x2, int y2){
+        return;
     }
 
     /** Draws a filled circle of radius r<=181 around (x,y), using the
      *  current pen color. */
     function void drawCircle(int x, int y, int r){
+        return;
     }
+    
 
     /** sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
      * writeData16(int color) will paint the w*h pixels in the rectangle
      * in the corresponding color.*/ 
     function void setWindow(int x1, int y1, int x2, int y2){
+        return;
     }
 
     /** sets the rgb color for the next pixel in the rectangle set by
      * setWindow(int x1, int y1, int x2, int y2).*/
     function void writeData16(int color){
+        return;
     }
 
     /** writes 8 bit data to LCD with DCX wire set to high. */
     function void writeData(int data){
+        return;
     }
 
     /** writes the 8 bit command with DCX wire set to low */
     function void writeCommand(int command){
+        return;
     }
 
     /** draws the BitMap into the rectangle with upper left corner (x1,y1)
@@ -72,6 +87,7 @@ class Screen {
      *  representing up to 16 pixel in the row. The rectangle is limited
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map){
+        return;
     }
 
     /** RGB values for various colors. */

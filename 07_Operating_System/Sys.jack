@@ -9,11 +9,13 @@ class Sys {
         // TODO: NYI
         // do Memory.init();
         // do Math.init();
-        // do Screen.init();
         // do Output.init();
         // do Keyboard.init();
+        // do Screen.init();
         do UART.init();
         do Touch.init();
+        
+        let LED[0] = 0;
         do Main.main();
         do Sys.halt();
         return;
@@ -21,8 +23,10 @@ class Sys {
 
     /** Halts the program execution. */
     function void halt() {
-        while (true) {
-            // pass
+        while (true) { 
+            // 0 == false, -1 (0xFFFF) == true
+            // but logic is inverted for if-goto:
+            //   if not break, else loop
         }
         return;
     }
