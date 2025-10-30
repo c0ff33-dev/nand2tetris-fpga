@@ -35,11 +35,6 @@ class Touch{
         let RTP[0] = c; // start RTP_SCK
         while (RTP[0] < 0) {
             let rx = RTP[0];
-            // DEBUG: emit both bytes for testing
-            // let hiByte = Util.logShiftByteRight(rx);
-            // do UART.writeChar(hiByte);
-            // do UART.writeChar(rx);
-            // do Touch.blink(250);
         }
         do Sys.wait(1); // wait before clocking next byte
         return rx;

@@ -34,4 +34,13 @@ class Util {
         let sum = sum + loByte; // remaining byte
         return sum;
     }
+
+    // take a word and emit two bytes over UART
+    function void debugWord(int word) {
+        var int hiByte;
+        let hiByte = Util.logShiftByteRight(word);
+        do UART.writeChar(hiByte);
+        do UART.writeChar(word);
+        return;
+    }
 }
