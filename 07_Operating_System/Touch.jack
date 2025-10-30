@@ -20,11 +20,10 @@
 // sleep cycle will commence after 10000ms but should wake on its own with input/cmd
 
 class Touch{
-    static int RTP, LED, x_coord, y_coord, pen;
+    static int RTP, x_coord, y_coord, pen;
 
     function void init() {
         let RTP = 4106;
-        let LED = 4096;
         return;
     }
 
@@ -36,10 +35,11 @@ class Touch{
         let RTP[0] = c; // start RTP_SCK
         while (RTP[0] < 0) {
             let rx = RTP[0];
-            let hiByte = Touch.logShiftByteRight(rx);
-            do UART.writeChar(hiByte); // DEBUG
-            do UART.writeChar(rx); // DEBUG
-            do Touch.blink(1000); // 250
+             // DEBUG: emit both bytes for testing
+            // let hiByte = Util.logShiftByteRight(rx);
+            // do UART.writeChar(hiByte);
+            // do UART.writeChar(rx);
+            // do Touch.blink(250);
         }
         do Sys.wait(1); // wait before clocking next byte
         return rx;
@@ -64,8 +64,8 @@ class Touch{
         let hiY = Touch.writeRTP(0);
         
         let pen = initial - 128; // 1------P
-        let x_coord = Touch.shiftByteLeft(loX, hiX);
-        let y_coord = Touch.shiftByteLeft(loY, hiY);
+        let x_coord = Util.shiftByteLeft(loX, hiX);
+        let y_coord = Util.shiftByteLeft(loY, hiY);
         return true;
     }
 
@@ -83,42 +83,4 @@ class Touch{
     function boolean getPen(){
         return pen;
     }
-
-    // TODO: home these utility functions
-
-    // take a 16 bit word and shift the upper byte right by 8
-    function int logShiftByteRight(int word) {
-        var int result;
-        // psuedo division by 256
-        while (word > 255) {
-            let word = word - 256;
-            let result = result + 1;
-        }
-        return result;
-    }
-
-    // take two bytes and return a 16 bit word
-    function int shiftByteLeft(int loByte, int hiByte) {
-        var int sum;
-        // shift the left hiByte by 8 (2^8=256)
-        let sum = hiByte + hiByte; // 2
-        let sum = sum + sum; // 4
-        let sum = sum + sum; // 8
-        let sum = sum + sum; // 16
-        let sum = sum + sum; // 32
-        let sum = sum + sum; // 64
-        let sum = sum + sum; // 128
-        let sum = sum + sum; // 256
-        let sum = sum + loByte; // remaining byte
-        return sum;
-    }
-
-    // Cycle LED[1] once
-    function void blink(int interval) {
-        let LED[0] = 1; 
-        do Sys.wait(interval);
-        let LED[0] = 0;
-        do Sys.wait(interval);
-        return;
-    } 
 }

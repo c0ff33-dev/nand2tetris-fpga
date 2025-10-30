@@ -1,0 +1,37 @@
+/**
+ * A library for miscellaneous system functions that don't quite fit elsewhere.
+ */
+class Util {
+
+    /** Performs all the initializations required by the OS. */
+    function void init() {
+        return;
+    }
+
+    // take a 16 bit word and shift the upper byte right by 8
+    function int logShiftByteRight(int word) {
+        var int result;
+        // psuedo division by 256
+        while (word > 255) {
+            let word = word - 256;
+            let result = result + 1;
+        }
+        return result;
+    }
+
+    // take two bytes and return a 16 bit word
+    function int shiftByteLeft(int loByte, int hiByte) {
+        var int sum;
+        // shift the left hiByte by 8 (2^8=256)
+        let sum = hiByte + hiByte; // 2
+        let sum = sum + sum; // 4
+        let sum = sum + sum; // 8
+        let sum = sum + sum; // 16
+        let sum = sum + sum; // 32
+        let sum = sum + sum; // 64
+        let sum = sum + sum; // 128
+        let sum = sum + sum; // 256
+        let sum = sum + loByte; // remaining byte
+        return sum;
+    }
+}
