@@ -1,0 +1,139 @@
+/**
+* A library of functions for displaying graphics on the screen.
+* The connected LCD physical screen consists of 320 rows (indexed 0..319, top to bottom)
+* of 240 pixels each (indexed 0..239, left to right). The top left pixel on 
+* the screen is indexed (0,0). Every pixel can be set to a 16 bit color code composed of
+* RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
+*/
+class ScreenExt {
+    static int LCD;
+
+    /** Initializes the Screen. */
+    function void init() {
+        let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
+        return;
+    }
+
+    /** Sets the current pen color, to be used for all subsequent drawXXX
+     *  commands. Colors are represented by 16 bit RGB values with
+     *  binary representation: rrrrrggggggbbbbb */
+    function void setPenColor(int color) {
+        return;
+    }
+
+    /** Sets the current background color, to be used for clearScreen()
+     *  and drawBitMap() commands.
+     *  Colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
+    function void setBackColor(int color) {
+        return;
+    }
+   
+    /** sets the Window to a rectangle with upper left corner (x1,y1)
+     * and lower right corner (x2,y2). The next w*h calls to
+     * writeData16(int color) will paint the w*h pixels in the rectangle
+     * in the corresponding color.*/ 
+    function void setWindow(int x1, int y1, int x2, int y2) {
+        return;
+    }
+
+    /** writes the 8 bit command with DCX wire set to low */
+    function void writeCommand(int cmd) {
+        // 0x0=ready, 0x8000=busy
+        var int busy;
+
+        // send command byte
+        let LCD[0] = cmd;
+        do Sys.wait(1); // wait before checking result
+        let busy = LCD[0];
+        while (~(busy = 0)) {
+            do Util.debugWord(busy);
+            do Sys.wait(1); // wait until ready to send
+            do GPIO.blink(250);
+        }
+
+        // drive CSX high and reset DCX
+        let LCD[0] = 256;
+        do Sys.wait(1); // wait before checking result
+        let busy = LCD[0];
+        while (~(busy = 0)) {
+            do Util.debugWord(busy);
+            do Sys.wait(1); // wait until ready to send
+            do GPIO.blink(250);
+        }
+        return;
+    }
+
+    /** writes 16 bit data to LCD with DCX wire set to high. */
+    // TODO: probably need higher resolution timer for this
+    function void writeData(int data) {
+        return;
+    }
+
+    /** sets the rgb color for the next pixel in the rectangle set by
+     * setWindow(int x1, int y1, int x2, int y2).*/
+    function void writeData16(int color) {
+        return;
+    }
+
+    /** draws the BitMap into the rectangle with upper left corner (x1,y1)
+     *  and lower right corner (x2,y2) using the pen color for all 1s and the
+     *  back color for all 0s in the BitMap. BitMap is an Array of h integers
+     *  representing up to 16 pixel in the row. The rectangle is limited
+     *  to maximal 16 pixels in width.*/ 
+    function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
+        return;
+    }
+
+    /** RGB values for various colors. */
+    function int BLACK() {
+        return -1; // TODO
+    }
+    function int NAVY() {
+        return 30;  //00000 000000 11110
+    }
+    function int BLUE() {
+        return 31;  //00000 000000 11111
+    }
+    function int LIME() {
+        return 2016; //00000 111111 00000
+    }
+    function int GREEN() {
+        return 1920; //00000 111100 00000
+    }
+    function int CYAN() {
+        return 2047; //00000 111111 11111
+    }
+    function int MAROON() {
+        return -4096; //11110 000000 00000
+    }
+    function int PURPLE() {
+        return -4066; //11110 000000 11110
+    }
+    function int OLIVE() {
+        return -2176; //11110 111100 00000
+    }
+    function int DARKGREY() {
+        return -14824; //11000 110000 11000
+    }
+    function int TEAL() {
+        return 1950; //00000 111000 11100
+    }
+    function int LIGHTGREY() {
+        return -6372; //11100 111000 11100
+    }
+    function int RED() {
+        return -2048; //11111 000000 00000
+    }
+    function int MAGENTA() {
+        return -2017; //11111 000000 11111
+    }
+    function int YELLOW() {
+        return -32; //11111 111111 00000
+    }
+    function int ORANGE() {
+        return -128; //11111 111000 00000
+    }
+    function int WHITE() {
+        return -1; //11111 111111 11111
+    }
+}

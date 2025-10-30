@@ -9,9 +9,10 @@ class Sys {
         // do Math.init();
         // do Output.init();
         // do Keyboard.init();
-        // do Screen.init();
+        // do Screen.init(); // TODO: not linked
         do GPIO.init();
         do UART.init();
+        do ScreenExt.init();
         do Touch.init();
         do Main.main();
         do Sys.halt();

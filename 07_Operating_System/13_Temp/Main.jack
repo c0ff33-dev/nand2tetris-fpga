@@ -1,5 +1,20 @@
 class Main {
     function void main() {
+        do UART.writeChar(222); // 0xDE (start)
+        
+        // FIXME: nothing working, checked wiring assignment (software)
+
+        // do ScreenExt.writeCommand(33); // Display Inversion ON (21h)
+        // do ScreenExt.writeCommand(32); // Display Inversion OFF (20h)
+        
+        // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) // power off
+        // do ScreenExt.writeCommand(17); // Sleep Out (11h) // power on
+
+        // do ScreenExt.writeCommand(41); // Display ON (29h)
+        // do ScreenExt.writeCommand(40); // Display OFF (28h)
+        
+        do UART.writeChar(173); // 0xAD (end)
+        do Sys.error(0); // done
         return;
     }
 

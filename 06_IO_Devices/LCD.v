@@ -102,6 +102,8 @@ module LCD(
 	// master MSB >= slave LSB (MOSI)
 	// init=0 before load, no shift on first cycle
 
+	// TODO: consider using shiftReg for reading SPI responses 
+
 	// if load=1 shiftReg gets cycled through SDO
 	// if load16=1 shiftReg gets cycled through shiftReg16
 	BitShift8L shiftReg (
