@@ -35,7 +35,7 @@ class Touch{
         let RTP[0] = c; // start RTP_SCK
         while (RTP[0] < 0) {
             let rx = RTP[0];
-             // DEBUG: emit both bytes for testing
+            // DEBUG: emit both bytes for testing
             // let hiByte = Util.logShiftByteRight(rx);
             // do UART.writeChar(hiByte);
             // do UART.writeChar(rx);

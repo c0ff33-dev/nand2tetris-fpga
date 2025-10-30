@@ -1,12 +1,11 @@
 class Main {
-    method void init() {
+    function void main() {
         return;
     }
 
-    function void main() {
+    function void rtp_main() {
         var int rtp;
-        do init();
-        do UART.writeChar(222); // 0xDE
+        do UART.writeChar(222); // 0xDE (start)
 
         // command format: header, size, data, [...] // size = bytes after this byte
         // response: header, size, status, command, [data], [...]
@@ -20,9 +19,6 @@ class Main {
         // FIXME: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
         // FIXME: tried up to 8 times slower (~100kHz) with no change
         // FIXME: RTP.v fully meets all timing constraints
-        
-        // do Sys.error(0);
-        // do Sys.halt();
 
         // send command byte DISABLE_TOUCH
         let rtp = Touch.writeRTP(85); // 0x55
@@ -49,11 +45,17 @@ class Main {
         if (rtp = 2) {
             do Sys.error(0); // trap on expected byte
         }
+        if (~(rtp = 255)) {
+            do Sys.error(0); // trap on any new byte
+        }
         
         let rtp = Touch.writeRTP(0); // 3, 0x0
         do UART.writeChar(rtp);
         if (rtp = 0) {
             do Sys.error(0); // trap on expected byte
+        }
+        if (~(rtp = 255)) {
+            do Sys.error(0); // trap on any new byte
         }
 
         let rtp = Touch.writeRTP(0); // 4, 0x10
@@ -61,9 +63,12 @@ class Main {
         if (rtp = 16) { // command type
             do Sys.error(0); // trap on expected byte
         }
+        if (~(rtp = 255)) {
+            do Sys.error(0); // trap on any new byte
+        }
 
-        do GPIO.writeLed(3);
-        do UART.writeChar(173); // 0xAD
+        do GPIO.writeLed(3); // error
+        do UART.writeChar(173); // 0xAD (end)
 
         return;
     }
