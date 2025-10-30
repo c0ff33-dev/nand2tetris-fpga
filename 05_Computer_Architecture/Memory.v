@@ -27,8 +27,8 @@ module Memory(
 	input [15:0] inIO5, // SRAM_A (4101)
 	input [15:0] inIO6, // SRAM_D (4102)
 	input [15:0] inIO7, // GO (4103)
-	input [15:0] inIO8, // reserved [15:0]
-	input [15:0] inIO9, // reserved [15:0]
+	input [15:0] inIO8, // LCD8 [15:0]
+	input [15:0] inIO9, // LCD16 [15:0]
 	input [15:0] inIOA, // RTP (4106)
 	input [15:0] inIOB, // DEBUG0 (4107)
 	input [15:0] inIOC, // DEBUG1 (4108)
@@ -45,8 +45,8 @@ module Memory(
 	output loadIO5, // SRAM_A (4101)
 	output loadIO6, // SRAM_D (4102)
 	output loadIO7, // GO (4103)
-	output loadIO8, // reserved [15:0]
-	output loadIO9, // reserved [15:0]
+	output loadIO8, // LCD8 [15:0]
+	output loadIO9, // LCD16 [15:0]
 	output loadIOA, // RTP (4106)
 	output loadIOB, // DEBUG0 (4107)
 	output loadIOC, // DEBUG1 (4108)

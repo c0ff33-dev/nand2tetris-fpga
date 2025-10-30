@@ -49,7 +49,7 @@ module HACK(
 	// SRAM_DATA: update posedge clk, read negedge clk
 	// GO: mode update posedge clk else combinational
 
-	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
+	wire clk,writeM,loadRAM,clkRST,RST,resLoad,lcdBusy;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr;
@@ -240,6 +240,21 @@ module HACK(
 	);
 	// K6R4016V1D uses 18 bits but we address 16 LSB
 	assign SRAM_ADDR = {2'd0, go_sram_addr};
+
+	// TODO: LCD8/16 (4104/4105)
+	LCD lcd(
+		.clk(clk), 
+		.load(loadIO8),
+		.load16(loadIO9),
+		.in(outM),
+		.out(lcdBusy), // LCD8/16 share one common circuit & busy signal
+		.DCX(LCD_DCX),
+		.CSX(LCD_CSX),
+		.SDO(LCD_SDO),
+		.SCK(LCD_SCK)
+	);
+	assign inIO8 = lcdBusy;
+	assign ioIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel AR1021
 	RTP rtp(
