@@ -12,7 +12,7 @@ class Tile {
 	static Array colors;
 	static Array bits;
 
-	function void init(){
+	function void init() {
 		let colors = Array.new(7);
 		let colors[0] = Screen.YELLOW();
 		let colors[1] = Screen.TEAL();
@@ -66,7 +66,7 @@ class Tile {
 	var int r;
 	let grid = null;
 	let type=7;
-	while (type = 7){
+	while (type = 7) {
 		let type = Random.nextInt() & 7;
 	}
 	let x = 11;		
@@ -75,7 +75,7 @@ class Tile {
         return this;
     }
 
-	method void move(int px,int py){
+	method void move(int px,int py) {
 		let x=px;
 		let y=py;
 		return;
@@ -86,16 +86,16 @@ class Tile {
         return;
     }
 
-	method boolean check(){
+	method boolean check() {
 		var int i;
 		var int j;
 		var int bit;
 		let j = 0;
 		let bit = bits[(type*4)+r];
-		while (j<4){
+		while (j<4) {
 			let i=0;
-			while (i<4){
-				if (bit<0){
+			while (i<4) {
+				if (bit<0) {
 					if (grid.hasTile(x+i,y+j)) {
 						return false;
 					}
@@ -108,11 +108,11 @@ class Tile {
         return true;
     }
    	
-	method int getScore(){
+	method int getScore() {
 		return grid.clearRow();
 	} 
     
-	method void rotateRight(){
+	method void rotateRight() {
         do erase();
         let r = r+1;
 		if (r>3) {
@@ -130,7 +130,7 @@ class Tile {
 		return;
     }
     
-    method void rotateLeft(){
+    method void rotateLeft() {
         do erase();
         let r = r-1;
 		if (r<0) {
@@ -148,7 +148,7 @@ class Tile {
 		return;
     }
     
-    method void moveRight(){
+    method void moveRight() {
         do erase();
         let x = x + 1;
         if (check()) {
@@ -160,7 +160,7 @@ class Tile {
 	return;
     }
     
-    method void moveLeft(){
+    method void moveLeft() {
         do erase();
         let x = (x-1);
         if (~(check())) {
@@ -170,7 +170,7 @@ class Tile {
 	return;
     }
     
-    method void moveUp(){
+    method void moveUp() {
         do erase();
         let y = y - 1;
         if (check()) {
@@ -182,7 +182,7 @@ class Tile {
 		return;
     }
     
-    method boolean moveDown(){
+    method boolean moveDown() {
         do erase();
         let y = y + 1;
         if (check()) {
@@ -194,28 +194,28 @@ class Tile {
 	return false;
     }
 
-   	method boolean span(Grid g){
+   	method boolean span(Grid g) {
 		do erase();
 		let grid=g;
 		let x=3;
 		let y=0;
-		if (check()){
+		if (check()) {
 			do draw();
 			return true;
 		}
 		return false;
 	} 
     
-    method void draw(){
+    method void draw() {
 		var int i,j;
 		var int bit;
 		let i = 0;
 		let j = 0;
 		let bit = bits[(type*4)+r];
-		while (j<4){
+		while (j<4) {
 			let i=0;
-			while (i<4){
-				if (bit<0){
+			while (i<4) {
+				if (bit<0) {
                 	if (~(grid=null)) {do grid.draw(x+i,y+j,colors[type]);}
 					else {
 						do Screen.setPenColor(colors[type]);
@@ -230,16 +230,16 @@ class Tile {
         return;
     }
     
-    method void erase(){
+    method void erase() {
 		var int i,j;
 		var int bit;
 		let i = 0;
 		let j = 0;
 		let bit = bits[(type*4)+r];
-		while (j<4){
+		while (j<4) {
 			let i=0;
-			while (i<4){
-				if (bit<0){
+			while (i<4) {
+				if (bit<0) {
                 	if (~(grid=null)) {
 				do grid.draw(x+i,y+j,-1);
 			}

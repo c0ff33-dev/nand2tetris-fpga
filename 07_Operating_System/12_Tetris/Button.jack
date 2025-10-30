@@ -3,21 +3,21 @@ class Button{
 	field int position;
 	field String text;
 
-	constructor Button new(int p,String t){
+	constructor Button new(int p,String t) {
 		let position = p;
 		let text = t;
 		return this;
 	}
 
-	method void dispose(){
-		if (~(text=null)){
+	method void dispose() {
+		if (~(text=null)) {
 			do text.dispose();
 		}
         do Memory.deAlloc(this);
 		return;
 	}	
 
-	method void draw(boolean press){
+	method void draw(boolean press) {
 		var int x;
 		var int y;
 		var int color;
@@ -33,7 +33,7 @@ class Button{
 		do Screen.setBackColor(color);
 		do Screen.setPenColor(Screen.BLACK());
 		do Output.moveCursor(27-(3*y),1+((x*15)/2));
-		if (~(text=null)){do Output.printString(text);}
+		if (~(text=null)) {do Output.printString(text);}
 		do Screen.setBackColor(Screen.WHITE());
 		return;
 	}	

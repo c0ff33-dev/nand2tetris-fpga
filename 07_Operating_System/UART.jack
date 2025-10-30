@@ -6,7 +6,7 @@ class UART {
 
     /** initializes UART. UART_TX is memory mapped at addr.
      *  UART_RX is memory mapped at addr+1 */
-    function void init(){ // int addr
+    function void init() { // int addr
         let UART_TX = 4098;
         let UART_RX = 4099;
         // don't init TX or it will transmit
@@ -15,7 +15,7 @@ class UART {
     }
 
     /** wait for UART_TX to be ready to send next byte and send c. */
-    function void writeChar(int c){
+    function void writeChar(int c) {
         // 0x0=ready, 0x8000=busy
         let UART_TX[0] = c; // assume wire clear for first tx
         while (~(UART_TX[0] = 0)) {

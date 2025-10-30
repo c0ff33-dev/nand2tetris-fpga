@@ -6,7 +6,7 @@ class Random {
 		return r;
     }
 
-	function void seed(int i){
+	function void seed(int i) {
 		let r = i;
 		return;
 	}

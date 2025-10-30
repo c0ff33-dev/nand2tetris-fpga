@@ -51,7 +51,7 @@ class TetrisGame {
         return;
     }
     
-	method void score(int r){
+	method void score(int r) {
 		if (r=1) {let score = score + 40; }
 		if (r=2) {let score = score + 100; }
 		if (r=3) {let score = score + 300; }
@@ -71,15 +71,15 @@ class TetrisGame {
 		let next = Tile.new();
 		do next.draw();
 		let exit = false;
-		while (~exit){
+		while (~exit) {
 			let p = menu.getButton();
 	    	if (p = 3) { do tile.moveRight();}
 	    	if (p = 2) { do tile.rotateRight();}
 	    	if (p = 1) { do tile.rotateLeft();}
     		if (p = 0) { do tile.moveLeft();}
 		let time = time -1;
-		if (time=0){	
-				if (~(tile.moveDown())){
+		if (time=0) {	
+				if (~(tile.moveDown())) {
 					do score(tile.getScore());
 					do tile.dispose();
 					let tile = next;

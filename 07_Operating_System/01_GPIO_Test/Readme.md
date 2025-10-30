@@ -11,7 +11,7 @@ class Sys {
 
     function void init() {
         do GPIO.init(4096);
-        while (true){
+        while (true) {
             do GPIO.writeLed(GPIO.readBut());
         }        
         return;

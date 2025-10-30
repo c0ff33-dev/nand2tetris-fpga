@@ -40,7 +40,7 @@ class Main {
 		do Screen.setPenColor(Screen.BLACK());
 		
 		let x=0;
-		while (x<240){
+		while (x<240) {
 			do Screen.drawPixel(x,150);
 			let x=x+2;
 		}
@@ -75,7 +75,7 @@ class Main {
 		do Screen.drawBitMap(112, 260, 127, 275,map);
 		let x=120;
 		let vx=10;
-		while (true){
+		while (true) {
 			do Sys.wait(100);
 			do Screen.setPenColor(Screen.WHITE());
 			do Screen.drawCircle(x,300,5);

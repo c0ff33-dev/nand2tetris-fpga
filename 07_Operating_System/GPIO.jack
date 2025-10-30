@@ -6,7 +6,7 @@ class GPIO {
  
     /** Initialize LED and BUT. LED is memory mapped to addr.
      *  BUT is memory mapepd to addr +1  */
-    function void init(){
+    function void init() {
         let LED = 4096;
         let BUT = 4097;
         let DEBUG0 = 4107; // DEBUG0-4=4107-4111
@@ -14,23 +14,23 @@ class GPIO {
     }
 
     /** Returns the value of LED. */
-    function int readLed(){
+    function int readLed() {
         return LED[0];
     }
 
     /** Write c to LED */
-    function void writeLed(int value){
+    function void writeLed(int value) {
         let LED[0] = value;
         return;
     }
 
     // read from DEBUG0-4
-    function void readDebug(int port){
+    function void readDebug(int port) {
         return DEBUG0[port];
     }
 
     // write to DEBUG0-4
-    function void writeDebug(int port, int value){
+    function void writeDebug(int port, int value) {
         let DEBUG0[port] = value;
     }
 
@@ -39,7 +39,7 @@ class GPIO {
         return BUT[0];
     }
 
-    // Cycle LED[1] once
+    // Cycle LED[1] once per <interval> milliseconds
     function void blink(int interval) {
         do GPIO.writeLed(1); 
         do Sys.wait(interval);

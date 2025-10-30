@@ -1,7 +1,7 @@
 class Main{
 	
-	function void main(){
-		while (true){
+	function void main() {
+		while (true) {
 			if (Touch.getEvent()) {
 				do StdIO.printInt(Touch.getX());
 				do StdIO.printString(" ");

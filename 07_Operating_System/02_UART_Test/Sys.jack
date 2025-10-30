@@ -8,7 +8,7 @@ class Sys {
 		do UART.init(4098);
 		do UART.writeChar(71);
 		do UART.writeChar(79);
-		while (true){
+		while (true) {
 			do UART.writeChar(UART.readChar());
 		}
 		return;

@@ -13,13 +13,13 @@ class Main {
 		let menu = Menu.new(null,null,null," Play");
 		do Tile.init();
 		let time = 10000;
-		while(time > 0){
-			if (time = 10000){
+		while(time > 0) {
+			if (time = 10000) {
 				do Main.drawStart();
 				do Main.drawTile();
 				do menu.draw();
 			}
-			if (time = 1){
+			if (time = 1) {
 				do Main.clearTile();
 				do Main.drawTile();
 				let time = 10000;
@@ -39,20 +39,20 @@ class Main {
         return;
     }
 
-	function void drawTile(){
+	function void drawTile() {
 		let tile = Tile.new();
 		do tile.move(6,12);
 		do tile.draw();
 		return;
 	}
 
-	function void clearTile(){
+	function void clearTile() {
 		do tile.erase();
 		do tile.dispose();
 		return;
 	}
 
-	function void drawStart(){
+	function void drawStart() {
 		var String n2t;
 		var String hv;
 		let n2t = "nand2tetris-fpga";

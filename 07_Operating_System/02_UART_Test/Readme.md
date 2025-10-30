@@ -11,7 +11,7 @@ class Sys {
 
     function void init() {
         do UART.init(4098);
-        while (true){
+        while (true) {
             do UART.write(UART.read());
         }        
         return;
