@@ -6,11 +6,10 @@
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 */
 class Screen {
-    static int LCD, LED;
+    static int LCD;
 
     /** Initializes the Screen. */
     function void init(){
-        let LED = 4096;
         return;
     }
 

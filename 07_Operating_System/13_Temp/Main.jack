@@ -1,17 +1,5 @@
 class Main {
-    static int LED, RTP, UART_TX, UART_RX;
-    static int DEBUG0,DEBUG1,DEBUG2,DEBUG3,DEBUG4;
-
     method void init() {
-        let LED = 4096;
-        let UART_TX = 4098;
-        let UART_RX = 4099;
-        let RTP = 4106;
-        let DEBUG0 = 4107;
-        let DEBUG1 = 4108;
-        let DEBUG2 = 4109;
-        let DEBUG3 = 4110;
-        let DEBUG4 = 4111;
         return;
     }
 
@@ -32,52 +20,50 @@ class Main {
         // FIXME: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
         // FIXME: tried up to 8 times slower (~100kHz) with no change
         // FIXME: RTP.v fully meets all timing constraints
+        
+        // do Sys.error(0);
+        // do Sys.halt();
 
         // send command byte DISABLE_TOUCH
         let rtp = Touch.writeRTP(85); // 0x55
+        do UART.writeChar(rtp);
 
-        // let rtp = Touch.writeRTP(1);  // 0x01
-        // do UART.writeChar(rtp);
+        let rtp = Touch.writeRTP(1);  // 0x01
+        do UART.writeChar(rtp);
 
-        // let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
-        // do UART.writeChar(rtp);
+        let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
+        do UART.writeChar(rtp);
 
         // // read command response
-        // let rtp = Touch.writeRTP(0); // 1, 0x55
-        // do UART.writeChar(rtp);
-        // if (rtp = 85) {
-        //     do Sys.error(0); // trap on expected byte
-        // }
-        // if (~(rtp = 255)) {
-        //     do Sys.error(0); // trap on any new byte
-        // }
+        let rtp = Touch.writeRTP(0); // 1, 0x55
+        do UART.writeChar(rtp);
+        if (rtp = 85) {
+            do Sys.error(0); // trap on expected byte
+        }
+        if (~(rtp = 255)) {
+            do Sys.error(0); // trap on any new byte
+        }
 
-        // let rtp = Touch.writeRTP(0); // 2, 0x02
-        // do UART.writeChar(rtp);
-        // if (rtp = 2) {
-        //     do Sys.error(0); // trap on expected byte
-        // }
+        let rtp = Touch.writeRTP(0); // 2, 0x02
+        do UART.writeChar(rtp);
+        if (rtp = 2) {
+            do Sys.error(0); // trap on expected byte
+        }
         
-        // let rtp = Touch.writeRTP(0); // 3, 0x0
-        // do UART.writeChar(rtp);
-        // if (rtp = 0) {
-        //     do Sys.error(0); // trap on expected byte
-        // }
+        let rtp = Touch.writeRTP(0); // 3, 0x0
+        do UART.writeChar(rtp);
+        if (rtp = 0) {
+            do Sys.error(0); // trap on expected byte
+        }
 
-        // let rtp = Touch.writeRTP(0); // 4, 0x10
-        // do UART.writeChar(rtp);
-        // if (rtp = 16) { // command type
-        //     do Sys.error(0); // trap on expected byte
-        // } else {
-        //     let LED[0] = 3;
-        // }
+        let rtp = Touch.writeRTP(0); // 4, 0x10
+        do UART.writeChar(rtp);
+        if (rtp = 16) { // command type
+            do Sys.error(0); // trap on expected byte
+        }
 
-        let LED[0] = 3;
+        do GPIO.writeLed(3);
         do UART.writeChar(173); // 0xAD
-        
-        // FIXME: Jack (not asm) programs are looping without this
-        // FIXME: VM/asm code for Sys.halt() looks fine
-        while (true) {}
 
         return;
     }

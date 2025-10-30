@@ -6,10 +6,12 @@ class Math {
 
     /** Initializes the library. */
     function void init() {
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        return -1;
     }
 
     /** Returns the product of x and y. 
@@ -18,6 +20,7 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        return -1;
     }
 
     /** Returns the integer part of x/y.
@@ -26,17 +29,21 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        return -1;
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        return -1;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        return -1;
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        return -1;
     }
 }
