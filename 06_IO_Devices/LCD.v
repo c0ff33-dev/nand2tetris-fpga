@@ -17,6 +17,10 @@
  * 240x320x18 display, 256K colours (65K addressable)
  * DCX updates on the 7th negedge e.g. asserts on posedge of last command/data bit 
  * CSX must be driven low 1 cycle before SCK posedge and high no earlier than 8th SCK negedge
+ *
+ * In MOD-LCD2.8RTP the ILI9341V SDO (MISO) wire is not connected so we have no use for
+ * an SDI wire on LCD and no way to read the response in any of the SPI commands that
+ * return a response.
 */
 
 // Note: 2 cycles @ 25 MHz meets SCL pulse width requirements for write (twrh/twrl) 
