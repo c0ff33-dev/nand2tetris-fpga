@@ -53,9 +53,9 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 | LCD_SDO | 7                     | 8 MOSI                             |
 | LCD_SCK | 9                     | 9 SCK                              |
 | LCD_CSX | 11                    | 10 CS                              |
-| RTP_SDI | 13                    | 4 IRQ/SDO (with solder jumper SJ3) |
-| RTP_SDO | 15                    | 6 SDA                              |
-| RTP_SCK | 17                    | 5 SCL                              |
+| RTP_SDI | 13 (29)               | 4 IRQ/SDO (with solder jumper SJ3) |
+| RTP_SDO | 15 (31)               | 6 SDA                              |
+| RTP_SCK | 17 (33)               | 5 SCL                              |
 
 **Attention:** To enable SPI communication on the RTP controller chip AR1021 we must modify two solder jumpers. (Compare with schematic of MOD-LCD2.8RTP together with Datasheet of AR1021). The latest iteration of MOD-LCD2.8RTP is Rev D which has a different layout than pictured (Rev B) but same modifications apply.
 
