@@ -36,6 +36,7 @@ class ScreenExt {
         return;
     }
 
+    // TODO: looking at arduino code maybe ok to leave CSX low during consecutive writes
     /** writes the 8 bit command with DCX wire set to low */
     function void writeCommand(int cmd) {
         // 0x0=ready, 0x8000=busy
