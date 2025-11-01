@@ -49,10 +49,10 @@ module HACK(
 	// SRAM_DATA: update posedge clk, read negedge clk
 	// GO: mode update posedge clk else combinational
 
-	wire clk,writeM,loadRAM,clkRST,RST,resLoad,lcdBusy;
+	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr;
+	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
 	// 25 MHz internal clock w/ 20μs initial reset period
 	Clock25_Reset20 clock(
@@ -254,7 +254,7 @@ module HACK(
 		.SCK(LCD_SCK)
 	);
 	assign inIO8 = lcdBusy;
-	assign ioIO9 = lcdBusy;
+	assign inIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel AR1021
 	RTP rtp(
