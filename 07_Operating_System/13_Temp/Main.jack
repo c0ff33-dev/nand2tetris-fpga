@@ -1,5 +1,14 @@
 class Main {
     function void main() {
+        
+        do ScreenExt.setPencolour(ScreenExt.RED());
+        
+        if (~(ScreenExt.getPencolour()=-2048)) {
+            do Sys.error(0); // pass
+        }
+        
+        do ScreenExt.fillScreen(); // FIXME: reaches end but doesn't fill
+        
         // frame buffer will be random data on init but may not be noticeable
         // do ScreenExt.writeCommand(33); // Display Inversion ON (21h) DINVON
         // do Sys.wait(1000);
@@ -13,7 +22,7 @@ class Main {
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
 
-        do GPIO.writeLed(1); // done
+        do GPIO.writeLed(3); // done
         return;
     }
 

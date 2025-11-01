@@ -46,7 +46,7 @@ module LCD(
 	// if in[8=0] and load=1 then csx=0 (drive CSX low, send byte)
 	// if in[8=1] and load=1 then csx=1 (drive CSX high without sending byte)
 	// init csx=1 to block any premture transactions
-	// csx remains unchanged in either case until next load
+	// csx remains unchanged in either case until next load (cmd byte only)
 	Bit cs (
 		.clk(clk),
 		.in(init ? in[8] : 1'b1),
@@ -59,7 +59,7 @@ module LCD(
 	Bit dc (
 		.clk(clk),
 		.in(init ? (load16 ? 1'b1 : in[9]) : 1'b0),
-		.load(init ? load : 1'b1),
+		.load(init ? (load|load16) : 1'b1), // init dc=0
 		.out(dcx)
 	);
 
@@ -105,8 +105,6 @@ module LCD(
 	// slave MSB >= master LSB (MISO)
 	// master MSB >= slave LSB (MOSI)
 	// init=0 before load, no shift on first cycle
-
-	// TODO: consider using shiftReg for reading SPI responses 
 
 	// if load=1 shiftReg gets cycled through SDO
 	// if load16=1 shiftReg gets cycled through shiftReg16

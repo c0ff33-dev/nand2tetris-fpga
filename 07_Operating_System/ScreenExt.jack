@@ -9,7 +9,7 @@
 * to be driven high when the current batch of transactions is finished.
 */
 class ScreenExt {
-    static int LCD, LCD_WAIT, fgcolour, bgcolour, pixels; // TODO: to fg/bg need to be saved?
+    static int LCD, LCD_WAIT, fgcolour, bgcolour, pixels; // TODO: do fg/bg need to be saved?
     // timings are all over the place in docs - wait min 120ms on any major state change
     // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
     // DISPOFF (display off) is default(!) - frame buffer disabled & blank page inserted
@@ -23,13 +23,13 @@ class ScreenExt {
     function void init() {
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
-
+        
         // ILI9341V initialization: config
         do ScreenExt.writeCommand(54); // MADCTL 0x36
         do ScreenExt.writeData(72); // Param 0x48 (invert column/rgb order)
         do ScreenExt.writeCommand(58); // COLMOD 0x3A
         do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
-
+        
         // ILI9341V initialization: awaken
         // these are the only essential SPI commands
         // without any other initialization this will be random pixels but have to fully power on/off
@@ -40,32 +40,33 @@ class ScreenExt {
         do Sys.wait(LCD_WAIT); // wait for SLPOUT
         do ScreenExt.writeCommand(41); // DISPON 0x29 (enable display)
         do Sys.wait(LCD_WAIT); // wait for DISPON
-
+        
+        // FIXME: above works without this function + CSX driving high is not covered in Screen sim?
         do ScreenExt._completeTransaction();
+        
         return;
     }
 
-    // TODO: might be nice to have higher resolution timer for SPI commands
+    // FIXME: do we need to throttle SPI commands - isn't that LCD's job?
     /** writes the 8 bit command with DCX wire set to low */
     function void writeCommand(int cmd) {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[0] = cmd; // send command byte
-        let busy = 0;
+        let busy = -1;
         while (~(busy = 0)) {
             let busy = LCD[0]; // read response
-            do Sys.wait(1); // wait until ready
         }
         return;
     }
 
+    // FIXME: no evidence any param commands are working either yet?
     /** writes 16 bit data to LCD with DCX wire set to high. */
     function void writeData(int data) {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[1] = data; // send data byte(s)
-        let busy = 0;
+        let busy = -1;
         while (~(busy = 0)) {
             let busy = LCD[1]; // read response
-            do Sys.wait(1); // wait until ready
         }
         return;
     }
@@ -78,6 +79,10 @@ class ScreenExt {
         return;
     }
 
+    function int getPencolour() {
+        return fgcolour; // FIXME: works
+    }
+
     /** Sets the current background colour, to be used for clearScreen()
      *  and drawBitMap() commands.
      *  colours are represented by 16 bit RGB values: rrrrrggggggbbbbb */
@@ -85,15 +90,19 @@ class ScreenExt {
         let bgcolour = colour;
         return;
     }
+
+    function int getBackcolour() {
+        return bgcolour;
+    }
    
     /** sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
      * writeRgbData(int colour) will paint the w*h pixels in the rectangle
      * in the corresponding colour.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
-        // valid ranges:
-        // x2 >= x1, 0-239
-        // y2 >= y1, 0-319
+        // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
+        // when MADCTL D5=0 which it should be
+        // otherwise ignored by ILI9341V
         do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
         do ScreenExt.writeData(x1); // SC (left column extent)
         do ScreenExt.writeData(x2); // EC (right column extent)
@@ -103,19 +112,16 @@ class ScreenExt {
         do ScreenExt.writeData(y2); // EC (bottom row extent)
         do ScreenExt._completeTransaction();
 
-        let pixels = Math.multiply((x2-x1+1),(y2-y1+1)); // sum of pixel to paint
+        // store the sum of pixels to paint rather than coords
+        // warning: need to stay within 15 bit ALU limits
+        // FIXME: tested with small numbers
+        let pixels = Math.multiply((x2-x1+1),(y2-y1+1));
         return;
     }
 
     /** sets the 16 bit rgb colour for the next pixel in the rectangle 
      * set by setWindow(int x1, int y1, int x2, int y2).*/
     function void writeRgbData(int colour) {
-        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
-        while (pixels > 0) {
-            do ScreenExt.writeData(colour); // pixel contents (16 bit rgb data)
-            let pixels = pixels - 1;
-        }
-        do ScreenExt._completeTransaction();
         return;
     }
 
@@ -124,16 +130,42 @@ class ScreenExt {
     function void _completeTransaction() {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[0] = 256; // send command byte
-        let busy = 0;
+        let busy = -1;
         while (~(busy = 0)) {
             let busy = LCD[0]; // read response
-            do Sys.wait(1); // wait until ready
         }
         return;
     }
 
-    function void fillScreen(int x1, int y1, int x2, int y2) {
-        do ScreenExt.setWindow(0,0,239,319);
+    // FIXME: wip
+    function void fillScreen() {
+        var int i, j, rgb;
+        
+        let rgb = ScreenExt.getPencolour();
+        
+        // do ScreenExt.setWindow(0,0,239,319);
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        
+        let i = 32767;
+        while (i > 0) {
+            do ScreenExt.writeData(rgb); // red
+            let i = i-1;
+        }
+        
+        // call writeData() w*h times
+        // 240x320 = 76800 / 3 = 25600 (15 bit ALU limit)
+        // let i = 3;
+        // while (i > 0) {
+        //     let j = 25600;
+        //     while (j > 0) {
+        //         // write pixel contents (16 bit rgb data)
+        //         do ScreenExt.writeData(rgb);
+        //         let j = j - 1;
+        //     }
+        //     let i = i - 1;
+        // }
+        // let pixels = 0;
+        do ScreenExt._completeTransaction();
         return;
     }
 

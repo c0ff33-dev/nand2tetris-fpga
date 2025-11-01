@@ -18,6 +18,9 @@ class Screen {
 
     /** Draws the (x,y) pixel, using the current pen color. */
     function void drawPixel(int x,int y) {
+        // TODO: NYI
+        // do ScreenExt.setWindow(x,y,x,y);
+        // do ScreenExt.writeRgbData(ScreenExt.getPencolour());
         return;
     }
 
