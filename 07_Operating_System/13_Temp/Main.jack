@@ -1,28 +1,5 @@
 class Main {
     function void main() {
-        var int i, LCD_WAIT;
-        let LCD_WAIT = 120;
-        // timings are all over the place in docs - wait min 120ms on any major state change
-        // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
-        // DISPOFF (display off) is default(!) - frame buffer disabled & blank page inserted
-        // NORON (normal displayy mode on) is default
-        // DINVOFF (display inversion off) is default
-        // GAMSET (gamma set) gamma curve 1 is default
-        // IDMOFF (idle mode off) is default (max colours)
-        // some commands will wait for VSCYNC to avoid visual artifacts
-
-        // these are the only essential SPI commands
-        // without any other initialization this will be random pixels but have to fully power on/off
-        // to reset frame buffer as RESET is not connected to UEXT on MOD-LCD2.8RTP
-        // the uninitialized display it will have the appearance of grey-ish vertical scanlines
-
-        // wake - system starts in SLPIN after power/hw/sw reset
-        do Sys.wait(LCD_WAIT); // wait in case coming out of reset
-        do ScreenExt.writeCommand(17); // Sleep Out (11h) SLPOUT (wake)
-        do Sys.wait(LCD_WAIT); // wait for SLPOUT
-        do ScreenExt.writeCommand(41); // Display ON (29h) DISPON
-        do Sys.wait(LCD_WAIT); // wait for DISPON
-
         // frame buffer will be random data on init but may not be noticeable
         // do ScreenExt.writeCommand(33); // Display Inversion ON (21h) DINVON
         // do Sys.wait(1000);
@@ -36,7 +13,7 @@ class Main {
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
 
-        do Sys.error(0); // done
+        do GPIO.writeLed(1); // done
         return;
     }
 

@@ -4,13 +4,69 @@
 * of 240 pixels each (indexed 0..239, left to right). The top left pixel on 
 * the screen is indexed (0,0). Every pixel can be set to a 16 bit colour code composed of
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
+*
+* CSX is implicitly driven low on all SPI transactions by the FPGA controller and only needs
+* to be driven high when the current batch of transactions is finished.
 */
 class ScreenExt {
-    static int LCD, fgcolour, bgcolour;
+    static int LCD, LCD_WAIT, fgcolour, bgcolour, pixels; // TODO: to fg/bg need to be saved?
+    // timings are all over the place in docs - wait min 120ms on any major state change
+    // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
+    // DISPOFF (display off) is default(!) - frame buffer disabled & blank page inserted
+    // NORON (normal displayy mode on) is default
+    // DINVOFF (display inversion off) is default
+    // GAMSET (gamma set) gamma curve 1 is default
+    // IDMOFF (idle mode off) is default (max colours)
+    // some commands will wait for VSCYNC to avoid visual artifacts
 
     /** Initializes the Screen. */
     function void init() {
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
+        let LCD_WAIT = 120; // transition in milliseconds constant
+
+        // ILI9341V initialization: config
+        do ScreenExt.writeCommand(54); // MADCTL 0x36
+        do ScreenExt.writeData(72); // Param 0x48 (invert column/rgb order)
+        do ScreenExt.writeCommand(58); // COLMOD 0x3A
+        do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
+
+        // ILI9341V initialization: awaken
+        // these are the only essential SPI commands
+        // without any other initialization this will be random pixels but have to fully power on/off
+        // to reset frame buffer as RESET is not connected to UEXT on MOD-LCD2.8RTP
+        // the uninitialized display it will have the appearance of grey-ish vertical scanlines
+        do Sys.wait(LCD_WAIT); // wait in case coming out of reset
+        do ScreenExt.writeCommand(17); // SLPOUT 0x11 (wake)
+        do Sys.wait(LCD_WAIT); // wait for SLPOUT
+        do ScreenExt.writeCommand(41); // DISPON 0x29 (enable display)
+        do Sys.wait(LCD_WAIT); // wait for DISPON
+
+        do ScreenExt._completeTransaction();
+        return;
+    }
+
+    // TODO: might be nice to have higher resolution timer for SPI commands
+    /** writes the 8 bit command with DCX wire set to low */
+    function void writeCommand(int cmd) {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[0] = cmd; // send command byte
+        let busy = 0;
+        while (~(busy = 0)) {
+            let busy = LCD[0]; // read response
+            do Sys.wait(1); // wait until ready
+        }
+        return;
+    }
+
+    /** writes 16 bit data to LCD with DCX wire set to high. */
+    function void writeData(int data) {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[1] = data; // send data byte(s)
+        let busy = 0;
+        while (~(busy = 0)) {
+            let busy = LCD[1]; // read response
+            do Sys.wait(1); // wait until ready
+        }
         return;
     }
 
@@ -32,53 +88,52 @@ class ScreenExt {
    
     /** sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
-     * writeData16(int colour) will paint the w*h pixels in the rectangle
+     * writeRgbData(int colour) will paint the w*h pixels in the rectangle
      * in the corresponding colour.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
+        // valid ranges:
+        // x2 >= x1, 0-239
+        // y2 >= y1, 0-319
+        do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
+        do ScreenExt.writeData(x1); // SC (left column extent)
+        do ScreenExt.writeData(x2); // EC (right column extent)
+
+        do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
+        do ScreenExt.writeData(y1); // SC (top row extent)
+        do ScreenExt.writeData(y2); // EC (bottom row extent)
+        do ScreenExt._completeTransaction();
+
+        let pixels = Math.multiply((x2-x1+1),(y2-y1+1)); // sum of pixel to paint
         return;
     }
 
-    // TODO: looking at arduino code maybe ok to leave CSX low during consecutive writes
-    /** writes the 8 bit command with DCX wire set to low */
-    function void writeCommand(int cmd) {
-        // 0x0=ready, 0x8000=busy
-        var int busy;
-
-        // send command byte
-        let LCD[0] = cmd;
-        do Sys.wait(1); // wait before checking result
-        let busy = LCD[0];
-        while (~(busy = 0)) {
-            do Util.debugWord(busy);
-            do Sys.wait(1); // wait until ready to send
-            do GPIO.blink(250);
+    /** sets the 16 bit rgb colour for the next pixel in the rectangle 
+     * set by setWindow(int x1, int y1, int x2, int y2).*/
+    function void writeRgbData(int colour) {
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        while (pixels > 0) {
+            do ScreenExt.writeData(colour); // pixel contents (16 bit rgb data)
+            let pixels = pixels - 1;
         }
+        do ScreenExt._completeTransaction();
+        return;
+    }
 
-        // drive CSX high and reset DCX
-        let LCD[0] = 256;
-        do Sys.wait(1); // wait before checking result
-        let busy = LCD[0];
+    // drive CSX high/DCX low without sending a byte
+    // it is fine to leave CSX low for multiple SPI transactions
+    function void _completeTransaction() {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[0] = 256; // send command byte
+        let busy = 0;
         while (~(busy = 0)) {
-            do Util.debugWord(busy);
-            do Sys.wait(1); // wait until ready to send
-            do GPIO.blink(250);
+            let busy = LCD[0]; // read response
+            do Sys.wait(1); // wait until ready
         }
-        return;
-    }
-
-    /** writes 16 bit data to LCD with DCX wire set to high. */
-    // TODO: probably need higher resolution timer for this
-    function void writeData(int data) {
-        return;
-    }
-
-    /** sets the rgb colour for the next pixel in the rectangle set by
-     * setWindow(int x1, int y1, int x2, int y2).*/
-    function void writeData16(int colour) {
         return;
     }
 
     function void fillScreen(int x1, int y1, int x2, int y2) {
+        do ScreenExt.setWindow(0,0,239,319);
         return;
     }
 

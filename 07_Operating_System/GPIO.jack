@@ -25,13 +25,14 @@ class GPIO {
     }
 
     // read from DEBUG0-4
-    function void readDebug(int port) {
+    function int readDebug(int port) {
         return DEBUG0[port];
     }
 
     // write to DEBUG0-4
     function void writeDebug(int port, int value) {
         let DEBUG0[port] = value;
+        return;
     }
 
     /** Returns the value of BUT */

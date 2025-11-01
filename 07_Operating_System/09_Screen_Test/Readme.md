@@ -7,13 +7,9 @@ The connected LCD physical screen consists of 320 rows (indexed 0..319, top to b
 
 The Screen is controlled by sending commands to special function register LCD, which connects to the ILI9341V controller on MOD-LCD2.8RTP. Every command is 8 bits long with DCX=0 pulled low followed by any number (or none) of arguments, which are send with DCX=1 pushed high. All commands are described in the datasheet of [ILI9341V](../../doc/ILI9341V_v1.0.pdf). (h denote hexadecimal and d denote decimal notation).
 
-1. **Memory access control (36h)**: send 54d (DCX=0) followed by the argument 72d (with DCX=1) to set the iteration pattern(s) for memory access on ILI9341V. Specifically inverted column and RGB order:
-
-MY  MX  MV  ML  BGR  MH  0  0
- 0   1   0   0    1   0  0  0
-
+1. **Memory access control (36h)**: send 54d (DCX=0) followed by the argument 72d (with DCX=1) to set the iteration pattern(s) for memory access on ILI9341V. Specifically inverted column and RGB order.
 2. **COLMOD Pixel Format Set (3Ah)**: send 58d (DCX=0) followed by the argument 85d (DCX=1) to set the pixel format to rgb 16 bit.
-3. **Sleep Out (11h)**: send 17d (DCX=0) and wait 120ms to awake ILI9341V from sleep mode.
+3. **Sleep Out (11h)**: send 17d (DCX=0) and wait 120ms to wake ILI9341V from sleep mode.
 4. **Display ON (29h)**: send 41d (DCX=0) and wait 120ms to switch the display on.
 
 After initialisation with commands 1-4, the screen turns on showing a random pattern of RGB colors. To paint something on the screen, we must send the following three commands to LCD.
@@ -30,9 +26,9 @@ Initializes the LCD screen, by sending the commands 1-4 to LCD. The LCD is memor
 
 ### function void setWindow(int x1,int y1, int x2, int y2)
 
-Sets a rectangle window by sending commands 4.,5. and the command 7. without the arguments. (x1,y1) is the upper left corner and (x2,y2) is the lower right corner of the rectangle window. The next `w*h` calls of writeData16(int value) will paint the pixels in the rectangle according to the rgb values starting in the upper left corner and ending in the lower right corner.
+Sets a rectangle window by sending commands 4.,5. and the command 7. without the arguments. (x1,y1) is the upper left corner and (x2,y2) is the lower right corner of the rectangle window. The next `w*h` calls of writeRgbData(int value) will paint the pixels in the rectangle according to the rgb values starting in the upper left corner and ending in the lower right corner.
 
-### function void writeData16(int color)
+### function void writeRgbData(int color)
 
 Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWindow(int,int,int,int)`. This procedure must be called `w*h` times to paint every pixel in the rectangle defined by `setAddrWindow(int,int,int,int)`.
 
