@@ -87,54 +87,54 @@ class ScreenExt {
 
     /** RGB values for various colors. */
     function int BLACK() {
-        return -1; // TODO
+        return 0; // 00000 000000 00000
     }
     function int NAVY() {
-        return 30;  //00000 000000 11110
+        return 30; // 00000 000000 11110
     }
     function int BLUE() {
-        return 31;  //00000 000000 11111
+        return 31; // 00000 000000 11111
     }
     function int LIME() {
-        return 2016; //00000 111111 00000
+        return 2016; // 00000 111111 00000
     }
     function int GREEN() {
-        return 1920; //00000 111100 00000
+        return 1920; // 00000 111100 00000
     }
     function int CYAN() {
-        return 2047; //00000 111111 11111
+        return 2047; // 00000 111111 11111
     }
     function int MAROON() {
-        return -4096; //11110 000000 00000
+        return -4096; // 11110 000000 00000
     }
     function int PURPLE() {
-        return -4066; //11110 000000 11110
+        return -4066; // 11110 000000 11110
     }
     function int OLIVE() {
-        return -2176; //11110 111100 00000
+        return -2176; // 11110 111100 00000
     }
     function int DARKGREY() {
-        return -14824; //11000 110000 11000
+        return -14824; // 11000 110000 11000
     }
     function int TEAL() {
-        return 1950; //00000 111000 11100
+        return 1950; // 00000 111000 11100
     }
     function int LIGHTGREY() {
-        return -6372; //11100 111000 11100
+        return -6372; // 11100 111000 11100
     }
     function int RED() {
-        return -2048; //11111 000000 00000
+        return -2048; // 11111 000000 00000
     }
     function int MAGENTA() {
-        return -2017; //11111 000000 11111
+        return -2017; // 11111 000000 11111
     }
     function int YELLOW() {
-        return -32; //11111 111111 00000
+        return -32; // 11111 111111 00000
     }
     function int ORANGE() {
-        return -128; //11111 111000 00000
+        return -128; // 11111 111000 00000
     }
     function int WHITE() {
-        return -1; //11111 111111 11111
+        return -1; // 11111 111111 11111
     }
 }

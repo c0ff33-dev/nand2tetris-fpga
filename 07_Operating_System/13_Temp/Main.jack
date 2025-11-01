@@ -1,11 +1,10 @@
 class Main {
     function void main() {
         var int i, LCD_WAIT;
-        let LCD_WAIT = 500; // 120
+        let LCD_WAIT = 120;
         do UART.writeChar(222); // 0xDE (start)
-        // TODO: in arduino sketch Mega2560 / Olimexino 2560 (ATmega2560) is most similar
         // FIXME: checked wiring assignment (software/hardware) + codes/timing
-        // FIXME: responded to at least some commands (mainly reset) in arduino
+        // FIXME: works in arduino via UEXT (display only)
         while (i < 3) {
             // timings are all over the place in docs - wait min 120ms on any major state change
             // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
@@ -23,6 +22,7 @@ class Main {
             do ScreenExt.writeCommand(41); // Display ON (29h) DISPON
             do Sys.wait(LCD_WAIT); // wait for DISPON
 
+            // this probably only works if there is something in the buffer to invert
             do ScreenExt.writeCommand(33); // Display Inversion ON (21h) DINVON
             do Sys.wait(1000);
             do ScreenExt.writeCommand(32); // Display Inversion OFF (20h) DINVOFF
