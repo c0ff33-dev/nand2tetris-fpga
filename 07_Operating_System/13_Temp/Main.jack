@@ -1,7 +1,7 @@
 class Main {
     function void main() {
         var int i, LCD_WAIT;
-        let LCD_WAIT = 120;
+        let LCD_WAIT = 120; // 500?
         do UART.writeChar(222); // 0xDE (start)
         // FIXME: checked wiring assignment (software/hardware) + codes/timing
         // FIXME: works in arduino via UEXT (display only)
@@ -22,7 +22,7 @@ class Main {
             do ScreenExt.writeCommand(41); // Display ON (29h) DISPON
             do Sys.wait(LCD_WAIT); // wait for DISPON
 
-            // this probably only works if there is something in the buffer to invert
+            // frame buffer will be random data on init but sould be noticeable
             do ScreenExt.writeCommand(33); // Display Inversion ON (21h) DINVON
             do Sys.wait(1000);
             do ScreenExt.writeCommand(32); // Display Inversion OFF (20h) DINVOFF

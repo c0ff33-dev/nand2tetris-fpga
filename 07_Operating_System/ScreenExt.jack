@@ -2,11 +2,11 @@
 * A library of functions for displaying graphics on the screen.
 * The connected LCD physical screen consists of 320 rows (indexed 0..319, top to bottom)
 * of 240 pixels each (indexed 0..239, left to right). The top left pixel on 
-* the screen is indexed (0,0). Every pixel can be set to a 16 bit color code composed of
+* the screen is indexed (0,0). Every pixel can be set to a 16 bit colour code composed of
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 */
 class ScreenExt {
-    static int LCD;
+    static int LCD, fgcolour, bgcolour;
 
     /** Initializes the Screen. */
     function void init() {
@@ -14,24 +14,26 @@ class ScreenExt {
         return;
     }
 
-    /** Sets the current pen color, to be used for all subsequent drawXXX
-     *  commands. Colors are represented by 16 bit RGB values with
+    /** Sets the current pen colour, to be used for all subsequent drawXXX
+     *  commands. colours are represented by 16 bit RGB values with
      *  binary representation: rrrrrggggggbbbbb */
-    function void setPenColor(int color) {
+    function void setPencolour(int colour) {
+        let fgcolour = colour;
         return;
     }
 
-    /** Sets the current background color, to be used for clearScreen()
+    /** Sets the current background colour, to be used for clearScreen()
      *  and drawBitMap() commands.
-     *  Colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
-    function void setBackColor(int color) {
+     *  colours are represented by 16 bit RGB values: rrrrrggggggbbbbb */
+    function void setBackcolour(int colour) {
+        let bgcolour = colour;
         return;
     }
    
     /** sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
-     * writeData16(int color) will paint the w*h pixels in the rectangle
-     * in the corresponding color.*/ 
+     * writeData16(int colour) will paint the w*h pixels in the rectangle
+     * in the corresponding colour.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
         return;
     }
@@ -70,22 +72,26 @@ class ScreenExt {
         return;
     }
 
-    /** sets the rgb color for the next pixel in the rectangle set by
+    /** sets the rgb colour for the next pixel in the rectangle set by
      * setWindow(int x1, int y1, int x2, int y2).*/
-    function void writeData16(int color) {
+    function void writeData16(int colour) {
+        return;
+    }
+
+    function void fillScreen(int x1, int y1, int x2, int y2) {
         return;
     }
 
     /** draws the BitMap into the rectangle with upper left corner (x1,y1)
-     *  and lower right corner (x2,y2) using the pen color for all 1s and the
-     *  back color for all 0s in the BitMap. BitMap is an Array of h integers
+     *  and lower right corner (x2,y2) using the pen colour for all 1s and the
+     *  back colour for all 0s in the BitMap. BitMap is an Array of h integers
      *  representing up to 16 pixel in the row. The rectangle is limited
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
         return;
     }
 
-    /** RGB values for various colors. */
+    /** RGB values for various colours. */
     function int BLACK() {
         return 0; // 00000 000000 00000
     }
