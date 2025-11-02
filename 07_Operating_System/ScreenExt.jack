@@ -25,12 +25,28 @@ class ScreenExt {
         let LCD_WAIT = 120; // transition in milliseconds constant
         
         // ILI9341V initialization: config
-        // changing BGR bit doesn't seem to change anything
-        // changing MX bit only seems to change pixel orientation
-        do ScreenExt.writeCommand(54); // MADCTL 0x36: MX=1, BGR=1
-        do ScreenExt.writeData(72); // Param 0x48 (vertical scanlines/rgb bit order) - same as adafruit
 
-        // TODO: works/definitely required
+        // MADCTL 0x36
+        // Note: the addressing of how data is written to memory in the FPGA is
+        // not affeced by MADCTL D5-7, the change is executed by manipulating
+        // the read pointer of the frame memory on the ILI9341V side -
+        // basically the image can appear flipped/mirrored compared to the source
+        // - Row top to bottom (MADCTL D7/MY=0)
+        // - Column left to right (MADCTL D6/MX=0) // adafruit=1, image is flipped on x-axis
+        // - Row/column exchange: normal (MADCTL D5/MV=0)
+        // - V-draw: top to bottom (MADCTL D4/ML=0)
+        // - RGB-BGR: RGB (MADCTL D3/BGR=0) // adafruit=1, BGR order (wrong for this implementation?)
+        // - H-draw: left to right (MADCTL D2/MH=0)
+        // RAMWR: ignore excess data calls (IFCTL D0/WEMODE=0) or redraw (default=1)
+
+        // FIXME: RGB seems wrong, possibly still need image flip but hard to tell atm
+        // FIXME: current setWindow clamps to top right
+        do ScreenExt.writeCommand(54); // MADCTL 0x36
+        // do ScreenExt.writeData(72); // Param 0x48 MX=1, BGR=1 (same as adafruit)
+        // do ScreenExt.writeData(64); // Param 0x40 MX=1 only      
+        do ScreenExt.writeData(0); // Param 0x0 (default)
+
+        // TODO: this works/is definitely required
         do ScreenExt.writeCommand(58); // COLMOD 0x3A
         do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
 
@@ -115,24 +131,69 @@ class ScreenExt {
         // high byte: (x/y shr 8 AND 0xFF) to shift right & mask the high byte
         // low byte: (x/y AND 0xFF) to mask high byte leaving the low byte
 
-        // FIXME: crash?
+        // FIXME: all tests pass
+        // var int d;
+        // let d = ScreenExt._maskHiByte(240); // pass
+        // if (~(d = 240)) {
+        //     do Sys.error(0);
+        // }
+
+        // let d = ScreenExt._maskHiByte(320); // pass
+        // if (~(d = 64)) {
+        //     do Sys.error(0);
+        // }
+
+        // let d = Util.logShiftByteRight(240); // pass
+        // if (~(d = 0)) {
+        //     do Sys.error(0);
+        // }
+
+        // let d = Util.logShiftByteRight(320); // pass
+        // if (~(d = 1)) {
+        //     do Sys.error(0);
+        // }
+
+        // let d = ScreenExt._maskHiByte(Util.logShiftByteRight(240)); // pass
+        // if (~(d = 0)) {
+        //     do Sys.error(0);
+        // }
+
+        // let d = ScreenExt._maskHiByte(Util.logShiftByteRight(320)); // pass
+        // if (~(d = 1)) {
+        //     do Sys.error(0);
+        // }
+
+        // FIXME: enable
+        // for 16 bit values rsh 8 is sufficient to mask
+        // adafruit doesn't bother masking lo byte either
         // do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
-        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(x1))); // SC[15:8]
-        // do ScreenExt.writeData(Util.maskHiByte(x1)); // SC[7:0]
-        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(x2))); // EC[15:8]
-        // do ScreenExt.writeData(Util.maskHiByte(x2)); // EC[7:0]
+        // do ScreenExt.writeData(Util.logShiftByteRight(x1)); // SC[15:8]
+        // do ScreenExt.writeData(x1); // SC[7:0]
+        // do ScreenExt.writeData(Util.logShiftByteRight(x2)); // EC[15:8]
+        // do ScreenExt.writeData(x2); // EC[7:0]
 
         // do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
-        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(y1))); // SP[15:8]
+        // do ScreenExt.writeData(Util.logShiftByteRight(y1)); // SP[15:8]
         // do ScreenExt.writeData(y1); // SP[7:0]
-        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(y2))); // EP[15:8]
+        // do ScreenExt.writeData(Util.logShiftByteRight(y2)); // EP[15:8]
         // do ScreenExt.writeData(y2); // EP[7:0]
 
+        // FIXME: bounding box issue - why does this look like its clamping in reverse? (1 pixel)
+        do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
+        do ScreenExt.writeData(0); // SC[15:8]
+        do ScreenExt.writeData(0); // SC[7:0]
+        do ScreenExt.writeData(0); // EC[15:8] - max (239)
+        do ScreenExt.writeData(239); // EC[7:0]
+        do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
+        do ScreenExt.writeData(0); // SP[15:8]
+        do ScreenExt.writeData(0); // SP[7:0]
+        do ScreenExt.writeData(1); // EP[15:8] - max (319)
+        do ScreenExt.writeData(63); // EP[7:0]
         do ScreenExt._completeTransaction();
 
         // store the sum of pixels to paint rather than coords
         // warning: need to stay within 15 bit ALU limits
-        let pixels = Math.multiply((x2-x1+1),(y2-y1+1));
+        // let pixels = Math.multiply((x2-x1+1),(y2-y1+1)); FIXME: enable
         return;
     }
 
@@ -157,6 +218,7 @@ class ScreenExt {
     function void fillScreen() {
         var int i, j;
         
+        // TODO: adafruit defines x2/y2 as x+w-1 and y+h-1 which is intuitive
         do ScreenExt.setWindow(0,0,239,319);
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
        

@@ -3,11 +3,11 @@ class Main {
         while (true) {
             do ScreenExt.setPencolour(ScreenExt.BLACK());        
             do ScreenExt.fillScreen();
-            do Sys.wait(1000);
 
             do ScreenExt.setPencolour(ScreenExt.WHITE());        
             do ScreenExt.fillScreen();
-            do Sys.wait(1000);
+            
+            do GPIO.writeLed(3); // done
         }
 
         // sleep - takes 120ms to go to sleep
@@ -28,15 +28,15 @@ class Main {
         // command format: header, size, data, [...] // size = bytes after this byte
         // response: header, size, status, command, [data], [...]
 
-        // FIXME: first byte 0x0, subsequent bytes 0xFF - like SDI stuck high?
-        // FIXME: sleep is meant to clear pending data so maybe its not I2C IRQ?
-        // FIXME: SDO is not meant to be high until response in SPI mode but at least SJ3 is open
-        // FIXME: also no error header so its definitely scuffed
-        // FIXME: tb is probably wrong / no mention of using SDO idle high in AR1021 docs
-        // FIXME: but RTP signals look ok in 06/07 sims (as expected)
-        // FIXME: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
-        // FIXME: tried up to 8 times slower (~100kHz) with no change
-        // FIXME: RTP.v fully meets all timing constraints
+        // TODO: first byte 0x0, subsequent bytes 0xFF - like SDI stuck high?
+        // TODO: sleep is meant to clear pending data so maybe its not I2C IRQ?
+        // TODO: SDO is not meant to be high until response in SPI mode but at least SJ3 is open
+        // TODO: also no error header so its definitely scuffed
+        // TODO: tb is probably wrong / no mention of using SDO idle high in AR1021 docs
+        // TODO: but RTP signals look ok in 06/07 sims (as expected)
+        // TODO: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
+        // TODO: tried up to 8 times slower (~100kHz) with no change
+        // TODO: RTP.v fully meets all timing constraints
 
         // send command byte DISABLE_TOUCH
         let rtp = Touch.writeRTP(85); // 0x55
