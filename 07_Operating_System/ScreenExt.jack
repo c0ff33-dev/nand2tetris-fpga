@@ -151,10 +151,24 @@ class ScreenExt {
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
        
         // call writeData() w*h times
-        while (pixels > 0) {
-            do ScreenExt.writeData(ScreenExt.getPencolour());
-            let pixels = pixels - 1;
+        // TODO: something like this will work when pixels is <= 32767
+        // while (pixels > 0) {
+        //     do ScreenExt.writeData(ScreenExt.getPencolour());
+        //     let pixels = pixels - 1;
+        // }
+
+        // TODO: otherwise when pixels > 32767:
+        let i = 240;
+        while (i > 0) {
+            let j = 320;
+            while (j > 0) {
+                do ScreenExt.writeData(ScreenExt.getPencolour());
+                let j = j - 1;
+            }
+            let i = i - 1;
         }
+        let pixels = 0;
+
         do ScreenExt._completeTransaction();
         return;
     }
