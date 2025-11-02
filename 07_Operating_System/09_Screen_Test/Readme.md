@@ -20,6 +20,8 @@ After initialisation with commands 1-4, the screen turns on showing a random pat
 
 **Note**: For the Column/Page address set commands ILI9341V expects the `x`/`y` coords to be split into 4 parameters with only one byte in [7:0] of each parameter so some shifting logic is needed to split up the 16 bit inputs.
 
+**Note**: Consider making some utility functions for the bitwise operations that Jack natively lacks as these will come in handy later on as well.
+
 For convenience the commands 1-7 are distributed to three functions of Screen.jack:
 
 ### function void init(int addr)

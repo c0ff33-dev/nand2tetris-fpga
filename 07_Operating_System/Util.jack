@@ -19,8 +19,17 @@ class Util {
         return result;
     }
 
+    // mask the top half of a 16 bit word leaving the lower byte
+    function int maskHiByte(int word) {
+        if (word< 256) { 
+            return word;
+        } else {
+            return word - 256;
+        }
+    }
+
     // take two bytes and return a 16 bit word
-    function int shiftByteLeft(int loByte, int hiByte) {
+    function int shiftByteLeft(int hiByte, int loByte) {
         var int sum;
         // shift the left hiByte by 8 (2^8=256)
         let sum = hiByte + hiByte; // 2

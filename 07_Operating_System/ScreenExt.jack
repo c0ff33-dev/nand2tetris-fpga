@@ -108,16 +108,26 @@ class ScreenExt {
      * in the corresponding colour.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
         // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
-        // when MADCTL D5(MV)=0 (default) CASET=X, PASET=Y
         // otherwise ignored by ILI9341V
-        // FIXME: this is wrong - its 4 params using the lower byte of each
-        do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
-        do ScreenExt.writeData(x1); // SC (left column extent)
-        do ScreenExt.writeData(x2); // EC (right column extent)
+        // when MADCTL D5(MV)=0 (default) CASET=X, PASET=Y
+        // CASET SC/EC=left/right column extent
+        // PASET SP/EP=top/bottom row extent
+        // high byte: (x/y shr 8 AND 0xFF) to shift right & mask the high byte
+        // low byte: (x/y AND 0xFF) to mask high byte leaving the low byte
 
-        do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
-        do ScreenExt.writeData(y1); // SC (top row extent)
-        do ScreenExt.writeData(y2); // EC (bottom row extent)
+        // FIXME: crash?
+        // do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
+        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(x1))); // SC[15:8]
+        // do ScreenExt.writeData(Util.maskHiByte(x1)); // SC[7:0]
+        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(x2))); // EC[15:8]
+        // do ScreenExt.writeData(Util.maskHiByte(x2)); // EC[7:0]
+
+        // do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
+        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(y1))); // SP[15:8]
+        // do ScreenExt.writeData(y1); // SP[7:0]
+        // do ScreenExt.writeData(Util.maskHiByte(Util.logShiftByteRight(y2))); // EP[15:8]
+        // do ScreenExt.writeData(y2); // EP[7:0]
+
         do ScreenExt._completeTransaction();
 
         // store the sum of pixels to paint rather than coords
