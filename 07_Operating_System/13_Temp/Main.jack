@@ -1,19 +1,14 @@
 class Main {
     function void main() {
-        
-        do ScreenExt.setPencolour(ScreenExt.RED());
-        
-        if (~(ScreenExt.getPencolour()=-2048)) {
-            do Sys.error(0); // pass
+        while (true) {
+            do ScreenExt.setPencolour(ScreenExt.BLACK());        
+            do ScreenExt.fillScreen();
+            do Sys.wait(1000);
+
+            do ScreenExt.setPencolour(ScreenExt.WHITE());        
+            do ScreenExt.fillScreen();
+            do Sys.wait(1000);
         }
-        
-        do ScreenExt.fillScreen(); // FIXME: reaches end but doesn't fill
-        
-        // frame buffer will be random data on init but may not be noticeable
-        // do ScreenExt.writeCommand(33); // Display Inversion ON (21h) DINVON
-        // do Sys.wait(1000);
-        // do ScreenExt.writeCommand(32); // Display Inversion OFF (20h) DINVOFF
-        // do Sys.wait(1000);
 
         // sleep - takes 120ms to go to sleep
         // do Sys.wait(LCD_WAIT); // wait in case coming out of reset

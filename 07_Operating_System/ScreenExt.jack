@@ -25,10 +25,20 @@ class ScreenExt {
         let LCD_WAIT = 120; // transition in milliseconds constant
         
         // ILI9341V initialization: config
-        // do ScreenExt.writeCommand(54); // MADCTL 0x36
-        // do ScreenExt.writeData(72); // Param 0x48 (invert column/rgb order)
-        // do ScreenExt.writeCommand(58); // COLMOD 0x3A
-        // do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
+        // changing BGR bit doesn't seem to change anything
+        // changing MX bit only seems to change pixel orientation
+        do ScreenExt.writeCommand(54); // MADCTL 0x36: MX=1, BGR=1
+        do ScreenExt.writeData(72); // Param 0x48 (vertical scanlines/rgb bit order) - same as adafruit
+
+        // TODO: works/definitely required
+        do ScreenExt.writeCommand(58); // COLMOD 0x3A
+        do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
+
+        // TODO: function?
+        // do ScreenExt.writeCommand(32); // DINVOFF 0x20 (regular display)
+        // do Sys.wait(LCD_WAIT);
+        // do ScreenExt.writeCommand(33); // DINVON 0x21 (invert display)
+        // do Sys.wait(LCD_WAIT);
         
         // ILI9341V initialization: awaken
         // these are the only essential SPI commands
@@ -41,13 +51,10 @@ class ScreenExt {
         do ScreenExt.writeCommand(41); // DISPON 0x29 (enable display)
         do Sys.wait(LCD_WAIT); // wait for DISPON
         
-        // FIXME: above works without this function + CSX driving high is not covered in Screen sim?
         do ScreenExt._completeTransaction();
-        
         return;
     }
 
-    // FIXME: do we need to throttle SPI commands - isn't that LCD's job?
     /** writes the 8 bit command with DCX wire set to low */
     function void writeCommand(int cmd) {
         var int busy; // 0x0=ready, 0x8000=busy
@@ -59,7 +66,6 @@ class ScreenExt {
         return;
     }
 
-    // FIXME: no evidence any param commands are working either yet?
     /** writes 16 bit data to LCD with DCX wire set to high. */
     function void writeData(int data) {
         var int busy; // 0x0=ready, 0x8000=busy
@@ -75,12 +81,13 @@ class ScreenExt {
      *  commands. colours are represented by 16 bit RGB values with
      *  binary representation: rrrrrggggggbbbbb */
     function void setPencolour(int colour) {
+        // FIXME: non-black/white colours seem wrong and have scanlines
         let fgcolour = colour;
         return;
     }
 
     function int getPencolour() {
-        return fgcolour; // FIXME: works
+        return fgcolour;
     }
 
     /** Sets the current background colour, to be used for clearScreen()
@@ -101,8 +108,9 @@ class ScreenExt {
      * in the corresponding colour.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
         // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
-        // when MADCTL D5=0 which it should be
+        // when MADCTL D5(MV)=0 (default) CASET=X, PASET=Y
         // otherwise ignored by ILI9341V
+        // FIXME: this is wrong - its 4 params using the lower byte of each
         do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
         do ScreenExt.writeData(x1); // SC (left column extent)
         do ScreenExt.writeData(x2); // EC (right column extent)
@@ -114,7 +122,6 @@ class ScreenExt {
 
         // store the sum of pixels to paint rather than coords
         // warning: need to stay within 15 bit ALU limits
-        // FIXME: tested with small numbers
         let pixels = Math.multiply((x2-x1+1),(y2-y1+1));
         return;
     }
@@ -137,34 +144,17 @@ class ScreenExt {
         return;
     }
 
-    // FIXME: wip
     function void fillScreen() {
-        var int i, j, rgb;
+        var int i, j;
         
-        let rgb = ScreenExt.getPencolour();
-        
-        // do ScreenExt.setWindow(0,0,239,319);
+        do ScreenExt.setWindow(0,0,239,319);
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
-        
-        let i = 32767;
-        while (i > 0) {
-            do ScreenExt.writeData(0); // black
-            let i = i-1;
-        }
-        
+       
         // call writeData() w*h times
-        // 240x320 = 76800 / 3 = 25600 (15 bit ALU limit)
-        // let i = 3;
-        // while (i > 0) {
-        //     let j = 25600;
-        //     while (j > 0) {
-        //         // write pixel contents (16 bit rgb data)
-        //         do ScreenExt.writeData(rgb);
-        //         let j = j - 1;
-        //     }
-        //     let i = i - 1;
-        // }
-        // let pixels = 0;
+        while (pixels > 0) {
+            do ScreenExt.writeData(ScreenExt.getPencolour());
+            let pixels = pixels - 1;
+        }
         do ScreenExt._completeTransaction();
         return;
     }
@@ -230,4 +220,43 @@ class ScreenExt {
     function int WHITE() {
         return -1; // 11111 111111 11111
     }
+
+    // TODO: adafruit functions
+
+    // void Adafruit_ILI9341::setRotation(uint8_t m) {
+    //     rotation = m % 4; // can't be higher than 3
+    //     switch (rotation) {
+    //         case 0:
+    //             m = (MADCTL_MX | MADCTL_BGR);
+    //             _width  = ILI9341_TFTWIDTH;
+    //             _height = ILI9341_TFTHEIGHT;
+    //             break;
+    //         case 1:
+    //             m = (MADCTL_MV | MADCTL_BGR);
+    //             _width  = ILI9341_TFTHEIGHT;
+    //             _height = ILI9341_TFTWIDTH;
+    //             break;
+    //         case 2:
+    //             m = (MADCTL_MY | MADCTL_BGR);
+    //             _width  = ILI9341_TFTWIDTH;
+    //             _height = ILI9341_TFTHEIGHT;
+    //             break;
+    //         case 3:
+    //             m = (MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR);
+    //             _width  = ILI9341_TFTHEIGHT;
+    //             _height = ILI9341_TFTWIDTH;
+    //             break;
+    //     }
+    // 
+    //     startWrite();
+    //     writeCommand(ILI9341_MADCTL);
+    //     spiWrite(m);
+    //     endWrite();
+    // }
+
+    // void Adafruit_ILI9341::invertDisplay(boolean i) {
+    //     startWrite();
+    //     writeCommand(i ? ILI9341_INVON : ILI9341_INVOFF);
+    //     endWrite();
+    // }
 }
