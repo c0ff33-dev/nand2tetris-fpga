@@ -25,10 +25,10 @@ class ScreenExt {
         let LCD_WAIT = 120; // transition in milliseconds constant
         
         // ILI9341V initialization: config
-        do ScreenExt.writeCommand(54); // MADCTL 0x36
-        do ScreenExt.writeData(72); // Param 0x48 (invert column/rgb order)
-        do ScreenExt.writeCommand(58); // COLMOD 0x3A
-        do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
+        // do ScreenExt.writeCommand(54); // MADCTL 0x36
+        // do ScreenExt.writeData(72); // Param 0x48 (invert column/rgb order)
+        // do ScreenExt.writeCommand(58); // COLMOD 0x3A
+        // do ScreenExt.writeData(85); // Param 0x55 (16 bit RGB format)
         
         // ILI9341V initialization: awaken
         // these are the only essential SPI commands
@@ -148,7 +148,7 @@ class ScreenExt {
         
         let i = 32767;
         while (i > 0) {
-            do ScreenExt.writeData(rgb); // red
+            do ScreenExt.writeData(0); // black
             let i = i-1;
         }
         

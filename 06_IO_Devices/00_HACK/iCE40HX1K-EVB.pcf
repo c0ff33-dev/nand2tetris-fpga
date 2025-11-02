@@ -60,12 +60,15 @@ set_io SRAM_DATA[14] 53	# SD14
 set_io SRAM_DATA[15] 52	# SD15
 
 # GPIO: top right=1, bottom right=2
+# RXD on MOD-LCD2.8RTP UEXT is reserved for backlight control but isn't used here
 set_io LCD_DCX 1		# PIO3_1A connected to pin 5 of GPIO1, pin 7 (D/C) on MOD-LCD2.8RTP
 set_io LCD_SDO 2		# PIO3_1B connected to pin 7 of GPIO1, pin 8 (MOSI) on MOD-LCD2.8RTP
 set_io LCD_SCK 3		# PIO3_2A connected to pin 9 of GPIO1, pin 9 (SCK) on MOD-LCD2.8RTP
 set_io LCD_CSX 4		# PIO3_2B connected to pin 11 of GPIO1, pin 10 (CS) on MOD-LCD2.8RTP
 
 # GPIO: top left=33, bottom left=34
+# default annotation on MOD-LCD2.8RTP assumes I2C (SDA/SCL) is used for RTP
+# but if using the hardware mod for SPI then some pins are repurposed
 set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
 set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
 set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP

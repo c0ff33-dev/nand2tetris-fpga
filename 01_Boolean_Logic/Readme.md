@@ -71,7 +71,6 @@ module Xor(
     And AND2(.a(nota),.b(b),.out(w2));
 
     Or OR(.a(w1),.b(w2),.out(out));
-}
 ```
 
 ### Simulation
