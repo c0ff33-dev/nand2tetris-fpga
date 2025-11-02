@@ -29,8 +29,9 @@ class ScreenExt {
         // MADCTL 0x36
         // Note: the addressing of how data is written to memory in the FPGA is
         // not affeced by MADCTL D5-7, the change is executed by manipulating
-        // the read pointer of the frame memory on the ILI9341V side -
+        // the read/write pointer of the frame memory on the ILI9341V side -
         // basically the image can appear flipped/mirrored compared to the source
+
         // - Row top to bottom (MADCTL D7/MY=0)
         // - Column left to right (MADCTL D6/MX=0) // adafruit=1, image is flipped on x-axis
         // - Row/column exchange: normal (MADCTL D5/MV=0)
@@ -40,11 +41,13 @@ class ScreenExt {
         // RAMWR: ignore excess data calls (IFCTL D0/WEMODE=0) or redraw (default=1)
 
         // FIXME: RGB seems wrong, possibly still need image flip but hard to tell atm
-        // FIXME: current setWindow clamps to top right
+        // FIXME: current setWindow clamps to top right somehow - consistent with D6=1 0,0?
         do ScreenExt.writeCommand(54); // MADCTL 0x36
         // do ScreenExt.writeData(72); // Param 0x48 MX=1, BGR=1 (same as adafruit)
         // do ScreenExt.writeData(64); // Param 0x40 MX=1 only      
         do ScreenExt.writeData(0); // Param 0x0 (default)
+        // do ScreenExt.writeData(32); // FIXME: MV=1 (experimental)
+        // do ScreenExt.writeData(224); // FIXME: MV/MX/My=1 (experimental)
 
         // TODO: this works/is definitely required
         do ScreenExt.writeCommand(58); // COLMOD 0x3A
@@ -163,7 +166,11 @@ class ScreenExt {
         //     do Sys.error(0);
         // }
 
-        // FIXME: enable
+        // FIXME: adafruit rolls up x1/2 and y1/2 into 2 x 32 bit packets
+        // FIXME: 64 = 32x2 = 16x4 SPI sessions: SC > EC > SP > EP (they use 8 bit SPI vs our 16 with writeData())
+        // FIXME: but serially its all the same - misinterpreted docs as needing padding
+
+        // FIXME: original - salvage notes but any 4 x writeData() pattern won't work (misread docs)
         // for 16 bit values rsh 8 is sufficient to mask
         // adafruit doesn't bother masking lo byte either
         // do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
@@ -178,17 +185,38 @@ class ScreenExt {
         // do ScreenExt.writeData(Util.logShiftByteRight(y2)); // EP[15:8]
         // do ScreenExt.writeData(y2); // EP[7:0]
 
-        // FIXME: bounding box issue - why does this look like its clamping in reverse? (1 pixel)
-        do ScreenExt.writeCommand(42); // CASET 0x2A (column adrr set)
-        do ScreenExt.writeData(0); // SC[15:8]
-        do ScreenExt.writeData(0); // SC[7:0]
-        do ScreenExt.writeData(0); // EC[15:8] - max (239)
-        do ScreenExt.writeData(239); // EC[7:0]
-        do ScreenExt.writeCommand(43); // PASET 0x2B (page [row] adrr set)
-        do ScreenExt.writeData(0); // SP[15:8]
-        do ScreenExt.writeData(0); // SP[7:0]
-        do ScreenExt.writeData(1); // EP[15:8] - max (319)
-        do ScreenExt.writeData(63); // EP[7:0]
+        // FIXME: appears to always draw 1 pixel if not blocked in software
+        // CASET/PASET limits are swapped if MADCTL MV/D5=1
+        // CASET 0x2A (column adrr set): max 239
+
+        // FIXME: alternate #1 - salvage notes but any 2x4 writeData() pattern won't work
+        // do ScreenExt.writeCommand(42);
+        // // FIXME: extends "backwards" from right to left, SC (high) to EC (low)
+        // // FIXME: this is consistent with MX=1 (pg213) but doesn't react to any MADCTL updates :/
+        // do ScreenExt.writeData(0); // SC[15:8], min/max 0
+        // do ScreenExt.writeData(239); // SC[7:0], min 0, max 239
+        // do ScreenExt.writeData(0); // EC[15:8], min/max 0
+        // do ScreenExt.writeData(0); // EC[7:0], min 0, max 239
+        // // PASET 0x2B (page [row] adrr set): max 319
+        // do ScreenExt.writeCommand(43);
+        // // FIXME: extends "downwards" from top to bottom, SP (high) to EP (low) but high byte is ignored?
+        // do ScreenExt.writeData(0); // SP[15:8], min 0, max 1
+        // do ScreenExt.writeData(255); // SP[7:0], min 0, max 63/255
+        // do ScreenExt.writeData(0); // EP[15:8], min 0, max 1
+        // do ScreenExt.writeData(0); // EP[7:0], min 0, max 63/255
+
+        // FIXME: alternate #2
+        // FIXME: this enables a full bounding box but doesn't fill in 240x320 calls?
+        // FIXME: unlike above it correctly flows from low SC/SP to high SP/EP
+        // FIXME: extends "backwards" from right to left, SC (low) to EC (high)
+        // FIXME: the bounding box is also definitely set at 240x320
+        do ScreenExt.writeCommand(42);
+        do ScreenExt.writeData(0); // SC
+        do ScreenExt.writeData(120); // EC
+        do ScreenExt.writeCommand(43); 
+        do ScreenExt.writeData(0); // SP
+        do ScreenExt.writeData(319); // EP
+        
         do ScreenExt._completeTransaction();
 
         // store the sum of pixels to paint rather than coords
@@ -219,7 +247,7 @@ class ScreenExt {
         var int i, j;
         
         // TODO: adafruit defines x2/y2 as x+w-1 and y+h-1 which is intuitive
-        do ScreenExt.setWindow(0,0,239,319);
+        do ScreenExt.setWindow(0,0,239,319); // FIXME: input values currently overridden
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
        
         // call writeData() w*h times
@@ -229,10 +257,10 @@ class ScreenExt {
         //     let pixels = pixels - 1;
         // }
 
-        // TODO: otherwise when pixels > 32767:
-        let i = 240;
+        // FIXME: brute forcing with higher pixel count to test window bounds
+        let i = 480; // 240
         while (i > 0) {
-            let j = 320;
+            let j = 480; // 320
             while (j > 0) {
                 do ScreenExt.writeData(ScreenExt.getPencolour());
                 let j = j - 1;

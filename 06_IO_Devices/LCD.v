@@ -119,14 +119,14 @@ module LCD(
 
 	// if load=1 shiftReg16 is ignored
 	// if load16=1 shiftReg16 gets cycled through SDO
-	//   and then after 8 shifts it will be where shiftReg started
+	//   and then after 8 shifts it will contain what shiftReg did at start
 	BitShift8L shiftReg16 (
 		.clk(~clk), // posedge latch
 		.in(init ? in[15:8] : 8'd0), // init on load
-		.inLSB(init ? shiftOut[7] : 1'b0), // shift slaveMSB into masterLSB
+		.inLSB(init ? shiftOut[7] : 1'b0), // shiftOutMSB into shiftOut16LSB
 		.load(init ? load16 : 1'b1), // don't shift on load
 		.shift(SCK & clkCount[0]), // once per negedge SCK (1/2 clk)
-		.out(shiftOut16) // available for sampling by posedge for SDO
+		.out(shiftOut16) // send shiftOut16 15:0 [15:8...7:0]
 	);
 
 	// generic init handler, should work with ice40 + yosys
