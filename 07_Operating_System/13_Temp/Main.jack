@@ -1,7 +1,8 @@
 class Main {
+    // TODO: annotate functions vs built-in vs course vs mine
     function void main() {
         while (true) {
-            do ScreenExt.setPencolour(ScreenExt.BLACK());        
+            do ScreenExt.setPencolour(ScreenExt.BLUE());        
             do ScreenExt.fillScreen();
 
             do ScreenExt.setPencolour(ScreenExt.WHITE());        
@@ -10,6 +11,7 @@ class Main {
             do GPIO.writeLed(3); // done
         }
 
+        // TODO: function?
         // sleep - takes 120ms to go to sleep
         // do Sys.wait(LCD_WAIT); // wait in case coming out of reset
         // do ScreenExt.writeCommand(40); // Display OFF (28h) DISPOFF
