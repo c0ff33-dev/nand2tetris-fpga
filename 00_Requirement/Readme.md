@@ -93,7 +93,7 @@ $ sudo make install
 
 Test the programmer with the test project provided by Olimex.
 
-**Tipp:** Connect the solder jumper 3.3V_E1 on iCE40HX1K-EVB to power the fpga board iCE40HX1K-EVB over the IDC10 cable connected to Olimexino 32u4 over UEXT. This supersedes the need of the external 3.3V DC power supply.
+**Tip:** Connect the solder jumper 3.3V_E1 on iCE40HX1K-EVB to power the fpga board iCE40HX1K-EVB over the IDC10 cable connected to Olimexino 32u4 over UEXT. This supersedes the need for the external 3.3V DC power supply but you can still use one if having power stability issues over USB.
 
  ![](ICE40PGM.jpg)
 
