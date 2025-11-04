@@ -59,11 +59,15 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 **Attention:** To enable SPI communication on the RTP controller chip AR1021 we must modify two solder jumpers. (Compare with schematic of MOD-LCD2.8RTP together with Datasheet of AR1021). The latest iteration of MOD-LCD2.8RTP is Rev D which has a different layout than pictured (Rev B) but same modifications apply.
 
-1. Cut connection SJ1-GND with a sharp cutter knife (green)
+- Cut connection SJ1-GND with a sharp knife (green). A craft knife, scalpel or similar should do - be very careful not to sever any other traces!
+  - If you have a multimeter check that continuity is broken between SJ1-GND and SJ1-2.
+  - If you're not confident doing this then you can implement an I2C controller for RTP but this is an exercise left to the reader.
 
-2. Connect M1 to VDD (+3.3V) by soldering SJ1-VDD to activate SPI mode of AR1021 (yellow)
+- Connect M1 to VDD (+3.3V) by soldering SJ1-VDD to activate SPI mode of AR1021 (yellow).
+  - After the cut + solder on SJ1 the M1 pin should now be powered instead of being drained to ground.
 
-3. Connect UEXT pin 4 (IRQ/SDO) by soldering SJ3 (yellow)
+- Connect UEXT pin 4 (IRQ/SDO) by soldering SJ3 (yellow).
+  - SJ3 will now be high (+3.3V) at idle.
 
 ![](jumper_rtp.jpg)
 
