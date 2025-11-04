@@ -31,10 +31,10 @@ class Touch{
      *  also responsible for the inter byte delay of ~50μs */
     function int writeRTP(int c) {
         // busy=0x8000(+), else byte=0x0-0xFF
-        var int rx, hiByte;        
+        var int rx;        
         let RTP[0] = c; // start RTP_SCK
         while (RTP[0] < 0) {
-            let rx = RTP[0];
+            let rx = RTP[0]; // read RTP
         }
         do Sys.wait(1); // wait before clocking next byte
         return rx;

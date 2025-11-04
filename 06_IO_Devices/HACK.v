@@ -287,16 +287,16 @@ module HACK(
 	// DEBUG2 (4109)
 	Register debug2(
 		.clk(clk),
-		.in(outM),
-		.load(loadIOD),
+		.in({15'd0,RTP_SCK}), // TODO: DEBUG
+		.load(1'b1),  // TODO: DEBUG
 		.out(inIOD)
 	);
 
 	// DEBUG3 (4110)
 	Register debug3(
 		.clk(clk),
-		.in(outM),
-		.load(loadIOE),
+		.in({15'd0,RTP_SDO}), // TODO: DEBUG
+		.load(1'b1),  // TODO: DEBUG
 		.out(inIOE)
 	);
 

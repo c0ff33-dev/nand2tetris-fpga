@@ -1,15 +1,20 @@
 class Main {
     // TODO: annotate functions vs built-in vs course vs mine
-    function void main() {
-        while (true) {
-            do ScreenExt.setPencolour(ScreenExt.BLUE());        
-            do ScreenExt.fillScreen();
 
-            do ScreenExt.setPencolour(ScreenExt.WHITE());        
-            do ScreenExt.fillScreen();
-            
-            do GPIO.writeLed(3); // done
-        }
+    function void main() {
+        do Main.lcd_main();
+        do Main.rtp_main();
+        return;
+    }
+    function void lcd_main() {
+        // while (true) {
+        //     do ScreenExt.setPencolour(ScreenExt.BLUE());        
+        //     do ScreenExt.fillScreen();
+
+        //     do ScreenExt.setPencolour(ScreenExt.WHITE());        
+        //     do ScreenExt.fillScreen();
+        //     do GPIO.writeLed(3); // done
+        // }
 
         // TODO: function?
         // sleep - takes 120ms to go to sleep
@@ -18,13 +23,15 @@ class Main {
         // do Sys.wait(LCD_WAIT); // wait for DISPOFF
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
-
-        do GPIO.writeLed(3); // done
+        
+        do ScreenExt.setPencolour(ScreenExt.BLUE());
+        do ScreenExt.fillScreen();
+        do GPIO.writeLed(1);
         return;
     }
 
     function void rtp_main() {
-        var int rtp;
+        var int rtp, crc;
         do UART.writeChar(222); // 0xDE (start)
 
         // command format: header, size, data, [...] // size = bytes after this byte
@@ -47,47 +54,57 @@ class Main {
         let rtp = Touch.writeRTP(1);  // 0x01
         do UART.writeChar(rtp);
 
-        let rtp = Touch.writeRTP(16); // 0x10=GET_VERSION, 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
+        let rtp = Touch.writeRTP(18); // 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
         do UART.writeChar(rtp);
 
-        // // read command response
+        // read command response
         let rtp = Touch.writeRTP(0); // 1, 0x55
+
         do UART.writeChar(rtp);
         if (rtp = 85) {
-            do Sys.error(0); // trap on expected byte
+            let crc = 1;
+            // do Sys.error(0); // trap on expected byte
         }
-        if (~(rtp = 255)) {
-            do Sys.error(0); // trap on any new byte
-        }
+        // if (~(rtp = 255)) {
+        //     do Sys.error(0); // trap on any new byte
+        // }
 
         let rtp = Touch.writeRTP(0); // 2, 0x02
         do UART.writeChar(rtp);
         if (rtp = 2) {
-            do Sys.error(0); // trap on expected byte
+            let crc = crc + 1;
+            // do Sys.error(0); // trap on expected byte
         }
-        if (~(rtp = 255)) {
-            do Sys.error(0); // trap on any new byte
-        }
+        // if (~(rtp = 255)) {
+        //     do Sys.error(0); // trap on any new byte
+        // }
         
         let rtp = Touch.writeRTP(0); // 3, 0x0
         do UART.writeChar(rtp);
         if (rtp = 0) {
-            do Sys.error(0); // trap on expected byte
+            let crc = crc + 1;
+            // do Sys.error(0); // trap on expected byte
         }
-        if (~(rtp = 255)) {
-            do Sys.error(0); // trap on any new byte
-        }
+        // if (~(rtp = 255)) {
+        //     do Sys.error(0); // trap on any new byte
+        // }
 
-        let rtp = Touch.writeRTP(0); // 4, 0x10
+        let rtp = Touch.writeRTP(0); // 4, <input cmd>
         do UART.writeChar(rtp);
-        if (rtp = 16) { // command type
-            do Sys.error(0); // trap on expected byte
+        if (rtp = 18) { // command type
+            let crc = crc + 1;
+            // do Sys.error(0); // trap on expected byte
         }
-        if (~(rtp = 255)) {
-            do Sys.error(0); // trap on any new byte
-        }
+        // if (~(rtp = 255)) {
+        //     do Sys.error(0); // trap on any new byte
+        // }
 
-        do GPIO.writeLed(3); // error
+        if (crc = 4) {
+            do Sys.error(0); // victory!
+        } else {
+            do GPIO.writeLed(3); // error
+        }
+        
         do UART.writeChar(173); // 0xAD (end)
 
         return;
