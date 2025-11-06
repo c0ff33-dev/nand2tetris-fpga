@@ -1,112 +1,167 @@
-/**
- * The special function register RTP receives bytes from the touch panel
- * controller AR1021.
- * 
- * When load=1 transmission of byte in[7:0] is initiated. The byte is send to
- * SDO bitwise together with 8 clock signals on SCK. At the same time RTP
- * receives a byte at SDI. During transmission out[15] is 1. The transmission
- * of a byte takes 256 clock cycles (32 cycles for each bit to achieve a slower
- * transfer rate). Every 32 clock cycles one bit is shifted out. In the middle
- * of each bit at counter number 31 the bit SDI is sampled. When transmission
- * is completed out[15]=0 and RTP outputs the received byte to out[7:0].
- *
- * AR1021 shifts on posedge, samples negedge (CPHA=0, CPOL=1) with a maximum
- * bit rate of ~900kHz (~28 cycles @ 25 MHz clock) and requires an inter-byte delay
- * of ~50μs (1250 cycles) however this latter implementation detail is currently 
- * handled in software.
- */
+// =====================================================
+// Simple I2C Master (Single Byte, 100kHz, 25MHz Clock)
+// =====================================================
+// Author: ChatGPT (GPT-5)
+// Description:
+// - Generates I2C start, stop, read, and write cycles
+// - Fixed 25MHz input clock, 100kHz I2C clock
+// - Single-byte transfer per start
+// - Minimal control interface
+// =====================================================
 
-`default_nettype none
+module i2c_master_simple (
+    input  wire        clk,        // 25 MHz clock
+    input  wire        reset_n,    // Active-low reset
 
-module RTP(
-	input clk,
-	input load,
-	input [15:0] in,
-	output [15:0] out,
-	output SDO,
-	input SDI,
-	output SCK
-	// CSX is optional for AR1021
+    // I2C lines
+    output reg         scl,        // I2C clock
+    inout  wire        sda,        // I2C data (open-drain)
+
+    // Control interface
+    input  wire [6:0]  dev_addr,   // 7-bit I2C address
+    input  wire [7:0]  wr_data,    // Byte to write
+    output reg  [7:0]  rd_data,    // Byte read from slave
+    input  wire        start,      // Begin transaction
+    input  wire        rw,         // 0 = write, 1 = read
+    output reg         busy,       // Busy flag
+    output reg         ack_error   // ACK error flag
 );
-	
-	reg miso = 0;
-	wire busy, reset, sckReset;
-	wire [7:0] shiftOut;
-	wire [15:0] busyCount, sckCount;
 
-	// remaining registers are aligned to leading posedge (opposite of SPI)
-	// so shift can happen first then sample later in same cycle
-	// busy bit is set at load [t+1] regardless of in content
+    // -------------------------------------------------
+    // Clock divider for SCL = 100 kHz
+    // -------------------------------------------------
+    localparam integer DIVIDER = 25_000_000 / (100_000 * 4); // 4 ticks per SCL period
+    reg [9:0] clk_cnt;
+    reg scl_en;
 
-	// load on new byte or reset when complete
-	// no CSX to manage so don't check in[8]
-	Bit busyBit (
-		.clk(clk),
-		.in(reset ? 1'b0 : 1'b1),
-		.load(load | reset),
-		.out(busy)
-	);
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            clk_cnt <= 0;
+            scl <= 1'b1;
+            scl_en <= 1'b0;
+        end else if (busy) begin
+            if (clk_cnt == DIVIDER - 1) begin
+                clk_cnt <= 0;
+                scl <= ~scl;       // Toggle SCL every DIVIDER cycles
+                scl_en <= 1'b1;    // Single-cycle enable
+            end else begin
+                clk_cnt <= clk_cnt + 1;
+                scl_en <= 1'b0;
+            end
+        end else begin
+            scl <= 1'b1;
+            scl_en <= 1'b0;
+        end
+    end
 
-	// increment SCK while busy at 16 cycles per high/low
-	// 1 cycle to set load, 32 cycles per bit
-	// 256 cycles to shift 8 bits
-	PC count_32(
-		.clk(clk),
-		.in(16'd0), // unused
-		.load(1'd0), // unused
-		.inc(busy), // inc while busy
-		.reset(sckReset), // cycle 0 to max sckCount
-		.out(sckCount)
-	);
-	assign sckReset = (sckCount == 16'd31);
+    // -------------------------------------------------
+    // SDA control (open-drain)
+    // -------------------------------------------------
+    reg sda_out;
+    reg sda_oe;  // 1 = drive SDA low, 0 = release
+    assign sda = sda_oe ? 1'b0 : 1'bz;
+    wire sda_in = sda;
 
-	// reset busy signal after 256 cycles
-	PC count_256(
-		.clk(clk),
-		.in(16'd0), // unused
-		.load(1'd0), // unused
-		.inc(busy), // inc while busy
-		.reset(reset), // cycle 0 to max busyCount
-		.out(busyCount)
-	);
-	assign reset = (busyCount == 16'd255);
+    // -------------------------------------------------
+    // State machine
+    // -------------------------------------------------
+    localparam [3:0]
+        IDLE   = 0,
+        START  = 1,
+        SEND_ADDR = 2,
+        SEND_RW   = 3,
+        ADDR_ACK  = 4,
+        WRITE_DATA = 5,
+        READ_DATA  = 6,
+        DATA_ACK   = 7,
+        STOP    = 8;
 
-	// MISO = SDI in [t+1]
-	// sample during SCK negedge (but not too close to edge)
-	// valid until following SCK negedge
-	// must be negedge if sckCount==31 but this is probably
-	// an artifact of tb using a posedge register for input
-	always @(negedge clk)
-		// wait at least 150ns after SCK low before sampling
-		// anywhere along current SCK negedge will satisfy the sim
-		if (sckCount==31)
-			miso <= SDI;
+    reg [3:0] state;
+    reg [3:0] bit_cnt;
+    reg [7:0] shift_reg;
 
-	// circular buffer to enable duplex comms with slave where:
-	// slave MSB >= master LSB (MISO)
-	// master MSB >= slave LSB (MOSI)
-	// init=0 before load, no shift on first cycle
-	// shift late in SCK negedge so it emits posedge
-	// valid until next posedge for sampling by AR1021
-	BitShift8L shiftreg (
-		.clk(~clk), // negate for posedge latch
-		.in(init ? in[7:0] : 8'd0), // init on load
-		.inLSB(init ? miso : 1'b0), // shift slaveMSB into masterLSB
-		.load(init ? load : 1'b1), // don't shift on load
-		.shift(sckCount==31), // shift once per 32 cycles
-		.out(shiftOut) // available for sampling by negedge for SDO
-	);
+    // -------------------------------------------------
+    // FSM sequential
+    // -------------------------------------------------
+    always @(posedge clk or negedge reset_n) begin
+        if (!reset_n) begin
+            state <= IDLE;
+            busy <= 0;
+            ack_error <= 0;
+            sda_oe <= 0;
+            bit_cnt <= 0;
+            rd_data <= 8'h00;
+        end else begin
+            case (state)
+                IDLE: begin
+                    sda_oe <= 0;
+                    if (start) begin
+                        busy <= 1;
+                        ack_error <= 0;
+                        state <= START;
+                    end
+                end
 
-	// generic init handler, should work with ice40 + yosys
-	reg init = 0;
-	always @(posedge clk) begin
-		if (~init) begin
-			init <= 1;
-		end
-	end
+                START: begin
+                    // SDA goes low while SCL high → start condition
+                    sda_oe <= 1;
+                    shift_reg <= {dev_addr, rw}; // address + R/W
+                    bit_cnt <= 7;
+                    state <= SEND_ADDR;
+                end
 
-	assign SDO = init ? (busy & shiftOut[7]) : 1'b0; // broadcast MOSI while busy
-	assign SCK = init ? (busy & (sckCount <= 16'd15)) : 1'b0; // SCK high/low 16 cycles each
-	assign out = init ? {busy,7'd0,shiftOut} : 16'd0; // out[15]=busy, out[7:0]=received byte
+                SEND_ADDR: if (scl_en && ~scl) begin
+                    sda_oe <= ~shift_reg[bit_cnt]; // drive bit
+                    if (bit_cnt == 0)
+                        state <= ADDR_ACK;
+                    else
+                        bit_cnt <= bit_cnt - 1;
+                end
+
+                ADDR_ACK: if (scl_en && scl) begin
+                    sda_oe <= 0; // release SDA
+                    if (sda_in)
+                        ack_error <= 1; // no ACK
+                    if (!rw)
+                        state <= WRITE_DATA;
+                    else begin
+                        bit_cnt <= 7;
+                        rd_data <= 8'h00;
+                        state <= READ_DATA;
+                    end
+                end
+
+                WRITE_DATA: if (scl_en && ~scl) begin
+                    sda_oe <= ~wr_data[bit_cnt];
+                    if (bit_cnt == 0)
+                        state <= DATA_ACK;
+                    else
+                        bit_cnt <= bit_cnt - 1;
+                end
+
+                READ_DATA: if (scl_en && scl) begin
+                    rd_data[bit_cnt] <= sda_in;
+                    if (bit_cnt == 0)
+                        state <= DATA_ACK;
+                    else
+                        bit_cnt <= bit_cnt - 1;
+                end
+
+                DATA_ACK: if (scl_en && ~scl) begin
+                    sda_oe <= (rw) ? 1 : 0; // NACK for read, release for write
+                    state <= STOP;
+                end
+
+                STOP: begin
+                    // SDA low while SCL high -> SDA high = STOP
+                    if (scl_en && scl) begin
+                        sda_oe <= 0;
+                        busy <= 0;
+                        state <= IDLE;
+                    end
+                end
+            endcase
+        end
+    end
 
 endmodule
