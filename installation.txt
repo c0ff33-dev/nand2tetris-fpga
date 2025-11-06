@@ -63,3 +63,13 @@ cd iCE40-HX1K-EVB/leds
 apio sim
 apio build
 apio upload
+
+# cli
+curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+sudo ln -s ~/bin/arduino-cli /usr/local/bin/arduino-cli
+arduino-cli core install arduino:avr
+arduino-cli lib install "Adafruit GFX Library@1.2.3"
+wget https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip -O SPIMemory-2.2.0.zip
+unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
+
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/the_admin/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
