@@ -1,7 +1,7 @@
 // =====================================================
 // Simple I2C Master
 //   - 25 MHz system clock input
-//   - 100 kHz I2C bit rate
+//   - 100 KHz I2C bit rate
 //   - Handles single-byte read or write
 // =====================================================
 
@@ -14,9 +14,9 @@ module RTP (
     output wire [15:0] out    // out[15]=busy, [7:0]=data (if read)
 );
 
-// 25 MHz / (100 kHz × 4) = 62.5 → ~62 cycles per 1/4 SCL period
+// 25 MHz / (100 KHz × 4) = 62.5 → ~62 cycles per 1/4 SCL period
 // 4 clk cycles per SCL cycle
-localparam integer DIVIDER = 25_000_000 / (100_000 * 4);
+localparam integer DIVIDER = 25_000_000 / (400_000 * 4);
 
 reg [9:0] clk_cnt;
 reg tick;
@@ -65,6 +65,7 @@ reg [7:0] shift_reg;
 reg [3:0] bit_cnt;
 reg [1:0] phase;  // 0=data_setup, 1=scl_high, 2=scl_low, 3=next_bit
 
+// TODO: update state machine to read two bytes during ready cycle (in[8]=1)
 always @(posedge clk) begin
     case (state)
         IDLE: begin
@@ -73,7 +74,7 @@ always @(posedge clk) begin
             phase <= 0;
             if (load) begin
                 _out[15] <= 1;  // busy
-                shift_reg <= {DEV_ADDR, 1'b0};
+                shift_reg <= {DEV_ADDR, in[8]};
                 state <= START_COND;
             end
         end

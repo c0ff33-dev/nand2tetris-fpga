@@ -55,7 +55,7 @@ module RTP_tb();
     reg [31:0] n = 0;
     wire trigger;
     reg write = 1;
-    assign trigger = (n == 20) || (n == 200);
+    assign trigger = (n == 20) || (n == 10000);
 
     always @(posedge clk) begin
         if (trigger) begin
@@ -111,7 +111,7 @@ module RTP_tb();
     end
 
     // SDA/SCL comparators - track expected behavior based on RTP implementation
-    localparam DIVIDER = 62;
+    localparam DIVIDER = 15; // 400 KHz (fast mode)
     reg [9:0] clk_cnt_cmp = 0;
     reg tick_cmp = 0;
     reg sda_cmp = 1;
@@ -309,7 +309,7 @@ module RTP_tb();
         $display("------------------------");
         $display("Testbench: RTP");
 
-        for (n = 0; n < 200; n = n + 1) begin
+        for (n = 0; n < 2500; n = n + 1) begin
             check();
         end
 
