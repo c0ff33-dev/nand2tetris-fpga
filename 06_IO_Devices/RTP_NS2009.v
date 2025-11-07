@@ -60,39 +60,73 @@ localparam [3:0]
 
 localparam [6:0] DEV_ADDR = 7'h48; // 7-bit I2C device address
 
-reg [3:0] state;
+reg [3:0] state = IDLE;
 reg [7:0] shift_reg;
 reg [3:0] bit_cnt;
+reg [1:0] phase;  // 0=data_setup, 1=scl_high, 2=scl_low, 3=next_bit
 
 always @(posedge clk) begin
-    begin
-        case (state)
-            IDLE: begin
-                sda_oe <= 0;
-                scl_oe <= 0;
-                if (load) begin
-                    _out[15] <= 1;  // busy
-                    state <= START_COND;
-                end
+    case (state)
+        IDLE: begin
+            sda_oe <= 0;
+            scl_oe <= 0;
+            phase <= 0;
+            if (load) begin
+                _out[15] <= 1;  // busy
+                shift_reg <= {DEV_ADDR, 1'b0};
+                state <= START_COND;
             end
+        end
 
-            START_COND: begin
-                // SDA goes low while SCL high
-                sda_oe <= 1;   // SDA low
-                scl_oe <= 0;   // SCL high
-                if (tick) begin
-                    shift_reg <= {DEV_ADDR, rw};
-                    bit_cnt <= 7;
-                    state <= SEND_ADDR;
-                end
+        START_COND: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        // START: SDA goes low while SCL high
+                        sda_oe <= 1;   // SDA low
+                        scl_oe <= 0;   // SCL high
+                        phase <= 1;
+                    end
+                    1: begin
+                        bit_cnt <= 7;
+                        phase <= 0;
+                        state <= SEND_ADDR;
+                    end
+                    default: phase <= 0;
+                endcase
             end
+        end
 
-            SEND_ADDR: begin
-                if (tick) begin
-                    scl_oe <= 1;                    // SCL low
-                    sda_oe <= ~shift_reg[bit_cnt];  // set data
-                    scl_oe <= 0;                    // SCL high
-                    if (bit_cnt == 0) begin
+        SEND_ADDR: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        // Data setup with SCL low
+                        scl_oe <= 1;                    // SCL low
+                        sda_oe <= ~shift_reg[bit_cnt];  // set data
+                        phase <= 1;
+                    end
+                    1: begin
+                        // SCL high - data valid
+                        scl_oe <= 0;                    // SCL high
+                        phase <= 2;
+                    end
+                    2: begin
+                        // Prepare for next bit
+                        scl_oe <= 1;                    // SCL low
+                        if (bit_cnt == 0) begin
+                            // ACK bit - release SDA
+                            sda_oe <= 0;
+                            phase <= 3;
+                        end else begin
+                            bit_cnt <= bit_cnt - 1;
+                            phase <= 0;
+                        end
+                    end
+                    3: begin
+                        // ACK phase - SCL high to sample ACK
+                        scl_oe <= 0;                    // SCL high
+                        // Transition to next state
                         if (rw) begin
                             bit_cnt <= 7;
                             state <= READ_BYTE;
@@ -101,45 +135,97 @@ always @(posedge clk) begin
                             shift_reg <= in[7:0];   // data to write
                             state <= WRITE_BYTE;
                         end
-                    end else
-                        bit_cnt <= bit_cnt - 1;
-                end
+                        phase <= 0;
+                    end
+                endcase
             end
+        end
 
-            WRITE_BYTE: begin
-                if (tick) begin
-                    scl_oe <= 1;
-                    sda_oe <= ~shift_reg[bit_cnt];
-                    scl_oe <= 0;
-                    if (bit_cnt == 0) begin
+        WRITE_BYTE: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        scl_oe <= 1;                    // SCL low
+                        sda_oe <= ~shift_reg[bit_cnt];  // set data
+                        phase <= 1;
+                    end
+                    1: begin
+                        scl_oe <= 0;                    // SCL high
+                        phase <= 2;
+                    end
+                    2: begin
+                        scl_oe <= 1;                    // SCL low
+                        if (bit_cnt == 0) begin
+                            // ACK bit
+                            sda_oe <= 0;
+                            phase <= 3;
+                        end else begin
+                            bit_cnt <= bit_cnt - 1;
+                            phase <= 0;
+                        end
+                    end
+                    3: begin
+                        scl_oe <= 0;                    // SCL high for ACK
                         state <= STOP_COND;
-                    end else
-                        bit_cnt <= bit_cnt - 1;
-                end
+                        phase <= 0;
+                    end
+                endcase
             end
+        end
 
-            READ_BYTE: begin
-                sda_oe <= 0; // release SDA
-                if (tick) begin
-                    _out[bit_cnt] <= sda_in;
-                    if (bit_cnt == 0)
+        READ_BYTE: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        scl_oe <= 1;                    // SCL low
+                        sda_oe <= 0;                    // release SDA
+                        phase <= 1;
+                    end
+                    1: begin
+                        scl_oe <= 0;                    // SCL high
+                        _out[bit_cnt] <= sda_in;        // sample data
+                        phase <= 2;
+                    end
+                    2: begin
+                        scl_oe <= 1;                    // SCL low
+                        if (bit_cnt == 0) begin
+                            // NACK bit - drive high
+                            sda_oe <= 1;
+                            phase <= 3;
+                        end else begin
+                            bit_cnt <= bit_cnt - 1;
+                            phase <= 0;
+                        end
+                    end
+                    3: begin
+                        scl_oe <= 0;                    // SCL high for NACK
                         state <= STOP_COND;
-                    else
-                        bit_cnt <= bit_cnt - 1;
-                end
+                        phase <= 0;
+                    end
+                endcase
             end
+        end
 
-            STOP_COND: begin
-                sda_oe <= 1; // SDA low
-                scl_oe <= 0; // SCL high
-                if (tick) begin
-                    sda_oe <= 0;      // SDA high
-                    _out[15] <= 0;     // clear busy
-                    state <= IDLE;
-                end
+        STOP_COND: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        // STOP: SDA rises while SCL high
+                        sda_oe <= 1;                    // SDA low
+                        scl_oe <= 0;                    // SCL high
+                        phase <= 1;
+                    end
+                    1: begin
+                        sda_oe <= 0;                    // SDA high (release)
+                        _out[15] <= 0;                  // clear busy
+                        state <= IDLE;
+                        phase <= 0;
+                    end
+                    default: phase <= 0;
+                endcase
             end
-        endcase
-    end
+        end
+    endcase
 end
 
 endmodule
