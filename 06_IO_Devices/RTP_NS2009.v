@@ -1,10 +1,4 @@
-// =====================================================
-// Simple I2C Master
-//   - 25 MHz system clock input
-//   - 100 KHz I2C bit rate
-//   - Handles single-byte read or write
-// =====================================================
-
+// NS2009 400 KHz I2C controller
 module RTP (
     input  wire        clk,
     input  wire        load,
@@ -41,7 +35,7 @@ always @(posedge clk) begin
     end
 end
 
-// TODO: is there actually a pull-up resistor on SDA?
+// TODO: is there actually a pull-up resistor on SDA? what does adafruit do?
 // 1 = drive low, 0 = release
 reg sda_oe;         
 reg scl_oe;
@@ -60,14 +54,15 @@ localparam [3:0]
     READ_BYTE2  = 4'd5,
     STOP_COND   = 4'd6;
 
-localparam [6:0] DEV_ADDR = 7'h48; // 7-bit I2C device address
+localparam [6:0] DEV_ADDR = 7'h48; // 7-bit device address for NS2009
 
 reg [3:0] state = IDLE;
 reg [7:0] shift_reg;
 reg [3:0] bit_cnt;
 reg [1:0] phase;  // 0=data_setup, 1=scl_high, 2=scl_low, 3=next_bit
 
-// TODO: update state machine to read two bytes during ready cycle (in[8]=1)
+// TODO: check what out is actually emitting on read commands
+// state machine
 always @(posedge clk) begin
     case (state)
         IDLE: begin

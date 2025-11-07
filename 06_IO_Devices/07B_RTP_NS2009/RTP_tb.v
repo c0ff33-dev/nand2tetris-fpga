@@ -21,6 +21,7 @@ module RTP_tb();
         .load(load)
     );
 
+    // Slave: return read data to master
     reg sda_drv = 0;   // drive low for data
     assign SDA = sda_drv ? 1'b0 : 1'bz;
 
@@ -28,12 +29,17 @@ module RTP_tb();
     reg [2:0] bit_cnt = 0;
     reg sending = 0;
 
-    wire rw = in[8]; // 0=write, 1=read
+    wire rw = in[8]; // 0=write, 1=read, in is stable in sim only
     wire busy = out[15];
 
     always @(negedge SCL ) begin
         begin
-            if (busy && rw) begin
+            if (busy && !rw) begin
+                // on write populate output buffer
+                if (!sending) slave_data <= 8'hDE;
+                sda_drv <= 0; // SDA low
+            end
+            else if (busy && rw) begin
                 // Send slave_data MSB first
                 sda_drv <= slave_data[7 - bit_cnt];
                 sending <= 1;
@@ -41,21 +47,18 @@ module RTP_tb();
                 if (bit_cnt == 7) begin
                     bit_cnt <= 0;
                     sending <= 0;
+                    // on completion of first read set next byte
+                    slave_data <= 8'hAD;
                 end
-            end else if (busy && !rw) begin
-                // Capture write data (echo)
-                if (!sending) slave_data <= in[7:0];
+            end else
                 sda_drv <= 0;
-            end else begin
-                sda_drv <= 0;
-            end
         end
     end
 
+    // Master: trigger write command followed by read command
     reg [31:0] n = 0;
-    wire trigger;
     reg write = 1;
-    assign trigger = (n == 20) || (n == 2000);
+    wire trigger = (n == 20) || (n == 2000);
 
     always @(posedge clk) begin
         if (trigger) begin
@@ -73,10 +76,9 @@ module RTP_tb();
         end
     end
 
+    // Testbench state machine
     reg [15:0] out_cmp = 0;
     reg busy_cmp = 0;
-    reg [7:0] last_wr = 0;
-    reg [3:0] state_cmp = 0;
 
     localparam [3:0]
         IDLE        = 4'd0,
@@ -87,237 +89,231 @@ module RTP_tb();
         READ_BYTE2  = 4'd5,
         STOP_COND   = 4'd6;
 
-    always @(posedge clk) begin
-        case (state_cmp)
-            IDLE: begin
-                if (load) begin
-                    busy_cmp <= 1;
-                    state_cmp <= START_COND;
-                    if (!in[8])
-                        last_wr <= in[7:0];
-                    else
-                        out_cmp <= last_wr;
-                end
-            end
-
-            START_COND:   state_cmp <= SEND_ADDR;
-            SEND_ADDR:    state_cmp <= (in[8] ? READ_BYTE : WRITE_BYTE);
-            WRITE_BYTE,
-            READ_BYTE:    state_cmp <= STOP_COND;
-            STOP_COND: begin
-                busy_cmp <= 0;
-                state_cmp <= IDLE;
-            end
-        endcase
-    end
-
-    // SDA/SCL comparators - track expected behavior based on RTP implementation
+    // SDA/SCL comparators
     localparam DIVIDER = 15; // 400 KHz (fast mode)
-    reg [9:0] clk_cnt_cmp = 0;
-    reg tick_cmp = 0;
+    reg [9:0] tb_clk_cnt = 0;
+    reg tb_tick = 0;
     reg sda_cmp = 1;
     reg scl_cmp = 1;
-    reg [3:0] state_cmp = IDLE;
-    reg [1:0] phase_cmp = 0;
-    reg [3:0] bit_cnt_cmp = 0;
-    reg [7:0] shift_reg_cmp = 0;
-    reg rw_cmp = 0;
+    reg [3:0] tb_state = IDLE;
+    reg [1:0] tb_phase = 0;
+    reg [3:0] tb_bit_cnt = 0;
+    reg [7:0] tb_shiftreg = 0;
+    reg tb_rw = 0;
+
+    // master data
+    reg [7:0] tb_mdata [0:4];  // 6 elements x 8 bits
+    reg [2:0] tb_midx = 0;
+
+    initial begin
+        tb_mdata[0] = 8'h90; // write cmd
+        tb_mdata[1] = 8'hFF; // response placeholder
+        tb_mdata[2] = 8'h91; // read cmd
+        tb_mdata[3] = 8'hDE; // read bytes
+        tb_mdata[4] = 8'hAD;
+    end
 
     // Generate tick
     always @(posedge clk) begin
         if (busy_cmp) begin
-            if (clk_cnt_cmp == DIVIDER - 1) begin
-                clk_cnt_cmp <= 0;
-                tick_cmp <= 1'b1;
+            if (tb_clk_cnt == DIVIDER - 1) begin
+                tb_clk_cnt <= 0;
+                tb_tick <= 1'b1;
             end else begin
-                clk_cnt_cmp <= clk_cnt_cmp + 1;
-                tick_cmp <= 1'b0;
+                tb_clk_cnt <= tb_clk_cnt + 1;
+                tb_tick <= 1'b0;
             end
         end else begin
-            clk_cnt_cmp <= 0;
-            tick_cmp <= 1'b0;
+            tb_clk_cnt <= 0;
+            tb_tick <= 1'b0;
         end
     end
 
-    // State machine for SDA/SCL prediction
     always @(posedge clk) begin
-        case (state_cmp)
+        case (tb_state)
             IDLE: begin
                 sda_cmp <= 1;
                 scl_cmp <= 1;
-                phase_cmp <= 0;
+                tb_phase <= 0;
                 if (load) begin
                     busy_cmp <= 1;
-                    shift_reg_cmp <= {7'h48, 1'b0};
-                    rw_cmp <= in[8];
-                    state_cmp <= START_COND;
+                    tb_rw <= rw;
+                    tb_state <= START_COND;
+                    tb_shiftreg <= tb_mdata[tb_midx]; // update shift on start
+                    tb_midx <= tb_midx + 1;
                 end
             end
 
             START_COND: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             sda_cmp <= 0;   // SDA low
                             scl_cmp <= 1;   // SCL high
-                            phase_cmp <= 1;
+                            tb_phase <= 1;
                         end
                         1: begin
-                            bit_cnt_cmp <= 7;
-                            phase_cmp <= 0;
-                            state_cmp <= SEND_ADDR;
+                            tb_bit_cnt <= 7;
+                            tb_phase <= 0;
+                            tb_state <= SEND_ADDR;
                         end
-                        default: phase_cmp <= 0;
+                        default: tb_phase <= 0;
                     endcase
                 end
             end
 
             SEND_ADDR: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= shift_reg_cmp[bit_cnt_cmp]; // set data
-                            phase_cmp <= 1;
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            tb_phase <= 1;
                         end
                         1: begin
                             scl_cmp <= 1;                       // SCL high
-                            phase_cmp <= 2;
+                            tb_phase <= 2;
                         end
                         2: begin
                             scl_cmp <= 0;                       // SCL low
-                            if (bit_cnt_cmp == 0) begin
+                            if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 1;                   // release for ACK
-                                phase_cmp <= 3;
+                                tb_phase <= 3;
                             end else begin
-                                bit_cnt_cmp <= bit_cnt_cmp - 1;
-                                phase_cmp <= 0;
+                                tb_bit_cnt <= tb_bit_cnt - 1;
+                                tb_phase <= 0;
                             end
                         end
                         3: begin
                             scl_cmp <= 1;                       // SCL high for ACK
-                            if (rw_cmp) begin
-                                bit_cnt_cmp <= 7;
-                                state_cmp <= READ_BYTE;
+                            tb_shiftreg <= tb_mdata[tb_midx];   // update shift before read/write
+                            tb_midx <= tb_midx + 1;
+                            if (tb_rw) begin
+                                tb_bit_cnt <= 7;
+                                tb_state <= READ_BYTE;
                             end else begin
-                                bit_cnt_cmp <= 7;
-                                shift_reg_cmp <= last_wr;
-                                state_cmp <= WRITE_BYTE;
+                                tb_bit_cnt <= 7;
+                                tb_shiftreg <= 0;
+                                tb_state <= WRITE_BYTE;
                             end
-                            phase_cmp <= 0;
+                            tb_phase <= 0;
                         end
                     endcase
                 end
             end
 
             WRITE_BYTE: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= shift_reg_cmp[bit_cnt_cmp]; // set data
-                            phase_cmp <= 1;
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            tb_phase <= 1;
                         end
                         1: begin
                             scl_cmp <= 1;                       // SCL high
-                            phase_cmp <= 2;
+                            tb_phase <= 2;
                         end
                         2: begin
                             scl_cmp <= 0;                       // SCL low
-                            if (bit_cnt_cmp == 0) begin
+                            if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 1;                   // release for ACK
-                                phase_cmp <= 3;
+                                tb_phase <= 3;
                             end else begin
-                                bit_cnt_cmp <= bit_cnt_cmp - 1;
-                                phase_cmp <= 0;
+                                tb_bit_cnt <= tb_bit_cnt - 1;
+                                tb_phase <= 0;
                             end
                         end
                         3: begin
                             scl_cmp <= 1;                       // SCL high for ACK
-                            state_cmp <= STOP_COND;
-                            phase_cmp <= 0;
+                            tb_state <= STOP_COND;
+                            tb_phase <= 0;
                         end
                     endcase
                 end
             end
 
             READ_BYTE: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
                             sda_cmp <= 1;                       // release SDA
-                            phase_cmp <= 1;
+                            tb_phase <= 1;
                         end
                         1: begin
                             scl_cmp <= 1;                       // SCL high
-                            phase_cmp <= 2;
+                            tb_phase <= 2;
                         end
                         2: begin
                             scl_cmp <= 0;                       // SCL low
-                            if (bit_cnt_cmp == 0) begin
+                            if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                   // drive low for NACK
-                                phase_cmp <= 3;
+                                tb_phase <= 3;
+                                out_cmp <= 16'hDE;
                             end else begin
-                                bit_cnt_cmp <= bit_cnt_cmp - 1;
-                                phase_cmp <= 0;
+                                tb_bit_cnt <= tb_bit_cnt - 1;
+                                tb_phase <= 0;
                             end
                         end
                         3: begin
                             scl_cmp <= 1;                       // SCL high for NACK
-                            state_cmp <= READ_BYTE2;
-                            phase_cmp <= 0;
+                            tb_state <= READ_BYTE2;
+                            tb_phase <= 0;
+                            tb_shiftreg <= tb_mdata[tb_midx];     // update shift before 2nd read
+                            tb_midx <= tb_midx + 1;
                         end
                     endcase
                 end
             end
 
             READ_BYTE2: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
                             sda_cmp <= 1;                       // release SDA
-                            phase_cmp <= 1;
+                            tb_phase <= 1;
                         end
                         1: begin
                             scl_cmp <= 1;                       // SCL high
-                            phase_cmp <= 2;
+                            tb_phase <= 2;
                         end
                         2: begin
                             scl_cmp <= 0;                       // SCL low
-                            if (bit_cnt_cmp == 0) begin
+                            if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                   // drive low for NACK
-                                phase_cmp <= 3;
+                                tb_phase <= 3;
                             end else begin
-                                bit_cnt_cmp <= bit_cnt_cmp - 1;
-                                phase_cmp <= 0;
+                                tb_bit_cnt <= tb_bit_cnt - 1;
+                                tb_phase <= 0;
                             end
                         end
                         3: begin
                             scl_cmp <= 1;                       // SCL high for NACK
-                            state_cmp <= STOP_COND;
-                            phase_cmp <= 0;
+                            tb_state <= STOP_COND;
+                            tb_phase <= 0;
+                            out_cmp <= 16'hAD;
                         end
                     endcase
                 end
             end
 
             STOP_COND: begin
-                if (tick_cmp) begin
-                    case (phase_cmp)
+                if (tb_tick) begin
+                    case (tb_phase)
                         0: begin
                             sda_cmp <= 0;                       // SDA low
                             scl_cmp <= 1;                       // SCL high
-                            phase_cmp <= 1;
+                            tb_phase <= 1;
                         end
                         1: begin
                             sda_cmp <= 1;                       // SDA high (release)
                             busy_cmp <= 0;
-                            state_cmp <= IDLE;
-                            phase_cmp <= 0;
+                            tb_state <= IDLE;
+                            tb_phase <= 0;
                         end
-                        default: phase_cmp <= 0;
+                        default: tb_phase <= 0;
                     endcase
                 end
             end
