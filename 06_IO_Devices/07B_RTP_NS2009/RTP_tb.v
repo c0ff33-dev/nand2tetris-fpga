@@ -8,19 +8,16 @@ module RTP_tb();
     // -------------------------
     reg clk = 0;
     reg reset_n = 0;
-
-    always #2 clk=~clk; // 25 MHz
+    always #2 clk = ~clk; // 25 MHz
 
     // -------------------------
     // I2C master signals
     // -------------------------
-    reg start = 0;
-    reg rw = 0;                 // 0 = write, 1 = read
-    reg [7:0] wr_data = 0;
-    reg [6:0] dev_addr = 7'h50;
+    reg load = 0;
+    reg rw = 0;          // 0 = write, 1 = read
+    reg [7:0] in = 0;
     wire [7:0] rd_data;
     wire busy;
-    wire ack_error;
     wire sda, scl;
 
     // -------------------------
@@ -37,32 +34,47 @@ module RTP_tb();
         .reset_n(reset_n),
         .sda(sda),
         .scl(scl),
-        .dev_addr(dev_addr),
-        .wr_data(wr_data),
+        .in(in),
         .rd_data(rd_data),
-        .start(start),
+        .load(load),
         .rw(rw),
-        .busy(busy),
-        .ack_error(ack_error)
+        .busy(busy)
     );
 
     // -------------------------
-    // Simple I2C slave model
+    // Simple I2C slave model (echo last write)
     // -------------------------
-    reg sda_drv = 0;      // drive low for ACK
-    reg scl_drv = 0;      // hold low for clock stretch
-    reg stretch = 0;      // clock stretch enable
+    reg sda_drv = 0;   // drive low for data
     assign sda = sda_drv ? 1'b0 : 1'bz;
-    assign scl = scl_drv ? 1'b0 : 1'bz;
 
-    // Simple slave behavior: always ACK, optional stretch
-    always @(posedge clk) begin
-        if (stretch)
-            scl_drv <= 1;
-        else
-            scl_drv <= 0;
+    reg [7:0] slave_data = 8'h00;
+    reg [2:0] bit_cnt = 0;
+    reg sending = 0;
 
-        sda_drv <= 0; // always ACK
+    always @(negedge scl or negedge reset_n) begin
+        if (!reset_n) begin
+            sda_drv <= 0;
+            bit_cnt <= 0;
+            sending <= 0;
+            slave_data <= 8'h00;
+        end else begin
+            if (busy && rw) begin
+                // Send slave_data MSB first
+                sda_drv <= slave_data[7 - bit_cnt];
+                sending <= 1;
+                bit_cnt <= bit_cnt + 1;
+                if (bit_cnt == 7) begin
+                    bit_cnt <= 0;
+                    sending <= 0;
+                end
+            end else if (busy && !rw) begin
+                // Capture write data (simple echo)
+                if (!sending) slave_data <= in;
+                sda_drv <= 0;
+            end else begin
+                sda_drv <= 0;
+            end
+        end
     end
 
     // -------------------------
@@ -70,15 +82,22 @@ module RTP_tb();
     // -------------------------
     reg [31:0] n = 0;
     wire trigger;
-    assign trigger = (n == 10) || (n == 50) || (n == 100) || (n == 150); // start points
+    reg write = 1;
+    assign trigger = (n == 20) || (n == 60);
 
     always @(posedge clk) begin
         if (trigger) begin
-            start <= 1;
-            wr_data <= $random;
-            rw <= $random % 2;
+            load <= 1;
+            in <= $random;
+            if (write == 1) begin
+                rw <= 0; // first trigger write
+                write <= 0;
+            end else begin
+                rw <= 1; // second trigger read
+                write <= 1;
+            end
         end else begin
-            start <= 0;
+            load <= 0;
         end
     end
 
@@ -87,13 +106,15 @@ module RTP_tb();
     // -------------------------
     reg [7:0] rd_exp = 0;
     reg busy_exp = 0;
-    reg ack_err_exp = 0;
+    reg [7:0] last_wr = 0;
 
     always @(posedge clk) begin
-        if (start) begin
+        if (load) begin
             busy_exp <= 1;
-            ack_err_exp <= 0; // slave always ACKs
-            if (rw) rd_exp <= 8'hA5; // arbitrary expected read value
+            if (!rw)
+                last_wr <= in; // remember last write
+            else
+                rd_exp <= last_wr;  // read should echo last write
         end else if (!busy) begin
             busy_exp <= 0;
         end
@@ -105,10 +126,10 @@ module RTP_tb();
     reg fail = 0;
 
     task check;
-        #1
-        if ((busy !== busy_exp) || (ack_error !== ack_err_exp) || (rd_data !== rd_exp)) begin
-            $display("FAIL: clk=%b, start=%b, rw=%b, wr_data=%02h, rd_data=%02h, busy=%b, ack_error=%b", 
-                      clk, start, rw, wr_data, rd_data, busy, ack_error);
+        #2
+        if ((busy !== busy_exp) || (rd_data !== rd_exp)) begin
+            $display("FAIL: clk=%b, load=%b, rw=%b, in=%02h, rd_data=%02h, busy=%b", 
+                      clk, load, rw, in, rd_data, busy);
             fail = 1;
         end
     endtask

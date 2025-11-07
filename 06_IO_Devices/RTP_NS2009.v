@@ -1,15 +1,8 @@
 // =====================================================
-// Simple I2C Master (25 MHz → 100 kHz, Single Byte, Clock-Stretch Aware)
-// =====================================================
-// Author : ChatGPT (GPT-5)
-// Date   : 2025-11-07
-// =====================================================
-// Features:
+// Simple I2C Master
 //   - 25 MHz system clock input
 //   - 100 kHz I2C bit rate
-//   - Open-drain SDA and SCL (pull-ups required)
 //   - Handles single-byte read or write
-//   - Waits for clock stretching (slave can hold SCL low)
 // =====================================================
 
 module RTP (
@@ -21,19 +14,18 @@ module RTP (
     inout  wire        scl,
 
     // Control interface
-    input  wire [6:0]  dev_addr,   // 7-bit I2C device address
-    input  wire [7:0]  wr_data,    // Data to write
+    input  wire [7:0]  in,         // Data to write
     output reg  [7:0]  rd_data,    // Data read
-    input  wire        start,      // Begin transaction
+    input  wire        load,       // Begin transaction
     input  wire        rw,         // 0 = write, 1 = read
-    output reg         busy,       // 1 = transaction in progress
-    output reg         ack_error   // 1 = NACK received
+    output reg         busy        // 1 = transaction in progress
 );
 
 // -------------------------------------------------
 // Clock divider (for I2C timing ticks)
 // -------------------------------------------------
 // 25 MHz / (100 kHz × 4) = 62.5 → ~62 cycles per 1/4 SCL period
+// 4 ticks per SCL cycle
 localparam integer DIVIDER = 25_000_000 / (100_000 * 4);
 
 reg [9:0] clk_cnt;
@@ -76,11 +68,11 @@ localparam [3:0]
     IDLE        = 4'd0,
     START_COND  = 4'd1,
     SEND_ADDR   = 4'd2,
-    ADDR_ACK    = 4'd3,
-    WRITE_BYTE  = 4'd4,
-    READ_BYTE   = 4'd5,
-    DATA_ACK    = 4'd6,
-    STOP_COND   = 4'd7;
+    WRITE_BYTE  = 4'd3,
+    READ_BYTE   = 4'd4,
+    STOP_COND   = 4'd5;
+
+localparam [6:0] DEV_ADDR = 7'h48; // 7-bit I2C device address
 
 reg [3:0] state;
 reg [7:0] shift_reg;
@@ -92,7 +84,6 @@ reg [3:0] bit_cnt;
 always @(posedge clk or negedge reset_n) begin
     if (!reset_n) begin
         busy      <= 0;
-        ack_error <= 0;
         sda_oe    <= 0;
         scl_oe    <= 0;
         bit_cnt   <= 0;
@@ -104,9 +95,8 @@ always @(posedge clk or negedge reset_n) begin
             IDLE: begin
                 sda_oe <= 0;
                 scl_oe <= 0;
-                if (start) begin
+                if (load) begin
                     busy <= 1;
-                    ack_error <= 0;
                     state <= START_COND;
                 end
             end
@@ -114,10 +104,10 @@ always @(posedge clk or negedge reset_n) begin
             // -------------------------------------------------
             START_COND: begin
                 // SDA goes low while SCL high
-                sda_oe <= 1;   // drive low
-                scl_oe <= 0;   // ensure SCL released (high)
-                if (tick && scl_in) begin
-                    shift_reg <= {dev_addr, rw};
+                sda_oe <= 1;   // SCL low
+                scl_oe <= 0;   // SDA high
+                if (tick) begin
+                    shift_reg <= {DEV_ADDR, rw};
                     bit_cnt <= 7;
                     state <= SEND_ADDR;
                 end
@@ -126,35 +116,20 @@ always @(posedge clk or negedge reset_n) begin
             // -------------------------------------------------
             SEND_ADDR: begin
                 if (tick) begin
-                    // Pull SCL low before data change
-                    scl_oe <= 1;
-                    sda_oe <= ~shift_reg[bit_cnt];
-                    // Release SCL high for sampling
-                    if (bit_cnt == 0)
-                        state <= ADDR_ACK;
-                    else
+                    scl_oe <= 1;                    // SCL low
+                    sda_oe <= ~shift_reg[bit_cnt];  // set data
+                    scl_oe <= 0;                    // SCL high (ignore slave clock)
+                    if (bit_cnt == 0) begin
+                        if (rw) begin
+                            bit_cnt <= 7;
+                            state <= READ_BYTE;
+                        end else begin
+                            bit_cnt <= 7;
+                            shift_reg <= in;
+                            state <= WRITE_BYTE;
+                        end
+                    end else
                         bit_cnt <= bit_cnt - 1;
-                end
-                // Release SCL and wait for it to go high (clock stretch aware)
-                if (tick && scl_oe) scl_oe <= 0;
-            end
-
-            // -------------------------------------------------
-            ADDR_ACK: begin
-                // 9th clock: Slave drives ACK
-                sda_oe <= 0;   // release SDA
-                scl_oe <= 0;   // release SCL
-                if (scl_in && tick) begin
-                    if (sda_in) ack_error <= 1;
-                    if (rw) begin
-                        rd_data <= 8'h00;
-                        bit_cnt <= 7;
-                        state <= READ_BYTE;
-                    end else begin
-                        bit_cnt <= 7;
-                        shift_reg <= wr_data;
-                        state <= WRITE_BYTE;
-                    end
                 end
             end
 
@@ -163,45 +138,32 @@ always @(posedge clk or negedge reset_n) begin
                 if (tick) begin
                     scl_oe <= 1;
                     sda_oe <= ~shift_reg[bit_cnt];
-                    if (bit_cnt == 0)
-                        state <= DATA_ACK;
-                    else
+                    scl_oe <= 0;
+                    if (bit_cnt == 0) begin
+                        state <= STOP_COND;
+                    end else
                         bit_cnt <= bit_cnt - 1;
                 end
-                if (tick && scl_oe) scl_oe <= 0;
             end
 
             // -------------------------------------------------
             READ_BYTE: begin
-                sda_oe <= 0; // release SDA for input
-                if (scl_in && tick) begin
+                sda_oe <= 0; // release SDA
+                if (tick) begin
                     rd_data[bit_cnt] <= sda_in;
                     if (bit_cnt == 0)
-                        state <= DATA_ACK;
+                        state <= STOP_COND;
                     else
                         bit_cnt <= bit_cnt - 1;
                 end
             end
 
             // -------------------------------------------------
-            DATA_ACK: begin
-                if (rw)
-                    sda_oe <= 1; // Master sends NACK after read
-                else
-                    sda_oe <= 0; // Release for ACK from slave
-
-                scl_oe <= 0;
-                if (scl_in && tick)
-                    state <= STOP_COND;
-            end
-
-            // -------------------------------------------------
             STOP_COND: begin
-                // SDA low while SCL high -> SDA high = STOP
-                sda_oe <= 1;
-                scl_oe <= 0;
-                if (scl_in && tick) begin
-                    sda_oe <= 0; // release high
+                sda_oe <= 1; // SDA low
+                scl_oe <= 0; // SCL high
+                if (tick) begin
+                    sda_oe <= 0; // SDA high
                     busy <= 0;
                     state <= IDLE;
                 end
