@@ -2,62 +2,37 @@
 `default_nettype none
 
 module RTP_tb();
-
-    // -------------------------
-    // Clock & reset
-    // -------------------------
     reg clk = 0;
-    reg reset_n = 0;
     always #2 clk = ~clk; // 25 MHz
 
-    // -------------------------
-    // I2C master signals
-    // -------------------------
     reg load = 0;
-    reg rw = 0;          // 0 = write, 1 = read
-    reg [7:0] in = 0;
-    wire [7:0] rd_data;
-    wire busy;
-    wire sda, scl;
+    reg [15:0] in = 0;
+    wire [15:0] out;
+    wire SDA, SCL;
+    pullup(SDA);
+    pullup(SCL);
 
-    // -------------------------
-    // Pull-ups
-    // -------------------------
-    pullup(sda);
-    pullup(scl);
-
-    // -------------------------
-    // Instantiate I2C master
-    // -------------------------
     RTP rtp (
         .clk(clk),
-        .reset_n(reset_n),
-        .sda(sda),
-        .scl(scl),
+        .SDA(SDA),
+        .SCL(SCL),
         .in(in),
-        .rd_data(rd_data),
-        .load(load),
-        .rw(rw),
-        .busy(busy)
+        .out(out),
+        .load(load)
     );
 
-    // -------------------------
-    // Simple I2C slave model (echo last write)
-    // -------------------------
     reg sda_drv = 0;   // drive low for data
-    assign sda = sda_drv ? 1'b0 : 1'bz;
+    assign SDA = sda_drv ? 1'b0 : 1'bz;
 
     reg [7:0] slave_data = 8'h00;
     reg [2:0] bit_cnt = 0;
     reg sending = 0;
 
-    always @(negedge scl or negedge reset_n) begin
-        if (!reset_n) begin
-            sda_drv <= 0;
-            bit_cnt <= 0;
-            sending <= 0;
-            slave_data <= 8'h00;
-        end else begin
+    wire rw = in[8]; // 0=write, 1=read
+    wire busy = out[15];
+
+    always @(negedge SCL ) begin
+        begin
             if (busy && rw) begin
                 // Send slave_data MSB first
                 sda_drv <= slave_data[7 - bit_cnt];
@@ -68,8 +43,8 @@ module RTP_tb();
                     sending <= 0;
                 end
             end else if (busy && !rw) begin
-                // Capture write data (simple echo)
-                if (!sending) slave_data <= in;
+                // Capture write data (echo)
+                if (!sending) slave_data <= in[7:0];
                 sda_drv <= 0;
             end else begin
                 sda_drv <= 0;
@@ -77,9 +52,6 @@ module RTP_tb();
         end
     end
 
-    // -------------------------
-    // Test stimulus
-    // -------------------------
     reg [31:0] n = 0;
     wire trigger;
     reg write = 1;
@@ -88,12 +60,12 @@ module RTP_tb();
     always @(posedge clk) begin
         if (trigger) begin
             load <= 1;
-            in <= $random;
+            in[7:0] <= $random;
             if (write == 1) begin
-                rw <= 0; // first trigger write
+                in[8] <= 0; // first trigger write
                 write <= 0;
             end else begin
-                rw <= 1; // second trigger read
+                in[8] <= 1; // second trigger read
                 write <= 1;
             end
         end else begin
@@ -101,42 +73,32 @@ module RTP_tb();
         end
     end
 
-    // -------------------------
-    // Expected outputs
-    // -------------------------
-    reg [7:0] rd_exp = 0;
+    reg [15:0] out_cmp = 0;
     reg busy_exp = 0;
     reg [7:0] last_wr = 0;
 
     always @(posedge clk) begin
         if (load) begin
             busy_exp <= 1;
-            if (!rw)
-                last_wr <= in; // remember last write
+            if (!in[8])
+                last_wr <= in[7:0]; // save last write
             else
-                rd_exp <= last_wr;  // read should echo last write
+                out_cmp <= last_wr; // read should echo last write
         end else if (!busy) begin
             busy_exp <= 0;
         end
     end
 
-    // -------------------------
-    // Compare / fail signal
-    // -------------------------
     reg fail = 0;
-
     task check;
         #2
-        if ((busy !== busy_exp) || (rd_data !== rd_exp)) begin
-            $display("FAIL: clk=%b, load=%b, rw=%b, in=%02h, rd_data=%02h, busy=%b", 
-                      clk, load, rw, in, rd_data, busy);
+        if ((busy !== busy_exp) || (out !== out_cmp)) begin
+            $display("FAIL: clk=%b, load=%b, in=%02h, out=%02h", 
+                      clk, load, in, out);
             fail = 1;
         end
     endtask
 
-    // -------------------------
-    // Main simulation
-    // -------------------------
     initial begin
         $dumpfile("RTP_tb.vcd");
         $dumpvars(0, RTP_tb);
@@ -144,10 +106,6 @@ module RTP_tb();
         $display("------------------------");
         $display("Testbench: RTP");
 
-        // Release reset after a few cycles
-        #5 reset_n = 1;
-
-        // Run for N cycles
         for (n = 0; n < 200; n = n + 1) begin
             check();
         end

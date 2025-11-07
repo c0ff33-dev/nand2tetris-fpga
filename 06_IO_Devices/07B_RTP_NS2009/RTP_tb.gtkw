@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Fri Nov  7 02:36:19 2025
+[*] Fri Nov  7 03:38:23 2025
 [*]
 [dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07B_RTP_NS2009/RTP_tb.vcd"
-[dumpfile_mtime] "Fri Nov  7 02:36:03 2025"
-[dumpfile_size] 9171
+[dumpfile_mtime] "Fri Nov  7 03:36:09 2025"
+[dumpfile_size] 6322
 [savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07B_RTP_NS2009/RTP_tb.gtkw"
 [timestart] 0
 [size] 1920 963
 [pos] 398 281
-*-19.114578 544000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-16.096655 29400 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] RTP_tb.
 [sst_width] 281
 [signals_width] 160
@@ -17,33 +17,35 @@
 [sst_vpaned_height] 259
 @28
 RTP_tb.clk
-RTP_tb.rtp.reset_n
 RTP_tb.trigger
 @200
 -IN
-@22
-RTP_tb.rtp.in[7:0]
-@29
+@28
 RTP_tb.rtp.load
+RTP_tb.rtp.rw
+@22
+RTP_tb.rtp.in[15:0]
 @200
 -I2C
+@22
+RTP_tb.rtp.state[3:0]
 @28
-RTP_tb.rtp.sda
-RTP_tb.rtp.scl
+RTP_tb.rtp.scl_oe
+RTP_tb.rtp.scl_in
+RTP_tb.rtp.sda_in
+RTP_tb.rtp.sda_oe
 @200
 -OUT
 @28
 RTP_tb.rtp.busy
 @22
-RTP_tb.rtp.rd_data[7:0]
+RTP_tb.rtp.clk_cnt[9:0]
+RTP_tb.rtp.shift_reg[7:0]
+RTP_tb.rtp.out[15:0]
 @200
 -CMP
 @28
 RTP_tb.busy_exp
-@22
-RTP_tb.rd_exp[7:0]
-@28
-RTP_tb.ack_err_exp
 @200
 -Test
 @22
