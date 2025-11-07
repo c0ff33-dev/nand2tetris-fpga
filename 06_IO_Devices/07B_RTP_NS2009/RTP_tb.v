@@ -74,27 +74,49 @@ module RTP_tb();
     end
 
     reg [15:0] out_cmp = 0;
-    reg busy_exp = 0;
+    reg busy_cmp = 0;
     reg [7:0] last_wr = 0;
+    reg [3:0] state_exp = 0;
+
+    localparam [3:0]
+        IDLE        = 4'd0,
+        START_COND  = 4'd1,
+        SEND_ADDR   = 4'd2,
+        WRITE_BYTE  = 4'd3,
+        READ_BYTE   = 4'd4,
+        STOP_COND   = 4'd5;
 
     always @(posedge clk) begin
-        if (load) begin
-            busy_exp <= 1;
-            if (!in[8])
-                last_wr <= in[7:0]; // save last write
-            else
-                out_cmp <= last_wr; // read should echo last write
-        end else if (!busy) begin
-            busy_exp <= 0;
-        end
+        case (state_exp)
+            IDLE: begin
+                if (load) begin
+                    busy_cmp <= 1;
+                    state_exp <= START_COND;
+                    if (!in[8])
+                        last_wr <= in[7:0];
+                    else
+                        out_cmp <= last_wr;
+                end
+            end
+
+            START_COND:   state_exp <= SEND_ADDR;
+            SEND_ADDR:    state_exp <= (in[8] ? READ_BYTE : WRITE_BYTE);
+            WRITE_BYTE,
+            READ_BYTE:    state_exp <= STOP_COND;
+            STOP_COND: begin
+                busy_cmp <= 0;
+                state_exp <= IDLE;
+            end
+        endcase
     end
 
+    // TODO: SDA/SCL cmp
     reg fail = 0;
     task check;
         #2
-        if ((busy !== busy_exp) || (out !== out_cmp)) begin
-            $display("FAIL: clk=%b, load=%b, in=%02h, out=%02h", 
-                      clk, load, in, out);
+        if ((busy !== busy_cmp) || (out !== out_cmp)) begin
+            $display("FAIL: clk=%b, load=%b, in=%02h, out=%02h, busy=%b",
+                      clk, load, in, out, busy);
             fail = 1;
         end
     endtask
