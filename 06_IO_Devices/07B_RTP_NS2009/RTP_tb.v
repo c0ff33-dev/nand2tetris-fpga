@@ -55,7 +55,7 @@ module RTP_tb();
     reg [31:0] n = 0;
     wire trigger;
     reg write = 1;
-    assign trigger = (n == 20) || (n == 10000);
+    assign trigger = (n == 20) || (n == 2000);
 
     always @(posedge clk) begin
         if (trigger) begin
@@ -76,22 +76,23 @@ module RTP_tb();
     reg [15:0] out_cmp = 0;
     reg busy_cmp = 0;
     reg [7:0] last_wr = 0;
-    reg [3:0] state_exp = 0;
+    reg [3:0] state_cmp = 0;
 
     localparam [3:0]
         IDLE        = 4'd0,
         START_COND  = 4'd1,
         SEND_ADDR   = 4'd2,
-        WRITE_BYTE  = 4'd3,
+        WRITE_BYTE  = 4'd3,   
         READ_BYTE   = 4'd4,
-        STOP_COND   = 4'd5;
+        READ_BYTE2  = 4'd5,
+        STOP_COND   = 4'd6;
 
     always @(posedge clk) begin
-        case (state_exp)
+        case (state_cmp)
             IDLE: begin
                 if (load) begin
                     busy_cmp <= 1;
-                    state_exp <= START_COND;
+                    state_cmp <= START_COND;
                     if (!in[8])
                         last_wr <= in[7:0];
                     else
@@ -99,13 +100,13 @@ module RTP_tb();
                 end
             end
 
-            START_COND:   state_exp <= SEND_ADDR;
-            SEND_ADDR:    state_exp <= (in[8] ? READ_BYTE : WRITE_BYTE);
+            START_COND:   state_cmp <= SEND_ADDR;
+            SEND_ADDR:    state_cmp <= (in[8] ? READ_BYTE : WRITE_BYTE);
             WRITE_BYTE,
-            READ_BYTE:    state_exp <= STOP_COND;
+            READ_BYTE:    state_cmp <= STOP_COND;
             STOP_COND: begin
                 busy_cmp <= 0;
-                state_exp <= IDLE;
+                state_cmp <= IDLE;
             end
         endcase
     end
@@ -264,6 +265,37 @@ module RTP_tb();
                         end
                         3: begin
                             scl_cmp <= 1;                       // SCL high for NACK
+                            state_cmp <= READ_BYTE2;
+                            phase_cmp <= 0;
+                        end
+                    endcase
+                end
+            end
+
+            READ_BYTE2: begin
+                if (tick_cmp) begin
+                    case (phase_cmp)
+                        0: begin
+                            scl_cmp <= 0;                       // SCL low
+                            sda_cmp <= 1;                       // release SDA
+                            phase_cmp <= 1;
+                        end
+                        1: begin
+                            scl_cmp <= 1;                       // SCL high
+                            phase_cmp <= 2;
+                        end
+                        2: begin
+                            scl_cmp <= 0;                       // SCL low
+                            if (bit_cnt_cmp == 0) begin
+                                sda_cmp <= 0;                   // drive low for NACK
+                                phase_cmp <= 3;
+                            end else begin
+                                bit_cnt_cmp <= bit_cnt_cmp - 1;
+                                phase_cmp <= 0;
+                            end
+                        end
+                        3: begin
+                            scl_cmp <= 1;                       // SCL high for NACK
                             state_cmp <= STOP_COND;
                             phase_cmp <= 0;
                         end
@@ -309,7 +341,7 @@ module RTP_tb();
         $display("------------------------");
         $display("Testbench: RTP");
 
-        for (n = 0; n < 2500; n = n + 1) begin
+        for (n = 0; n < 5000; n = n + 1) begin
             check();
         end
 

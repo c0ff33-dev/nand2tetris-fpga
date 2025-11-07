@@ -41,9 +41,10 @@ always @(posedge clk) begin
     end
 end
 
-reg sda_oe;         // 1 = drive low, 0 = release
-reg scl_oe;         // 1 = drive low, 0 = release
-
+// TODO: is there actually a pull-up resistor on SDA?
+// 1 = drive low, 0 = release
+reg sda_oe;         
+reg scl_oe;
 assign SDA = sda_oe ? 1'b0 : 1'bz;
 assign SCL = scl_oe ? 1'b0 : 1'bz;
 
@@ -54,9 +55,10 @@ localparam [3:0]
     IDLE        = 4'd0,
     START_COND  = 4'd1,
     SEND_ADDR   = 4'd2,
-    WRITE_BYTE  = 4'd3,
+    WRITE_BYTE  = 4'd3,   
     READ_BYTE   = 4'd4,
-    STOP_COND   = 4'd5;
+    READ_BYTE2  = 4'd5,
+    STOP_COND   = 4'd6;
 
 localparam [6:0] DEV_ADDR = 7'h48; // 7-bit I2C device address
 
@@ -190,8 +192,39 @@ always @(posedge clk) begin
                     2: begin
                         scl_oe <= 1;                    // SCL low
                         if (bit_cnt == 0) begin
-                            // NACK bit - drive high
-                            sda_oe <= 1;
+                            sda_oe <= 0;                // ACK bit - drive low
+                            phase <= 3;
+                        end else begin
+                            bit_cnt <= bit_cnt - 1;
+                            phase <= 0;
+                        end
+                    end
+                    3: begin
+                        scl_oe <= 0;                    // SCL high for NACK
+                        state <= READ_BYTE2;
+                        phase <= 0;
+                    end
+                endcase
+            end
+        end
+
+        READ_BYTE2: begin
+            if (tick) begin
+                case (phase)
+                    0: begin
+                        scl_oe <= 1;                    // SCL low
+                        sda_oe <= 0;                    // release SDA
+                        phase <= 1;
+                    end
+                    1: begin
+                        scl_oe <= 0;                    // SCL high
+                        _out[bit_cnt] <= sda_in;        // sample data
+                        phase <= 2;
+                    end
+                    2: begin
+                        scl_oe <= 1;                    // SCL low
+                        if (bit_cnt == 0) begin
+                            sda_oe <= 1;                // NACK bit - drive high
                             phase <= 3;
                         end else begin
                             bit_cnt <= bit_cnt - 1;
