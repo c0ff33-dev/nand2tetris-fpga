@@ -6,7 +6,7 @@ module RTP_tb();
     always #2 tb_clk = ~tb_clk; // 25 MHz
 
     reg tb_load = 0;
-    reg [15:0] tb_in = 0;
+    reg [15:0] tb_in = 0; // this is a reg in sim only!
     wire [15:0] tb_out;
     wire tb_SDA, tb_SCL;
     pullup(tb_SDA);
@@ -21,25 +21,24 @@ module RTP_tb();
         .load(tb_load)
     );
 
-    // Slave: return read data to master
-    reg tb_sda_drv = 0;   // drive low for data, else release (high z)
+    // Slave: drive SDA to return data to master
+    reg tb_sda_drv = 0;   // drive low for data when set, else release (high z)
     assign tb_SDA = tb_sda_drv ? 1'b0 : 1'bz;
 
-    reg [7:0] tb_slv_data = 8'h00;
+    reg [7:0] tb_slv_data = 0;
     reg [2:0] tb_slv_bitcnt = 0;
     reg tb_slv_sending = 0;
 
-    wire tb_rw_w = tb_in[8]; // 0=write, 1=read, in is stable in sim only
     wire tb_busy = tb_out[15];
 
     always @(negedge tb_SCL ) begin
         begin
-            if (tb_busy && !tb_rw_w) begin
+            if (tb_busy && !tb_in[8]) begin
                 // on write populate output buffer
-                if (!tb_slv_sending) tb_slv_data <= 8'hDE;
-                tb_sda_drv <= 0; // SDA low
+                if (!tb_slv_sending) tb_slv_data <= tb_mdata[3];
+                tb_sda_drv <= 0; // release SDA
             end
-            else if (tb_busy && tb_rw_w) begin
+            else if (tb_busy && tb_in[8]) begin
                 // Send tb_slv_data MSB first
                 tb_sda_drv <= tb_slv_data[7 - tb_slv_bitcnt];
                 tb_slv_sending <= 1;
@@ -48,10 +47,10 @@ module RTP_tb();
                     tb_slv_bitcnt <= 0;
                     tb_slv_sending <= 0;
                     // on completion of first read set next byte
-                    tb_slv_data <= 8'hAD;
+                    tb_slv_data <= tb_mdata[4];
                 end
             end else
-                tb_sda_drv <= 0;
+                tb_sda_drv <= 0; // release SDA
         end
     end
 
@@ -98,18 +97,18 @@ module RTP_tb();
     reg [1:0] tb_phase = 0;
     reg [3:0] tb_bit_cnt = 0;
     reg [7:0] tb_shiftreg = 0;
-    reg tb_rw = 0;
 
     // master data
     reg [7:0] tb_mdata [0:4];  // 6 elements x 8 bits
+    reg [7:0] tb_lo_byte;  // 6 elements x 8 bits
     reg [2:0] tb_midx = 0;
 
     initial begin
         tb_mdata[0] = 8'h90; // tb_write cmd
         tb_mdata[1] = $random; // response placeholder
         tb_mdata[2] = 8'h91; // read cmd
-        tb_mdata[3] = $random; // read bytes
-        tb_mdata[4] = $random;
+        tb_mdata[3] = 8'hDE; // read bytes
+        tb_mdata[4] = 8'hAD;
     end
 
     // Generate tick
@@ -128,6 +127,8 @@ module RTP_tb();
         end
     end
 
+    // TODO: idle state looks long
+    // TODO: ACK/NACK handling not implemented?
     always @(posedge tb_clk) begin
         case (tb_state)
             IDLE: begin
@@ -135,9 +136,8 @@ module RTP_tb();
                 scl_cmp <= 1;
                 tb_phase <= 0;
                 if (tb_load) begin
-                    busy_cmp <= 1; // tb_busy from load
+                    busy_cmp <= 1; // busy from load
                     out_cmp <= 16'h8000;
-                    tb_rw <= tb_rw;   // read tb_rw from in[8]
                     tb_state <= START_COND;
                     tb_shiftreg <= tb_mdata[tb_midx]; // update shift on start
                     tb_midx <= tb_midx + 1;
@@ -189,7 +189,7 @@ module RTP_tb();
                             tb_shiftreg <= tb_mdata[tb_midx];   // update shift before read/write
                             tb_midx <= tb_midx + 1;
                             tb_bit_cnt <= 7;
-                            if (tb_rw) begin
+                            if (tb_in[8]) begin
                                 tb_state <= READ_BYTE;
                             end else begin
                                 tb_state <= WRITE_BYTE;
@@ -226,7 +226,7 @@ module RTP_tb();
                             scl_cmp <= 1;                       // SCL high for ACK
                             tb_state <= IDLE;
                             tb_phase <= 0;
-                            out_cmp <= 16'hFF;                  // response byte shifted in, done
+                            out_cmp <= tb_mdata[tb_midx-1];     // response byte shifted in, done
                         end
                     endcase
                 end
@@ -259,9 +259,9 @@ module RTP_tb();
                             tb_state <= READ_BYTE2;
                             tb_phase <= 0;
 
-                            tb_shiftreg <= tb_mdata[tb_midx];   // update shift/out before 2nd read
-                            tb_midx <= tb_midx + 1;
-                            out_cmp <= 16'h80DE;                // first byte shifted in, still tb_busy
+                            tb_shiftreg <= tb_mdata[tb_midx];     // update shift/out before 2nd read
+                            out_cmp <= {8'h80,tb_mdata[tb_midx]}; // first byte shifted in, still busy
+                            tb_lo_byte <= tb_mdata[tb_midx];      // save 1st byte for later
                             tb_bit_cnt <= 7;
                         end
                     endcase
@@ -294,7 +294,7 @@ module RTP_tb();
                             scl_cmp <= 1;                       // SCL high for NACK
                             tb_state <= IDLE;
                             tb_phase <= 0;
-                            out_cmp <= 16'hDEAD;                // 2nd byte shifted, done
+                            out_cmp <= {tb_mdata[tb_midx-1],tb_lo_byte}; // 2nd byte shifted, done
                         end
                     endcase
                 end
@@ -306,8 +306,8 @@ module RTP_tb();
     task check;
         #2
         if ((tb_busy != busy_cmp) || (tb_out !== out_cmp) || (tb_SDA != sda_cmp) || (tb_SCL != scl_cmp)) begin
-            $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
-                      tb_clk, tb_load, tb_in, tb_out, tb_busy, tb_SDA, tb_SCL);
+            // $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
+            //           tb_clk, tb_load, tb_in, tb_out, tb_busy, tb_SDA, tb_SCL);
             fail = 1;
         end
     endtask
