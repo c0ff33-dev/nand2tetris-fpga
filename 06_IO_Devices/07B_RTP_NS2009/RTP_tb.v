@@ -104,7 +104,7 @@ module RTP_tb();
 
     initial begin
         tb_mdata[0] = 8'h90; // write cmd (no response)
-        tb_mdata[1] = $random; // cmd byte
+        tb_mdata[1] = 8'hAA; // cmd byte
         tb_mdata[2] = 8'h91; // read cmd
         tb_mdata[3] = 8'hDE; // read bytes
         tb_mdata[4] = 8'hAD;
@@ -129,7 +129,7 @@ module RTP_tb();
     // state machine: load/shift low, sample high
     always @(posedge tb_clk) begin
         case (tb_state)
-            IDLE: begin
+            IDLE: begin // 0
                 sda_cmp <= 1; // both high at idle
                 scl_cmp <= 1;
                 tb_phase <= 0;
@@ -146,7 +146,7 @@ module RTP_tb();
                 end
             end
 
-            START_COND: begin
+            START_COND: begin // 1
                 if (tb_tick) begin
                     scl_cmp <= 1;   // SCL high
                     sda_cmp <= 0;   // SDA low
@@ -154,7 +154,7 @@ module RTP_tb();
                 end
             end
 
-            SEND_ADDR: begin
+            SEND_ADDR: begin // 2
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
@@ -180,13 +180,14 @@ module RTP_tb();
                             else 
                                 tb_state <= WRITE_BYTE;
                             tb_phase <= 0;
+                            tb_shiftreg <= tb_mdata[tb_midx];
+                            tb_midx <= tb_midx + 1;
                         end
                     endcase
                 end
             end
 
-            // FIXME: shiftreg needs command byte
-            WRITE_BYTE: begin
+            WRITE_BYTE: begin // 3
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
@@ -215,8 +216,7 @@ module RTP_tb();
                 end
             end
 
-            // FIXME: shiftreg/out wrong
-            READ_BYTE: begin
+            READ_BYTE: begin // 4
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
@@ -246,7 +246,7 @@ module RTP_tb();
                 end
             end
 
-            READ_BYTE2: begin
+            READ_BYTE2: begin // 5
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
