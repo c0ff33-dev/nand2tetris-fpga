@@ -5,6 +5,7 @@ module RTP_tb();
     reg tb_clk = 0;
     always #2 tb_clk = ~tb_clk; // 25 MHz
 
+    // device under test
     reg tb_load = 0;
     reg [15:0] tb_in = 0; // this is a reg in sim only!
     wire [15:0] tb_out;
@@ -21,7 +22,7 @@ module RTP_tb();
         .load(tb_load)
     );
 
-    // Slave: drive SDA to return data to master
+    // slave: drive SDA to return data to master
     reg tb_sda_drv = 0;   // drive low for data when set, else release (high z)
     assign tb_SDA = tb_sda_drv ? 1'b0 : 1'bz;
 
@@ -54,7 +55,7 @@ module RTP_tb();
         end
     end
 
-    // Master: trigger write command followed by read command
+    // master: trigger write command followed by read command
     reg [31:0] tb_n = 0;
     reg tb_write = 1;
     wire trigger = (tb_n == 20) || (tb_n == 1500);
@@ -75,7 +76,7 @@ module RTP_tb();
         end
     end
 
-    // Testbench state machine
+    // testbench state machine
     reg [15:0] out_cmp = 0;
     reg busy_cmp = 0;
 
@@ -87,8 +88,8 @@ module RTP_tb();
         READ_BYTE   = 4'd4,
         READ_BYTE2  = 4'd5;
 
-    // SDA/SCL comparators
-    localparam TB_DIVIDER = 15; // 400 KHz (fast mode)
+    // 400 KHz (fast mode) = 25_000_000 / (400_000 * ticks);
+    localparam TB_DIVIDER = 20; // max 3 ticks per SCL cycle
     reg [9:0] tb_clk_cnt = 0;
     reg tb_tick = 0;
     reg sda_cmp = 1;
@@ -98,19 +99,18 @@ module RTP_tb();
     reg [3:0] tb_bit_cnt = 0;
     reg [7:0] tb_shiftreg = 0;
 
-    // master data
-    reg [7:0] tb_mdata [0:4];  // 6 elements x 8 bits
+    // input/output data
+    reg [7:0] tb_mdata [0:4];  // 4 elements x 8 bits
     reg [2:0] tb_midx = 0;
 
     initial begin
-        tb_mdata[0] = 8'h90;   // write cmd
-        tb_mdata[1] = $random; // response placeholder
-        tb_mdata[2] = 8'h91;   // read cmd
-        tb_mdata[3] = $random; // read bytes
-        tb_mdata[4] = $random;
+        tb_mdata[0] = 8'h90;   // write cmd (no response)
+        tb_mdata[1] = 8'h91;   // read cmd
+        tb_mdata[2] = $random; // read bytes
+        tb_mdata[3] = $random;
     end
 
-    // Generate tick
+    // generate tick
     always @(posedge tb_clk) begin
         if (busy_cmp) begin
             if (tb_clk_cnt == TB_DIVIDER - 1) begin
@@ -133,6 +133,7 @@ module RTP_tb();
             IDLE: begin
                 sda_cmp <= 1; // both high at idle
                 scl_cmp <= 1;
+                tb_phase <= 0;
                 if (tb_load) begin
                     // busy from load [t+1]
                     busy_cmp <= 1; 
@@ -177,8 +178,6 @@ module RTP_tb();
                         end
                         2: begin
                             scl_cmp <= 1;                       // SCL high (slave ACK)
-                            tb_shiftreg <= tb_mdata[tb_midx];   // update shift before read/write
-                            tb_midx <= tb_midx + 1;
                             tb_bit_cnt <= 8;
                             if (tb_in[8]) begin
                                 tb_state <= READ_BYTE;
@@ -215,7 +214,6 @@ module RTP_tb();
                             scl_cmp <= 1;                      // SCL high (slave ACK)
                             out_cmp <= {8'd0,tb_shiftreg};     // update output with response byte
                             tb_state <= IDLE;
-                            tb_phase <= 0;
                             busy_cmp <= 0;                     // clear busy 
                         end
                     endcase
@@ -277,7 +275,6 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 1;                                 // SCL high for master NACK
                             tb_state <= IDLE;
-                            tb_phase <= 0;
                             out_cmp <= {tb_mdata[tb_midx-1],tb_shiftreg}; // 2nd byte shifted, done
                             busy_cmp <= 0;                                // clear busy 
                         end
