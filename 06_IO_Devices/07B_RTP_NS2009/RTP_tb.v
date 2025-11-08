@@ -2,37 +2,37 @@
 `default_nettype none
 
 module RTP_tb();
-    reg clk = 0;
-    always #2 clk = ~clk; // 25 MHz
+    reg tb_clk = 0;
+    always #2 tb_clk = ~tb_clk; // 25 MHz
 
-    reg load = 0;
-    reg [15:0] in = 0;
-    wire [15:0] out;
-    wire SDA, SCL;
-    pullup(SDA);
-    pullup(SCL);
+    reg tb_load = 0;
+    reg [15:0] tb_in = 0;
+    wire [15:0] tb_out;
+    wire tb_SDA, tb_SCL;
+    pullup(tb_SDA);
+    pullup(tb_SCL);
 
     RTP rtp (
-        .clk(clk),
-        .SDA(SDA),
-        .SCL(SCL),
-        .in(in),
-        .out(out),
-        .load(load)
+        .clk(tb_clk),
+        .SDA(tb_SDA),
+        .SCL(tb_SCL),
+        .in(tb_in),
+        .out(tb_out),
+        .load(tb_load)
     );
 
     // Slave: return read data to master
     reg tb_sda_drv = 0;   // drive low for data, else release (high z)
-    assign SDA = tb_sda_drv ? 1'b0 : 1'bz;
+    assign tb_SDA = tb_sda_drv ? 1'b0 : 1'bz;
 
     reg [7:0] tb_slv_data = 8'h00;
     reg [2:0] tb_slv_bitcnt = 0;
     reg tb_slv_sending = 0;
 
-    wire tb_rw_w = in[8]; // 0=write, 1=read, in is stable in sim only
-    wire tb_busy = out[15];
+    wire tb_rw_w = tb_in[8]; // 0=write, 1=read, in is stable in sim only
+    wire tb_busy = tb_out[15];
 
-    always @(negedge SCL ) begin
+    always @(negedge tb_SCL ) begin
         begin
             if (tb_busy && !tb_rw_w) begin
                 // on write populate output buffer
@@ -60,19 +60,19 @@ module RTP_tb();
     reg tb_write = 1;
     wire trigger = (tb_n == 20) || (tb_n == 2000);
 
-    always @(posedge clk) begin
+    always @(posedge tb_clk) begin
         if (trigger) begin
-            load <= 1;
-            in[7:0] <= $random;
+            tb_load <= 1;
+            tb_in[7:0] <= $random;
             if (tb_write == 1) begin
-                in[8] <= 0; // first trigger write
+                tb_in[8] <= 0; // first trigger write
                 tb_write <= 0;
             end else begin
-                in[8] <= 1; // second trigger read
+                tb_in[8] <= 1; // second trigger read
                 tb_write <= 1;
             end
         end else begin
-            load <= 0;
+            tb_load <= 0;
         end
     end
 
@@ -87,7 +87,6 @@ module RTP_tb();
         WRITE_BYTE  = 4'd3,   
         READ_BYTE   = 4'd4,
         READ_BYTE2  = 4'd5;
-        // STOP_COND   = 4'd6;
 
     // SDA/SCL comparators
     localparam TB_DIVIDER = 15; // 400 KHz (fast mode)
@@ -107,14 +106,14 @@ module RTP_tb();
 
     initial begin
         tb_mdata[0] = 8'h90; // tb_write cmd
-        tb_mdata[1] = 8'hFF; // response placeholder
+        tb_mdata[1] = $random; // response placeholder
         tb_mdata[2] = 8'h91; // read cmd
-        tb_mdata[3] = 8'hDE; // read bytes
-        tb_mdata[4] = 8'hAD;
+        tb_mdata[3] = $random; // read bytes
+        tb_mdata[4] = $random;
     end
 
     // Generate tick
-    always @(posedge clk) begin
+    always @(posedge tb_clk) begin
         if (busy_cmp) begin
             if (tb_clk_cnt == TB_DIVIDER - 1) begin
                 tb_clk_cnt <= 0;
@@ -129,13 +128,13 @@ module RTP_tb();
         end
     end
 
-    always @(posedge clk) begin
+    always @(posedge tb_clk) begin
         case (tb_state)
             IDLE: begin
                 sda_cmp <= 1; // both high at idle
                 scl_cmp <= 1;
                 tb_phase <= 0;
-                if (load) begin
+                if (tb_load) begin
                     busy_cmp <= 1; // tb_busy from load
                     out_cmp <= 16'h8000;
                     tb_rw <= tb_rw;   // read tb_rw from in[8]
@@ -300,34 +299,15 @@ module RTP_tb();
                     endcase
                 end
             end
-
-            // STOP_COND: begin
-            //     if (tb_tick) begin
-            //         case (tb_phase)
-            //             0: begin
-            //                 sda_cmp <= 0;                       // SDA low
-            //                 scl_cmp <= 1;                       // SCL high
-            //                 tb_phase <= 1;
-            //             end
-            //             1: begin
-            //                 sda_cmp <= 1;                       // SDA high (release)
-            //                 busy_cmp <= 0;
-            //                 tb_state <= IDLE;
-            //                 tb_phase <= 0;
-            //             end
-            //             default: tb_phase <= 0;
-            //         endcase
-            //     end
-            // end
         endcase
     end
 
     reg fail = 0;
     task check;
         #2
-        if ((tb_busy != busy_cmp) || (out !== out_cmp) || (SDA != sda_cmp) || (SCL != scl_cmp)) begin
-            $display("FAIL: clk=%b, load=%b, in=%02h, out=%02h, tb_busy=%b",
-                      clk, load, in, out, tb_busy, SDA, SCL);
+        if ((tb_busy != busy_cmp) || (tb_out !== out_cmp) || (tb_SDA != sda_cmp) || (tb_SCL != scl_cmp)) begin
+            $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
+                      tb_clk, tb_load, tb_in, tb_out, tb_busy, tb_SDA, tb_SCL);
             fail = 1;
         end
     endtask
