@@ -127,38 +127,32 @@ module RTP_tb();
         end
     end
 
-    // TODO: idle state looks long
-    // TODO: ACK/NACK handling not implemented?
+    // TODO: this uses 3 clock cycles per bit, can probably be optimized
+    // TODO: but would still need a bit of a rework to preserve the ACK/NACK cycles
     always @(posedge tb_clk) begin
         case (tb_state)
             IDLE: begin
                 sda_cmp <= 1; // both high at idle
                 scl_cmp <= 1;
-                tb_phase <= 0;
                 if (tb_load) begin
-                    busy_cmp <= 1; // busy from load
+                    // busy from load [t+1]
+                    busy_cmp <= 1; 
                     out_cmp <= 16'h8000;
                     tb_state <= START_COND;
-                    tb_shiftreg <= tb_mdata[tb_midx]; // update shift on start
+
+                    // update shift on load
+                    tb_shiftreg <= tb_mdata[tb_midx];
                     tb_midx <= tb_midx + 1;
+                    tb_bit_cnt <= 7;
                 end
             end
 
             START_COND: begin
                 if (tb_tick) begin
-                    case (tb_phase)
-                        0: begin
-                            sda_cmp <= 0;   // SDA low
-                            scl_cmp <= 1;   // SCL high
-                            tb_phase <= 1;
-                        end
-                        1: begin
-                            tb_bit_cnt <= 7;
-                            tb_phase <= 0;
-                            tb_state <= SEND_ADDR;
-                        end
-                        default: tb_phase <= 0;
-                    endcase
+                    // START bit
+                    scl_cmp <= 1;   // SCL high
+                    sda_cmp <= 0;   // SDA low
+                    tb_state <= SEND_ADDR;
                 end
             end
 
@@ -167,7 +161,7 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // SDA=data
                             tb_phase <= 1;
                         end
                         1: begin
@@ -177,7 +171,7 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 0;                       // SCL low
                             if (tb_bit_cnt == 0) begin
-                                sda_cmp <= 1;                   // slave ACK (release)
+                                sda_cmp <= 0;                   // slave ACK (drive low)
                                 tb_phase <= 3;
                             end else begin
                                 tb_bit_cnt <= tb_bit_cnt - 1;
@@ -185,7 +179,7 @@ module RTP_tb();
                             end
                         end
                         3: begin
-                            scl_cmp <= 1;                       // SCL high for ACK
+                            scl_cmp <= 1;                       // SCL high for slave ACK
                             tb_shiftreg <= tb_mdata[tb_midx];   // update shift before read/write
                             tb_midx <= tb_midx + 1;
                             tb_bit_cnt <= 7;
@@ -205,7 +199,7 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // SDA=data
                             tb_phase <= 1;
                         end
                         1: begin
@@ -215,7 +209,7 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 0;                       // SCL low
                             if (tb_bit_cnt == 0) begin
-                                sda_cmp <= 1;                   // release for ACK
+                                sda_cmp <= 0;                   // slave ACK (drive low)
                                 tb_phase <= 3;
                             end else begin
                                 tb_bit_cnt <= tb_bit_cnt - 1;
@@ -223,7 +217,7 @@ module RTP_tb();
                             end
                         end
                         3: begin
-                            scl_cmp <= 1;                       // SCL high for ACK
+                            scl_cmp <= 1;                       // SCL high for slave ACK
                             tb_state <= IDLE;
                             tb_phase <= 0;
                             out_cmp <= tb_mdata[tb_midx-1];     // response byte shifted in, done
@@ -237,7 +231,7 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // SDA=data
                             tb_phase <= 1;
                         end
                         1: begin
@@ -247,7 +241,7 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 0;                       // SCL low
                             if (tb_bit_cnt == 0) begin
-                                sda_cmp <= 0;                   // drive low for NACK
+                                sda_cmp <= 0;                   // master ACK (drive low)
                                 tb_phase <= 3;
                             end else begin
                                 tb_bit_cnt <= tb_bit_cnt - 1;
@@ -255,12 +249,12 @@ module RTP_tb();
                             end
                         end
                         3: begin
-                            scl_cmp <= 1;                       // SCL high for NACK
+                            scl_cmp <= 1;                         // SCL high for master ACK
                             tb_state <= READ_BYTE2;
                             tb_phase <= 0;
 
                             tb_shiftreg <= tb_mdata[tb_midx];     // update shift/out before 2nd read
-                            out_cmp <= {8'h80,tb_mdata[tb_midx]}; // first byte shifted in, still busy
+                            out_cmp <= {8'h80,tb_mdata[tb_midx-1]}; // first byte shifted in, still busy
                             tb_lo_byte <= tb_mdata[tb_midx];      // save 1st byte for later
                             tb_bit_cnt <= 7;
                         end
@@ -273,7 +267,7 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                       // SCL low
-                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // set data
+                            sda_cmp <= tb_shiftreg[tb_bit_cnt]; // SDA=data
                             tb_phase <= 1;
                         end
                         1: begin
@@ -283,7 +277,7 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 0;                       // SCL low
                             if (tb_bit_cnt == 0) begin
-                                sda_cmp <= 0;                   // drive low for NACK
+                                sda_cmp <= 1;                   // drive low for master NACK
                                 tb_phase <= 3;
                             end else begin
                                 tb_bit_cnt <= tb_bit_cnt - 1;
@@ -291,7 +285,7 @@ module RTP_tb();
                             end
                         end
                         3: begin
-                            scl_cmp <= 1;                       // SCL high for NACK
+                            scl_cmp <= 1;                       // SCL high for master NACK
                             tb_state <= IDLE;
                             tb_phase <= 0;
                             out_cmp <= {tb_mdata[tb_midx-1],tb_lo_byte}; // 2nd byte shifted, done
