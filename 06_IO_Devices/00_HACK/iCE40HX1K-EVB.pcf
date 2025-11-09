@@ -69,6 +69,10 @@ set_io LCD_CSX 4		# PIO3_2B connected to pin 11 of GPIO1, pin 10 (CS) on MOD-LCD
 # GPIO: top left=33, bottom left=34
 # default annotation on MOD-LCD2.8RTP assumes I2C (SDA/SCL) is used for RTP
 # but if using the hardware mod for SPI then some pins are repurposed
-set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
-set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
-set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP
+# set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
+# set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
+# set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP
+
+# if using NS2009 for RTP use these pins instead
+set_io RTP_SDA 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
+set_io RTP_SCL 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP

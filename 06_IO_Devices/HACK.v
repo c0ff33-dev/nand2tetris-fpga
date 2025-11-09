@@ -32,9 +32,11 @@ module HACK(
 	output LCD_SDO,			// LCD data out 
 	output LCD_SCK,			// LCD serial clock
 	output LCD_CSX,			// LCD chip select not
-	input  RTP_SDI,			// RTP data in
-	output RTP_SDO,			// RTP data out 
-	output RTP_SCK			// RTP serial clock
+	// input  RTP_SDI,			// RTP data in
+	// output RTP_SDO,			// RTP data out 
+	// output RTP_SCK			// RTP serial clock
+	inout  RTP_SDA,         // RTP data line
+	output RTP_SCL          // RTP serial clock
 );
 	
 	// timing index
@@ -257,14 +259,24 @@ module HACK(
 	assign inIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel AR1021
+	// RTP rtp(
+	// 	.clk(clk),
+	// 	.load(loadIOA),
+	// 	.in(outM),
+	// 	.out(inIOA),
+	// 	.SDO(RTP_SDO),
+	// 	.SDI(RTP_SDI),
+	// 	.SCK(RTP_SCK)
+	// );
+
+	// RTP (4106) controller for Resistive Touch Panel NS2009
 	RTP rtp(
 		.clk(clk),
 		.load(loadIOA),
 		.in(outM),
 		.out(inIOA),
-		.SDO(RTP_SDO),
-		.SDI(RTP_SDI),
-		.SCK(RTP_SCK)
+		.SDA(RTP_SDA),
+		.SCL(RTP_SCL)
 	);
 
 	// additional registers
@@ -287,7 +299,7 @@ module HACK(
 	// DEBUG2 (4109)
 	Register debug2(
 		.clk(clk),
-		.in({15'd0,RTP_SCK}), // TODO: DEBUG
+		.in({15'd0,RTP_SCL}), // TODO: DEBUG
 		.load(1'b1),  // TODO: DEBUG
 		.out(inIOD)
 	);
@@ -295,7 +307,7 @@ module HACK(
 	// DEBUG3 (4110)
 	Register debug3(
 		.clk(clk),
-		.in({15'd0,RTP_SDO}), // TODO: DEBUG
+		.in({15'd0,RTP_SDA}), // TODO: DEBUG
 		.load(1'b1),  // TODO: DEBUG
 		.out(inIOE)
 	);
@@ -303,8 +315,8 @@ module HACK(
 	// DEBUG4 (4111)
 	Register debug4(
 		.clk(clk),
-		.in({15'd0,RTP_SDI}), // TODO: DEBUG
-		.load(1'b1),  // TODO: DEBUG
+		.in(outM),
+		.load(loadIOF),
 		.out(inIOF)
 	);
 

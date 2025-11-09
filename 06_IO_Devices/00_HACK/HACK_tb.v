@@ -21,9 +21,11 @@ module HACK_tb();
 	wire LCD_SDO;
 	wire LCD_SCK;
 	wire LCD_CSX;
-	reg RTP_SDI;
-	wire RTP_SDO;
-	wire RTP_SCK;
+	// wire RTP_SDI;
+	// wire RTP_SDO;
+	// wire RTP_SCK;
+	wire RTP_SDA;
+	wire RTP_SCL;
 
 	// Part
 	HACK HACK(
@@ -45,9 +47,11 @@ module HACK_tb();
 		.LCD_SDO(LCD_SDO),			// LCD serial data out 
 		.LCD_SCK(LCD_SCK),			// LCD serial clock
 		.LCD_CSX(LCD_CSX),			// LCD chip select not
-		.RTP_SDI(RTP_SDI),			// RTP serial data in
-		.RTP_SDO(RTP_SDO),			// RTP serial data out in
-		.RTP_SCK(RTP_SCK)			// RTP serial clock
+		// .RTP_SDI(RTP_SDI),			// RTP serial data in
+		// .RTP_SDO(RTP_SDO),			// RTP serial data out in
+		// .RTP_SCK(RTP_SCK)			// RTP serial clock
+		.RTP_SDA(RTP_SDA),			// RTP data line
+		.RTP_SCL(RTP_SCL)			// RTP serial clock
 	);
 
 	// Simulate
