@@ -1,11 +1,16 @@
-// NS2009 400 KHz I2C controller
+// NS2009 Resistive Touch Panel (RTP) controller
+// 400 KHz I2C interface
+// 7 bit device address: 0x48 (0x90 write, 0x91 read)
+// no response other than the ACK bit for writes
+// 12 bit response for reads (two bytes, MSB first)
+
 module RTP (
     input  wire        clk,
     input  wire        load,
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
     inout  wire        SDA,
     inout  wire        SCL,
-    output wire [15:0]  out    // out[15]=busy, [7:0]=data (if read)
+    output wire [15:0]  out   // out[15]=busy, [7:0]=data (if read)
 );
 
 // 25 MHz / 400 KHz = ~62 clk cycles per SCL
@@ -17,12 +22,11 @@ reg [7:0] hi_byte = 0;
 reg [7:0] lo_byte = 0;
 reg [15:0] _out = 0;
 
-wire busy = init ? _out[15] : 1'b0; // init
 assign out = _out;
 
 // clock divider for I2C SCL timing
 always @(posedge clk) begin
-    if (busy) begin
+    if (out[15]) begin // busy
         if (clk_cnt == DIVIDER - 1) begin
             clk_cnt <= 0;
             tick <= 1'b1;
@@ -201,7 +205,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        _out <= {hi_byte,lo_byte};       // first byte shifted in, still busy
+                        _out <= {hi_byte,lo_byte};      // first byte shifted in, still busy
                         state <= IDLE;
                         rw <= 0;
                     end

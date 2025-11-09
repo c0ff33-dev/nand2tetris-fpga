@@ -30,11 +30,7 @@ module RTP_tb();
     reg tb_slv_sending = 0;
 
     wire tb_busy = tb_out[15];
-
-    initial begin
-        tb_slv_data <= tb_mdata[3]; // init first read byte
-    end
-
+    
     // slave: drive SDA to return data to master
     always @(negedge SCL) begin
         if (tb_state==SEND_ADDR || tb_state==WRITE_BYTE) begin
@@ -44,18 +40,20 @@ module RTP_tb();
                 tb_slv_bitcnt <= 0; 
             end else
                 tb_sda_drv <= 0; // release SDA
+            if (tb_state==WRITE_BYTE)
+                tb_slv_data <= tb_mdata[3]; // set write byte
         end
         else if (tb_state==READ_BYTE || tb_state==READ_BYTE2) begin
-            tb_sda_drv <= ~tb_slv_data[7 - tb_slv_bitcnt];
-            tb_slv_sending <= 1;
-            tb_slv_bitcnt <= tb_slv_bitcnt + 1;
             if (tb_slv_bitcnt == 8) begin
                 tb_slv_bitcnt <= 0;
                 tb_slv_sending <= 0;
-                tb_slv_data <= tb_mdata[4]; // next read byte
+                tb_slv_data <= tb_mdata[4]; // set next read byte
                 tb_sda_drv <= 0; // release SDA for master ACK
-            end else
-                tb_sda_drv <= 0; // release SDA
+            end else begin
+                tb_sda_drv <= ~tb_slv_data[7 - tb_slv_bitcnt];
+                tb_slv_sending <= 1;
+                tb_slv_bitcnt <= tb_slv_bitcnt + 1;
+            end
         end else
             tb_sda_drv <= 0; // release SDA
     end
@@ -115,13 +113,18 @@ module RTP_tb();
     // input/output data
     reg [7:0] tb_mdata [0:5];  // 5 elements x 8 bits
     reg [2:0] tb_midx = 0;
+    reg [3:0] tb_rnd_nibble = 0;
 
     initial begin
         tb_mdata[0] = 8'h90; // write cmd (no response)
-        tb_mdata[1] = 8'hAA; // cmd byte
+        tb_mdata[1] = $random; // cmd byte
         tb_mdata[2] = 8'h91; // read cmd
-        tb_mdata[3] = 8'hDE; // read bytes
-        tb_mdata[4] = 8'hAD;
+        
+        // high byte normally won't exceed 0x0F for 12 bit ADC
+        // and can't exceed 0x7F without overwriting the busy bit
+        tb_rnd_nibble = $random;
+        tb_mdata[3] = {4'd0,tb_rnd_nibble}; // read bytes
+        tb_mdata[4] = $random;
     end
 
     // generate tick
@@ -267,7 +270,7 @@ module RTP_tb();
                         0: begin
                             scl_cmp <= 0;                                 // SCL low
                             if (tb_bit_cnt == 0) begin
-                                sda_cmp <= 0;                             // master ACK (drive low)
+                                sda_cmp <= 1;                             // master NACK (SDA high)
                                 tb_phase <= 2;
                             end else
                                 tb_phase <= 1;
