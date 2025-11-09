@@ -63,12 +63,13 @@ module RTP_tb();
     always @(posedge tb_clk) begin
         if (trigger) begin
             tb_load <= 1;
-            tb_in[7:0] <= tb_mdata[1]; // command byte
             if (tb_write == 1) begin
-                tb_in[8] <= 0; // first trigger write
+                // first trigger write
+                tb_in <= {8'd0,tb_mdata[1]}; // command byte
                 tb_write <= 0;
             end else begin
-                tb_in[8] <= 1; // second trigger read
+                // second trigger read
+                tb_in <= 16'h100; // read command (no data)
                 tb_write <= 1;
             end
         end else
