@@ -1,23 +1,5 @@
 /** A library to read touch events from the resistive touch panel controller
- * AR1021.*/
-
-// Relevant docs start at page 18
-// returns 0x4D if read when no data to return
-// inter-byte delay of ~50μs (1250 cycles)
-// touch report = SDO: PEN, X_lo, X_hi, Y_lo, T_hi (5 bytes)
-//  PEN [7:0]: 1------P, P=0/1 pen up/down
-// X_lo [7:0]: 0XXXXXXX, X6-X0
-// X_hi [7:0]: 000XXXXX, X11-X7
-// Y_lo [7:0]: 0YYYYYYY, X6-X0
-// Y_hi [7:0]: 000YYYYY, X11-X7
-// command format: header, size, data, [...] // size = bytes after this byte
-// response: header, size, status, command, [data], [...]
-// status: 0x00 success, 0x01 bad command, 0x03 bad header, 0x04 timeout, 0xFC cancel calibration
-// ENABLE_TOUCH = 0x55, 0x01, 0x12 // response = 0x55, 0x02, 0x00, 0x12
-// DISABLE_TOUCH = 0x55, 0x01, 0x13 // response = 0x55, 0x02, 0x00, 0x13
-// recommended to send DISABLE_TOUCH and wait 50ms before sending commands
-// command timeout after ~100 ms (minimum 4 byte response)
-// sleep cycle will commence after 10000ms but should wake on its own with input/cmd
+ * NS2009.*/
 
 class Touch{
     static int RTP, x_coord, y_coord, pen;
