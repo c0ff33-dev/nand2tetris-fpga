@@ -9,14 +9,14 @@ module RTP_tb();
     reg tb_load = 0;
     reg [15:0] tb_in = 0; // this is a reg in sim only!
     wire [15:0] tb_out;
-    wire tb_SDA, tb_SCL;
-    pullup(tb_SDA);
-    pullup(tb_SCL);
+    wire SDA, SCL;
+    pullup(SDA);
+    pullup(SCL);
 
     RTP rtp (
         .clk(tb_clk),
-        .SDA(tb_SDA),
-        .SCL(tb_SCL),
+        .SDA(SDA),
+        .SCL(SCL),
         .in(tb_in),
         .out(tb_out),
         .load(tb_load)
@@ -24,31 +24,42 @@ module RTP_tb();
 
     // slave: drive SDA to return data to master
     reg tb_sda_drv = 0;   // drive low for data when set, else release (high z)
-    assign tb_SDA = tb_sda_drv ? 1'b0 : 1'bz;
+    assign SDA = tb_sda_drv ? 1'b0 : 1'bz;
 
     reg [7:0] tb_slv_data = 0;
-    reg [2:0] tb_slv_bitcnt = 0;
+    reg [3:0] tb_slv_bitcnt = 0;
     reg tb_slv_sending = 0;
 
     wire tb_busy = tb_out[15];
 
-    always @(negedge tb_SCL) begin
+    // FIXME: sda_oe/tb_sda_drv contention
+    // FIXME: small sda/sda_cmp mismatches
+
+    always @(negedge SCL) begin
         begin
             if (tb_busy && !tb_in[8]) begin
-                // on write populate output buffer
+                // TODO: this isn't how this works, just init the buffer?
                 if (!tb_slv_sending) tb_slv_data <= tb_mdata[3];
                 tb_sda_drv <= 0; // release SDA
             end
-            else if (tb_busy && tb_in[8]) begin
+            else if (tb_state==SEND_ADDR) begin
+                 // Send tb_slv_data MSB first
+                tb_slv_bitcnt <= tb_slv_bitcnt + 1;
+                if (tb_slv_bitcnt == 8) begin
+                    tb_slv_bitcnt <= 0;
+                    tb_sda_drv <= 1; // drive SDA low (slave ACK)
+                end
+            end
+            else if (tb_state==READ_BYTE || tb_state==READ_BYTE2) begin
                 // Send tb_slv_data MSB first
-                tb_sda_drv <= tb_slv_data[7 - tb_slv_bitcnt];
+                tb_sda_drv <= ~tb_slv_data[7 - tb_slv_bitcnt];
                 tb_slv_sending <= 1;
                 tb_slv_bitcnt <= tb_slv_bitcnt + 1;
-                if (tb_slv_bitcnt == 7) begin
+                if (tb_slv_bitcnt == 8) begin
                     tb_slv_bitcnt <= 0;
                     tb_slv_sending <= 0;
-                    // on completion of first read set next byte
-                    tb_slv_data <= tb_mdata[4];
+                    tb_slv_data <= tb_mdata[4]; // next read byte
+                    tb_sda_drv <= 1; // drive SDA low (slave ACK)
                 end
             end else
                 tb_sda_drv <= 0; // release SDA
@@ -281,9 +292,9 @@ module RTP_tb();
     reg fail = 0;
     task check;
         #2
-        if ((tb_busy != busy_cmp) || (tb_out !== out_cmp) || (tb_SDA != sda_cmp) || (tb_SCL != scl_cmp)) begin
+        if ((tb_busy != busy_cmp) || (tb_out !== out_cmp) || (SDA != sda_cmp) || (SCL != scl_cmp)) begin
             // $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
-            //           tb_clk, tb_load, tb_in, tb_out, tb_busy, tb_SDA, tb_SCL);
+            //           tb_clk, tb_load, tb_in, tb_out, tb_busy, SDA, SCL);
             fail = 1;
         end
     endtask

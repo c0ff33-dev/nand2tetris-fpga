@@ -62,7 +62,7 @@ reg rw = 0;
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
 always @(posedge clk) begin
     case (state)
-        IDLE: begin
+        IDLE: begin // 0
             scl_oe <= 0; // SCL high (release)
             sda_oe <= 0; // SDA high (release)
             phase <= 0;
@@ -75,19 +75,19 @@ always @(posedge clk) begin
                 else
                     data <= 0;       // unused for read
                 state <= START_COND;
+                bit_cnt <= 8;
             end
         end
 
-        START_COND: begin
+        START_COND: begin // 1
             if (tick) begin
                 scl_oe <= 0;   // SCL high (release)
                 sda_oe <= 1;   // SDA low (drive)
-                bit_cnt <= 8;
                 state <= SEND_ADDR;
             end
         end
 
-        SEND_ADDR: begin
+        SEND_ADDR: begin // 2
             if (tick) begin
                 case (phase)
                     0: begin
@@ -118,7 +118,7 @@ always @(posedge clk) begin
             end
         end
 
-        WRITE_BYTE: begin
+        WRITE_BYTE: begin // 3
             if (tick) begin
                 case (phase)
                     0: begin
@@ -147,7 +147,7 @@ always @(posedge clk) begin
         end
 
         // FIXME: out wrong (check tb first)
-        READ_BYTE: begin
+        READ_BYTE: begin // 4
             if (tick) begin
                 case (phase)
                     0: begin
@@ -179,7 +179,7 @@ always @(posedge clk) begin
         end
 
         // FIXME: out wrong (check tb first)
-        READ_BYTE2: begin
+        READ_BYTE2: begin // 5
             if (tick) begin
                 case (phase)
                     0: begin
