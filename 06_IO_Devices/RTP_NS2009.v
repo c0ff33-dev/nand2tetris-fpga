@@ -5,7 +5,7 @@ module RTP (
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
     inout  wire        SDA,
     inout  wire        SCL,
-    output reg [15:0]  out    // out[15]=busy, [7:0]=data (if read)
+    output wire [15:0]  out    // out[15]=busy, [7:0]=data (if read)
 );
 
 // 25 MHz / 400 KHz = ~62 clk cycles per SCL
@@ -15,8 +15,10 @@ reg [9:0] clk_cnt;
 reg tick;
 reg [7:0] hi_byte = 0;
 reg [7:0] lo_byte = 0;
+reg [15:0] _out = 0;
 
-wire busy = init ? out[15] : 1'b0; // init
+wire busy = init ? _out[15] : 1'b0; // init
+assign out = _out;
 
 // clock divider for I2C SCL timing
 always @(posedge clk) begin
@@ -68,7 +70,7 @@ always @(posedge clk) begin
             phase <= 0;
             if (load) begin
                 rw <= in[8];   // read/write bit
-                out[15] <= 1;  // busy
+                _out[15] <= 1;  // busy
                 addr <= {DEV_ADDR, in[8]}; // 7 bit address + r/w bit
                 if (in[8] == 0)
                     data <= in[7:0]; // command byte for write
@@ -139,14 +141,13 @@ always @(posedge clk) begin
                     2: begin
                         scl_oe <= 0;                       // SCL high (release) - slave ACK
                         state <= IDLE;
-                        out <= 0;                          // clear busy
+                        _out <= 0;                          // clear busy
                         rw <= 0;
                     end
                 endcase
             end
         end
 
-        // FIXME: out wrong (check tb first)
         READ_BYTE: begin // 4
             if (tick) begin
                 case (phase)
@@ -169,7 +170,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        out <= {8'h80,hi_byte};         // first byte shifted in, still busy
+                        _out <= {8'h80,hi_byte};         // first byte shifted in, still busy
                         bit_cnt <= 8;                   // prepare for second byte
                         state <= READ_BYTE2;
                         phase <= 0;
@@ -178,7 +179,6 @@ always @(posedge clk) begin
             end
         end
 
-        // FIXME: out wrong (check tb first)
         READ_BYTE2: begin // 5
             if (tick) begin
                 case (phase)
@@ -201,7 +201,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        out <= {hi_byte,lo_byte};       // first byte shifted in, still busy
+                        _out <= {hi_byte,lo_byte};       // first byte shifted in, still busy
                         state <= IDLE;
                         rw <= 0;
                     end
@@ -216,7 +216,7 @@ reg init = 0;
 always @(posedge clk) begin
     if (~init) begin
         init <= 1;
-        out <= 0;
+        _out <= 0;
     end
 end
 

@@ -22,7 +22,6 @@ module RTP_tb();
         .load(tb_load)
     );
 
-    // slave: drive SDA to return data to master
     reg tb_sda_drv = 0;   // drive low for data when set, else release (high z)
     assign SDA = tb_sda_drv ? 1'b0 : 1'bz;
 
@@ -32,37 +31,40 @@ module RTP_tb();
 
     wire tb_busy = tb_out[15];
 
-    // FIXME: sda_oe/tb_sda_drv contention
-    // FIXME: small sda/sda_cmp mismatches
+    initial begin
+        tb_slv_data <= tb_mdata[3]; // init first read byte
+    end
 
+    // slave: drive SDA to return data to master
     always @(negedge SCL) begin
-        begin
-            if (tb_busy && !tb_in[8]) begin
-                // TODO: this isn't how this works, just init the buffer?
-                if (!tb_slv_sending) tb_slv_data <= tb_mdata[3];
-                tb_sda_drv <= 0; // release SDA
-            end
-            else if (tb_state==SEND_ADDR) begin
-                 // Send tb_slv_data MSB first
-                tb_slv_bitcnt <= tb_slv_bitcnt + 1;
-                if (tb_slv_bitcnt == 8) begin
-                    tb_slv_bitcnt <= 0;
-                    tb_sda_drv <= 1; // drive SDA low (slave ACK)
-                end
-            end
-            else if (tb_state==READ_BYTE || tb_state==READ_BYTE2) begin
-                // Send tb_slv_data MSB first
-                tb_sda_drv <= ~tb_slv_data[7 - tb_slv_bitcnt];
-                tb_slv_sending <= 1;
-                tb_slv_bitcnt <= tb_slv_bitcnt + 1;
-                if (tb_slv_bitcnt == 8) begin
-                    tb_slv_bitcnt <= 0;
-                    tb_slv_sending <= 0;
-                    tb_slv_data <= tb_mdata[4]; // next read byte
-                    tb_sda_drv <= 1; // drive SDA low (slave ACK)
-                end
+        if (tb_state==SEND_ADDR || tb_state==WRITE_BYTE) begin
+            tb_slv_bitcnt <= tb_slv_bitcnt + 1;
+            if (tb_slv_bitcnt == 8) begin
+                tb_sda_drv <= 1; // drive SDA low (slave ACK)
+                tb_slv_bitcnt <= 0; 
             end else
                 tb_sda_drv <= 0; // release SDA
+        end
+        else if (tb_state==READ_BYTE || tb_state==READ_BYTE2) begin
+            tb_sda_drv <= ~tb_slv_data[7 - tb_slv_bitcnt];
+            tb_slv_sending <= 1;
+            tb_slv_bitcnt <= tb_slv_bitcnt + 1;
+            if (tb_slv_bitcnt == 8) begin
+                tb_slv_bitcnt <= 0;
+                tb_slv_sending <= 0;
+                tb_slv_data <= tb_mdata[4]; // next read byte
+                tb_sda_drv <= 0; // release SDA for master ACK
+            end else
+                tb_sda_drv <= 0; // release SDA
+        end else
+            tb_sda_drv <= 0; // release SDA
+    end
+
+    // on the real chip ACK would drive SDA low for a full cycle
+    // but in tb there are no more ticks and we don't sample the ACK
+    always @(posedge SCL) begin
+        if (tb_state==IDLE) begin
+            tb_sda_drv <= 0; // release SDA
         end
     end
 
@@ -219,6 +221,7 @@ module RTP_tb();
                         end
                         2: begin
                             scl_cmp <= 1;                      // SCL high (slave ACK)
+                            sda_cmp <= 1;                      // release SDA
                             out_cmp <= 0;                      // update output with response byte
                             tb_state <= IDLE;
                             busy_cmp <= 0;                     // clear busy 
