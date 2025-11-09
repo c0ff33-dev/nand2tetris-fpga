@@ -31,81 +31,9 @@ class Main {
     }
 
     function void rtp_main() {
-        var int rtp, crc;
-        do UART.writeChar(222); // 0xDE (start)
-
-        // command format: header, size, data, [...] // size = bytes after this byte
-        // response: header, size, status, command, [data], [...]
-
-        // TODO: first byte 0x0, subsequent bytes 0xFF - like SDI stuck high?
-        // TODO: sleep is meant to clear pending data so maybe its not I2C IRQ?
-        // TODO: SDO is not meant to be high until response in SPI mode but at least SJ3 is open
-        // TODO: also no error header so its definitely scuffed
-        // TODO: tb is probably wrong / no mention of using SDO idle high in AR1021 docs
-        // TODO: but RTP signals look ok in 06/07 sims (as expected)
-        // TODO: DEBUG4=RTP_SDI, tested directly in asm driver (rtp_sdi.asm) and its always high
-        // TODO: tried up to 8 times slower (~100kHz) with no change
-        // TODO: RTP.v fully meets all timing constraints
-
-        // send command byte DISABLE_TOUCH
-        let rtp = Touch.writeRTP(85); // 0x55
-        do UART.writeChar(rtp);
-
-        let rtp = Touch.writeRTP(1);  // 0x01
-        do UART.writeChar(rtp);
-
-        let rtp = Touch.writeRTP(18); // 0x12=ENABLE_TOUCH, 0x13=DISABLE_TOUCH
-        do UART.writeChar(rtp);
-
-        // read command response
-        let rtp = Touch.writeRTP(0); // 1, 0x55
-
-        do UART.writeChar(rtp);
-        if (rtp = 85) {
-            let crc = 1;
-            // do Sys.error(0); // trap on expected byte
-        }
-        // if (~(rtp = 255)) {
-        //     do Sys.error(0); // trap on any new byte
-        // }
-
-        let rtp = Touch.writeRTP(0); // 2, 0x02
-        do UART.writeChar(rtp);
-        if (rtp = 2) {
-            let crc = crc + 1;
-            // do Sys.error(0); // trap on expected byte
-        }
-        // if (~(rtp = 255)) {
-        //     do Sys.error(0); // trap on any new byte
-        // }
-        
-        let rtp = Touch.writeRTP(0); // 3, 0x0
-        do UART.writeChar(rtp);
-        if (rtp = 0) {
-            let crc = crc + 1;
-            // do Sys.error(0); // trap on expected byte
-        }
-        // if (~(rtp = 255)) {
-        //     do Sys.error(0); // trap on any new byte
-        // }
-
-        let rtp = Touch.writeRTP(0); // 4, <input cmd>
-        do UART.writeChar(rtp);
-        if (rtp = 18) { // command type
-            let crc = crc + 1;
-            // do Sys.error(0); // trap on expected byte
-        }
-        // if (~(rtp = 255)) {
-        //     do Sys.error(0); // trap on any new byte
-        // }
-
-        if (crc = 4) {
-            do Sys.error(0); // victory!
-        } else {
-            do GPIO.writeLed(3); // error
-        }
-        
-        do UART.writeChar(173); // 0xAD (end)
+        var int x;
+        let x = Touch.getX();
+        do UART.writeChar(x);
 
         return;
     }

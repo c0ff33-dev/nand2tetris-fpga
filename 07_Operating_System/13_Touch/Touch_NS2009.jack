@@ -3,21 +3,24 @@
 
 class Touch{
     static int RTP, x_coord, y_coord, pen;
-    static int read_x_cmd, read_y_cmd, read_z_cmd;
+    static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
     function void init() {
         let RTP = 4106;
-        let read_x_cmd = 192; // 0xC0 (11000000)
-        let read_y_cmd = 208; // 0xD0 (11010000)
-        let read_z_cmd = 224; // 0xE0 (11100000)
+        let set_x_reg = 192; // 0xC0 (11000000)
+        let set_y_reg = 208; // 0xD0 (11010000)
+        let set_z_reg = 224; // 0xE0 (11100000)
+        let read_cmd = 256;  // in[8]=1 for read
         return;
     }
 
-    /** writes 8 bits of c to RTP */
+    /** writes 8 bits of c to RTP and returns the response of RTP.
+     *  (no inter-byte delay needed for NS2009) */
     function int writeRTP(int c) {
-        // busy=0x8000(+), else byte=0x0-0xFF
-        var int rx;        
-        let RTP[0] = c; // start RTP_SCK
+        // busy=0x8000(+), else 12 bit ADC data 0x0-0xFFF (0-4095)
+        // response is zero for write commands
+        var int rx;
+        let RTP[0] = c; // start RTP_SCL
         while (RTP[0] < 0) {
             let rx = RTP[0]; // read RTP
         }
@@ -32,6 +35,10 @@ class Touch{
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getX() {
+        var int _;
+        let _ = Touch.writeRTP(set_x_reg);
+        let x_coord = Touch.writeRTP(read_cmd);
+        // TODO: mapping (same range apparently)
         return x_coord;
     }
 
