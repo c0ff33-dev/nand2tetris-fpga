@@ -10,7 +10,7 @@ module RTP (
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
     inout  wire        SDA,   // I2C data line (inout to allow open-drain)
     inout  wire        SCL,   // I2C clock (inout to allow open-drain)
-    output wire [15:0]  out   // out[15]=busy, [7:0]=data (if read)
+    output wire [15:0] out    // out[15]=busy, [7:0]=data (if read)
 );
 
 // 25 MHz / 400 KHz = ~62 clk cycles per SCL
@@ -38,6 +38,27 @@ always @(posedge clk) begin
         clk_cnt <= 0;
         tick <= 1'b0;
     end
+end
+
+// FIXME: still having congestion issues
+// decouple output updates from FSM (pnr congestion issues)
+reg [15:0] mid_out = 0;
+reg [15:0] final_out = 0;
+always @(posedge clk) begin
+    mid_out <= {8'h80,hi_byte};
+    next_out <= {           // shuffle the bytes back into a 16 bit integer
+            4'd0,          // shift the padded bits to the top
+            hi_byte,       // high byte as received   
+            lo_byte[7:4]   // low byte upper nibble
+        };
+    if (load && (state == IDLE))
+        next_out[15] <= 1;  // busy  
+    if ((phase == 2) && (state == WRITE_BYTE))
+        next_out <= 0; // clear busy
+    if ((phase == 2) && (state == READ_BYTE))
+        next_out <= mid_out; // first byte shifted in, still busy
+    if ((phase == 2) && (state == READ_BYTE2))
+        next_out <= final_out;
 end
 
 // TODO: is there actually a pull-up resistor on SDA? what does adafruit do?
@@ -74,7 +95,7 @@ always @(posedge clk) begin
             phase <= 0;
             if (load) begin
                 rw <= in[8];   // read/write bit
-                next_out[15] <= 1;  // busy
+                // next_out[15] <= 1;  // busy
                 addr <= {DEV_ADDR, in[8]}; // 7 bit address + r/w bit
                 if (in[8] == 0)
                     data <= in[7:0]; // command byte for write
@@ -145,7 +166,7 @@ always @(posedge clk) begin
                     2: begin
                         scl_oe <= 0;                       // SCL high (release) - slave ACK
                         state <= IDLE;
-                        next_out <= 0;                          // clear busy
+                        // next_out <= 0;                     // clear busy
                         rw <= 0;
                     end
                 endcase
@@ -174,7 +195,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        next_out <= {8'h80,hi_byte};         // first byte shifted in, still busy
+                        // next_out <= {8'h80,hi_byte}; // first byte shifted in, still busy
                         bit_cnt <= 8;                   // prepare for second byte
                         state <= READ_BYTE2;
                         phase <= 0;
@@ -205,11 +226,11 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        next_out <= {                   // shuffle the bytes back into a 16 bit integer
-                            4'd0,                       // shift the padded bits to the top
-                            hi_byte,                    // high byte as received   
-                            lo_byte[7:4]                // low byte upper nibble
-                        };
+                        // next_out <= {                   // shuffle the bytes back into a 16 bit integer
+                        //     4'd0,                       // shift the padded bits to the top
+                        //     hi_byte,                    // high byte as received   
+                        //     lo_byte[7:4]                // low byte upper nibble
+                        // };
                         state <= IDLE;
                         rw <= 0;
                     end
