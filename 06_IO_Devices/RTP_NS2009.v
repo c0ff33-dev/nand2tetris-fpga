@@ -8,8 +8,8 @@ module RTP (
     input  wire        clk,
     input  wire        load,
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
-    inout  wire        SDA,
-    inout  wire        SCL,
+    inout  wire        SDA,   // I2C data line (inout to allow open-drain)
+    inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0]  out   // out[15]=busy, [7:0]=data (if read)
 );
 
@@ -20,9 +20,9 @@ reg [9:0] clk_cnt;
 reg tick;
 reg [7:0] hi_byte = 0;
 reg [7:0] lo_byte = 0;
-reg [15:0] _out = 0;
+reg [15:0] next_out = 0;
 
-assign out = _out;
+assign out = next_out;
 
 // clock divider for I2C SCL timing
 always @(posedge clk) begin
@@ -74,7 +74,7 @@ always @(posedge clk) begin
             phase <= 0;
             if (load) begin
                 rw <= in[8];   // read/write bit
-                _out[15] <= 1;  // busy
+                next_out[15] <= 1;  // busy
                 addr <= {DEV_ADDR, in[8]}; // 7 bit address + r/w bit
                 if (in[8] == 0)
                     data <= in[7:0]; // command byte for write
@@ -145,7 +145,7 @@ always @(posedge clk) begin
                     2: begin
                         scl_oe <= 0;                       // SCL high (release) - slave ACK
                         state <= IDLE;
-                        _out <= 0;                          // clear busy
+                        next_out <= 0;                          // clear busy
                         rw <= 0;
                     end
                 endcase
@@ -174,7 +174,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        _out <= {8'h80,hi_byte};         // first byte shifted in, still busy
+                        next_out <= {8'h80,hi_byte};         // first byte shifted in, still busy
                         bit_cnt <= 8;                   // prepare for second byte
                         state <= READ_BYTE2;
                         phase <= 0;
@@ -205,7 +205,7 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        _out <= {                       // shuffle the bytes back into a 16 bit integer
+                        next_out <= {                   // shuffle the bytes back into a 16 bit integer
                             4'd0,                       // shift the padded bits to the top
                             hi_byte,                    // high byte as received   
                             lo_byte[7:4]                // low byte upper nibble
@@ -217,15 +217,6 @@ always @(posedge clk) begin
             end
         end
     endcase
-end
-
-// generic init handler, should work with ice40 + yosys
-reg init = 0;
-always @(posedge clk) begin
-    if (~init) begin
-        init <= 1;
-        _out <= 0;
-    end
 end
 
 endmodule

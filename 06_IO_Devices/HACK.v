@@ -32,11 +32,11 @@ module HACK(
 	output LCD_SDO,			// LCD data out 
 	output LCD_SCK,			// LCD serial clock
 	output LCD_CSX,			// LCD chip select not
-	// input  RTP_SDI,			// RTP data in
-	// output RTP_SDO,			// RTP data out 
-	// output RTP_SCK			// RTP serial clock
-	inout  RTP_SDA,         // RTP data line
-	output RTP_SCL          // RTP serial clock
+	// input  RTP_SDI,		// RTP data in
+	// output RTP_SDO,		// RTP data out 
+	// output RTP_SCK		// RTP serial clock
+	inout RTP_SDA,          // RTP data line
+	inout RTP_SCL           // RTP serial clock
 );
 	
 	// timing index
@@ -299,16 +299,16 @@ module HACK(
 	// DEBUG2 (4109)
 	Register debug2(
 		.clk(clk),
-		.in({15'd0,RTP_SCL}), // TODO: DEBUG
-		.load(1'b1),  // TODO: DEBUG
+		.in(outM),
+		.load(loadIOD),
 		.out(inIOD)
 	);
 
 	// DEBUG3 (4110)
 	Register debug3(
 		.clk(clk),
-		.in({15'd0,RTP_SDA}), // TODO: DEBUG
-		.load(1'b1),  // TODO: DEBUG
+		.in(outM),
+		.load(loadIOE),
 		.out(inIOE)
 	);
 
