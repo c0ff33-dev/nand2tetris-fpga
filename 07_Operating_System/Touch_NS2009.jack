@@ -1,0 +1,82 @@
+/** A library to read touch events from the resistive touch panel controller
+ * AR1021.*/
+
+// Relevant docs start at page 18
+// returns 0x4D if read when no data to return
+// inter-byte delay of ~50μs (1250 cycles)
+// touch report = SDO: PEN, X_lo, X_hi, Y_lo, T_hi (5 bytes)
+//  PEN [7:0]: 1------P, P=0/1 pen up/down
+// X_lo [7:0]: 0XXXXXXX, X6-X0
+// X_hi [7:0]: 000XXXXX, X11-X7
+// Y_lo [7:0]: 0YYYYYYY, X6-X0
+// Y_hi [7:0]: 000YYYYY, X11-X7
+// command format: header, size, data, [...] // size = bytes after this byte
+// response: header, size, status, command, [data], [...]
+// status: 0x00 success, 0x01 bad command, 0x03 bad header, 0x04 timeout, 0xFC cancel calibration
+// ENABLE_TOUCH = 0x55, 0x01, 0x12 // response = 0x55, 0x02, 0x00, 0x12
+// DISABLE_TOUCH = 0x55, 0x01, 0x13 // response = 0x55, 0x02, 0x00, 0x13
+// recommended to send DISABLE_TOUCH and wait 50ms before sending commands
+// command timeout after ~100 ms (minimum 4 byte response)
+// sleep cycle will commence after 10000ms but should wake on its own with input/cmd
+
+class Touch{
+    static int RTP, x_coord, y_coord, pen;
+
+    function void init() {
+        let RTP = 4106;
+        return;
+    }
+
+    /** writes 8 bits of c to RTP and returns the response of RTP.
+     *  also responsible for the inter byte delay of ~50μs */
+    function int writeRTP(int c) {
+        // busy=0x8000(+), else byte=0x0-0xFF
+        var int rx;        
+        let RTP[0] = c; // start RTP_SCK
+        while (RTP[0] < 0) {
+            let rx = RTP[0]; // read RTP
+        }
+        do Sys.wait(1); // wait before clocking next byte
+        return rx;
+    }
+
+    /** trys to read a valid touch event report. returns true on success.
+     *  returns false, if no valid touch event is available. */
+    function boolean getEvent() {
+        // read in 5 bytes and update internal fields if valid
+        // else last report is retained
+        var int loX, hiX, loY, hiY, initial;
+        
+        // screen initial byte for 0x4D (no data)
+        let initial = Touch.writeRTP(0);
+        if (initial = 77) {
+            // TODO: not sure the remaining 4 bytes need to be cycled
+            return false;
+        }
+        let loX = Touch.writeRTP(0);
+        let hiX = Touch.writeRTP(0);
+        let loY = Touch.writeRTP(0);
+        let hiY = Touch.writeRTP(0);
+        
+        // TODO: add a note to docs if shift logic actually needed here
+        let pen = initial - 128; // 1------P
+        let x_coord = Util.shiftByteLeft(hiX, loX);
+        let y_coord = Util.shiftByteLeft(hiY, loY);
+        return true;
+    }
+
+    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    function int getX() {
+        return x_coord;
+    }
+
+    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    function int getY() {
+        return y_coord;
+    }
+
+    /** returns the pen value (1 = down, 0 = up) of the last touch event report */
+    function boolean getPen() {
+        return pen;
+    }
+}
