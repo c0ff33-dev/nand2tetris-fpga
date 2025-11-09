@@ -1,6 +1,13 @@
 /** A library to read touch events from the resistive touch panel controller
  * NS2009.*/
 
+// write command (single byte, MSB first): C3, C2, C1, C0, x, PD0, M, x
+// C3-C0: ADC (analogue to digital converter) config
+// PD0 (PENIRQ/touch read): 0=enabled, 1=disabled
+// M: 0 = 12 bit mode, 1 = 8 bit mode
+
+// read command (two bytes, MSB first): 12 bits padded with 4 LSB 0s
+
 class Touch{
     static int RTP, x_coord, y_coord, pen;
 
@@ -62,3 +69,43 @@ class Touch{
         return pen;
     }
 }
+
+// "commands"
+// #define NS2009_READ_X 0xC0 // 11000000
+// #define NS2009_READ_Y 0xD0 // 11010000
+// #define NS2009_READ_Z 0xE0 // 11100000
+
+// void NS2009::Scan ()
+// {
+//   CheckTouched ();
+//   RawX = ReadRegister(NS2009_READ_X);
+//   X = Map_Data (RawX, MinX, MaxX, 0, SCREEN_SIZE_X);
+//   RawY = ReadRegister(NS2009_READ_Y);
+//   Y = Map_Data (RawY, MinY, MaxY, 0, SCREEN_SIZE_Y);
+// 
+//   // FlipX=false, FlipY=true
+//   if (FlipX)
+//     X = SCREEN_SIZE_X - X;
+//   if (FlipY)
+//     Y = SCREEN_SIZE_Y - Y;
+// }
+
+// bool NS2009::CheckTouched ()
+// {
+//   do
+//   {
+//     RawZ = ReadRegister(NS2009_READ_Z);
+//   }
+//   while (RawZ == 0xFFF);  // sometimes the I2C reading gives a false positive by returning only ones ==> 0xFFF = 4095
+//   Touched = (RawZ > THRESHOLD_Z);
+//   return Touched;
+// }
+
+// uint16_t Map_Data (uint16_t Data, uint16_t InMin, uint16_t InMax, uint16_t OutMin, uint16_t OutMax)
+// {
+//   if (Data < InMin)
+//     Data = InMin;
+//   if (Data > InMax)
+//     Data = InMax;
+//   return (uint16_t)(((uint32_t)(Data - InMin) * (OutMax - OutMin)) / (InMax - InMin)+ OutMin);
+// }

@@ -120,11 +120,10 @@ module RTP_tb();
         tb_mdata[1] = $random; // cmd byte
         tb_mdata[2] = 8'h91; // read cmd
         
-        // high byte normally won't exceed 0x0F for 12 bit ADC
-        // and can't exceed 0x7F without overwriting the busy bit
+        // delivers 12 bits serially MSB first and pads the last 4 bits
         tb_rnd_nibble = $random;
-        tb_mdata[3] = {4'd0,tb_rnd_nibble}; // read bytes
-        tb_mdata[4] = $random;
+        tb_mdata[3] = $random; // read bytes
+        tb_mdata[4] = {tb_rnd_nibble,4'd0};
     end
 
     // generate tick
@@ -285,7 +284,11 @@ module RTP_tb();
                         2: begin
                             scl_cmp <= 1;                                 // SCL high for master NACK
                             tb_state <= IDLE;
-                            out_cmp <= {tb_mdata[tb_midx-1],tb_shiftreg}; // 2nd byte shifted, done
+                            out_cmp <= {
+                                4'd0,
+                                tb_mdata[tb_midx-1],
+                                tb_shiftreg[7:4]
+                            };
                             busy_cmp <= 0;                                // clear busy
                             tb_shiftreg <= 0;
                         end
@@ -299,8 +302,8 @@ module RTP_tb();
     task check;
         #2
         if ((tb_busy != busy_cmp) || (tb_out !== out_cmp) || (SDA != sda_cmp) || (SCL != scl_cmp)) begin
-            // $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
-            //           tb_clk, tb_load, tb_in, tb_out, tb_busy, SDA, SCL);
+            $display("FAIL: tb_clk=%b, tb_load=%b, tb_in=%02h, tb_out=%02h, tb_busy=%b",
+                      tb_clk, tb_load, tb_in, tb_out, tb_busy, SDA, SCL);
             fail = 1;
         end
     endtask

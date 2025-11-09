@@ -205,7 +205,11 @@ always @(posedge clk) begin
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        _out <= {hi_byte,lo_byte};      // first byte shifted in, still busy
+                        _out <= {                       // shuffle the bytes back into a 16 bit integer
+                            4'd0,                       // shift the padded bits to the top
+                            hi_byte,                    // high byte as received   
+                            lo_byte[7:4]                // low byte upper nibble
+                        };
                         state <= IDLE;
                         rw <= 0;
                     end
