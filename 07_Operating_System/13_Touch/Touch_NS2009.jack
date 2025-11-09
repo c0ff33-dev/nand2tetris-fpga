@@ -1,23 +1,19 @@
 /** A library to read touch events from the resistive touch panel controller
  * NS2009.*/
 
-// write command (single byte, MSB first): C3, C2, C1, C0, x, PD0, M, x
-// C3-C0: ADC (analogue to digital converter) config
-// PD0 (PENIRQ/touch read): 0=enabled, 1=disabled
-// M: 0 = 12 bit mode, 1 = 8 bit mode
-
-// read command (two bytes, MSB first): 12 bits padded with 4 LSB 0s
-
 class Touch{
     static int RTP, x_coord, y_coord, pen;
+    static int read_x_cmd, read_y_cmd, read_z_cmd;
 
     function void init() {
         let RTP = 4106;
+        let read_x_cmd = 192; // 0xC0 (11000000)
+        let read_y_cmd = 208; // 0xD0 (11010000)
+        let read_z_cmd = 224; // 0xE0 (11100000)
         return;
     }
 
-    /** writes 8 bits of c to RTP and returns the response of RTP.
-     *  also responsible for the inter byte delay of ~50μs */
+    /** writes 8 bits of c to RTP */
     function int writeRTP(int c) {
         // busy=0x8000(+), else byte=0x0-0xFF
         var int rx;        
@@ -25,32 +21,12 @@ class Touch{
         while (RTP[0] < 0) {
             let rx = RTP[0]; // read RTP
         }
-        do Sys.wait(1); // wait before clocking next byte
         return rx;
     }
 
     /** trys to read a valid touch event report. returns true on success.
      *  returns false, if no valid touch event is available. */
     function boolean getEvent() {
-        // read in 5 bytes and update internal fields if valid
-        // else last report is retained
-        var int loX, hiX, loY, hiY, initial;
-        
-        // screen initial byte for 0x4D (no data)
-        let initial = Touch.writeRTP(0);
-        if (initial = 77) {
-            // TODO: not sure the remaining 4 bytes need to be cycled
-            return false;
-        }
-        let loX = Touch.writeRTP(0);
-        let hiX = Touch.writeRTP(0);
-        let loY = Touch.writeRTP(0);
-        let hiY = Touch.writeRTP(0);
-        
-        // TODO: add a note to docs if shift logic actually needed here
-        let pen = initial - 128; // 1------P
-        let x_coord = Util.shiftByteLeft(hiX, loX);
-        let y_coord = Util.shiftByteLeft(hiY, loY);
         return true;
     }
 
@@ -69,11 +45,6 @@ class Touch{
         return pen;
     }
 }
-
-// "commands"
-// #define NS2009_READ_X 0xC0 // 11000000
-// #define NS2009_READ_Y 0xD0 // 11010000
-// #define NS2009_READ_Z 0xE0 // 11100000
 
 // void NS2009::Scan ()
 // {
