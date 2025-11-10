@@ -169,12 +169,12 @@ module HACK(
 	// UART_RX (4099) @ 115200 baud (~14KB/sec)
 	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
 	// W: 1 = clear data register
-	UartRX uartRX(
-		.clk(clk),
-		.clear(loadIO3),
-		.RX(UART_RX), // serial rx bit (pin)
-		.out(inIO3) // memory map 
-	);
+	// UartRX uartRX(
+	// 	.clk(clk),
+	// 	.clear(loadIO3),
+	// 	.RX(UART_RX), // serial rx bit (pin)
+	// 	.out(inIO3) // memory map 
+	// );
 
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
