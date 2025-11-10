@@ -72,4 +72,5 @@ arduino-cli lib install "Adafruit GFX Library@1.2.3"
 wget https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip -O SPIMemory-2.2.0.zip
 unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
 
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/the_admin/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
 arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/the_admin/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
