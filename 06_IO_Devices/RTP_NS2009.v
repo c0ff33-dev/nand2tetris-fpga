@@ -40,7 +40,7 @@ always @(posedge clk) begin
     end
 end
 
-// FIXME: still having congestion issues
+// TODO: revert congestion commit - redoing FSM is FUTURE task (if ever)
 // decouple output updates from FSM (pnr congestion issues)
 reg [15:0] mid_out = 0;
 reg [15:0] final_out = 0;

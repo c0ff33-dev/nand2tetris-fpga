@@ -31,10 +31,20 @@ class Main {
     }
 
     function void rtp_main() {
-        var int x;
-        let x = Touch.getX();
-        do UART.writeChar(x);
+        var int x,y,z;
 
+        while(true)  {
+            let x = Touch.getX();
+            do UART.writeChar(x);
+            let y = Touch.getY();
+            do UART.writeChar(y);
+            let z = Touch.getPen();
+            do UART.writeChar(z);
+            
+            do UART.writeChar(255); // 0xFF
+            do GPIO.writeLed(2);
+            do Sys.wait(1000); // 1ms
+        }
         return;
     }
 }

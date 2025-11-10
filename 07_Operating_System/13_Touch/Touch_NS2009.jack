@@ -1,5 +1,5 @@
 /** A library to read touch events from the resistive touch panel controller
- * NS2009.*/
+ * NS2009. */
 
 class Touch{
     static int RTP, x_coord, y_coord, pen;
@@ -7,9 +7,9 @@ class Touch{
 
     function void init() {
         let RTP = 4106;
-        let set_x_reg = 192; // 0xC0 (11000000)
-        let set_y_reg = 208; // 0xD0 (11010000)
-        let set_z_reg = 224; // 0xE0 (11100000)
+        let set_x_reg = 192; // 0xC0 (11000000), in[8]=0 for write
+        let set_y_reg = 208; // 0xD0 (11010000), in[8]=0 for write
+        let set_z_reg = 224; // 0xE0 (11100000), in[8]=0 for write
         let read_cmd = 256;  // in[8]=1 for read
         return;
     }
@@ -44,11 +44,19 @@ class Touch{
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getY() {
+        var int _;
+        let _ = Touch.writeRTP(set_y_reg);
+        let y_coord = Touch.writeRTP(read_cmd);
+        // TODO: mapping (same range apparently)
         return y_coord;
     }
 
     /** returns the pen value (1 = down, 0 = up) of the last touch event report */
     function boolean getPen() {
+        var int _;
+        let _ = Touch.writeRTP(set_z_reg);
+        let pen = Touch.writeRTP(read_cmd);
+        // TODO: mapping (same range apparently)
         return pen;
     }
 }
