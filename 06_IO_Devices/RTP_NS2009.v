@@ -13,8 +13,8 @@ module RTP (
     output wire [15:0]  out   // out[15]=busy, [7:0]=data (if read)
 );
 
-// 25 MHz / 400 KHz = ~31 clk cycles per SCL
-localparam integer DIVIDER = 25_000_000 / (400_000 * 2); // x2 for tick/tock
+// 25 MHz / 100 KHz = ~31 clk cycles per SCL
+localparam integer DIVIDER = 25_000_000 / (100_000 * 2); // x2 for tick/tock
 
 reg [9:0] clk_cnt;
 reg tick; // SCL clock: tick/tock every DIVIDER clk cycles

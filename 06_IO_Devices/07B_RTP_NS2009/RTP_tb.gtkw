@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Tue Nov 11 07:32:59 2025
+[*] Wed Nov 12 05:47:32 2025
 [*]
 [dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07B_RTP_NS2009/RTP_tb.vcd"
-[dumpfile_mtime] "Tue Nov 11 07:32:38 2025"
-[dumpfile_size] 600015
+[dumpfile_mtime] "Wed Nov 12 05:44:58 2025"
+[dumpfile_size] 1188675
 [savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/07B_RTP_NS2009/RTP_tb.gtkw"
 [timestart] 0
 [size] 2560 1369
 [pos] 2666 97
-*-24.870138 236520000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+*-25.777029 157500000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] RTP_tb.
 [sst_width] 214
 [signals_width] 207
@@ -26,6 +26,9 @@ RTP_tb.rtp.data[7:0]
 @28
 RTP_tb.rtp.SCL
 RTP_tb.rtp.SDA
+RTP_tb.rtp.sda_oe
+@29
+RTP_tb.tb_sda_drv
 @200
 -OUT
 @22
@@ -46,5 +49,7 @@ RTP_tb.tb_shiftreg[7:0]
 RTP_tb.tb_midx[2:0]
 @28
 RTP_tb.fail
+@24
+RTP_tb.tb_n[31:0]
 [pattern_trace] 1
 [pattern_trace] 0

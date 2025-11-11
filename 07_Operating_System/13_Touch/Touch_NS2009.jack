@@ -37,6 +37,7 @@ class Touch{
     function int getX() {
         var int _;
         let _ = Touch.writeRTP(set_x_reg);
+        do Sys.wait(1); // 1ms
         let x_coord = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return x_coord;
@@ -46,6 +47,7 @@ class Touch{
     function int getY() {
         var int _;
         let _ = Touch.writeRTP(set_y_reg);
+        do Sys.wait(1); // 1ms
         let y_coord = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return y_coord;
@@ -55,6 +57,7 @@ class Touch{
     function boolean getPen() {
         var int _;
         let _ = Touch.writeRTP(set_z_reg);
+        do Sys.wait(1); // 1ms
         let pen = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return pen;

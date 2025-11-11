@@ -1,6 +1,28 @@
 `timescale 10ns/1ns
 `default_nettype none
 
+// 100/400 KHz timings: 25MHz = 1 clk = 40ns = 1/25μs (25 clk/μs)
+// note: these are NOT evenly divided in standard vs fast mode!
+// generalized into rough timing buckets
+
+// free time between STOP/START: 4.7μs/1.3μs (~118/~32 clk cycles)
+// START/STOP setup/hold: 4.7μs/1.3μs (~118/~118 clk cycles)
+// SCL/SDA high/low: 4.7μs/1.3μs (~118/~32 clk cycles)
+// in fast mode SCL is 1/3 high, 2/3 low but NS2009 is plenty fast
+
+// data bits after START (high SDA=data)
+// - SCL/SDA low to high (same timing)
+// - SDA sampled during SCL high
+// - SDA shift during SCL low
+
+// FIXME: min 0 SCL freq so can be arbitrarily slow
+// FIXME: 125 clk = 5μs = 1 SCL tick
+// FIXME: tried swapping SDA/SCL wires but it went to 0xFF (as expected if not driven so its reacting to SCL)
+// FIXME: 0x5A/0x55 style output is still too uniform though to be chance
+
+// TODO: START/STOP_COND is one tick each for setup/hold so this is technically clipping (but unlikely to break)
+// TODO: padding the end with ~2 SCL ticks (setup/hold) is better than using a software timer for free bus time (if room)
+
 module RTP_tb();
     reg tb_clk = 0;
     always #2 tb_clk = ~tb_clk; // 25 MHz
@@ -69,7 +91,7 @@ module RTP_tb();
     // master: trigger write command followed by read command
     reg [31:0] tb_n = 0;
     reg tb_write = 1;
-    wire trigger = (tb_n == 20) || (tb_n == 5000);
+    wire trigger = (tb_n == 20) || (tb_n == TB_DIVIDER*90);
 
     always @(posedge tb_clk) begin
         if (trigger) begin
@@ -99,8 +121,7 @@ module RTP_tb();
         READ_BYTE   = 4'd4,
         READ_BYTE2  = 4'd5;
 
-    // 400 KHz (fast mode) = 25_000_000 / 400_000 = ~62 clk cycles per SCL (31 tick/tock)
-    localparam TB_DIVIDER = 31;
+    localparam TB_DIVIDER = 125; // 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL
     reg [9:0] tb_clk_cnt = 0;
     reg tb_tick = 0;
     reg sda_cmp = 1;
@@ -315,7 +336,7 @@ module RTP_tb();
         $display("------------------------");
         $display("Testbench: RTP");
 
-        for (tb_n = 0; tb_n < 16000; tb_n = tb_n + 1) begin
+        for (tb_n = 0; tb_n < 30000; tb_n = tb_n + 1) begin
             check();
         end
 
