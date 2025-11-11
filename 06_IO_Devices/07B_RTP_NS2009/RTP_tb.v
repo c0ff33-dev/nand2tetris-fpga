@@ -99,8 +99,8 @@ module RTP_tb();
         READ_BYTE   = 4'd4,
         READ_BYTE2  = 4'd5;
 
-    // 400 KHz (fast mode) = 25_000_000 / 400_000 = ~62 clk cycles per SCL
-    localparam TB_DIVIDER = 62;
+    // 400 KHz (fast mode) = 25_000_000 / 400_000 = ~62 clk cycles per SCL (31 tick/tock)
+    localparam TB_DIVIDER = 31;
     reg [9:0] tb_clk_cnt = 0;
     reg tb_tick = 0;
     reg sda_cmp = 1;
