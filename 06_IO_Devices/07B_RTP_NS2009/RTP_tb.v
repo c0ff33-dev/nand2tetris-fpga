@@ -15,10 +15,9 @@
 // - SDA sampled during SCL high
 // - SDA shift during SCL low
 
-// FIXME: min 0 SCL freq so can be arbitrarily slow
-// FIXME: 125 clk = 5μs = 1 SCL tick
 // FIXME: tried swapping SDA/SCL wires but it went to 0xFF (as expected if not driven so its reacting to SCL)
 // FIXME: 0x5A/0x55 style output is still too uniform though to be chance
+// FIXME: no change in output at < 100 KHz speeds
 
 // TODO: START/STOP_COND is one tick each for setup/hold so this is technically clipping (but unlikely to break)
 // TODO: padding the end with ~2 SCL ticks (setup/hold) is better than using a software timer for free bus time (if room)

@@ -19,12 +19,9 @@ class Touch{
     function int writeRTP(int c) {
         // busy=0x8000(+), else 12 bit ADC data 0x0-0xFFF (0-4095)
         // response is zero for write commands
-        var int rx;
         let RTP[0] = c; // start RTP_SCL
-        while (RTP[0] < 0) {
-            let rx = RTP[0]; // read RTP
-        }
-        return rx;
+        while (RTP[0] < 0) {} // wait, don't save yet or it'll read the busy bit
+        return RTP[0];
     }
 
     /** trys to read a valid touch event report. returns true on success.
