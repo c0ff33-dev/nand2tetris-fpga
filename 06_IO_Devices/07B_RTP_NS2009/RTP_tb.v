@@ -19,7 +19,9 @@
 // FIXME: 0x5A/0x55 style output is still too uniform though to be chance
 // FIXME: no change in output at < 100 KHz speeds
 // FIXME: no change in output with change in target register (but 0xFF if wrong device addr so thats something)
+// FIXME: test bench slightly broken, as expected slower duty cycle had no effect
 
+// TODO: test for slave ACK - more likely to be a read than write issue if SEND_ADDR works
 // TODO: START/STOP_COND is one tick each for setup/hold so this is technically clipping (but unlikely to break)
 // TODO: padding the end with ~2 SCL ticks (setup/hold) is better than using a software timer for free bus time (if room)
 
@@ -91,7 +93,7 @@ module RTP_tb();
     // master: trigger write command followed by read command
     reg [31:0] tb_n = 0;
     reg tb_write = 1;
-    wire trigger = (tb_n == 20) || (tb_n == TB_DIVIDER*90);
+    wire trigger = (tb_n == 20) || (tb_n == TB_DIVIDER*120);
 
     always @(posedge tb_clk) begin
         if (trigger) begin
@@ -185,9 +187,17 @@ module RTP_tb();
 
             START_COND: begin // 1
                 if (tb_tick) begin
-                    scl_cmp <= 1;   // SCL high
-                    sda_cmp <= 0;   // SDA low
-                    tb_state <= SEND_ADDR;
+                    case (tb_phase)
+                        0: begin
+                            scl_cmp <= 1;   // SCL high
+                            sda_cmp <= 0;   // SDA low
+                            tb_phase <= 1;
+                        end
+                        1: begin
+                            tb_phase <= 0;
+                            tb_state <= SEND_ADDR;
+                        end                       
+                    endcase
                 end
             end
 
@@ -196,20 +206,23 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                               // SCL low
+                            tb_phase <= 1;
+                        end
+                        1: begin
                             if (tb_bit_cnt > 0)
                                 sda_cmp <= tb_shiftreg[tb_bit_cnt-1];   // SDA=data (skip 9th bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                           // slave ACK (drive low)
-                                tb_phase <= 2;
+                                tb_phase <= 3;
                             end else
-                                tb_phase <= 1;
+                                tb_phase <= 2;
                         end
-                        1: begin
+                        2: begin
                             scl_cmp <= 1;               // SCL high (data bit)
                             tb_phase <= 0;
                         end
-                        2: begin
+                        3: begin
                             scl_cmp <= 1;               // SCL high (slave ACK)
                             tb_bit_cnt <= 8;
                             if (tb_in[8])
@@ -228,21 +241,24 @@ module RTP_tb();
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
-                            scl_cmp <= 0;                               // SCL low
+                            scl_cmp <= 0;
+                            tb_phase <= 1;                               // SCL low
+                        end
+                        1: begin
                             if (tb_bit_cnt > 0)
                                 sda_cmp <= tb_shiftreg[tb_bit_cnt-1];   // SDA=data (skip 9th bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                           // slave ACK (drive low)
-                                tb_phase <= 2;
+                                tb_phase <= 3;
                             end else
-                                tb_phase <= 1;
+                                tb_phase <= 2;
                         end
-                        1: begin
+                        2: begin
                             scl_cmp <= 1;                      // SCL high (data bit)
                             tb_phase <= 0;
                         end
-                        2: begin
+                        3: begin
                             scl_cmp <= 1;                      // SCL high (slave ACK)
                             sda_cmp <= 1;                      // release SDA
                             out_cmp <= 0;                      // update output with response byte
@@ -259,21 +275,24 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                           // SCL low
+                            tb_phase <= 1;
+                        end
+                        1: begin
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                       // master ACK (drive low)
-                                tb_phase <= 2;
+                                tb_phase <= 3;
                             end else begin
-                                tb_phase <= 1;
+                                tb_phase <= 2;
                                 if (tb_bit_cnt > 0)
                                     sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
                             end
                         end
-                        1: begin
+                        2: begin
                             scl_cmp <= 1;                           // SCL high (data bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             tb_phase <= 0;
                         end
-                        2: begin
+                        3: begin
                             scl_cmp <= 1;                           // SCL high (master ACK)
                             tb_shiftreg <= tb_mdata[tb_midx];
                             out_cmp <= {8'h80,tb_mdata[tb_midx-1]}; // first byte shifted in, still busy
@@ -290,20 +309,23 @@ module RTP_tb();
                     case (tb_phase)
                         0: begin
                             scl_cmp <= 0;                                 // SCL low
+                            tb_phase <= 1;
+                        end
+                        1: begin
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 1;                             // master NACK (SDA high)
-                                tb_phase <= 2;
+                                tb_phase <= 3;
                             end else
-                                tb_phase <= 1;
+                                tb_phase <= 2;
                                 if (tb_bit_cnt > 0)
                                     sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
                         end
-                        1: begin
+                        2: begin
                             scl_cmp <= 1;                                 // SCL high (data bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             tb_phase <= 0;
                         end
-                        2: begin
+                        3: begin
                             scl_cmp <= 1;                                 // SCL high for master NACK
                             tb_state <= IDLE;
                             out_cmp <= {
@@ -337,7 +359,7 @@ module RTP_tb();
         $display("------------------------");
         $display("Testbench: RTP");
 
-        for (tb_n = 0; tb_n < 30000; tb_n = tb_n + 1) begin
+        for (tb_n = 0; tb_n < 60000; tb_n = tb_n + 1) begin
             check();
         end
 
