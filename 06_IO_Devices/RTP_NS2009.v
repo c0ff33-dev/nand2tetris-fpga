@@ -40,7 +40,6 @@ always @(posedge clk) begin
     end
 end
 
-// TODO: is there actually a pull-up resistor on SDA? what does adafruit do?
 // 1 = drive low, 0 = release (pulled high if not driven)
 reg sda_oe = 0;         
 reg scl_oe = 0;
@@ -152,6 +151,7 @@ always @(posedge clk) begin
             end
         end
 
+        // FIXME: SDA reads possibly too close to SCL transition?
         READ_BYTE: begin // 4
             if (tick) begin
                 case (phase)

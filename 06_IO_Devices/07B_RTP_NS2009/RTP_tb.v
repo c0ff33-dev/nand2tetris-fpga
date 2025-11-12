@@ -18,6 +18,7 @@
 // FIXME: tried swapping SDA/SCL wires but it went to 0xFF (as expected if not driven so its reacting to SCL)
 // FIXME: 0x5A/0x55 style output is still too uniform though to be chance
 // FIXME: no change in output at < 100 KHz speeds
+// FIXME: no change in output with change in target register (but 0xFF if wrong device addr so thats something)
 
 // TODO: START/STOP_COND is one tick each for setup/hold so this is technically clipping (but unlikely to break)
 // TODO: padding the end with ~2 SCL ticks (setup/hold) is better than using a software timer for free bus time (if room)
@@ -261,10 +262,11 @@ module RTP_tb();
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                       // master ACK (drive low)
                                 tb_phase <= 2;
-                            end else
+                            end else begin
                                 tb_phase <= 1;
                                 if (tb_bit_cnt > 0)
                                     sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
+                            end
                         end
                         1: begin
                             scl_cmp <= 1;                           // SCL high (data bit)
