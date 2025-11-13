@@ -141,10 +141,14 @@ module HACK(
 	// LED 1/2 (4096), sharing 1 x 2 bit register
 	Register led(
 		.clk(clk),
-		.in(outM),
-		.load(loadIO0),
+		// .in(outM),
+		// .load(loadIO0),
+		.in(debug_led_out),
+		.load(debug_led_load),
 		.out(outLED) // 16 bit output going back to memory
 	);
+	wire [15:0] debug_led_out;
+	wire debug_led_load;
 	assign LED = outLED[1:0]; // 2 bit output (pin)
 
 	// BUT 1/2 (4097), sharing 1 x 2 bit register
@@ -276,7 +280,9 @@ module HACK(
 		.in(outM),
 		.out(inIOA),
 		.SDA(RTP_SDA),
-		.SCL(RTP_SCL)
+		.SCL(RTP_SCL),
+		.led_load(debug_led_load),
+		.led_out(debug_led_out)
 	);
 
 	// additional registers

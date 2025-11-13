@@ -10,7 +10,9 @@ module RTP (
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
     inout  wire        SDA,   // I2C data line (inout to allow open-drain)
     inout  wire        SCL,   // I2C clock (inout to allow open-drain)
-    output wire [15:0]  out   // out[15]=busy, [7:0]=data (if read)
+    output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
+    output reg led_load = 0,
+    output reg [15:0] led_out = 0
 );
 
 // 25 MHz / 100 KHz = ~31 clk cycles per SCL
@@ -61,6 +63,27 @@ reg [7:0] addr = 0, data = 0;
 reg [3:0] bit_cnt = 0;
 reg [1:0] phase = 0; // steps in each state (varies)
 reg rw = 0;
+
+// debug FSM
+// - can't sample directly at edge, some noise during SCL low
+// - clean ACK recv'd during SEND_ADDR/phase 3
+// - clean ACK recv'd during WRITE_BYTE/phase 3
+always @(posedge clk) begin
+    // poll throughout the entire SCL period
+    // if (state==SEND_ADDR && phase==3) begin
+    if (state==WRITE_BYTE && phase==3) begin
+        // check for ACK
+        if (~SDA && SCL && led_out==0) begin
+            led_load <= 1;
+            led_out <= 1;
+        end
+        // check for SDA flapping
+        if (SDA && SCL && led_out>=1) begin
+            led_load <= 1;
+            led_out <= 3;
+        end
+    end
+end
 
 // state machine: load/shift low, sample high, release for slave ACK/response
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
