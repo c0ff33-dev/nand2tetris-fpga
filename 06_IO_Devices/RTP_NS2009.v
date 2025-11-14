@@ -11,11 +11,11 @@ module RTP (
     inout  wire        SDA,   // I2C data line (inout to allow open-drain)
     inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
-    output reg         led_load = 0,
+    output reg         led_load = 1,
     output reg [15:0]  led_out = 0
 );
 
-// 25 MHz / 100 KHz = ~31 clk cycles per SCL
+// 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL (currently 125/100 KHz)
 localparam integer DIVIDER = 25_000_000 / (100_000 * 2); // x2 for tick/tock
 
 reg [9:0] clk_cnt;
@@ -70,14 +70,13 @@ reg [3:0] bit_cnt = 0;
 reg [1:0] phase = 0; // steps in each state (varies)
 reg rw = 0;
 
-// debug FSM
+// FIXME: debug FSM
 // - can't sample directly at edge, some noise during SCL low
-// - clean ACK recv'd during SEND_ADDR/phase 3
-// - clean ACK recv'd during WRITE_BYTE/phase 3
+// - clean ACK recv'd during SEND_ADDR (read/write)
+// - clean ACK recv'd during WRITE_BYTE
 // always @(posedge clk) begin
 //     // poll throughout the entire SCL period
-//     if (state==SEND_ADDR && phase==2) begin
-//     // if (state==WRITE_BYTE && phase==2'd2) begin
+//     if (state==SEND_ADDR && phase==2 && addr[7]==1) begin
 //         // check for ACK
 //         if (~SDA && SCL && led_out==0) begin
 //             led_load <= 1;
@@ -91,9 +90,45 @@ reg rw = 0;
 //     end
 // end
 
+// FIXME: SDA flaps throughout READ_BYTE sampling phase?
+// reg set = 0;
+// reg sda = 0;
+// always @(posedge clk) begin
+//     if (state==READ_BYTE && phase==1) begin
+//         if (half_tick) begin
+//             set <= 1;
+//             sda <= SDA;
+//         end else if (set) begin
+//             if (sda != SDA) begin
+//                 led_load <= 1;
+//                 led_out <= 3;
+//             end
+//         end
+//     end
+// end
+
+// FIXME: SDA flaps through IDLE?!
+// reg set = 0;
+// reg sda = 0;
+// reg scl = 0;
+// always @(posedge clk) begin
+//     if (state==IDLE && half_tick) begin
+//         set <= 1;
+//         sda <= SDA;
+//         scl <= SCL;
+//         if (set) begin
+//             if (sda != SDA || scl != SCL) begin
+//                 led_load <= 1;
+//                 led_out <= 3;
+//             end
+//         end
+//     end
+// end
+
 // state machine: load/shift low, sample high, release for slave ACK/response
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
+reg loaded = 0;
 always @(posedge clk) begin
     case (state)
         IDLE: begin // 0
@@ -108,9 +143,19 @@ always @(posedge clk) begin
                     data <= in[7:0]; // command byte for write
                 else
                     data <= 0;       // unused for read
-                state <= START_COND;
                 bit_cnt <= 8;
+                loaded <= 1;
+                state <= START_COND;
             end
+            
+            // TODO: "should" test all line releases actually raise but unlikely to be an issue at low speeds
+            // FIXME: both lines/sides are electrically high but never hits this condition if checking both?
+            // wait for lines to rise
+            // if (loaded && SCL && SDA) begin
+            //     loaded <= 0;
+            //     led_out <= 1;
+            //     // state <= START_COND;
+            // end
         end
 
         START_COND: begin // 1

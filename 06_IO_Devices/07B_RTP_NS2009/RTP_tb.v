@@ -16,6 +16,8 @@
 // - SDA shift during SCL low
 
 // FIXME: tried swapping SDA/SCL wires but it went to 0xFF (as expected if not driven so its reacting to SCL)
+// FIXME: actively driving SCL also results in 0xFF
+// FIXME: basically any sampling of SDA outside of the SEND_ADDR ACK window(s) seems broken, no change using SCL midpoint
 // FIXME: 0x5A/0x55 style output is still too uniform though to be chance
 // FIXME: no change in output at < 100 KHz speeds
 // FIXME: no change in output with change in target register (but 0xFF if wrong device addr so thats something)
@@ -164,6 +166,7 @@ module RTP_tb();
     end
 
     // state machine: load/shift low, sample high
+    reg tb_loaded = 0;
     always @(posedge tb_clk) begin
         case (tb_state)
             IDLE: begin // 0
@@ -174,13 +177,20 @@ module RTP_tb();
                     // busy from load [t+1]
                     busy_cmp <= 1; 
                     out_cmp <= 16'h8000;
-                    tb_state <= START_COND;
 
                     // update shift on load
                     tb_shiftreg <= tb_mdata[tb_midx];
                     tb_midx <= tb_midx + 1;
                     tb_bit_cnt <= 8;
+
+                    // tb_loaded <= 1;
+                    tb_state <= START_COND;
                 end
+
+                // if (tb_loaded) begin
+                //     // tb_state <= START_COND;
+                //     tb_loaded <= 0;
+                // end
             end
 
             START_COND: begin // 1
