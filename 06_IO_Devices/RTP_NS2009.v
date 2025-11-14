@@ -11,8 +11,8 @@ module RTP (
     inout  wire        SDA,   // I2C data line (inout to allow open-drain)
     inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
-    output reg led_load = 0,
-    output reg [15:0] led_out = 0
+    output reg         led_load = 0,
+    output reg [15:0]  led_out = 0
 );
 
 // 25 MHz / 100 KHz = ~31 clk cycles per SCL
@@ -20,6 +20,7 @@ localparam integer DIVIDER = 25_000_000 / (100_000 * 2); // x2 for tick/tock
 
 reg [9:0] clk_cnt;
 reg tick; // SCL clock: tick/tock every DIVIDER clk cycles
+reg half_tick; // SCL clock: pulse during the middle of every SCL cycle
 reg [7:0] hi_byte = 0;
 reg [7:0] lo_byte = 0;
 reg [15:0] next_out = 0;
@@ -31,9 +32,14 @@ always @(posedge clk) begin
     if (out[15]) begin // busy
         if (clk_cnt == DIVIDER - 1) begin
             clk_cnt <= 0;
+            half_tick <= 0;
             tick <= 1'b1;
+        end else if (clk_cnt == DIVIDER/2) begin
+            half_tick <= 1'b1;
+            clk_cnt <= clk_cnt + 1;
         end else begin
             clk_cnt <= clk_cnt + 1;
+            half_tick <= 0;
             tick <= 1'b0;
         end
     end else begin
@@ -68,22 +74,22 @@ reg rw = 0;
 // - can't sample directly at edge, some noise during SCL low
 // - clean ACK recv'd during SEND_ADDR/phase 3
 // - clean ACK recv'd during WRITE_BYTE/phase 3
-always @(posedge clk) begin
-    // poll throughout the entire SCL period
-    // if (state==SEND_ADDR && phase==3) begin
-    if (state==WRITE_BYTE && phase==3) begin
-        // check for ACK
-        if (~SDA && SCL && led_out==0) begin
-            led_load <= 1;
-            led_out <= 1;
-        end
-        // check for SDA flapping
-        if (SDA && SCL && led_out>=1) begin
-            led_load <= 1;
-            led_out <= 3;
-        end
-    end
-end
+// always @(posedge clk) begin
+//     // poll throughout the entire SCL period
+//     if (state==SEND_ADDR && phase==2) begin
+//     // if (state==WRITE_BYTE && phase==2'd2) begin
+//         // check for ACK
+//         if (~SDA && SCL && led_out==0) begin
+//             led_load <= 1;
+//             led_out <= 1;
+//         end
+//         // check for SDA flapping
+//         if (SDA && SCL && led_out>=1) begin
+//             led_load <= 1;
+//             led_out <= 3;
+//         end
+//     end
+// end
 
 // state machine: load/shift low, sample high, release for slave ACK/response
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
@@ -167,14 +173,13 @@ always @(posedge clk) begin
                     2: begin
                         scl_oe <= 0;                       // SCL high (release) - slave ACK
                         state <= IDLE;
-                        next_out <= 0;                          // clear busy
+                        next_out <= 0;                     // clear busy
                         rw <= 0;
                     end
                 endcase
             end
         end
 
-        // FIXME: SDA reads possibly too close to SCL transition?
         READ_BYTE: begin // 4
             if (tick) begin
                 case (phase)
@@ -190,19 +195,23 @@ always @(posedge clk) begin
                     end
                     1: begin
                         scl_oe <= 0;                    // SCL high (release) - data bit
-                        if (bit_cnt > 0)
-                            hi_byte[bit_cnt-1] <= SDA;  // sample SDA
-                        bit_cnt <= bit_cnt - 1;
-                        phase <= 0;
+                        phase <= 0;                     // transition on full tick, sample on half-tick
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
-                        next_out <= {8'h80,hi_byte};         // first byte shifted in, still busy
+                        next_out <= {8'h80,hi_byte};    // first byte shifted in, still busy
                         bit_cnt <= 8;                   // prepare for second byte
                         state <= READ_BYTE2;
                         phase <= 0;
                     end
                 endcase
+            end
+
+            // sample SDA half way into the SCL tick
+            if (phase==1 && half_tick) begin
+                if (bit_cnt > 0)
+                    hi_byte[bit_cnt-1] <= SDA;
+                bit_cnt <= bit_cnt - 1;
             end
         end
 
@@ -221,10 +230,7 @@ always @(posedge clk) begin
                     end
                     1: begin
                         scl_oe <= 0;                    // SCL high (release) - data bit
-                        if (bit_cnt > 0)
-                            lo_byte[bit_cnt-1] <= SDA;  // sample SDA (write to lower byte out)
-                        bit_cnt <= bit_cnt - 1;
-                        phase <= 0;
+                        phase <= 0;                     // transition on full tick, sample on half-tick
                     end
                     2: begin
                         scl_oe <= 0;                    // SCL high (release) - master ACK
@@ -237,6 +243,13 @@ always @(posedge clk) begin
                         rw <= 0;
                     end
                 endcase
+            end
+
+            // sample SDA half way into the SCL tick
+            if (phase==1 && half_tick) begin
+                if (bit_cnt > 0)
+                    lo_byte[bit_cnt-1] <= SDA;
+                bit_cnt <= bit_cnt - 1;
             end
         end
     endcase
