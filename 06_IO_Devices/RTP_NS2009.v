@@ -8,11 +8,17 @@ module RTP (
     input  wire        clk,
     input  wire        load,
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
-    inout  wire        SDA,   // I2C data line (inout to allow open-drain)
-    inout  wire        SCL,   // I2C clock (inout to allow open-drain)
+    // inout  wire        SDA,   // I2C data line (inout to allow open-drain)
+    // inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
+
     output reg         led_load = 1,
-    output reg [15:0]  led_out = 0
+    output reg [15:0]  led_out = 1,
+
+    output reg sda_oe,
+    output reg scl_oe,
+    input wire sda_in,
+    input wire scl_in
 );
 
 // 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL (currently 125/100 KHz)
@@ -48,11 +54,12 @@ always @(posedge clk) begin
     end
 end
 
+// TODO: not totally convinced this is different to explicit SB_IO in synthesis
 // 1 = drive low, 0 = release (pulled high if not driven)
-reg sda_oe = 0;         
-reg scl_oe = 0;
-assign SDA = sda_oe ? 1'b0 : 1'bz;
-assign SCL = scl_oe ? 1'b0 : 1'bz;
+// reg sda_oe = 0;         
+// reg scl_oe = 0;
+// assign sda_in = sda_oe ? 1'b0 : 1'bz;
+// assign scl_in = scl_oe ? 1'b0 : 1'bz;
 
 localparam [3:0]
     IDLE        = 4'd0,
@@ -78,11 +85,11 @@ reg rw = 0;
 //     // poll throughout the entire SCL period
 //     if (state==SEND_ADDR && phase==2 && addr[7]==1) begin
 //         // check for ACK
-//         if (~SDA && SCL && led_out==0) begin
+//         if (~sda_in && scl_in && led_out==0) begin
 //             led_out <= 1;
 //         end
 //         // check for SDA flapping
-//         if (SDA && SCL && led_out>=1) begin
+//         if (sda_in && scl_in && led_out>=1) begin
 //             led_out <= 3;
 //         end
 //     end
@@ -94,12 +101,12 @@ reg rw = 0;
 // reg sda = 0;
 // always @(posedge clk) begin
 //     if (state==READ_BYTE && phase==2) begin
-//         if (!set && half_tick && SCL) begin
+//         if (!set && half_tick && scl_in) begin
 //             set <= 1;
-//             sda <= SDA;
+//             sda <= sda_in;
 //         // check it holds for the remainder of the cycle
 //         // tested with expected + forced error conditions
-//         end else if (set && SCL && sda!=SDA) begin
+//         end else if (set && scl_in && sda!=sda_in) begin
 //             set <= 2; // break if error
 //             led_out <= 3;
 //         end
@@ -111,6 +118,7 @@ reg rw = 0;
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
 reg loaded = 0;
+// wire sda_in, scl_in;
 always @(posedge clk) begin
     case (state)
         IDLE: begin // 0
@@ -127,17 +135,20 @@ always @(posedge clk) begin
                     data <= 0;       // unused for read
                 bit_cnt <= 8;
                 loaded <= 1;
-                state <= START_COND;
+                led_out <= 2;
+                // state <= START_COND;
             end
             
             // TODO: "should" test all line releases actually raise but unlikely to be an issue at low speeds
             // FIXME: both lines/sides are electrically high but never hits this condition if checking both?
+            // FIXME: works in sim so this is suspicious - explicit SB_IO didn't help
+
             // wait for lines to rise
-            // if (loaded && SCL && SDA) begin
-            //     loaded <= 0;
-            //     led_out <= 1;
-            //     // state <= START_COND;
-            // end
+            if (loaded && scl_in && sda_in) begin
+                loaded <= 0;
+                led_out <= 3;
+                state <= START_COND;
+            end
         end
 
         START_COND: begin // 1
@@ -238,9 +249,9 @@ always @(posedge clk) begin
             end
 
             // sample SDA half way into the SCL tick
-            if (phase==2 && half_tick && SCL) begin
+            if (phase==2 && half_tick && scl_in) begin
                 if (bit_cnt > 0)
-                    hi_byte[bit_cnt-1] <= SDA;
+                    hi_byte[bit_cnt-1] <= sda_in;
                 bit_cnt <= bit_cnt - 1;
             end
         end
@@ -279,9 +290,9 @@ always @(posedge clk) begin
             end
 
             // sample SDA half way into the SCL tick
-            if (phase==2 && half_tick && SCL) begin
+            if (phase==2 && half_tick && scl_in) begin
                 if (bit_cnt > 0)
-                    lo_byte[bit_cnt-1] <= SDA;
+                    lo_byte[bit_cnt-1] <= sda_in;
                 bit_cnt <= bit_cnt - 1;
             end
         end

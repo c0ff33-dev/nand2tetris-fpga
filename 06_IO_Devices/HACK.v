@@ -279,10 +279,38 @@ module HACK(
 		.load(loadIOA),
 		.in(outM),
 		.out(inIOA),
-		.SDA(RTP_SDA),
-		.SCL(RTP_SCL),
+		// .SDA(RTP_SDA),
+		// .SCL(RTP_SCL),
 		.led_load(debug_led_load),
-		.led_out(debug_led_out)
+		.led_out(debug_led_out),
+
+		.sda_oe(sda_oe),
+		.scl_oe(scl_oe),
+		.sda_in(sda_in),
+		.scl_in(scl_in)
+	);
+
+	// TODO: not totally convinced this is different to what was synthesized before
+	wire sda_oe, scl_oe;
+	wire sda_in, scl_in;
+	SB_IO #(
+		.PIN_TYPE(6'b1010_01), // 1 = input, 0 = output, bidir
+		.PULLUP(1'b1)           // enable internal pull-up if desired
+	) sda_buf (
+		.PACKAGE_PIN(RTP_SDA),
+		.OUTPUT_ENABLE(sda_oe),
+		.D_OUT_0(1'b0),        // drive 0 when OE=1
+		.D_IN_0(sda_in)
+	);
+
+	SB_IO #(
+		.PIN_TYPE(6'b1010_01),
+		.PULLUP(1'b1)
+	) scl_buf (
+		.PACKAGE_PIN(RTP_SCL),
+		.OUTPUT_ENABLE(scl_oe),
+		.D_OUT_0(1'b0),
+		.D_IN_0(scl_in)
 	);
 
 	// additional registers
