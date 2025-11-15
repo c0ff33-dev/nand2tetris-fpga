@@ -88,22 +88,23 @@ reg rw = 0;
 //     end
 // end
 
-// SDA steady during high SCL of READ_BYTE phases
-// reg set = 0;
+// SDA steady during high SCL of READ_BYTE[2] sample phase
+// from half-tick to end on every read, hw + sim both agree
+// reg [1:0] set = 0;
 // reg sda = 0;
 // always @(posedge clk) begin
-//     if (state==READ_BYTE && phase==1) begin
-//         if (half_tick && SCL) begin
+//     if (state==READ_BYTE && phase==2) begin
+//         if (!set && half_tick && SCL) begin
 //             set <= 1;
 //             sda <= SDA;
-//         end else if (set && SCL) begin
-//             if (sda != SDA) begin
-//                 set <= 2;
-//                 led_out <= 3;
-//             end
+//         // check it holds for the remainder of the cycle
+//         // tested with expected + forced error conditions
+//         end else if (set && SCL && sda!=SDA) begin
+//             set <= 2; // break if error
+//             led_out <= 3;
 //         end
 //     end else if (set==1)
-//         set <= 0;
+//         set <= 0; // reset/check every sample phase
 // end
 
 // state machine: load/shift low, sample high, release for slave ACK/response
@@ -237,7 +238,7 @@ always @(posedge clk) begin
             end
 
             // sample SDA half way into the SCL tick
-            if (phase==2 && (clk_cnt==(DIVIDER-1)) && SCL) begin
+            if (phase==2 && half_tick && SCL) begin
                 if (bit_cnt > 0)
                     hi_byte[bit_cnt-1] <= SDA;
                 bit_cnt <= bit_cnt - 1;
@@ -278,7 +279,7 @@ always @(posedge clk) begin
             end
 
             // sample SDA half way into the SCL tick
-            if (phase==2 && (clk_cnt==(DIVIDER-1)) && SCL) begin
+            if (phase==2 && half_tick && SCL) begin
                 if (bit_cnt > 0)
                     lo_byte[bit_cnt-1] <= SDA;
                 bit_cnt <= bit_cnt - 1;
