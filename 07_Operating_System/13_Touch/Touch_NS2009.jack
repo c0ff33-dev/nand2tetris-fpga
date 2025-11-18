@@ -27,14 +27,34 @@ class Touch{
     /** trys to read a valid touch event report. returns true on success.
      *  returns false, if no valid touch event is available. */
     function boolean getEvent() {
-        return true;
+        do Touch.getX();
+        do Touch.getY();
+        do Touch.getPen();
+        
+        if (pen > 25) { // not sure about sensitivity / arbitrary threshold
+            // do UART.writeChar(Util.logShiftByteRight(pen));
+            // do UART.writeChar(pen);
+            // do UART.writeChar(Util.logShiftByteRight(x_coord));
+            // do UART.writeChar(x_coord);
+            // do UART.writeChar(Util.logShiftByteRight(y_coord));
+            // do UART.writeChar(y_coord);
+            // do UART.writeChar(222); // 0xDE
+            // do UART.writeChar(173); // 0xAD
+
+            // ignore malformed data and 0xFFF touch event
+            if (x_coord > 4095 | y_coord > 4095 | pen > 4094) { 
+                return false; 
+            } else {
+                return true;
+            }
+        }
+        return false;
     }
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getX() {
         var int _;
         let _ = Touch.writeRTP(set_x_reg);
-        do Sys.wait(1); // 1ms
         let x_coord = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return x_coord;
@@ -44,7 +64,6 @@ class Touch{
     function int getY() {
         var int _;
         let _ = Touch.writeRTP(set_y_reg);
-        do Sys.wait(1); // 1ms
         let y_coord = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return y_coord;
@@ -54,7 +73,6 @@ class Touch{
     function boolean getPen() {
         var int _;
         let _ = Touch.writeRTP(set_z_reg);
-        do Sys.wait(1); // 1ms
         let pen = Touch.writeRTP(read_cmd);
         // TODO: mapping (same range apparently)
         return pen;
@@ -74,17 +92,6 @@ class Touch{
 //     X = SCREEN_SIZE_X - X;
 //   if (FlipY)
 //     Y = SCREEN_SIZE_Y - Y;
-// }
-
-// bool NS2009::CheckTouched ()
-// {
-//   do
-//   {
-//     RawZ = ReadRegister(NS2009_READ_Z);
-//   }
-//   while (RawZ == 0xFFF);  // sometimes the I2C reading gives a false positive by returning only ones ==> 0xFFF = 4095
-//   Touched = (RawZ > THRESHOLD_Z);
-//   return Touched;
 // }
 
 // uint16_t Map_Data (uint16_t Data, uint16_t InMin, uint16_t InMax, uint16_t OutMin, uint16_t OutMax)

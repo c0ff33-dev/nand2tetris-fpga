@@ -13,6 +13,8 @@
 // - SDA sampled during SCL high
 // - SDA shift during SCL low
 
+// TODO: fix/finalize RTP test bench
+
 module RTP_tb();
     reg tb_clk = 0;
     always #2 tb_clk = ~tb_clk; // 25 MHz

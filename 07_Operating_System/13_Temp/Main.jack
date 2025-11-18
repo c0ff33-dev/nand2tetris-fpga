@@ -26,34 +26,18 @@ class Main {
         
         do ScreenExt.setPencolour(ScreenExt.BLUE());
         do ScreenExt.fillScreen();
-        do GPIO.writeLed(1);
         return;
     }
 
     function void rtp_main() {
-        var int x,y,z;
-        do GPIO.writeLed(1);
-
+        var int t;
         while(true)  {
-            let z = Touch.getPen();
-            if (x > 4095 | y > 4095 | z > 4095) { do Sys.error(0); }
-
-            if (z > 100) { // not sure about sensitivity / arbitrary threshold
-                do UART.writeChar(Util.logShiftByteRight(z));
-                do UART.writeChar(z);
-                
-                let x = Touch.getX();
-                do UART.writeChar(Util.logShiftByteRight(x));
-                do UART.writeChar(x);
-                
-                let y = Touch.getY();
-                do UART.writeChar(Util.logShiftByteRight(y));
-                do UART.writeChar(y);
-                
-                do UART.writeChar(222); // 0xDE
-                do UART.writeChar(173); // 0xAD
+            let t = Touch.getEvent();
+            if (t) {
+                do GPIO.writeLed(t);
+            } else {
+                do GPIO.writeLed(1);
             }
-
         }
         return;
     }

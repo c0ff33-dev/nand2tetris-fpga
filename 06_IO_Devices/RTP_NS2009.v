@@ -2,7 +2,7 @@
 // 400 KHz I2C interface
 // 7 bit device address: 0x48 (0x90 write, 0x91 read)
 // no response other than the ACK bit for writes
-// 12 bit response for reads (two bytes, MSB first)
+// 12 bit response for reads (two bytes, MSB first, last 4 bits zero)
 
 module RTP (
     input  wire        clk,
@@ -74,45 +74,6 @@ reg [3:0] bit_cnt = 0;
 reg [1:0] phase = 0; // steps in each state (varies)
 reg rw = 0;
 
-// TODO: final tests for debug FSM w/ 4 phase timing
-// - can't sample directly at edge, some noise during SCL low
-// - clean ACK recv'd during SEND_ADDR (read/write)
-// - clean ACK recv'd during WRITE_BYTE
-// reg dbg_sda = 0;
-// always @(posedge clk) begin
-//     // poll throughout the entire SCL period
-//     // if (state==SEND_ADDR && phase==2 && addr[0]==0) begin
-//     if (state==WRITE_BYTE && phase==2) begin
-//         // check for ACK
-//         if (scl_in && led_out==0) begin
-//             led_out <= 1;
-//             dbg_sda <= sda_in;
-//         end else if (dbg_sda!=sda_in && scl_in && led_out==1)
-//             led_out <= 3; // check for SDA flapping
-//     end
-// end
-
-// SDA steady during high SCL of READ_BYTE[2] sample phase
-// from half-tick to end on every read, hw + sim both agree
-// reg [1:0] set = 0;
-// reg sda = 0;
-// always @(posedge clk) begin
-//     if (state==READ_BYTE && phase==2) begin
-//         if (!set && scl_in) begin
-//             set <= 1;
-//             sda <= sda_in;
-//         // check it holds for the remainder of the cycle
-//         // tested with expected + forced error conditions
-//         end else if (set && scl_in && sda!=sda_in) begin
-//             set <= 2; // break if error
-//             led_out <= 3;
-//         end else if (set && scl_in && sda==sda_in)
-//             led_out <= 1;
-//     end else if (set==1)
-//         set <= 0; // reset/check every sample phase
-// end
-
-// TODO: need to break from locked bus?
 // state machine: load/shift low, sample high, release for slave ACK/response
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
@@ -300,16 +261,7 @@ always @(posedge clk) begin
                     3: begin
                         sda_oe <= 0; // SDA high (release) - final
                         phase <= 0;
-
-                        next_out[15] <= 0; // clear busy bit // TODO: restore
-                        // DEBUG: return remaining bits sans out[15] so doesn't block or overflow ALU
-                        // next_out <= {
-                        //     1'b0,
-                        //     lo_byte[2:0],
-                        //     hi_byte,
-                        //     lo_byte[7:4]
-                        // };
-
+                        next_out[15] <= 0;
                         state <= IDLE;
                     end
                 endcase
