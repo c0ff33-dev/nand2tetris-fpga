@@ -45,7 +45,52 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
-        return -1;
+        var int q;   // quotient
+        var int d;   // divisor
+        var int p;   // power of two
+        var int temp;   // temp variable for halving
+        
+        var int dividend;
+        let dividend = x;
+        let q = 0;
+        let d = y;
+        let p = 1;
+
+        // divide by zero
+        if (y = 0) {
+            return 0;
+        }
+
+        // double divisor until next double would exceed dividend
+        while (((d + d) < dividend)|((d + d) = dividend)) {
+            let d = d + d;
+            let p = p + p;
+        }
+
+        while (p > 0) {
+            // if the scaled divisor fits, subtract it
+            if ((d < dividend)|(d = dividend)) {
+                let dividend = dividend - d;
+                let q = q + p;
+            }
+            
+            // halve d
+            let temp = 0;
+            while ((d > 2)|(d = 2)) {
+                let d = d - 2;
+                let temp = temp + 1;
+            }
+            let d = temp;
+
+            // halve p
+            let temp = 0;
+            while ((p > 2)|(p = 2)) {
+                let p = p - 2;
+                let temp = temp + 1;
+            }
+            let p = temp;
+        }
+        return q;
     }
 
     /** Returns the integer part of the square root of x. */

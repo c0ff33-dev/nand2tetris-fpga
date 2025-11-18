@@ -6,10 +6,10 @@ class Sys {
     function void init() {
         // TODO: NYI
         // do Memory.init();
-        // do Math.init();
         // do Output.init();
         // do Keyboard.init();
         // do Screen.init(); // TODO: not linked
+        do Math.init();
         do GPIO.init();
         do UART.init();
         do ScreenExt.init();
