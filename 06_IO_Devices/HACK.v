@@ -32,9 +32,6 @@ module HACK(
 	output LCD_SDO,			// LCD data out 
 	output LCD_SCK,			// LCD serial clock
 	output LCD_CSX,			// LCD chip select not
-	// input  RTP_SDI,		// RTP data in
-	// output RTP_SDO,		// RTP data out 
-	// output RTP_SCK		// RTP serial clock
 	inout RTP_SDA,          // RTP data line
 	inout RTP_SCL           // RTP serial clock
 );
@@ -50,6 +47,7 @@ module HACK(
 	// SRAM_ADDR: posedge clk
 	// SRAM_DATA: update posedge clk, read negedge clk
 	// GO: mode update posedge clk else combinational
+	// TODO: LCD/RTP
 
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
@@ -290,17 +288,24 @@ module HACK(
 		.scl_in(scl_in)
 	);
 
-	// TODO: not totally convinced this is different to what was synthesized before
+	// TODO: not convinced this is different to what was synthesized before
 	wire sda_oe, scl_oe;
 	wire sda_in, scl_in;
 	SB_IO #(
-		.PIN_TYPE(6'b1010_01), // 1 = input, 0 = output, bidir
-		.PULLUP(1'b1)           // enable internal pull-up if desired
+		.PIN_TYPE(6'b1010_01),  // direct/unregistered inout
+		// [5]: OUTPUT_ENABLE=1
+		// [4]: OUTPUT_CLK=0
+		// [3]: D_OUT_0_DIRECT=1
+		// [2]: D_OUT_0_INVERT=0
+		// [1]: D_IN_1_LATCH=0
+		// [0]: D_IN_0_DIRECT=1
+
+		.PULLUP(1'b1)           // enable pullup
 	) sda_buf (
-		.PACKAGE_PIN(RTP_SDA),
-		.OUTPUT_ENABLE(sda_oe),
-		.D_OUT_0(1'b0),        // drive 0 when OE=1
-		.D_IN_0(sda_in)
+		.PACKAGE_PIN(RTP_SDA),  // top level module inout pin
+		.OUTPUT_ENABLE(sda_oe), // select whether D_OUT_0 is driven
+		.D_OUT_0(1'b0),         // drive low when selected (OE=1)
+		.D_IN_0(sda_in)			// line to read when high Z
 	);
 
 	SB_IO #(

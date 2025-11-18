@@ -13,7 +13,7 @@ module RTP (
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
 
     output reg         led_load = 1,
-    output reg [15:0]  led_out = 1,
+    output reg [15:0]  led_out = 0,
 
     output reg sda_oe,
     output reg scl_oe,
@@ -22,11 +22,11 @@ module RTP (
 );
 
 // 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL (currently 125/100 KHz)
-localparam integer DIVIDER = 25_000_000 / (100_000 * 2); // x2 for tick/tock
+// 2=tick/tock x 2=sub-phases per high/low
+localparam integer DIVIDER = 25_000_000 / (100_000 * 2 * 2); 
 
 reg [9:0] clk_cnt;
 reg tick; // SCL clock: tick/tock every DIVIDER clk cycles
-reg half_tick; // SCL clock: pulse during the middle of every SCL cycle
 reg [7:0] hi_byte = 0;
 reg [7:0] lo_byte = 0;
 reg [15:0] next_out = 0;
@@ -38,14 +38,11 @@ always @(posedge clk) begin
     if (out[15]) begin // busy
         if (clk_cnt == DIVIDER - 1) begin
             clk_cnt <= 0;
-            half_tick <= 0;
             tick <= 1'b1;
         end else if (clk_cnt == DIVIDER/2) begin
-            half_tick <= 1'b1;
             clk_cnt <= clk_cnt + 1;
         end else begin
             clk_cnt <= clk_cnt + 1;
-            half_tick <= 0;
             tick <= 1'b0;
         end
     end else begin
@@ -61,17 +58,17 @@ end
 // assign sda_in = sda_oe ? 1'b0 : 1'bz;
 // assign scl_in = scl_oe ? 1'b0 : 1'bz;
 
-localparam [3:0]
+localparam [2:0]
     IDLE        = 4'd0,
     START_COND  = 4'd1,
     SEND_ADDR   = 4'd2,
     WRITE_BYTE  = 4'd3,   
     READ_BYTE   = 4'd4,
-    READ_BYTE2  = 4'd5;
+    END_COND    = 4'd5;
 
 localparam [6:0] DEV_ADDR = 7'h48; // 7-bit device address for NS2009
 
-reg [3:0] state = IDLE;
+reg [2:0] state = IDLE;
 reg [7:0] addr = 0, data = 0;
 reg [3:0] bit_cnt = 0;
 reg [1:0] phase = 0; // steps in each state (varies)
@@ -81,17 +78,17 @@ reg rw = 0;
 // - can't sample directly at edge, some noise during SCL low
 // - clean ACK recv'd during SEND_ADDR (read/write)
 // - clean ACK recv'd during WRITE_BYTE
+// reg dbg_sda = 0;
 // always @(posedge clk) begin
 //     // poll throughout the entire SCL period
-//     if (state==SEND_ADDR && phase==2 && addr[7]==1) begin
+//     // if (state==SEND_ADDR && phase==2 && addr[0]==0) begin
+//     if (state==WRITE_BYTE && phase==2) begin
 //         // check for ACK
-//         if (~sda_in && scl_in && led_out==0) begin
+//         if (scl_in && led_out==0) begin
 //             led_out <= 1;
-//         end
-//         // check for SDA flapping
-//         if (sda_in && scl_in && led_out>=1) begin
-//             led_out <= 3;
-//         end
+//             dbg_sda <= sda_in;
+//         end else if (dbg_sda!=sda_in && scl_in && led_out==1)
+//             led_out <= 3; // check for SDA flapping
 //     end
 // end
 
@@ -101,7 +98,7 @@ reg rw = 0;
 // reg sda = 0;
 // always @(posedge clk) begin
 //     if (state==READ_BYTE && phase==2) begin
-//         if (!set && half_tick && scl_in) begin
+//         if (!set && scl_in) begin
 //             set <= 1;
 //             sda <= sda_in;
 //         // check it holds for the remainder of the cycle
@@ -109,7 +106,8 @@ reg rw = 0;
 //         end else if (set && scl_in && sda!=sda_in) begin
 //             set <= 2; // break if error
 //             led_out <= 3;
-//         end
+//         end else if (set && scl_in && sda==sda_in)
+//             led_out <= 1;
 //     end else if (set==1)
 //         set <= 0; // reset/check every sample phase
 // end
@@ -118,13 +116,14 @@ reg rw = 0;
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
 reg loaded = 0;
-// wire sda_in, scl_in;
+reg next_byte = 0;
 always @(posedge clk) begin
     case (state)
         IDLE: begin // 0
             scl_oe <= 0; // SCL high (release)
             sda_oe <= 0; // SDA high (release)
             phase <= 0;
+            next_byte <= 0;
             if (load) begin
                 rw <= in[8];   // read/write bit
                 next_out[15] <= 1;  // busy
@@ -135,27 +134,36 @@ always @(posedge clk) begin
                     data <= 0;       // unused for read
                 bit_cnt <= 8;
                 loaded <= 1;
-                led_out <= 2;
-                // state <= START_COND;
             end
             
-            // TODO: "should" test all line releases actually raise but unlikely to be an issue at low speeds
-            // FIXME: both lines/sides are electrically high but never hits this condition if checking both?
-            // FIXME: works in sim so this is suspicious - explicit SB_IO didn't help
-
-            // wait for lines to rise
-            if (loaded && scl_in && sda_in) begin
+            // wait for lines to rise (don't block on SDA)
+            // if unconditional transition this will never be reached when loaded=1
+            if (loaded) begin
                 loaded <= 0;
-                led_out <= 3;
                 state <= START_COND;
             end
         end
 
+        // set START bit for one SCL high period 
+        // SDA drops while SCL is high to trigger START
         START_COND: begin // 1
             if (tick) begin
-                scl_oe <= 0;   // SCL high (release)
-                sda_oe <= 1;   // SDA low (drive)
-                state <= SEND_ADDR;
+                case (phase)
+                    0: begin
+                        phase <= 1; // continue SCL/SDA high
+                    end
+                    1: begin
+                        phase <= 2; // continue SCL/SDA high
+                    end
+                    2: begin
+                        sda_oe <= 1; // SDA low (drive)
+                        phase <= 3;
+                    end
+                    3: begin
+                        phase <= 0;
+                        state <= SEND_ADDR;
+                    end
+                endcase
             end
         end
 
@@ -163,27 +171,29 @@ always @(posedge clk) begin
             if (tick) begin
                 case (phase)
                     0: begin
-                        scl_oe <= 1;                       // SCL low (drive)
-                        if (bit_cnt > 0)
-                            sda_oe <= ~addr[bit_cnt-1];    // SDA=data (skip 9th bit)
-                        bit_cnt <= bit_cnt - 1;
-                        if (bit_cnt == 0) begin
-                            sda_oe <= 0;                   // release SDA for slave ACK
-                            phase <= 2;
-                        end else
-                            phase <= 1;
+                        scl_oe <= 1;                     // SCL low (drive)
+                        phase <= 1;
                     end
                     1: begin
-                        scl_oe <= 0;                       // SCL high (release) - data bit
-                        phase <= 0;
+                        if (bit_cnt > 0)
+                            sda_oe <= ~addr[bit_cnt-1];  // SDA=data (skip 9th bit)
+                        bit_cnt <= bit_cnt - 1;
+                        if (bit_cnt == 0)
+                            sda_oe <= 0;                 // release SDA for slave ACK
+                        phase <= 2;
                     end
                     2: begin
-                        scl_oe <= 0;                       // SCL high (release) - slave ACK
-                        bit_cnt <= 8;
-                        if (rw)
-                            state <= READ_BYTE;
-                        else
-                            state <= WRITE_BYTE;
+                        scl_oe <= 0;                     // SCL high (release) - data bit
+                        phase <= 3;
+                    end
+                    3: begin
+                        if (bit_cnt > 8) begin           // SCL high (continues) - data bit/slave ACK
+                            if (rw)
+                                state <= READ_BYTE;
+                            else
+                                state <= WRITE_BYTE;
+                            bit_cnt <= 8;
+                        end
                         phase <= 0;
                     end
                 endcase
@@ -194,25 +204,27 @@ always @(posedge clk) begin
             if (tick) begin
                 case (phase)
                     0: begin
-                        scl_oe <= 1;                       // SCL low (drive)
-                        if (bit_cnt > 0)
-                            sda_oe <= ~data[bit_cnt-1];    // SDA=data (skip 9th bit)
-                        bit_cnt <= bit_cnt - 1;
-                        if (bit_cnt == 0) begin
-                            sda_oe <= 0;                   // release SDA for slave ACK
-                            phase <= 2;
-                        end else
-                            phase <= 1;
+                        scl_oe <= 1;                    // SCL low (drive)
+                        phase <= 1;
                     end
                     1: begin
-                        scl_oe <= 0;                       // SCL high (release) - data bit
-                        phase <= 0;
+                        if (bit_cnt > 0)
+                            sda_oe <= ~data[bit_cnt-1]; // SDA=data (skip 9th bit)
+                        bit_cnt <= bit_cnt - 1;
+                        if (bit_cnt == 0)
+                            sda_oe <= 0;                // release SDA for slave ACK
+                        phase <= 2;
                     end
                     2: begin
-                        scl_oe <= 0;                       // SCL high (release) - slave ACK
-                        state <= IDLE;
-                        next_out <= 0;                     // clear busy
-                        rw <= 0;
+                        scl_oe <= 0;                    // SCL high (release) - data bit/slave ACK
+                        phase <= 3;
+                    end
+                    3: begin                            // continue SCL/SDA
+                        if (bit_cnt > 8) begin
+                            state <= END_COND;
+                            rw <= 0;
+                        end
+                        phase <= 0;
                     end
                 endcase
             end
@@ -223,77 +235,74 @@ always @(posedge clk) begin
                 case (phase)
                     0: begin
                         scl_oe <= 1;                    // SCL low (drive)
-                        if (bit_cnt == 0) begin
-                            sda_oe <= 1;                // master ACK (drive low)
-                            phase <= 3;
-                        end else begin
-                            sda_oe <= 0;                // release SDA (incoming data)
-                            phase <= 1;
-                        end
+                        phase <= 1;
                     end
                     1: begin
-                        scl_oe <= 0;                    // SCL high (release) - data bit
-                        phase <= 2;                     // wait a tick for SCL to rise
+                        if (bit_cnt==0)
+                            sda_oe <= ~next_byte;       // drive/release SDA: master [N]ACK
+                        else 
+                            sda_oe <= 0;                // release SDA (incoming data)
+                        phase <= 2;
                     end
                     2: begin
-                        phase <= 0;                     // transition on full tick, sample on half-tick
+                        scl_oe <= 0;                    // SCL high (release) - data bit/master [N]ACK
+                        phase <= 3;
                     end
                     3: begin
-                        scl_oe <= 0;                    // SCL high (release) - master ACK
-                        next_out <= {8'h80,hi_byte};    // first byte shifted in, still busy
-                        bit_cnt <= 8;                   // prepare for second byte
-                        state <= READ_BYTE2;
+                        bit_cnt <= bit_cnt - 1;
+                        if (bit_cnt > 0) begin
+                            // adjust offset for reduced count in 2nd byte
+                            if (~next_byte)
+                                hi_byte[bit_cnt-1] <= sda_in;
+                            else
+                                lo_byte[bit_cnt] <= sda_in;
+                        end
+                        if (bit_cnt==0) begin
+                            if (~next_byte) begin
+                                next_out <= {8'h80,hi_byte}; // first byte shifted in, still busy
+                                next_byte <= 1;
+                                bit_cnt <= 7;           // start next count at 7 (no start bit)
+                            end else begin
+                                next_out <= {
+                                    4'h8,
+                                    hi_byte,
+                                    lo_byte[7:4]
+                                }; // second byte shifted in, still busy
+                                state <= END_COND;
+                                rw <= 0;
+                            end
+                        end
                         phase <= 0;
                     end
                 endcase
             end
-
-            // sample SDA half way into the SCL tick
-            if (phase==2 && half_tick && scl_in) begin
-                if (bit_cnt > 0)
-                    hi_byte[bit_cnt-1] <= sda_in;
-                bit_cnt <= bit_cnt - 1;
-            end
         end
 
-        READ_BYTE2: begin // 5
+        // set STOP bit for one SCL high period 
+        // drive SDA low during SCL low (setup) 
+        // then release SDA high while SCL high to trigger STOP
+        END_COND: begin // 5
             if (tick) begin
                 case (phase)
                     0: begin
-                        scl_oe <= 1;                    // SCL low (drive)
-                        if (bit_cnt == 0) begin
-                            sda_oe <= 0;                // SDA high (release) - master NACK
-                            phase <= 3;
-                        end else begin
-                            sda_oe <= 0;                // release SDA (incoming data)
-                            phase <= 1;
-                        end
+                        scl_oe <= 1; // SCL low (drive)
+                        phase <= 1;
                     end
                     1: begin
-                        scl_oe <= 0;                    // SCL high (release) - data bit
-                        phase <= 2;                     // wait a tick for SCL to rise
+                        sda_oe <= 1; // SDA low (drive)
+                        phase <= 2;
                     end
                     2: begin
-                        phase <= 0;                     // transition on full tick, sample on half-tick
+                        scl_oe <= 0; // SCL high (release) - final
+                        phase <= 3;
                     end
                     3: begin
-                        scl_oe <= 0;                    // SCL high (release) - master ACK
-                        next_out <= {                   // shuffle the bytes back into a 16 bit integer
-                            4'd0,                       // shift the padded bits to the top
-                            hi_byte,                    // high byte as received   
-                            lo_byte[7:4]                // low byte upper nibble
-                        };
+                        sda_oe <= 0; // SDA high (release) - final
+                        phase <= 0;
+                        next_out[15] <= 0; // clear busy bit
                         state <= IDLE;
-                        rw <= 0;
                     end
                 endcase
-            end
-
-            // sample SDA half way into the SCL tick
-            if (phase==2 && half_tick && scl_in) begin
-                if (bit_cnt > 0)
-                    lo_byte[bit_cnt-1] <= sda_in;
-                bit_cnt <= bit_cnt - 1;
             end
         end
     endcase
