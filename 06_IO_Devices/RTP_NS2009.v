@@ -74,7 +74,7 @@ reg [3:0] bit_cnt = 0;
 reg [1:0] phase = 0; // steps in each state (varies)
 reg rw = 0;
 
-// FIXME: debug FSM
+// TODO: final tests for debug FSM w/ 4 phase timing
 // - can't sample directly at edge, some noise during SCL low
 // - clean ACK recv'd during SEND_ADDR (read/write)
 // - clean ACK recv'd during WRITE_BYTE
@@ -112,6 +112,7 @@ reg rw = 0;
 //         set <= 0; // reset/check every sample phase
 // end
 
+// TODO: need to break from locked bus?
 // state machine: load/shift low, sample high, release for slave ACK/response
 // need 9 SCL cycles per byte (8 data + ACK/NACK)
 // bit processing is pretty much the same except for ACK/NACK and output/sampling
@@ -299,7 +300,15 @@ always @(posedge clk) begin
                     3: begin
                         sda_oe <= 0; // SDA high (release) - final
                         phase <= 0;
-                        next_out[15] <= 0; // clear busy bit
+
+                        // next_out[15] <= 0; // clear busy bit // TODO: restore
+                        next_out <= { // DEBUG: return remaining bits sans out[15] so busy doesn't block
+                            1'b0,
+                            lo_byte[2:0],
+                            hi_byte,
+                            lo_byte[7:4]
+                        };
+
                         state <= IDLE;
                     end
                 endcase

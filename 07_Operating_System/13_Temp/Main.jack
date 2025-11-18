@@ -34,24 +34,26 @@ class Main {
         var int x,y,z;
 
         while(true)  {
-            let x = Touch.getX();
-            do UART.writeChar(Util.logShiftByteRight(x));
-            do UART.writeChar(x);
-            do Sys.wait(1); // 1ms
-            
-            let y = Touch.getY();
-            do UART.writeChar(Util.logShiftByteRight(y));
-            do UART.writeChar(y);
-            do Sys.wait(1); // 1ms
-            
             let z = Touch.getPen();
-            do UART.writeChar(Util.logShiftByteRight(z));
-            do UART.writeChar(z);
-            do Sys.wait(1); // 1ms
-            
-            do UART.writeChar(255); // 0xFF
-            do GPIO.writeLed(2);
-            do Sys.wait(1000); // 1s
+
+            if (z > 100) { // not sure about sensitivity / arbitrary threshold
+                do UART.writeChar(Util.logShiftByteRight(z));
+                do UART.writeChar(z);
+                
+                let x = Touch.getX();
+                do UART.writeChar(Util.logShiftByteRight(x));
+                do UART.writeChar(x);
+                
+                let y = Touch.getY();
+                do UART.writeChar(Util.logShiftByteRight(y));
+                do UART.writeChar(y);
+                
+                do UART.writeChar(222); // 0xDE
+                do UART.writeChar(173); // 0xAD
+                
+                if (x > 4095 | y > 4095 | z > 4095) { do Sys.error(0); }
+            }
+
         }
         return;
     }

@@ -1,27 +1,17 @@
 `timescale 10ns/1ns
 `default_nettype none
 
-// 100/400 KHz timings: 25MHz = 1 clk = 40ns = 1/25μs (25 clk/μs)
-// note: these are NOT evenly divided in standard vs fast mode!
+// 100/400 KHz timings: 25MHz = 1 clk = 40ns = 1/25μs (25 clk/1μs)
 // generalized into rough timing buckets
 
 // free time between STOP/START: 4.7μs/1.3μs (~118/~32 clk cycles)
 // START/STOP setup/hold: 4.7μs/1.3μs (~118/~118 clk cycles)
 // SCL/SDA high/low: 4.7μs/1.3μs (~118/~32 clk cycles)
-// in fast mode SCL is 1/3 high, 2/3 low but NS2009 is plenty fast
 
 // data bits after START (high SDA=data)
 // - SCL/SDA low to high (same timing)
 // - SDA sampled during SCL high
 // - SDA shift during SCL low
-
-// FIXME: tried swapping SDA/SCL wires but it went to 0xFF (as expected if not driven so its reacting to SCL)
-// FIXME: actively driving SCL also results in 0xFF
-// FIXME: basically any sampling of SDA outside of the SEND_ADDR ACK window(s) seems broken, no change using SCL midpoint
-// FIXME: 0x5A/0x55 style output is still too uniform though to be chance
-// FIXME: no change in output at < 100 KHz speeds
-// FIXME: no change in output with change in target register (but 0xFF if wrong device addr so thats something)
-// FIXME: no change using explicit SB_IO or dynamic SCL timing
 
 module RTP_tb();
     reg tb_clk = 0;

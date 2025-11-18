@@ -260,17 +260,6 @@ module HACK(
 	assign inIO8 = lcdBusy;
 	assign inIO9 = lcdBusy;
 
-	// RTP (4106) controller for Resistive Touch Panel AR1021
-	// RTP rtp(
-	// 	.clk(clk),
-	// 	.load(loadIOA),
-	// 	.in(outM),
-	// 	.out(inIOA),
-	// 	.SDO(RTP_SDO),
-	// 	.SDI(RTP_SDI),
-	// 	.SCK(RTP_SCK)
-	// );
-
 	// RTP (4106) controller for Resistive Touch Panel NS2009
 	RTP rtp(
 		.clk(clk),
