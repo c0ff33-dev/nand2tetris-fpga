@@ -2,7 +2,7 @@
  * NS2009. */
 
 class Touch{
-    static int RTP, x_coord, y_coord, pen;
+    static int RTP, x_coord, y_coord, pen, x_max, y_max, adc_max, pressure;
     static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
     function void init() {
@@ -11,6 +11,10 @@ class Touch{
         let set_y_reg = 208; // 0xD0 (11010000), in[8]=0 for write
         let set_z_reg = 224; // 0xE0 (11100000), in[8]=0 for write
         let read_cmd = 256;  // in[8]=1 for read
+        let x_max = 240;
+        let y_max = 320;
+        let adc_max = 4095;
+        let pressure = 25;   // not sure about sensitivity / arbitrary threshold
         return;
     }
 
@@ -31,18 +35,18 @@ class Touch{
         do Touch.getY();
         do Touch.getPen();
         
-        if (pen > 25) { // not sure about sensitivity / arbitrary threshold
+        if (pen) {
             // do UART.writeChar(Util.logShiftByteRight(pen));
             // do UART.writeChar(pen);
-            // do UART.writeChar(Util.logShiftByteRight(x_coord));
-            // do UART.writeChar(x_coord);
-            // do UART.writeChar(Util.logShiftByteRight(y_coord));
-            // do UART.writeChar(y_coord);
-            // do UART.writeChar(222); // 0xDE
-            // do UART.writeChar(173); // 0xAD
+            do UART.writeChar(Util.logShiftByteRight(x_coord));
+            do UART.writeChar(x_coord);
+            do UART.writeChar(Util.logShiftByteRight(y_coord));
+            do UART.writeChar(y_coord);
+            do UART.writeChar(222); // 0xDE
+            do UART.writeChar(173); // 0xAD
 
             // ignore malformed data and 0xFFF touch event
-            if (x_coord > 4095 | y_coord > 4095 | pen > 4094) { 
+            if (x_coord > adc_max | y_coord > adc_max | pen > (4094)) { 
                 return false; 
             } else {
                 return true;
@@ -53,52 +57,60 @@ class Touch{
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getX() {
-        var int _;
-        let _ = Touch.writeRTP(set_x_reg);
-        let x_coord = Touch.writeRTP(read_cmd);
-        // TODO: mapping (same range apparently)
+        var int x;
+        do Touch.writeRTP(set_x_reg);
+        let x_coord = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, x_max);
         return x_coord;
     }
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getY() {
-        var int _;
-        let _ = Touch.writeRTP(set_y_reg);
-        let y_coord = Touch.writeRTP(read_cmd);
-        // TODO: mapping (same range apparently)
+        var int y;
+        do Touch.writeRTP(set_y_reg);
+        let y = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, y_max);
+        let y_coord = y_max - y; // NS2009 inverts the Y axis by default
         return y_coord;
     }
 
     /** returns the pen value (1 = down, 0 = up) of the last touch event report */
     function boolean getPen() {
-        var int _;
-        let _ = Touch.writeRTP(set_z_reg);
-        let pen = Touch.writeRTP(read_cmd);
-        // TODO: mapping (same range apparently)
+        var int p;
+        do Touch.writeRTP(set_z_reg);
+        let p = Touch.writeRTP(read_cmd);
+        if (p > pressure) {
+            let pen = 1;
+        } else {
+            let pen = 0;
+        }
         return pen;
     }
+
+    /** Map 12 bit ADC coords to screen resolution */
+    function int _map(int data, int in_min, int in_max, int out_min, int out_max) {
+        // this is basically just integer division
+        var int i, pos, out_range, in_range, scaled, accum;
+
+        // TODO: not sure about clamping vs throwing an error here
+        if (data < in_min) { let data = in_min; }
+        if (data > in_max) { let data = in_max; }
+
+        let pos = data - in_min;
+        let out_range = out_max - out_min;
+        let in_range = in_max - in_min;
+
+        let scaled = 0;
+        let accum = 0;
+        let i = 0;
+        
+        while (i < pos) {
+            let i = i + 1;
+            let accum = accum + out_range;
+            if ((accum > in_range)|(accum = in_range)) {
+                let accum = accum - in_range;
+                let scaled = scaled + 1;
+            }
+        }
+
+        return out_min + scaled;
+    }
 }
-
-// void NS2009::Scan ()
-// {
-//   CheckTouched ();
-//   RawX = ReadRegister(NS2009_READ_X);
-//   X = Map_Data (RawX, MinX, MaxX, 0, SCREEN_SIZE_X);
-//   RawY = ReadRegister(NS2009_READ_Y);
-//   Y = Map_Data (RawY, MinY, MaxY, 0, SCREEN_SIZE_Y);
-// 
-//   // FlipX=false, FlipY=true
-//   if (FlipX)
-//     X = SCREEN_SIZE_X - X;
-//   if (FlipY)
-//     Y = SCREEN_SIZE_Y - Y;
-// }
-
-// uint16_t Map_Data (uint16_t Data, uint16_t InMin, uint16_t InMax, uint16_t OutMin, uint16_t OutMax)
-// {
-//   if (Data < InMin)
-//     Data = InMin;
-//   if (Data > InMax)
-//     Data = InMax;
-//   return (uint16_t)(((uint32_t)(Data - InMin) * (OutMax - OutMin)) / (InMax - InMin)+ OutMin);
-// }

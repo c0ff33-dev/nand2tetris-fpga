@@ -2,6 +2,7 @@ class Main {
     // TODO: annotate functions vs built-in vs course vs mine
 
     function void main() {
+        var int x, e;
         do Main.lcd_main();
         do Main.rtp_main();
         return;
