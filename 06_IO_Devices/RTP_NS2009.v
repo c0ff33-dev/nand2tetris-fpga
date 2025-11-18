@@ -12,8 +12,8 @@ module RTP (
     // inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
 
-    output reg         led_load = 1,
-    output reg [15:0]  led_out = 0,
+    // output reg         led_load = 1,
+    // output reg [15:0]  led_out = 0,
 
     output reg sda_oe,
     output reg scl_oe,
@@ -301,13 +301,14 @@ always @(posedge clk) begin
                         sda_oe <= 0; // SDA high (release) - final
                         phase <= 0;
 
-                        // next_out[15] <= 0; // clear busy bit // TODO: restore
-                        next_out <= { // DEBUG: return remaining bits sans out[15] so busy doesn't block
-                            1'b0,
-                            lo_byte[2:0],
-                            hi_byte,
-                            lo_byte[7:4]
-                        };
+                        next_out[15] <= 0; // clear busy bit // TODO: restore
+                        // DEBUG: return remaining bits sans out[15] so doesn't block or overflow ALU
+                        // next_out <= {
+                        //     1'b0,
+                        //     lo_byte[2:0],
+                        //     hi_byte,
+                        //     lo_byte[7:4]
+                        // };
 
                         state <= IDLE;
                     end

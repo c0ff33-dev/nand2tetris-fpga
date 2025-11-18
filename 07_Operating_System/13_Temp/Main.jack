@@ -32,9 +32,11 @@ class Main {
 
     function void rtp_main() {
         var int x,y,z;
+        do GPIO.writeLed(1);
 
         while(true)  {
             let z = Touch.getPen();
+            if (x > 4095 | y > 4095 | z > 4095) { do Sys.error(0); }
 
             if (z > 100) { // not sure about sensitivity / arbitrary threshold
                 do UART.writeChar(Util.logShiftByteRight(z));
@@ -50,8 +52,6 @@ class Main {
                 
                 do UART.writeChar(222); // 0xDE
                 do UART.writeChar(173); // 0xAD
-                
-                if (x > 4095 | y > 4095 | z > 4095) { do Sys.error(0); }
             }
 
         }
