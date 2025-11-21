@@ -12,22 +12,28 @@ mkdir src && cd src
 git clone https://gitlab.com/x653/nand2tetris-fpga.git
 git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
 
-# install apio + dependencies
+## install apio + dependencies
 cd nand2tetris-fpga
 python3 -m venv venv
 source venv/bin/activate
 python3 -m pip install apio
 apio install oss-cad-suite
 apio install examples
+apio install gtkwave # apio artifact is windows only, for linux see below
+
+# linux
 sudo apt update
 sudo apt install gtkwave # apio artifact is windows only
-sudo apt install xvfb tio
+sudo apt install xvfb tio # x11 and serial dependencies respectively
 
-# build + install the programmer
+## build + install the programmer
 cd ../iCE40HX1K-EVB/programmer/iceprogduino
 sudo apt install build-essential
 make
 sudo make install
+
+# windows
+choco install make
 
 # download linux 1.x version of arduino ide: https://www.arduino.cc/en/software/
 mkdir ~/src/arduino-1.8.19 && cd ~/src/arduino-1.8.19
@@ -74,3 +80,8 @@ unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
 
 arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/the_admin/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
 arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/the_admin/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
+
+## windows
+
+winiceprogduino.exe -ICOM3 -t
+python -m serial.tools.miniterm COM3 115200 --encoding hexlify
