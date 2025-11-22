@@ -1,4 +1,5 @@
 # the iceprogduino program is targeting POSIX dependencies not available on windows
+# winiceprogduino does not support writing to offsets
 
 # install python 3.12 (linux)
 sudo apt update
@@ -9,7 +10,7 @@ sudo apt install python3.11 python3.11-venv
 # install git and clone repos
 sudo apt install git
 mkdir src && cd src
-git clone https://gitlab.com/x653/nand2tetris-fpga.git
+git clone git@gitlab.com:gcpd88/nand2tetris-fpga.git # requires ssh config
 git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
 
 ## install apio + dependencies
