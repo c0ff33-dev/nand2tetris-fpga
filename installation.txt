@@ -1,5 +1,7 @@
 # the iceprogduino program is targeting POSIX dependencies not available on windows
 # winiceprogduino does not support writing to offsets
+# WSL serial passthrough is basic and doesn't support IOCTLs needed for arduino/iceprogduino
+# usbipd has many issues / can't be bothered unravelling
 
 # install python 3.12 (linux)
 sudo apt update
@@ -15,17 +17,16 @@ git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
 
 ## install apio + dependencies
 cd nand2tetris-fpga
-python3 -m venv venv
-source venv/bin/activate
-python3 -m pip install apio
+python3.11 -m venv .venv
+source .venv/bin/activate
+python -m pip install apio
 apio install oss-cad-suite
 apio install examples
-apio install gtkwave # apio artifact is windows only, for linux see below
+# apio install gtkwave # apio artifact is windows only
 
-# linux
-sudo apt update
-sudo apt install gtkwave # apio artifact is windows only
-sudo apt install xvfb tio # x11 and serial dependencies respectively
+sudo apt install gtkwave
+sudo apt install tio # serial client
+sudo apt install xvfb # not needed on wsl
 
 ## build + install the programmer
 cd ../iCE40HX1K-EVB/programmer/iceprogduino
@@ -33,33 +34,23 @@ sudo apt install build-essential
 make
 sudo make install
 
-# windows
-choco install make
-
-# download linux 1.x version of arduino ide: https://www.arduino.cc/en/software/
-mkdir ~/src/arduino-1.8.19 && cd ~/src/arduino-1.8.19
-tar -xvf ~/Downloads/arduino-1.8.19-linux64.tar.tar -C ~/src
-sudo sh install.sh
-
-# prepare arduino dependencies
-# download https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip
-mkdir examples/iceprog
-cp ~/src/iCE40HX1K-EVB/programmer/olimexino-32u4\ firmware/iceprog.ino ./examples/iceprog/
-VM > Removable Devices > Arduino Leonardo > Connect # VMWare
-
-# flash the programmer
-sudo ./arduino
-File > Open > ~/src/arduino-1.8.19/examples/iceprog/iceprog.ino
-Tools > Board > Arduino Leonardo
-Tools > Port > /dev/ttyACM0 (Arduino Leonardo)
-Sketch > Include Library > Add ZIP Library > ~/Downloads/SPIMemory-2.2.0.zip
-Sketch > Verify/Compile
-Sketch > Upload
+## prepare arduino dependencies
+cd ~ && curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
+sudo ln -s ~/bin/arduino-cli /usr/local/bin/arduino-cli
+arduino-cli core install arduino:avr
+arduino-cli lib install "Adafruit GFX Library@1.2.3"
+wget https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip -O SPIMemory-2.2.0.zip
+unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
 
 # enable write perms on the serial port
 sudo chmod a+rw /dev/ttyACM0
 
-# enable headless display for ssh
+## flash the arduino
+# COM passthrough from WSL doesn't work / need to flash from windows if not using pure linux
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/veris/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
+
+# enable headless display for ssh (skip on WSL)
 Xvfb :2 -screen 0 1024x768x24 &
 export DISPLAY=:2
 
@@ -71,18 +62,9 @@ apio sim
 apio build
 apio upload
 
-# cli
-curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-sudo ln -s ~/bin/arduino-cli /usr/local/bin/arduino-cli
-arduino-cli core install arduino:avr
-arduino-cli lib install "Adafruit GFX Library@1.2.3"
-wget https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip -O SPIMemory-2.2.0.zip
-unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
+## windows: this is a dead end / for posterity only
 
-arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/the_admin/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
-arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/the_admin/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
-
-## windows
-
-winiceprogduino.exe -ICOM3 -t
+winget install -e --id ArduinoSA.CLI # restart shell for PATH
+choco install make
 python -m serial.tools.miniterm COM3 115200 --encoding hexlify
+winiceprogduino.exe -ICOM3 -t # doesn't support -o for offset

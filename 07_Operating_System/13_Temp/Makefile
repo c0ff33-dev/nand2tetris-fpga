@@ -16,9 +16,6 @@ sim:
 	cp out.hack ../../06_IO_Devices/00_HACK/ROM.hack
 upload:
 	iceprogduino -o 64k -w out.bin
-# winiceprogduino doesn't support -o so need some other solution here
-win_upload: 
-	..\..\tools\winiceprogduino\winiceprogduino.exe -ICOM3 -o 64k -w out.bin
 clean:
 	rm -f *.vm *.asm *.hack *.bin *~
 
