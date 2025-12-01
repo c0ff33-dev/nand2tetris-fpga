@@ -24,9 +24,22 @@ class Main {
         // do Sys.wait(LCD_WAIT); // wait for DISPOFF
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
+        var int px, c;
         
         do ScreenExt.setPencolour(ScreenExt.BLUE());
         do ScreenExt.fillScreen();
+
+        // mock draw function
+        do ScreenExt.setWindow(0,0,9,9);
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        let c = ScreenExt.YELLOW();
+        let px = ScreenExt._getPixels();
+        while (px > 0) {
+            do ScreenExt.writeData(c);
+            let px = px - 1;
+            do ScreenExt._setPixels(px);
+        }
+        do ScreenExt._completeTransaction();
         return;
     }
 
