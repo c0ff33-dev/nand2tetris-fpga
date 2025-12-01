@@ -30,16 +30,17 @@ class Main {
         do ScreenExt.fillScreen();
 
         // mock draw function
-        do ScreenExt.setWindow(0,0,9,9);
-        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
         let c = ScreenExt.YELLOW();
+        do ScreenExt.setWindow(0,0,9,9);
         let px = ScreenExt._getPixels();
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM) // debug
         while (px > 0) {
-            do ScreenExt.writeData(c);
+            // do ScreenExt.writeRgbData(c); // FIXME: calling in a loop fails - timing violation?
+            do ScreenExt.writeData(c); // debug
             let px = px - 1;
             do ScreenExt._setPixels(px);
         }
-        do ScreenExt._completeTransaction();
+        do ScreenExt._completeTransaction(); // debug
         return;
     }
 

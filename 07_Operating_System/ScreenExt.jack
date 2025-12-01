@@ -142,6 +142,7 @@ class ScreenExt {
         do ScreenExt.writeData(y2); // EP[15:0]
         do ScreenExt._completeTransaction();
 
+        // FIXME: doesn't actually stop the overflow - check before add? carry bit?
         // store the sum of pixels to paint (w*h)
         // psuedo multiplication: avoids ALU overflow
         let i = x2-x1+1; // width
@@ -187,6 +188,7 @@ class ScreenExt {
         return;
     }
 
+    // FIXME: doesn't fill all the way since using pixels loop?
     function void fillScreen() {
         do ScreenExt.setWindow(0,0,239,319);
 
