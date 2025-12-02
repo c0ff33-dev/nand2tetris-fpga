@@ -9,7 +9,7 @@
 * to be driven high when the current batch of transactions is finished.
 */
 class ScreenExt {
-    static int LCD, LCD_WAIT, fgcolour, bgcolour, pixels;
+    static int LCD, LCD_WAIT, fgcolour, bgcolour;
     // timings are all over the place in docs - wait min 120ms on any major state change
     // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
     // DISPOFF (display off) is default(!) - frame buffer disabled & blank page inserted
@@ -34,10 +34,10 @@ class ScreenExt {
         // the read/write pointer of the frame memory on the ILI9341V side -
         // basically the image can appear flipped/mirrored compared to the source
         // - Row top to bottom (MADCTL D7/MY=0)
-        // - Column left to right (MADCTL D6/MX=0) // adafruit=1, image is flipped on x-axis
+        // - Column left to right (MADCTL D6/MX=0) // set to 1, coords need to be flipped on x-axis
         // - Row/column exchange: normal (MADCTL D5/MV=0)
         // - V-draw: top to bottom (MADCTL D4/ML=0)
-        // - RGB-BGR: RGB (MADCTL D3/BGR=0) // adafruit=1, BGR order (wrong for this implementation?)
+        // - RGB-BGR: RGB (MADCTL D3/BGR=0) // set to 1, BGR bit order
         // - H-draw: left to right (MADCTL D2/MH=0)
         // - RAMWR: ignore excess data calls (IFCTL D0/WEMODE=0) or redraw (default=1)
 
@@ -141,30 +141,7 @@ class ScreenExt {
         do ScreenExt.writeData(y1); // SP[15:0]
         do ScreenExt.writeData(y2); // EP[15:0]
         do ScreenExt._completeTransaction();
-
-        // FIXME: doesn't actually stop the overflow - check before add? carry bit?
-        // store the sum of pixels to paint (w*h)
-        // psuedo multiplication: avoids ALU overflow
-        let i = x2-x1+1; // width
-        while (i > 0) {
-            let j = y2-y1+1; // height
-            while (j > 0) {
-                let pixels = pixels + 1;
-                let j = j - 1;
-            }
-            let i = i - 1;
-        }
         return;
-    }
-
-    // set pixel count for external draw functions 
-    function void _setPixels(int px) {
-        let pixels = px;
-        return;
-    }
-
-    function int _getPixels() {
-        return pixels;
     }
 
     /** sets the 16 bit rgb colour for the next pixel in the rectangle 
@@ -188,17 +165,8 @@ class ScreenExt {
         return;
     }
 
-    // FIXME: doesn't fill all the way since using pixels loop?
     function void fillScreen() {
-        do ScreenExt.setWindow(0,0,239,319);
-
-        // inline the remaining logic for perf
-        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
-        while (pixels > 0) {
-            let pixels = pixels - 1;
-            do ScreenExt.writeData(fgcolour);
-        }
-        do ScreenExt._completeTransaction();
+        do Screen.drawRectangle(0, 0, 239, 319);
         return;
     }
 

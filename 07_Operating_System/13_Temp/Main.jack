@@ -24,23 +24,12 @@ class Main {
         // do Sys.wait(LCD_WAIT); // wait for DISPOFF
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
-        var int px, c;
         
         do ScreenExt.setPencolour(ScreenExt.BLUE());
         do ScreenExt.fillScreen();
 
-        // mock draw function
-        let c = ScreenExt.YELLOW();
-        do ScreenExt.setWindow(0,0,9,9);
-        let px = ScreenExt._getPixels();
-        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM) // debug
-        while (px > 0) {
-            // do ScreenExt.writeRgbData(c); // FIXME: calling in a loop fails - timing violation?
-            do ScreenExt.writeData(c); // debug
-            let px = px - 1;
-            do ScreenExt._setPixels(px);
-        }
-        do ScreenExt._completeTransaction(); // debug
+        do ScreenExt.setPencolour(ScreenExt.YELLOW());
+        do Screen.drawRectangle(0, 0, 9, 9);
         return;
     }
 

@@ -33,6 +33,25 @@ class Screen {
     /** Draws a filled rectangle whose top left corner is (x1, y1)
      * and bottom right corner is (x2,y2), using the current pen color. */
     function void drawRectangle(int x1, int y1, int x2, int y2) {
+        var int i, j, c;
+        do ScreenExt.setWindow(x1,y1,x2,y2);
+        let c = ScreenExt.getPencolour();
+
+        // inline the remaining logic for perf
+        // call writeData() w*h times
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        
+        let i = x2-x1+1; // width
+        while (i > 0) {
+            let j = y2-y1+1; // height
+            while (j > 0) {
+                do ScreenExt.writeData(c);
+                let j = j - 1;
+            }
+            let i = i - 1;
+        }
+
+        do ScreenExt._completeTransaction();
         return;
     }
 
