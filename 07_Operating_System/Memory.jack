@@ -1,3 +1,9 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+// Minor changes to init() signature
+
 /**
  * This library provides two services: direct access to the computer's main
  * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
@@ -24,7 +30,7 @@ class Memory {
     }
 
     /** De-allocates the given object (cast as an array) by making
-     *  it available for future allocations. */
+     *  it available for future allocations (appended to end of freeList) */
     function void deAlloc(Array o) {
     }    
 }

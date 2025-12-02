@@ -1,3 +1,9 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Output.jack
+// Doc only changes to screen dimensions
+
 /**
  * A library of functions for writing text on the screen.
  * The Hack physical screen consists of 320 rows of 240 pixels each.
@@ -17,6 +23,7 @@ class Output {
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
     }
+
     // Initializes the character map array
     function void initMap() {
         var int i;
@@ -64,7 +71,7 @@ class Output {
         do Output.create(64,30,51,51,59,59,59,27,3,30,0,0);  // @
         do Output.create(63,30,51,51,24,12,12,0,12,12,0,0);  // ?
         
-        do Output.create(65,12,30,51,51,63,51,51,51,51,0,0);          // A ** TO BE FILLED **
+        do Output.create(65,12,30,51,51,63,51,51,51,51,0,0); // A
         do Output.create(66,31,51,51,51,31,51,51,51,31,0,0); // B
         do Output.create(67,28,54,35,3,3,3,35,54,28,0,0);    // C
         do Output.create(68,15,27,51,51,51,51,51,27,15,0,0); // D

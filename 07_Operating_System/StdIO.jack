@@ -1,5 +1,6 @@
 /**
 * A library of functions for text based input and output over UART
+* Same API as Output/Keyboard from nand2tetris for print[*]/read[*] respectively
 */
 class StdIO {
 
