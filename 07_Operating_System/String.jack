@@ -1,3 +1,8 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/String.jack
+
 /**
  * Represents character strings. In addition for constructing and disposing
  * strings, the class features methods for getting and setting individual
@@ -7,54 +12,191 @@
  */
 
 class String {
+    field int maxLength;
+    field Array strArray;
+    field int len;
     
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
-    constructor String new(int maxLength) {
+    constructor String new(int _maxLength) {
+        if (_maxLength < 0) {
+            do Sys.error(14);
+        }
+
+        if (_maxLength > 0) {
+            let strArray = Array.new(_maxLength);
+        }
+
+        let maxLength = _maxLength;
+        let len = 0;
+        return this;
     }
 
     /** Disposes this string. */
     method void dispose() {
+        if (maxLength > 0) {
+            do Array.dispose(strArray);
+        }
+
+        do Memory.deAlloc(this);
+        return;
     }
 
     /** Returns the current length of this string. */
     method int length() {
+        return len;
     }
 
     /** Returns the character at the j-th location of this string. */
     method char charAt(int j) {
+        if ((j < 0) | (j > len) | (j = len)) {
+            do Sys.error(15);
+        }
+
+        return strArray[j];
     }
 
     /** Sets the character at the j-th location of this string to c. */
     method void setCharAt(int j, char c) {
+        if ((j < 0) | (j > len) | (j = len)) {
+            do Sys.error(16);
+        }
+
+        let strArray[j] = c;
+        return;
     }
 
     /** Appends c to this string's end and returns this string. */
     method String appendChar(char c) {
+        if (len = maxLength) {
+            do Sys.error(17);
+        }
+
+        let strArray[len] = c;
+        let len = len + 1;
+        return this;
     }
 
     /** Erases the last character from this string. */
     method void eraseLastChar() {
+        if (len = 0) {
+            do Sys.error(18);
+        }
+
+        let len = len - 1;
+        return;
     }
 
     /** Returns the integer value of this string, 
      *  until a non-digit character is detected. */
     method int intValue() {
+        var int index, value, charDigit;
+        var boolean isDigit, negative;
+
+        if (len = 0) {
+            return 0;
+        }
+
+        let isDigit = true;
+        
+        // check if string starts with "-" (45)
+        if (strArray[0] = 45) { 
+            let negative = true;
+            let index = 1;
+        }
+
+        while ((index < len) & isDigit) {
+            let charDigit = strArray[index] - 48; // resolve char_map to int
+            let isDigit = ~((charDigit < 0) | (charDigit > 9));
+
+            if (isDigit) {
+                let value = (value * 10) + charDigit;
+                let index = index + 1;
+            }
+        }
+
+        if (negative) {
+            let value = -value;
+        }
+
+        return value;
     }
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
+        var int index, base10; // local0, local1
+        var Array arr;
+        var boolean negative; // local3
+        
+        if (maxLength = 0) {
+            do Sys.error(19);
+        }
+
+        // set temp array to hold max possible signed int size +/-16384 (unsigned 32768)
+        let arr = Array.new(6);
+        
+        if (val < 0) {
+            let negative = true;
+            let val = -val; // if negative reverse sign to positive
+        }
+
+        let base10 = val;
+        
+        // loop through the string parsing the least significant digit each time
+        // val 12 (1st): base10 = 1, arr[0] = 48 + 2 // (12-(1*10))
+        // val 1 (2nd): base10 = 0, arr[0] = 48 + 1 // (1-(0*10))
+        while (base10 > 0) {
+            let base10 = val / 10; // discard remainder
+            let arr[index] = 48 + (val - (base10 * 10)); // resolve a single digit int to char_map
+            let index = index + 1;
+            let val = base10;
+        }
+        
+        // append "-" if negative
+        if (negative) {
+            let arr[index] = 45; // "-"
+            let index = index + 1;
+        }
+
+        // test if assignee string was too short
+        if (maxLength < index) {
+            // label IF_TRUE3
+            do Sys.error(19);
+        }
+        
+        if (index = 0) {
+            let strArray[0] = 48; // "0"
+            let len = 1;
+        }
+        else {
+            let len = 0;
+
+            while (len < index) {
+                // populate strArray in reverse from arr
+                // index/length=1: 1-(0+1) // strArray[0] = arr[0]
+                // index/length=2+ (1st): 2-(0+1) // strArray[0] = arr[1]
+                // index/length=2+ (2nd): 2-(0+2) // strArray[1] = arr[0]
+                let strArray[len] = arr[index - (len + 1)];
+                let len = len + 1;
+            }
+        }
+
+        do Array.dispose(arr);
+        return;
     }
 
     /** Returns the new line character. */
     function char newLine() {
+        return 128;
     }
 
     /** Returns the backspace character. */
     function char backSpace() {
+        return 129;
     }
 
     /** Returns the double quote (") character. */
     function char doubleQuote() {
+        return 34;
     }
 }
