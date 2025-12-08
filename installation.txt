@@ -76,3 +76,7 @@ winget install -e --id ArduinoSA.CLI # restart shell for PATH
 choco install make
 python -m serial.tools.miniterm COM3 115200 --encoding hexlify
 winiceprogduino.exe -ICOM3 -t # doesn't support -o for offset
+
+# vsc extensions
+throvn.nand2tetris
+roman-lukash.nand2tetris-jack-language-server
