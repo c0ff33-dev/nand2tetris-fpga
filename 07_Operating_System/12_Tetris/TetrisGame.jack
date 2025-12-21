@@ -24,7 +24,7 @@ class TetrisGame {
 	    do Screen.clearScreen();
 		let menu =  Menu.new("  <-","   L","  R","  ->");
 		do menu.draw();
-		do Screen.setPenColor(0);
+		do ScreenExt.setPenColor(0);
 		do Output.moveCursor(4,20);
 	    do Output.printString(S_next);
 		do Output.moveCursor(13,20);
@@ -56,7 +56,7 @@ class TetrisGame {
 		if (r=2) {let score = score + 100; }
 		if (r=3) {let score = score + 300; }
 		if (r=4) {let score = score +1200; }
-		do Screen.setPenColor(0);
+		do ScreenExt.setPenColor(0);
 		do Output.moveCursor(15,21);
 	    	do Output.printInt(score);
 		return;	
@@ -93,7 +93,7 @@ class TetrisGame {
 
 
 	    	if (exit) {
-				do Screen.setPenColor(0);
+				do ScreenExt.setPenColor(0);
             	do Output.moveCursor(10,5);
 	        	do Output.printString(S_game);
 	    	}

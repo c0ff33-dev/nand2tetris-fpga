@@ -28,13 +28,13 @@ class Button{
 		} else {
 			let color = Screen.LIGHTGREY();
 		}
-		do Screen.setPenColor(color);
+		do ScreenExt.setPenColor(color);
 		do Screen.drawRectangle((x*60)+1,288-(y*33),(x*60)+58,318-(y*33));
-		do Screen.setBackColor(color);
-		do Screen.setPenColor(Screen.BLACK());
+		do ScreenExt.setBackColor(color);
+		do ScreenExt.setPenColor(Screen.BLACK());
 		do Output.moveCursor(27-(3*y),1+((x*15)/2));
 		if (~(text=null)) {do Output.printString(text);}
-		do Screen.setBackColor(Screen.WHITE());
+		do ScreenExt.setBackColor(Screen.WHITE());
 		return;
 	}	
 }

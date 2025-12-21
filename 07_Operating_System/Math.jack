@@ -8,15 +8,29 @@
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+    static Array powArr, magArr;
 
     /** Initializes the library. */
     function void init() {
+        var int i;
+        let magArr = Array.new(16); // magnitudes of divisors
+        let powArr = Array.new(16); // precomputed powers of 2
+
+        // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768]
+        let powArr[0] = 1;
+        while(i < 15) {
+            let i = i + 1;
+            let powArr[i] = powArr[i - 1] + powArr[i - 1];
+        }
         return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
-        return -1;
+        if (x < 0) {
+            let x = -x;
+        }
+        return x;
     }
 
     /** Returns the product of x and y. 
@@ -25,22 +39,39 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
-        var int sum, i;
-        let sum = 0;
-        let i = y;
-        if (x=0 | y=0) {
-            return 0;
+        // Russian Peasant Multiplication
+        var int sum, tmp, power, i, neg;
+
+        // test if one product is negative
+        let neg = (((x < 0) & (y > 0)) | ((x > 0) & (y < 0)));
+        
+        // ensure larger absolute product is in x
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+        if (x < y) {
+            let tmp = x;
+            let x = y;
+            let y = tmp;
         }
-        if (y=1) {
-            return x;
+
+        // add x to sum for each power of 2 in y
+        // double x each iteration
+        while ((power-1)<(y-1)) {
+            // if current power of 2 is in y, add x to sum
+            // i.e. if any bits match in the bitwise comparison
+            // ~(...)=0 ensures the resulting expression is boolean
+            if (~((powArr[i] & y) = 0)) {
+                let sum = sum + x;
+                let power = power + powArr[i];
+            }
+            let x = x + x;
+            let i = i + 1;
         }
-        if (x=1) {
-            return y;
+
+        if (neg) {
+            let sum = -sum;
         }
-        while (i > 0) {
-            let sum = sum + x;
-            let i = i - 1;
-        }
+
         return sum;
     }
 
@@ -50,66 +81,81 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
-        var int q;   // quotient
-        var int d;   // divisor
-        var int p;   // power of two
-        var int temp;   // temp variable for halving
-        
-        var int dividend;
-        let dividend = x;
-        let q = 0;
-        let d = y;
-        let p = 1;
-
-        // divide by zero
+        // Binary Long Division
+        var int i, result, neg, overflow;
         if (y = 0) {
-            return 0;
+            do Sys.error(3); // check for division by zero
         }
 
-        // double divisor until next double would exceed dividend
-        while (((d + d) < dividend)|((d + d) = dividend)) {
-            let d = d + d;
-            let p = p + p;
+        // test if one dividend/divisor is negative
+        let neg = (((x < 0) & (y > 0)) | ((x > 0) & (y < 0)));
+        
+        // prepare magnitude array: holds scaled divisor values
+        let magArr[0] = Math.abs(y);
+        let x = Math.abs(x);
+        
+        // double while space in magArr and result won't overflow ALU
+        while ((i < 15) & (~overflow)) {
+            let overflow = (32767 - (magArr[i] - 1)) < (magArr[i] - 1);
+            if (~overflow) {
+                let magArr[i + 1] = magArr[i] + magArr[i];
+                let overflow = (magArr[i + 1] - 1) > (x - 1);
+                if (~overflow) {
+                    let i = i + 1;
+                }
+            }
+        }
+        
+        // compute quotient using binary substraction
+        while (i > -1) {
+            // if divisor * 2^shiftIndex fits into remaining dividend
+            if (~((magArr[i] - 1) > (x - 1))) {
+                let result = result + powArr[i];
+                let x = x - magArr[i];
+            }
+            // move down to next power of two
+            let i = i - 1;
         }
 
-        while (p > 0) {
-            // if the scaled divisor fits, subtract it
-            if ((d < dividend)|(d = dividend)) {
-                let dividend = dividend - d;
-                let q = q + p;
-            }
-            
-            // halve d
-            let temp = 0;
-            while ((d > 2)|(d = 2)) {
-                let d = d - 2;
-                let temp = temp + 1;
-            }
-            let d = temp;
-
-            // halve p
-            let temp = 0;
-            while ((p > 2)|(p = 2)) {
-                let p = p - 2;
-                let temp = temp + 1;
-            }
-            let p = temp;
+        // restore sign
+        if (neg) {
+            let result = -result;
         }
-        return q;
+        
+        return result;
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
-        return -1;
+        var int i, sum, sqr, result;
+        if (x < 0) {
+            do Sys.error(4); // x can't be negative
+        }
+        let i = 7;
+        while (i > -1) {
+            let sum = result + powArr[i];
+            let sqr = sum * sum;
+            if (~(sqr > x) & ~(sqr < 0)) {
+                let result = sum;
+            }
+            let i = i - 1;
+        }
+        return result;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
-        return -1;
+        if (a > b) {
+            let b = a;
+        }
+        return b;
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
-        return -1;
+        if (a < b) {
+            let b = a;
+        }
+        return b;
     }
 }

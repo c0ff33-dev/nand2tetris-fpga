@@ -15,7 +15,7 @@ class String {
     field int maxLength;
     field Array strArray;
     field int len;
-    
+
     /** constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int _maxLength) {
@@ -35,7 +35,7 @@ class String {
     /** Disposes this string. */
     method void dispose() {
         if (maxLength > 0) {
-            do Array.dispose(strArray);
+            do strArray.dispose();
         }
 
         do Memory.deAlloc(this);
@@ -52,7 +52,6 @@ class String {
         if ((j < 0) | (j > len) | (j = len)) {
             do Sys.error(15);
         }
-
         return strArray[j];
     }
 
@@ -61,7 +60,6 @@ class String {
         if ((j < 0) | (j > len) | (j = len)) {
             do Sys.error(16);
         }
-
         let strArray[j] = c;
         return;
     }
@@ -71,7 +69,6 @@ class String {
         if (len = maxLength) {
             do Sys.error(17);
         }
-
         let strArray[len] = c;
         let len = len + 1;
         return this;
@@ -82,7 +79,6 @@ class String {
         if (len = 0) {
             do Sys.error(18);
         }
-
         let len = len - 1;
         return;
     }
@@ -124,9 +120,9 @@ class String {
 
     /** Sets this string to hold a representation of the given value. */
     method void setInt(int val) {
-        var int index, base10; // local0, local1
+        var int index, base10;
         var Array arr;
-        var boolean negative; // local3
+        var boolean negative;
         
         if (maxLength = 0) {
             do Sys.error(19);
@@ -160,7 +156,6 @@ class String {
 
         // test if assignee string was too short
         if (maxLength < index) {
-            // label IF_TRUE3
             do Sys.error(19);
         }
         
@@ -181,7 +176,7 @@ class String {
             }
         }
 
-        do Array.dispose(arr);
+        do arr.dispose();
         return;
     }
 

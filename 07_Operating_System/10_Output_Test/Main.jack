@@ -2,6 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/OutputTest/Main.jack
+// Changes: coords, added test for colors.
 
 /** Test program for the OS Output class. */
 class Main {
@@ -37,8 +38,8 @@ class Main {
         do Output.backSpace();
         do Output.printInt(6789);
 
-		do Screen.setPenColor(Screen.WHITE());
-		do Screen.setBackColor(Screen.RED());
+		do ScreenExt.setPenColor(Screen.WHITE());
+		do ScreenExt.setBackColor(Screen.RED());
 
         do Output.moveCursor(10, 0);
         do Output.printString("Back Color Red");

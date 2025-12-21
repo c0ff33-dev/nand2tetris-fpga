@@ -2,65 +2,28 @@
 * A library of functions for displaying graphics on the screen.
 * The connected LCD physical screen consists of 320 rows (indexed 0..319, top to bottom)
 * of 240 pixels each (indexed 0..239, left to right). The top left pixel on 
-* the screen is indexed (0,0). Every pixel can be set to a 16 bit colour code composed of
+* the screen is indexed (0,0). Every pixel can be set to a 16 bit color code composed of
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 *
 * CSX is implicitly driven low on all SPI transactions by the FPGA controller and only needs
 * to be driven high when the current batch of transactions is finished.
 */
 class ScreenExt {
-    static int LCD, LCD_WAIT, fgcolour, bgcolour;
-    // timings are all over the place in docs - wait min 120ms on any major state change
-    // SLPIN (enter sleep mode) is default(!) - only responds to SLPOUT
-    // DISPOFF (display off) is default(!) - frame buffer disabled & blank page inserted
-    // NORON (normal display mode on) is default
-    // DINVOFF (display inversion off) is default
-    // GAMSET (gamma set) gamma curve 1 is default
-    // IDMOFF (idle mode off) is default (max colours)
-    // some commands will wait for VSCYNC to avoid visual artifacts
-
-    // TODO: add docs for LCD init states (grey/white etc)
-
+    static int LCD, LCD_WAIT, fgcolor, bgcolor;
     /** Initializes the Screen. */
     function void init() {
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
         
         // ILI9341V initialization: config
-
-        // MADCTL 0x36
-        // Note: the addressing of how data is written to memory in the FPGA is
-        // not affeced by MADCTL D5-7, the change is executed by manipulating
-        // the read/write pointer of the frame memory on the ILI9341V side -
-        // basically the image can appear flipped/mirrored compared to the source
-        // - Row top to bottom (MADCTL D7/MY=0)
-        // - Column left to right (MADCTL D6/MX=0) // set to 1, coords need to be flipped on x-axis
-        // - Row/column exchange: normal (MADCTL D5/MV=0)
-        // - V-draw: top to bottom (MADCTL D4/ML=0)
-        // - RGB-BGR: RGB (MADCTL D3/BGR=0) // set to 1, BGR bit order
-        // - H-draw: left to right (MADCTL D2/MH=0)
-        // - RAMWR: ignore excess data calls (IFCTL D0/WEMODE=0) or redraw (default=1)
-
-        // set draw orientation for top left = 0,0
-        // set RGB order (RGB on FPGA, BGR on LCD)
         do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
-        do ScreenExt.writeCommand(72+512); // Param 0x48 MX=1, BGR=1
+        do ScreenExt.writeCommand(72+512); // Param 0x48 MX=1 (flip x axis), BGR=1 (BGR bit order)
 
         // set RGB format
         do ScreenExt.writeCommand(58); // COLMOD 0x3A (8 bit param)
         do ScreenExt.writeCommand(85+512); // Param 0x55 (16 bit RGB format)
-
-        // TODO: function?
-        // do ScreenExt.writeCommand(32); // DINVOFF 0x20 (regular display)
-        // do Sys.wait(LCD_WAIT);
-        // do ScreenExt.writeCommand(33); // DINVON 0x21 (invert display)
-        // do Sys.wait(LCD_WAIT);
-        
+       
         // ILI9341V initialization: awaken
-        // these are the only essential SPI commands
-        // without any other initialization this will be random pixels but have to fully power on/off
-        // to reset frame buffer as RESET is not connected to UEXT on MOD-LCD2.8RTP
-        // the uninitialized display it will have the appearance of grey-ish vertical scanlines
         do Sys.wait(LCD_WAIT); // wait in case coming out of reset
         do ScreenExt.writeCommand(17); // SLPOUT 0x11 (wake)
         do Sys.wait(LCD_WAIT); // wait for SLPOUT
@@ -94,41 +57,37 @@ class ScreenExt {
         return;
     }
 
-    /** Sets the current pen colour, to be used for all subsequent drawXXX
-     *  commands. colours are represented by 16 bit RGB values with
+    /** Sets the current pen color, to be used for all subsequent drawXXX
+     *  commands. colors are represented by 16 bit RGB values with
      *  binary representation: rrrrrggggggbbbbb */
-    function void setPencolour(int colour) {
-        let fgcolour = colour;
+    function void setPenColor(int color) {
+        let fgcolor = color;
         return;
     }
 
-    function int getPencolour() {
-        return fgcolour;
+    function int getPenColor() {
+        return fgcolor;
     }
 
-    /** Sets the current background colour, to be used for clearScreen()
+    /** Sets the current background color, to be used for clearScreen()
      *  and drawBitMap() commands.
-     *  colours are represented by 16 bit RGB values: rrrrrggggggbbbbb */
-    function void setBackcolour(int colour) {
-        let bgcolour = colour;
+     *  colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
+    function void setBackColor(int color) {
+        let bgcolor = color;
         return;
     }
 
-    function int getBackcolour() {
-        return bgcolour;
+    function int getBackColor() {
+        return bgcolor;
     }
    
     /** sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
-     * writeRgbData(int colour) will paint the w*h pixels in the rectangle
-     * in the corresponding colour.*/ 
+     * writeRgbData(int color) will paint the w*h pixels in the rectangle
+     * in the corresponding color.*/ 
     function void setWindow(int x1, int y1, int x2, int y2) {
         // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
         // otherwise ignored by ILI9341V
-        // when MADCTL D5(MV)=0 (default) CASET=X, PASET=Y
-        // CASET SC/EC=left/right column extent
-        // PASET SP/EP=top/bottom row extent
-        // CASET/PASET limits are swapped if MADCTL MV/D5=1
         var int i, j;
                
         // CASET 0x2A (column adrr set): max 239
@@ -144,11 +103,11 @@ class ScreenExt {
         return;
     }
 
-    /** sets the 16 bit rgb colour for the next pixel in the rectangle 
+    /** sets the 16 bit rgb color for the next pixel in the rectangle 
      * set by setWindow(int x1, int y1, int x2, int y2). */
-    function void writeRgbData(int colour) {
+    function void writeRgbData(int color) {
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
-        do ScreenExt.writeData(colour);
+        do ScreenExt.writeData(color);
         do ScreenExt._completeTransaction();
         return;
     }
@@ -170,17 +129,17 @@ class ScreenExt {
         return;
     }
 
-    // TODO: need Array implementation
     /** draws the BitMap into the rectangle with upper left corner (x1,y1)
-     *  and lower right corner (x2,y2) using the pen colour for all 1s and the
-     *  back colour for all 0s in the BitMap. BitMap is an Array of h integers
+     *  and lower right corner (x2,y2) using the pen color for all 1s and the
+     *  back color for all 0s in the BitMap. BitMap is an Array of h integers
      *  representing up to 16 pixels in the row. The rectangle is limited
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
+        // FIXME: NYI
         return;
     }
 
-    /** RGB values for various colours. */
+    /** RGB values for various colors. */
     function int BLACK() {
         return 0; // 00000 000000 00000
     }

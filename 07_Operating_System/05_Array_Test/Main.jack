@@ -2,6 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/ArrayTest/Main.jack
+// Changes: Use DEBUG registers instead of heap.
 
 /** Test program for the OS Array class. */
 class Main {
@@ -11,7 +12,7 @@ class Main {
         var Array r;                  // stores test results
         var Array a, b, c;
         
-        let r = 4107;
+        let r = 4107;                 // use DEBUG0-4 registers
         
         let a = Array.new(3);
         let a[2] = 222;

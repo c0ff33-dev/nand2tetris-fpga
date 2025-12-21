@@ -2,8 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Screen.jack
-// Doc changes for screen dimensions and colors
-// Does not implement setColor()
+// Changes: doc changes for screen dimensions and colors
 
 /**
 * A library of functions for displaying graphics on the screen.
@@ -13,36 +12,157 @@
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 */
 class Screen {
+    static Array powArr, scrArr; // power of 2 array
+    static boolean color; // setColor
+
     /** Initializes the Screen. */
     function void init() {
+        var int i;
+
+        let scrArr = 16384; // FIXME: address
+        let color = true;
+        let powArr = Array.new(17);
+
+        // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,xxx]
+        let powArr[0] = 1;
+        while (i < 16) {
+            let i = i + 1;
+            let powArr[i] = powArr[i-1] + powArr[i-1];
+        }
         return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
+        var int i;
+        // FIXME: address
+        // 8192 = end of screen memory range
+        while (i < 8192) {
+            let scrArr[i] = 0;
+            let i = i + 1;
+        }
         return;
     }
 
-    /** Draws the (x,y) pixel, using the current pen color. */
-    function void drawPixel(int x,int y) {
-        // TODO: NYI
-        // do ScreenExt.setWindow(x,y,x,y);
-        // do ScreenExt.writeRgbData(ScreenExt.getPencolour());
+    // Internal API seen in reversed VM code only
+    // set pixel by applying bitmask to screen addr (word)
+    function void updateLocation(int addr, int mask) {
+        if (color) {
+            let scrArr[addr] = (scrArr[addr] | mask); // draw
+        } else {
+            let scrArr[addr] = scrArr[addr] & ~mask; // erase
+        }
         return;
     }
 
-    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current
-     *  pen color. */
-    function void drawLine(int x1,int y1,int x2,int y2) {
+    /** Sets the current color, to be used for all subsequent drawXXX commands.
+     *  Black is represented by true, white by false. */
+    function void setColor(boolean b) {
+        let color = b;
         return;
     }
 
-    /** Draws a filled rectangle whose top left corner is (x1, y1)
-     * and bottom right corner is (x2,y2), using the current pen color. */
-    function void drawRectangle(int x1, int y1, int x2, int y2) {
+    /** Draws the (x,y) pixel, using the current color. */
+    function void drawPixel(int x, int y) {
+        // FIXME: address/dimensions
+        // FIXME: probably also need to patch this to new draw funcs
+        var int word, bit, offset;
+        if ((x < 0) | (x > 511) | (y < 0) | (y > 255)) {
+            do Sys.error(7);
+        }
+
+        // screen = 512x256 array
+        // 512 = 32 x 16 bit words
+        let word = x / 16; // offset into the row in words
+        let bit = x - (word * 16); // offset into the word (x % 16)
+        let offset = (y * 32) + word; // word offset into the array (x rows)
+        do Screen.updateLocation(offset, powArr[bit]);
+        return;
+    }
+
+    // Internal API seen in reversed VM code only
+    // optionally flip x/y coords
+    function void drawConditional(int x, int y, boolean flip) {
+        if (flip) {
+            do Screen.drawPixel(y, x);
+        } else {
+            do Screen.drawPixel(x, y);
+        }
+        return;
+    }
+
+    /** Draws a line from pixel (x1,y1) to pixel (x2,y2), using the current color. */
+    function void drawLine(int x1, int y1, int x2, int y2) {
+        // FIXME: address/dimensions
+        // FIXME: probably also need to patch this to new draw funcs
+
+        // Bresenham’s line drawing algorithm
+        var int y, x, height, width, temp, accumulator;
+        var boolean flip, direction;
+        var int end, horDelta, diagDelta;
+        if ((x1 < 0) | (x2 > 511) | (y1 < 0) | (y2 > 255)) {
+            do Sys.error(8); // check bounds
+        }
+
+        let width = Math.abs(x2-x1);
+        let height = Math.abs(y2-y1);
+        let flip = (width < height); // flip if angle > 45 degrees
+        
+        // normalize direction so loop iterates either
+        // left-to-right or bottom-to-top (ascending)        
+        if ((flip & (y2 < y1)) | (~flip & (x2 < x1))) {
+            let temp = x1;
+            let x1 = x2;
+            let x2 = temp;
+            let temp = y1;
+            let y1 = y2;
+            let y2 = temp;
+        }
+        if (flip) {
+            let temp = width;
+            let width = height;
+            let height = temp;
+            let x = y1;
+            let y = x1;
+            let end = y2;
+            let direction = (x1 > x2);
+        } else {
+            let x = x1;
+            let y = y1;
+            let end = x2;
+            let direction = (y1 > y2);
+        }
+
+        // Bresenham error terms: track whether to change y (slope)
+        let accumulator = (2 * height) - width;
+        let horDelta = (2 * height);
+        let diagDelta = 2 * (height-width);
+        do Screen.drawConditional(x,y,flip);
+
+        while (x < end) {
+            if (accumulator < 0) {
+                // stay on current gradient
+                let accumulator = accumulator + horDelta;
+            } else {
+                // inc or dec gradient
+                let accumulator = accumulator + diagDelta;
+                if (direction) {
+                    let y = y - 1;
+                } else {
+                    let y = y + 1;
+                }
+            }
+            let x = x + 1;
+            do Screen.drawConditional(x,y,flip);
+        }
+        return;
+    }
+
+    // FIXME: preserving for now as example of new LCD draw
+    function void _drawRectangle(int x1, int y1, int x2, int y2) {
         var int i, j, c;
         do ScreenExt.setWindow(x1,y1,x2,y2);
-        let c = ScreenExt.getPencolour();
+        let c = ScreenExt.getPenColor();
 
         // inline the remaining logic for perf
         // call writeData() w*h times
@@ -62,9 +182,146 @@ class Screen {
         return;
     }
 
-    /** Draws a filled circle of radius r<=181 around (x,y), using the
-     *  current pen color. */
+    /** Draws a filled rectangle whose top left corner is (x1, y1)
+     * and bottom right corner is (x2,y2), using the current color. */
+    function void drawRectangle(int x1, int y1, int x2, int y2) {
+        // FIXME: address/dimensions
+        // FIXME: probably also need to patch this to new draw funcs
+        var int scrIdx, rowEnd, width, startWord, endWord, rightMask, leftMask, startBit, endBit;
+        if ((x1 > x2) | (y1 > y2) | (x1 < 0) | (x2 > 511) | (y1 < 0) | (y2 > 255)) {
+            do Sys.error(9); // check bounds
+        }
+
+        // create word/bit offsets
+        let startWord = x1 / 16;
+        let startBit = x1 - (startWord * 16);
+        let endWord = x2 / 16;
+        let endBit = x2 - (endWord * 16);
+
+        // create bitmasks for partial words
+        let leftMask = ~(powArr[startBit] - 1);
+        let rightMask = powArr[endBit + 1] - 1;
+
+        // iterate over rows
+        let scrIdx = (y1 * 32) + startWord;
+        let width = endWord - startWord;
+        while (~(y1 > y2)) {
+            let rowEnd = scrIdx + width;
+            if (width = 0) {
+                // rectangle <= one word width 
+                do Screen.updateLocation(scrIdx, (rightMask & leftMask));
+            } else {
+                // left edge (partial fill)
+                do Screen.updateLocation(scrIdx, leftMask);
+                let scrIdx = scrIdx + 1;
+
+                // middle (fully filled)
+                while (scrIdx < rowEnd) {
+                    do Screen.updateLocation(scrIdx, -1);
+                    let scrIdx = scrIdx + 1;
+                }
+
+                // right edge (partial fill)
+                do Screen.updateLocation(rowEnd, rightMask);
+            }
+
+            // next row
+            let y1 = y1 + 1;
+            let scrIdx = rowEnd + 32 - width;
+        }
+        return;
+    }
+
+    // Internal API seen in reversed VM code only
+    // draw a horizontal line only
+    // TODO: this does not seem worth duplicating compared to drawRectangle() 
+    function void drawHorizontal(int y, int x1, int x2) {
+        var int scrIdx, startWord, endWord, endAddr, rightMask, leftMask, width, minX, maxX, startBit, endBit;
+
+        // ensure x1 <= x2
+        let minX = Math.min(x1, x2);
+        let maxX = Math.max(x1, x2);
+        
+        // check bounds
+        // FIXME: address/dimensions
+        if ((y > -1) & (y < 256) & (minX < 512) & (maxX > -1)) {
+            // clamp to screen limits
+            let minX = Math.max(minX, 0);
+            let maxX = Math.min(maxX, 511);
+            
+            // word/bit indices
+            let startWord = minX / 16;
+            let startBit = minX - (startWord * 16);
+            let endWord = maxX / 16;
+            let endBit = maxX - (endWord * 16);
+            
+            // compute bitmasks & screen indices
+            let leftMask = ~(powArr[startBit] - 1);
+            let rightMask = powArr[endBit + 1] - 1;
+            let scrIdx = (y * 32) + startWord;
+            let width = endWord - startWord;
+            let endAddr = scrIdx + width;
+            
+            if (width = 0) {
+                // line <= one word width 
+                do Screen.updateLocation(scrIdx, (rightMask & leftMask));
+            } else {
+                // left edge (partial fill)
+                do Screen.updateLocation(scrIdx, leftMask);
+                let scrIdx = scrIdx + 1;
+
+                // middle (fully filled)
+                while (scrIdx < endAddr) {
+                    do Screen.updateLocation(scrIdx, -1);
+                    let scrIdx = scrIdx + 1;
+                }
+
+                // right edge (partial fill)
+                do Screen.updateLocation(endAddr, rightMask);
+            }
+        }
+        return;
+    }
+
+    // Internal API seen in reversed VM code only
+    // efficiently mirror a circle octant to fill the remaining shape
+    function void drawSymetric(int x1, int y1, int x2, int y2) {
+        do Screen.drawHorizontal(y1-y2, x1+x2, x1-x2); // bottom
+        do Screen.drawHorizontal(y1+y2, x1+x2, x1-x2); // top
+        do Screen.drawHorizontal(y1-x2, x1-y2, x1+y2); // middle-bottom
+        do Screen.drawHorizontal(y1+x2, x1-y2, x1+y2); // middle-top
+        return;
+    }
+
+    /** Draws a filled circle of radius r<=181 around (x,y), using the current color. */
     function void drawCircle(int x, int y, int r) {
+        // FIXME: address/dimensions
+        // FIXME: probably also need to patch this to new draw funcs
+
+        // Bresenham's Circle Drawing Algorithm
+        var int xOffset, yOffset, accumulator;
+        if ((x < 0) | (x > 511) | (y < 0) | (y > 255)) {
+            do Sys.error(12); // bounds check
+        }
+        if (((x-r) < 0) | ((x+r) > 511) | ((y-r) < 0) | ((y+r) > 255)) {
+            do Sys.error(13); // radius bounds check
+        }
+
+        // approximate the circle without using sqrt()
+        // calculates one octant then mirrors the rest using drawSymetric()
+        let yOffset = r;
+        let accumulator = 1 - r;
+        do Screen.drawSymetric(x, y, xOffset, yOffset);
+        while (yOffset > xOffset) {
+            if (accumulator < 0) {
+                let accumulator = accumulator + (2 * xOffset) + 3;
+            } else {
+                let accumulator = accumulator + (2 * (xOffset-yOffset)) + 5;
+                let yOffset = yOffset - 1;
+            }
+            let xOffset = xOffset + 1;
+            do Screen.drawSymetric(x, y, xOffset, yOffset);
+        }
         return;
     }
 }

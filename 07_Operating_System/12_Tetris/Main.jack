@@ -57,7 +57,7 @@ class Main {
 		var String hv;
 		let n2t = "nand2tetris-fpga";
 		do Screen.clearScreen();
-		do Screen.setPenColor(0);
+		do ScreenExt.setPenColor(0);
 		do Output.moveCursor(6,7);
 		do Output.printString(n2t);
 		do n2t.dispose();

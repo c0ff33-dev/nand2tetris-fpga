@@ -14,7 +14,7 @@
  * (and stays low even when transmission is completed). DCX is set to 1 (data).
  * After 32 clock cycles transmission is completed and out[15] is set to 0.
  *
- * 240x320x18 display, 256K colours (65K addressable)
+ * 240x320x18 display, 256K colors (65K addressable)
  * DCX updates on the 7th negedge e.g. asserts on posedge of last command/data bit 
  * CSX must be driven low 1 cycle before SCK posedge and high no earlier than 8th SCK negedge
  *

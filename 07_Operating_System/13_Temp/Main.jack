@@ -9,10 +9,10 @@ class Main {
     }
     function void lcd_main() {
         // while (true) {
-        //     do ScreenExt.setPencolour(ScreenExt.BLUE());        
+        //     do ScreenExt.setPenColor(ScreenExt.BLUE());        
         //     do ScreenExt.fillScreen();
 
-        //     do ScreenExt.setPencolour(ScreenExt.WHITE());        
+        //     do ScreenExt.setPenColor(ScreenExt.WHITE());        
         //     do ScreenExt.fillScreen();
         //     do GPIO.writeLed(3); // done
         // }
@@ -25,10 +25,10 @@ class Main {
         // do ScreenExt.writeCommand(16); // Enter Sleep Mode (10h) SLPIN (sleep)
         // do Sys.wait(LCD_WAIT); // wait for SLPIN
         
-        do ScreenExt.setPencolour(ScreenExt.BLUE());
+        do ScreenExt.setPenColor(ScreenExt.BLUE());
         do ScreenExt.fillScreen();
 
-        do ScreenExt.setPencolour(ScreenExt.YELLOW());
+        do ScreenExt.setPenColor(ScreenExt.YELLOW());
         do Screen.drawRectangle(0, 0, 9, 9);
         return;
     }

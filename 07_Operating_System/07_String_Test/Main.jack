@@ -2,8 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/StringTest/Main.jack
-
-// TODO: this test set could be improved
+// Changes: Use StdIO class instead of Output (same API as Output for print*())
 
 /** Test program for the OS String class. */
 class Main {

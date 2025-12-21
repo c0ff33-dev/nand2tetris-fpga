@@ -2,7 +2,10 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Memory.jack
-// Minor changes to init() signature
+// Changes: doc only changes for heap size.
+
+// Algorithm is discussed in more detail here:
+// http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/New-Heap-Management-algorithm-Coursera-version-td4032026.html 
 
 /**
  * This library provides two services: direct access to the computer's main
@@ -10,27 +13,154 @@
  * consists of 3840 words, each holding a 16-bit binary number.
  */ 
 class Memory {
-    
-    /** Initializes the class. start is the first memory address of the heap.
-     *  end is the last memory address of the heap */
-    function void init(int start, int end) {
+    static Array ram;
+
+    /** Initializes the class. */
+    function void init() {
+        // FIXME: heap addresses (original heap size = 32768 words)
+        let ram = 0; // manually assign pointer value as zero
+        // 2048 = first heap, 16383 = last heap
+        let ram[2048] = 14334; // blockSize (init=1 max size free block)
+        let ram[2049] = 2050; // *nextPtr = &blockData
+        // ram[2050] = 0; // &blockData
+        return;
     }
 
     /** Returns the RAM value at the given address. */
     function int peek(int address) {
+        return ram[address];
     }
 
     /** Sets the RAM value at the given address to the given value. */
     function void poke(int address, int value) {
+        let ram[address] = value;
+        return;
     }
 
     /** Finds an available RAM block of the given size and returns
      *  a reference to its base address. */
     function int alloc(int size) {
+        var Array blockPtr;
+        var Array nextBlock;
+
+        if (size < 0) {
+            do Sys.error(5); // Allocated memory size must be positive
+        }
+
+        if (size = 0) {
+            let size = 1; // min allocation is 1
+        }
+
+        // FIXME: heap address
+        let blockPtr = 2048; // start of heap
+
+        // search from start of heap until suitable freeBlock (first fit) or heap exhausted
+        // defrag if two adjacent free blocks found while interating
+
+        // 1st alloc: always skip if size < maxSize (entire heap is freeBlock)
+        // 2nd+ alloc: iterate through allocated blocks (blockSize == 0)
+        // 2nd+ alloc: break when out of bounds or found a block with blockSize > size required
+
+        // FIXME: heap address
+        while ((blockPtr < 16383) & (blockPtr[0] < size)) {
+            let nextBlock = blockPtr[1];
+
+            // if blockSize or nextBlockSize is zero or *nextBlock would exceed heap boundary
+            // advance to next block and continue
+            // FIXME: heap address
+            if ((blockPtr[0] = 0) | (nextBlock > 16382) | (nextBlock[0] = 0)) {
+                let blockPtr = nextBlock;
+            }
+
+            // elif two adjacent freeBlocks are found: defrag
+            else {
+                // combine blockSize and currentBlock inherits nextBlock *nextPtr (flink or terminate)
+
+                // blockSize = len(freeBlock) + nextBlockSize
+                let blockPtr[0] = (blockPtr[1] - blockPtr) + nextBlock[0];
+
+                // if nextBlock is end of list (**(nextPtr+1) == &blockData)
+                if (nextBlock[1] = (nextBlock + 2)) {
+                    // currentBlock updated to reference closest data block (terminate list)
+                    // *nextPtr = &blockData+2
+                    let blockPtr[1] = (blockPtr + 2);
+                } else { 
+                    // else currentBlock inherits nextBlock flink
+                    // *nextPtr = *nextBlockPtr
+                    let blockPtr[1] = nextBlock[1];
+                }
+            }
+        }
+
+        // error if loop was broken by exhausting heap / going out of bounds
+        // minimum (3 + size) words required to continue (blockSize, *nextPtr, freeBlockSize)
+        // FIXME: heap address
+        if ((blockPtr + size) > 16379) {
+            do Sys.error(6); // Heap overflow
+        }
+        
+        // if blockSize is sufficient split into allocBlock/freeBlock and link them together
+        if (blockPtr[0] > (size + 2)) {           
+            // freeBlockSize = blockSize - allocBlockSize
+            let blockPtr[size + 2] = blockPtr[0] - size - 2;
+
+            // freeBlock inherits allocBlock *nextPtr (flink or terminate)
+
+            // if *allocNextPtr is at the end of the list (allocNextPtr == &allocBlockData)
+            if (blockPtr[1] = (blockPtr + 2)) {
+                // freeBlock updated to reference closest data block (terminate list)
+                let blockPtr[size + 3] = blockPtr + size + 4;
+            }
+
+            else { 
+                // freeBlock inherits allocBlock flink
+                // *freeNextPtr = *allocNextPtr
+                let blockPtr[size + 3] = blockPtr[1];
+            }
+
+            // complete the chain by linking allocBlock to freeBlock
+
+            // *allocNextPtr = *freeBlock
+            let blockPtr[1] = blockPtr + size + 2;
+        }
+        // else: consume the whole block (size/flink unchanged)
+
+        let blockPtr[0] = 0; // allocBlockSize = 0, flag it as allocated
+        return blockPtr + 2; // return &allocBlockData
     }
 
     /** De-allocates the given object (cast as an array) by making
      *  it available for future allocations (appended to end of freeList) */
     function void deAlloc(Array o) {
-    }    
+        var Array blockPtr;
+        var Array nextPtr;
+
+        let blockPtr = o - 2; // move backwards from &allocBlockData to start of *allocBlock header
+        let nextPtr = blockPtr[1]; // *nextPtr
+
+        // if nextBlock is allocated update currentBlock in place as free
+        if (nextPtr[0] = 0) {
+            // restore allocBlockSize
+            let blockPtr[0] = blockPtr[1] - blockPtr - 2;
+        }
+
+        // elif nextBlock is a free combine it with currentBlock (defrag)
+        else {
+            // increase currentBlock size by total size of the adjacent freeBlock
+            let blockPtr[0] = blockPtr[1] - blockPtr + nextPtr[0];
+
+            // currentblock inherits the freeBlock *nextPtr (flink or terminate)
+
+            // if nextBlock was at end of freeList continue to reference nearest data block to terminate the list
+            if (nextPtr[1] = (nextPtr + 2)) {
+                let blockPtr[1] = blockPtr + 2;
+            }
+
+            // else currentBlock inherits freeBlock flink
+            else {
+                let blockPtr[1] = nextPtr[1];
+            }
+        }
+        return;
+    }
 }

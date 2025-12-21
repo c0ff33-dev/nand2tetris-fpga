@@ -7,7 +7,7 @@
  * A library that supports various program execution services.
  */
 class Sys {
-    /** Performs all the initializations required by the OS. */
+    /** Performs all the initializations required by the OS */
     function void init() {
         // TODO: NYI
         // do Memory.init();
@@ -26,16 +26,12 @@ class Sys {
 
     /** Halts the program execution. */
     function void halt() {
-        while (true) { 
-            // 0 == false, -1 (0xFFFF) == true
-            // but logic is inverted for if-goto:
-            //   if not break, else loop
-        }
+        while (true) {} // pass
         return;
     }
 
     // TODO: can fine tune with sim
-    /** Waits approximately duration milliseconds and returns.  */
+    /** Attempts to sleep for duration milliseconds and returns */
     function void wait(int duration) {
         // ~255 total instructions
         // ~86 instructions before/after loops

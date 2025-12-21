@@ -2,6 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/MathTest/Main.jack
+// Changes: use DEBUG register instead of heap.
 
 /** Test program for the OS Math class. */
 class Main {
@@ -10,7 +11,7 @@ class Main {
     function void main() {
         var Array r;          // stores the test results;
         
-        let r = 4107;
+        let r = 4107; // use DEBUG0-4 registers
     
         let r[0] = 2 * 3;                  // 6
         let r[1] = r[0] * (-30);           // 6 * (-30) = -180
