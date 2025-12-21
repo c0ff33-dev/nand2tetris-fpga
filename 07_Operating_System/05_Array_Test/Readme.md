@@ -1,7 +1,8 @@
 ## Array.jack
 
-Represents an array.
-In the Jack language, arrays are instances of the Array class. Once declared, the array entries can be accessed using the usual syntax arr[i]. Each array entry can hold a primitive data type as well as any object type. Different array entries can have different data types.
+Represents an array. In the Jack language, arrays are instances of the Array class. Once declared, the array entries can be accessed using the usual syntax arr[i]. Each array entry can hold a primitive data type as well as any object type. Different array entries can have different data types.
+
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`Array`, `GPIO`, `Memory`, `Sys`, `UART`).
 
 ***
 
@@ -19,6 +20,6 @@ In the Jack language, arrays are instances of the Array class. Once declared, th
   $ apio sim
   ```
 
-* Check the content of special function register DEBUG0--DEBUG4.
+* Check the content of special function register DEBUG0-DEBUG4.
   
   ![](array.png)

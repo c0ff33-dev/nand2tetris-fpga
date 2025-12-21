@@ -7,8 +7,11 @@ The Hack physical screen consists of 320 rows of 240 pixels each. The library us
 
 ### Project
 
-* implement `Output.jack`
-* test in real hardware
+* Implement `Output.jack`.
+
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`Array`, `GPIO`, `Math`, `Memory`, `Output`, `Screen`, `StdIO`, `String`, `Sys`, `UART`).
+
+* Test in real hardware.
 
 ```
 $ cd 09_Output_Test

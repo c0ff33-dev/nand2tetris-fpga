@@ -8,6 +8,8 @@ Represents character strings. In addition for constructing and disposing strings
 
 * Implement `String.jack` and at least the function `StdIO.printString(String s)`
 
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`Array`, `GPIO`, `Math`, `Memory`, `StdIO`, `String`, `Sys`, `UART`).
+
 * Test by running `String_Test`, which performs several String operation and outputs them to StdIO (UART)
   
   **Hint:** Use the debug register to show which caracters are transmitted over `UartTX`. Add the following code in function UART.writeChar():

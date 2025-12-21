@@ -17,7 +17,7 @@ class Memory {
 
     /** Initializes the class. */
     function void init() {
-        // FIXME: heap addresses (original heap size = 32768 words)
+        // FIXME: heap addresses (original heap size = 32768 words), new heap = 1024-3839
         let ram = 0; // manually assign pointer value as zero
         // 2048 = first heap, 16383 = last heap
         let ram[2048] = 14334; // blockSize (init=1 max size free block)

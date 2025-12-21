@@ -4,6 +4,8 @@ A library of commonly used mathematical functions.
 
 **Note:** Jack compilers implement multiplication and division using OS method calls.
 
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`Array`, `GPIO`, `Math`, `Memory`, `Sys`, `UART`).
+
 ***
 
 ### Project
@@ -20,5 +22,5 @@ A library of commonly used mathematical functions.
   $ apio sim
   ```
 
-* Compare the content of special function register DEBUG0--DEBUG4.
+* Compare the content of special function register DEBUG0-DEBUG4.
   ![](math.png)

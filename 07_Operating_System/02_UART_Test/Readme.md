@@ -10,7 +10,7 @@ In the Testfolder `02_UART_Test` you find a minimal version of `Sys.jack` contai
 class Sys {
 
     function void init() {
-        do UART.init(4098);
+        do UART.init();
         while (true) {
             do UART.write(UART.read());
         }        

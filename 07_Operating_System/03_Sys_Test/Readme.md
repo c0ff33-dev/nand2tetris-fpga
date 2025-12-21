@@ -2,7 +2,9 @@
 
 A library that supports various program execution services.
 
-**Hint:** To debug the next projects in real hardware, we can implement one or both of the following strategies into `Sys.jack`
+**Hint:** To debug the next projects in real hardware, we can implement one or both of the following strategies into `Sys.jack`.
+
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Sys`, `UART`).
 
 1. Use LED to indicate the state of JACK-OS according to
 

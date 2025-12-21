@@ -58,4 +58,8 @@ For every special function register we will need the appropriate software to tal
 
 * Check if attached IO-Device is working accorging to the uploaded software.
 
-# TODO: Create symlink for RTP selection: `sudo ln -s RTP_NS2009.v RTP.v`
+# TODO: Create symlink for RTP selection: 
+```
+sudo ln -s RTP_NS2009.v RTP.v
+sudo ln -s 07B_RTP_NS2009 07_RTP
+```

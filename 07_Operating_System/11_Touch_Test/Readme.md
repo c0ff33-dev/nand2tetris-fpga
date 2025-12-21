@@ -23,9 +23,9 @@ yhigh[4:0]*128+ylow[6:0] represent a 12 bit y-coordinate in the range 0-4095
 
 ### Project
 
-* implement `Touch.jack`
+* Implement `Touch.jack`.
 
-* Test in simulation
+* Test in simulation:
   
   ```
   $ cd 11_Touch_Test

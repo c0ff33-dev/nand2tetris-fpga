@@ -10,7 +10,7 @@ In the Testfolder `01_GPIO_Test` you find a minimal version of `Sys.jack` contai
 class Sys {
 
     function void init() {
-        do GPIO.init(4096);
+        do GPIO.init();
         while (true) {
             do GPIO.writeLed(GPIO.readBut());
         }        

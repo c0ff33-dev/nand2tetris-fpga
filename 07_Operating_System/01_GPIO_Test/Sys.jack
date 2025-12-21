@@ -5,7 +5,7 @@ class Sys {
 
     /** Performs all the initializations required by the OS. */
     function void init() {
-		do GPIO.init(4096);
+		do GPIO.init();
 		while (true) {
 			do GPIO.writeLed(GPIO.readBut());
 		}
