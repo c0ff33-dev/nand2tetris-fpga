@@ -65,7 +65,6 @@ class Main {
         
         do StdIO.println();
         do StdIO.printString("Test completed successfully");
-        
         return;
     }
 }

@@ -40,8 +40,12 @@ class StdIO {
      * value (until the first non-digit character in the entered text is
      * detected). Also handles user backspaces. */
     function int readInt(String message) {
-        // TODO: NYI
-        return -1;
+        var String s;
+        var int i;
+        let s = StdIO.readLine(message);
+        let i = s.intValue();
+        do s.dispose();
+        return i;
     }
 
     /**
@@ -49,7 +53,31 @@ class StdIO {
      * text until a newline character is detected, echoes the text
      * to the UART_TX, and returns its value. Also handles user backspaces. */
     function String readLine(String message) {
-        // TODO: NYI
-        return -1;
+        var String s;
+        var char c;
+        var int i;
+
+        // send input message and dispose
+        let s = String.new(50);
+        do StdIO.printString(message);
+        do message.dispose();
+
+        // read the input
+        // check for either line ending and backspace style
+        let c = UART.readChar();
+        while (~((c = 10) | (c = 13))) {
+             // ascii BS/DEL (backspace/delete)
+            if ((c = 8) | (c = 127)) {
+                do s.eraseLastChar();
+            } else {
+                do s.appendChar(c);
+            }
+            let c = UART.readChar();
+        }
+
+        do StdIO.println();
+        do StdIO.printString(s);
+        do StdIO.println();
+        return s;
     }
 }
