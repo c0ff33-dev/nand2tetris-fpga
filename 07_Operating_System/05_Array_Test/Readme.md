@@ -2,13 +2,13 @@
 
 Represents an array. In the Jack language, arrays are instances of the Array class. Once declared, the array entries can be accessed using the usual syntax arr[i]. Each array entry can hold a primitive data type as well as any object type. Different array entries can have different data types.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Memory`, `Sys`, `UART`).
-
 ***
 
 ### Project
 
 * Implement `Array.jack`
+
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Memory`, `Sys`, `UART`).
 
 * Test in simulation:
   
