@@ -25,16 +25,16 @@ Represents character strings. In addition for constructing and disposing strings
 * Compare your terminal output with:
   
   ```
-  new,appendChar: abcde
-  setInt: 12345
-  setInt: -32767
-  length: 5
-  charAt[2]: 99
-  setCharAt(2,'-'): ab-de
-  eraseLastChar: abcd
-  intValue: 456
-  intValue: -32123
-  backSpace: 129
-  doubleQuote: 34
-  newLine: 128
+  new,appendChar: abcde -- expected: abcde
+  setInt: 12345 -- expected: 12345
+  setInt: -32767 -- expected: -32767
+  length: 5 -- expected: 5
+  charAt[2]: 99 -- expected: 99
+  setCharAt(2,'-'): ab-de -- expected: ab-de
+  eraseLastChar: ab-d -- expected: ab-d
+  intValue: 456 -- expected: 456
+  intValue: -32123 -- expected: -32123
+  backSpace: 129 -- expected: 129
+  doubleQuote: 34 -- expected: 34
+  newLine: 128 -- expected: 128
   ```
