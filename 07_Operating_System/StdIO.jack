@@ -6,19 +6,30 @@ class StdIO {
 
     /** Prints the String s to UART_TX and disposes the String s */
     function void printString(String s) {
-        // TODO: NYI
+        var int i, len;
+        let i = 0;
+        let len = s.length();
+        while (i < len) {
+            do UART.writeChar(s.charAt(i));
+            let i = i + 1;
+        }
         return;
     }
 
     /** Prints the decimal representation of i to UART_TX */
     function void printInt(int i) {
-        // TODO: NYI
+        var String s;
+        let s = String.new(6); // max strInt = -16384
+        do s.setInt(i);
+        do StdIO.printString(s);
+        do s.dispose();
         return;
     }
 
     /** Prints the new line character to UART_TX */
     function void println() {
-        // TODO: NYI
+        do UART.writeChar(13); // ascii CR (carriage return)
+        do UART.writeChar(10); // ascii LF (line feed)
         return;
     }
 
