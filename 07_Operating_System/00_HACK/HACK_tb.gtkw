@@ -1,13 +1,13 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Mon Dec 22 07:19:53 2025
+[*] Mon Dec 22 07:44:19 2025
 [*]
 [dumpfile] "/home/veris/src/nand2tetris-fpga/07_Operating_System/00_HACK/HACK_tb.vcd"
-[dumpfile_mtime] "Mon Dec 22 07:19:09 2025"
-[dumpfile_size] 110842634
+[dumpfile_mtime] "Mon Dec 22 07:41:10 2025"
+[dumpfile_size] 110797438
 [savefile] "/home/veris/src/nand2tetris-fpga/07_Operating_System/00_HACK/HACK_tb.gtkw"
-[timestart] 0
-[size] 1920 963
+[timestart] 8000000
+[size] 1278 963
 [pos] 0 40
 *-29.718479 355000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
@@ -36,12 +36,10 @@ HACK_tb.HACK.LCD_SCK
 @200
 -RTP
 -DEBUG
-@24
+@421
 HACK_tb.HACK.debug0.out[15:0]
 HACK_tb.HACK.debug1.out[15:0]
-@25
 HACK_tb.HACK.debug2.out[15:0]
-@24
 HACK_tb.HACK.debug3.out[15:0]
 HACK_tb.HACK.debug4.out[15:0]
 [pattern_trace] 1

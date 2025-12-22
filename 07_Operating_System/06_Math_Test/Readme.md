@@ -8,14 +8,14 @@ A library of commonly used mathematical functions.
 
 ### Project
 
-* Implement `Math.jack`
+* Implement `Math.jack`.
 
 **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Math`, `Memory`, `Sys`, `UART`).
 
 * Test in simulation:
   
   ```
-  $ cd 00_Math_Test
+  $ cd 06_Math_Test
   $ make
   $ cd ../00_HACK
   $ apio clean
