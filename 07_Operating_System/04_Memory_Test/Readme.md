@@ -4,7 +4,7 @@ This library provides two services: direct access to the computer's main memory 
 
 Don't be afraid of the limited memory size of "only" 3840 words. Let the heap start at address 1024 with `do Memory.init()` in the `Sys.init()`. This will leave 768 words of stack, which is surely enough to run tetris.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`Array`, `GPIO`, `Memory`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Memory`, `Sys`, `UART`).
 
 | addr      | segment                       |
 | --------- | ----------------------------- |

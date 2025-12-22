@@ -14,15 +14,16 @@
  */ 
 class Memory {
     static Array ram;
+    static int startHeap, endHeap;
 
     /** Initializes the class. */
     function void init() {
-        // FIXME: heap addresses (original heap size = 32768 words), new heap = 1024-3839
         let ram = 0; // manually assign pointer value as zero
-        // 2048 = first heap, 16383 = last heap
-        let ram[2048] = 14334; // blockSize (init=1 max size free block)
-        let ram[2049] = 2050; // *nextPtr = &blockData
-        // ram[2050] = 0; // &blockData
+        let startHeap = 1024; // og: 2048
+        let endHeap = 3839; // new: BRAM, og: 16383
+        let ram[startHeap] = endHeap-startHeap-1; // blockSize (init=1 max size free block)
+        let ram[startHeap+1] = startHeap+2; // *nextPtr = &blockData
+        // ram[startHeap+2] = 0; // &blockData
         return;
     }
 
@@ -51,8 +52,7 @@ class Memory {
             let size = 1; // min allocation is 1
         }
 
-        // FIXME: heap address
-        let blockPtr = 2048; // start of heap
+        let blockPtr = startHeap;
 
         // search from start of heap until suitable freeBlock (first fit) or heap exhausted
         // defrag if two adjacent free blocks found while interating
@@ -61,14 +61,12 @@ class Memory {
         // 2nd+ alloc: iterate through allocated blocks (blockSize == 0)
         // 2nd+ alloc: break when out of bounds or found a block with blockSize > size required
 
-        // FIXME: heap address
-        while ((blockPtr < 16383) & (blockPtr[0] < size)) {
+        while ((blockPtr < endHeap) & (blockPtr[0] < size)) {
             let nextBlock = blockPtr[1];
 
             // if blockSize or nextBlockSize is zero or *nextBlock would exceed heap boundary
             // advance to next block and continue
-            // FIXME: heap address
-            if ((blockPtr[0] = 0) | (nextBlock > 16382) | (nextBlock[0] = 0)) {
+            if ((blockPtr[0] = 0) | (nextBlock > (endHeap-1)) | (nextBlock[0] = 0)) {
                 let blockPtr = nextBlock;
             }
 
@@ -94,8 +92,7 @@ class Memory {
 
         // error if loop was broken by exhausting heap / going out of bounds
         // minimum (3 + size) words required to continue (blockSize, *nextPtr, freeBlockSize)
-        // FIXME: heap address
-        if ((blockPtr + size) > 16379) {
+        if ((blockPtr + size) > (endHeap-4)) {
             do Sys.error(6); // Heap overflow
         }
         
