@@ -63,3 +63,12 @@ For every special function register we will need the appropriate software to tal
 sudo ln -s RTP_NS2009.v RTP.v
 sudo ln -s 07B_RTP_NS2009 07_RTP
 ```
+
+# FIXME: RTP wires
+```
+		// .RTP_SDI(RTP_SDI),			// RTP serial data in
+		// .RTP_SDO(RTP_SDO),			// RTP serial data out in
+		// .RTP_SCK(RTP_SCK)			// RTP serial clock
+		.RTP_SDA(RTP_SDA),			// RTP data line
+		.RTP_SCL(RTP_SCL)			// RTP serial clock
+```

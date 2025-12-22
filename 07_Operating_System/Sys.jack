@@ -13,12 +13,13 @@ class Sys {
         // do Memory.init();
         // do Output.init();
         // do Keyboard.init();
-        do Math.init();
+
+        // do Math.init();
         do GPIO.init();
         do UART.init();
-        do Screen.init();
-        do ScreenExt.init();
-        do Touch.init();
+        // do Screen.init();
+        // do ScreenExt.init();
+        // do Touch.init();
         do Main.main();
         do Sys.halt();
         return;

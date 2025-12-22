@@ -37,7 +37,7 @@ A library that supports various program execution services.
   
   ![](sys.png)
 
-* run in real hardware. Set the delay to 1s = 1000ms with `Sys.wait(1000)` in `Main.main()`.
+* Run in real hardware. Set the delay to 1s = 1000ms with `Sys.wait(1000)` in `Main.main()`.
   
   ```
   $ cd 03_Sys_Test
@@ -45,4 +45,4 @@ A library that supports various program execution services.
   $ make upload
   ```
 
-* Check if the LED change state every 1 second.
+* Check if the LED changes state every 1 second.

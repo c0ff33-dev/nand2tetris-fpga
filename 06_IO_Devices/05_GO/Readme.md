@@ -59,7 +59,7 @@ M=D   // 0xE308
 
 ### Run in real hardware
 
-* preload SPI flash rom with the hack programm `leds.asm.`
+* preload SPI flash rom with the hack program `leds.asm`
   
   ```
   $ cd ../../04_Machine_Language
@@ -72,7 +72,7 @@ M=D   // 0xE308
   ```
   $ cd 05_GO
   $ make
-  $ cd ../00HACK
+  $ cd ../00_HACK
   $ apio clean
   $ apio upload
   ```

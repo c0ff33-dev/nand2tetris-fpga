@@ -19,10 +19,10 @@ HACK HACK(
 	.LCD_DCX(LCD_DCX),
 	.LCD_SDO(LCD_SDO),
 	.LCD_SCK(LCD_SCK),
-	.LCD_CSX(LCD_CSX),
-	.RTP_SDO(RTP_SDO),
-	.RTP_SDI(RTP_SDI),
-	.RTP_SCK(RTP_SCK)
+	.LCD_CSX(LCD_CSX)
+	// .RTP_SDO(RTP_SDO),
+	// .RTP_SDI(RTP_SDI),
+	// .RTP_SCK(RTP_SCK)
 );
 
 always #0.5 CLK = ~CLK; // 100 MHz
@@ -35,11 +35,12 @@ always @(posedge CLK)
 always @(posedge CLK)
 	if (baudrate==0) uart <= {1'b1,uart[9:1]};
 assign RX = uart[0];
-	//Simulate RTP
-	reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
-	assign RTP_SDI = spi[40];
-	always @(posedge (RTP_SCK))
-		spi <= {spi[39:0],1'b0};
+	// TODO: Enable/fork for different RTP ICs
+	// Simulate RTP
+	// reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
+	// assign RTP_SDI = spi[40];
+	// always @(posedge (RTP_SCK))
+	// 	spi <= {spi[39:0],1'b0};
 	
 initial begin
 	$dumpfile("HACK_tb.vcd");

@@ -28,7 +28,7 @@ class Sys {
 * Test in simulation:
   
   ```
-  $ cd 02_UARTTest
+  $ cd 02_UART_Test
   $ make
   $ cd ../00_HACK
   $ apio clean

@@ -64,6 +64,7 @@ set_io LCD_MOSI 2		# PIO3_1B connected to pin 7 of GPIO1
 set_io LCD_SCK 3		# PIO3_2A connected to pin 9 of GPIO1
 set_io LCD_CEN 4		# PIO3_2B connected to pin 11 of GPIO1
 
+# FIXME: incorrect labels
 set_io RTP_MISO 7		# PIO3_3A connected to pin 13 of GPIO1
 set_io RTP_MOSI 8		# PIO3_3B connected to pin 15 of GPIO1
 set_io RTP_SCK 9		# PIO3_5A connected to pin 17 of GPIO1
