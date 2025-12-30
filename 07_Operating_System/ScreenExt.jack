@@ -18,6 +18,7 @@ class ScreenExt {
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
         
+        // TODO: lookup code to change orientation by swapping row/col?
         // ILI9341V initialization: config
         do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
         do ScreenExt.writeCommand(72+512); // Param 0x48 MX=1 (flip x axis), BGR=1 (BGR bit order)
@@ -150,7 +151,7 @@ class ScreenExt {
      *  representing up to 16 pixels in the row. The rectangle is limited
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
-        var int i, j, fg, bg;
+        var int i, j, fg, bg, width, height;
         do ScreenExt.setWindow(x1,y1,x2,y2);
         let fg = ScreenExt.getPenColor();
         let bg = ScreenExt.getBackColor();
@@ -159,20 +160,22 @@ class ScreenExt {
         // call writeData() w*h times
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
         
-        let i = x2-x1; // width
-        while (i > -1) {
-            let j = y2-y1; // height
-            while (j > -1) {
+        // FIXME: some corruption at the edges
+        // unlike the rest of the drawing code pixel order actually matters here
+        let height = y2-y1+1; // num of map entries to enum
+        let width = x2-x1+1; // num of bits to enum in the row/mask
+        while (j < height) {
+            let i = 0;
+            while (i < width) {
                 // use pow2 array to mask to a single bit
-                // map array len == height
                 if (~((map[j] & powArr[i]) = 0)) {
                     do ScreenExt.writeData(fg);
                 } else {
                     do ScreenExt.writeData(bg);
                 }
-                let j = j - 1;
+                let i = i + 1;
             }
-            let i = i - 1;
+            let j = j + 1;
         }
 
         do ScreenExt._completeTransaction();
