@@ -246,6 +246,7 @@ module HACK(
 	assign SRAM_ADDR = {2'd0, go_sram_addr};
 
 	// TODO: LCD8/16 (4104/4105)
+	// ILI9341V: 168KB VRAM (240x320 x 16bit colour depth)
 	LCD lcd(
 		.clk(clk), 
 		.load(loadIO8),

@@ -17,8 +17,8 @@ class Sys {
         do GPIO.init();
         do UART.init();
         do Math.init();
-        // do Screen.init();
-        // do ScreenExt.init();
+        do Screen.init();
+        do ScreenExt.init();
         // do Touch.init();
         do Main.main();
         do Sys.halt();

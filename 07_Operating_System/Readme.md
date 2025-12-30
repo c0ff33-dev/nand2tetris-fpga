@@ -39,6 +39,7 @@ This will compile all classes in the test folder and upload the binary file to S
 Finally you can run Tetris!
 
 # TODO: symlinks (some early dirs specifically have cut-down versions of the supporting libs)
+```
 sudo ln -sf ../GPIO.jack ./01_GPIO_Test/GPIO.jack
 sudo ln -sf ../UART.jack ./02_UART_Test/UART.jack
 sudo ln -sf ../GPIO.jack ./03_Sys_Test/GPIO.jack
@@ -123,9 +124,12 @@ sudo ln -sf ../Sys.jack ./12_Tetris/Sys.jack
 sudo ln -sf ../Touch.jack ./12_Tetris/Touch.jack
 sudo ln -sf ../UART.jack ./12_Tetris/UART.jack
 sudo ln -sf ../Util.jack ./12_Tetris/Util.jack
+```
 
+```
 sudo ln -sf ./13_Touch/Touch_AR1021.jack ./Touch.jack
 sudo ln -sf ./13_Touch/Touch_NS2009.jack ./Touch.jack
+```
 
 # TODO: wrap up 13_Temp
 ```

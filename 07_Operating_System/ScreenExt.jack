@@ -136,6 +136,8 @@ class ScreenExt {
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
         // FIXME: NYI
+        // simplified version of the original draw algorithm,
+        // constrainting to 16px width means each int = 1 row?
         return;
     }
 
