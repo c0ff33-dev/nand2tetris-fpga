@@ -10,8 +10,11 @@
 */
 class ScreenExt {
     static int LCD, LCD_WAIT, fgcolor, bgcolor;
+    static Array powArr; // power of 2 array
+
     /** Initializes the Screen. */
     function void init() {
+        var int i;
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
         
@@ -29,8 +32,15 @@ class ScreenExt {
         do Sys.wait(LCD_WAIT); // wait for SLPOUT
         do ScreenExt.writeCommand(41); // DISPON 0x29 (enable display)
         do Sys.wait(LCD_WAIT); // wait for DISPON
-        
         do ScreenExt._completeTransaction();
+
+        // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,xxx]
+        let powArr = Array.new(17);
+        let powArr[0] = 1;
+        while (i < 16) {
+            let i = i + 1;
+            let powArr[i] = powArr[i-1] + powArr[i-1];
+        }
         return;
     }
 
@@ -135,9 +145,32 @@ class ScreenExt {
      *  representing up to 16 pixels in the row. The rectangle is limited
      *  to maximal 16 pixels in width.*/ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
-        // FIXME: NYI
-        // simplified version of the original draw algorithm,
-        // constrainting to 16px width means each int = 1 row?
+        var int i, j, fg, bg;
+        do ScreenExt.setWindow(x1,y1,x2,y2);
+        let fg = ScreenExt.getPenColor();
+        let bg = ScreenExt.getBackColor();
+
+        // inline the remaining logic for perf
+        // call writeData() w*h times
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        
+        let i = x2-x1; // width
+        while (i > -1) {
+            let j = y2-y1; // height
+            while (j > -1) {
+                // use pow2 array to mask to a single bit
+                // map array len == height
+                if (~((map[j] & powArr[i]) = 0)) {
+                    do ScreenExt.writeData(fg);
+                } else {
+                    do ScreenExt.writeData(bg);
+                }
+                let j = j - 1;
+            }
+            let i = i - 1;
+        }
+
+        do ScreenExt._completeTransaction();
         return;
     }
 
@@ -193,43 +226,4 @@ class ScreenExt {
     function int WHITE() {
         return -1; // 11111 111111 11111
     }
-
-    // TODO: adafruit functions
-
-    // void Adafruit_ILI9341::setRotation(uint8_t m) {
-    //     rotation = m % 4; // can't be higher than 3
-    //     switch (rotation) {
-    //         case 0:
-    //             m = (MADCTL_MX | MADCTL_BGR);
-    //             _width  = ILI9341_TFTWIDTH;
-    //             _height = ILI9341_TFTHEIGHT;
-    //             break;
-    //         case 1:
-    //             m = (MADCTL_MV | MADCTL_BGR);
-    //             _width  = ILI9341_TFTHEIGHT;
-    //             _height = ILI9341_TFTWIDTH;
-    //             break;
-    //         case 2:
-    //             m = (MADCTL_MY | MADCTL_BGR);
-    //             _width  = ILI9341_TFTWIDTH;
-    //             _height = ILI9341_TFTHEIGHT;
-    //             break;
-    //         case 3:
-    //             m = (MADCTL_MX | MADCTL_MY | MADCTL_MV | MADCTL_BGR);
-    //             _width  = ILI9341_TFTHEIGHT;
-    //             _height = ILI9341_TFTWIDTH;
-    //             break;
-    //     }
-    // 
-    //     startWrite();
-    //     writeCommand(ILI9341_MADCTL);
-    //     spiWrite(m);
-    //     endWrite();
-    // }
-
-    // void Adafruit_ILI9341::invertDisplay(boolean i) {
-    //     startWrite();
-    //     writeCommand(i ? ILI9341_INVON : ILI9341_INVOFF);
-    //     endWrite();
-    // }
 }

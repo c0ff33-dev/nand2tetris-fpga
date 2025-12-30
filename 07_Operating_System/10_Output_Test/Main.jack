@@ -38,8 +38,8 @@ class Main {
         do Output.backSpace();
         do Output.printInt(6789);
 
-		do ScreenExt.setPenColor(Screen.WHITE());
-		do ScreenExt.setBackColor(Screen.RED());
+		do ScreenExt.setPenColor(ScreenExt.WHITE());
+		do ScreenExt.setBackColor(ScreenExt.RED());
 
         do Output.moveCursor(10, 0);
         do Output.printString("Back Color Red");
