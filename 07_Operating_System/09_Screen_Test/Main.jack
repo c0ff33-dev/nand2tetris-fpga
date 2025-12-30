@@ -5,9 +5,6 @@ class Main {
 		var int vx;
 		var Array map;
 
-		do ScreenExt.setBackColor(ScreenExt.WHITE());
-		do Screen.clearScreen();
-
 		do ScreenExt.setPenColor(ScreenExt.BLACK());
 		do Screen.drawRectangle(5,5,35,35);
 		do ScreenExt.setPenColor(ScreenExt.NAVY());

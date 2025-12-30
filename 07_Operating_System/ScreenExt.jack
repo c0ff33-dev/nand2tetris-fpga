@@ -34,6 +34,10 @@ class ScreenExt {
         do Sys.wait(LCD_WAIT); // wait for DISPON
         do ScreenExt._completeTransaction();
 
+        do ScreenExt.setPenColor(ScreenExt.BLACK());
+        do ScreenExt.setBackColor(ScreenExt.WHITE());
+        do Screen.clearScreen();
+
         // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,xxx]
         let powArr = Array.new(17);
         let powArr[0] = 1;
@@ -116,6 +120,7 @@ class ScreenExt {
     /** sets the 16 bit rgb color for the next pixel in the rectangle 
      * set by setWindow(int x1, int y1, int x2, int y2). */
     function void writeRgbData(int color) {
+        // Unused but provided for completeness
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
         do ScreenExt.writeData(color);
         do ScreenExt._completeTransaction();
