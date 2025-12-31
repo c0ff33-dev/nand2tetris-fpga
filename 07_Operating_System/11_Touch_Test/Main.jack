@@ -1,15 +1,23 @@
 class Main{
 	
 	function void main() {
+		var int i;
 		while (true) {
 			if (Touch.getEvent()) {
-				do StdIO.printInt(Touch.getX());
-				do StdIO.printString(" ");
-				do StdIO.printInt(Touch.getY());
-				do StdIO.printString(" ");
-				do StdIO.printInt(Touch.getPen());
-				do StdIO.println();
-			}	
+				do Output.printString("Touch: ");
+				do Output.printInt(Touch.getX());
+				do Output.printString(" ");
+				do Output.printInt(Touch.getY());
+				do Output.printString(" ");
+				do Output.printInt(Touch.getPen());
+				do Output.println();
+			} else {
+				if (i = 0) {
+					do Output.printString("No touch detected");
+					do Output.println();
+				}
+				let i = i + 1;
+			}
 		}	
 		return;
 	}

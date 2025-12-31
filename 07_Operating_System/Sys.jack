@@ -16,7 +16,7 @@ class Sys {
         do Screen.init();
         do ScreenExt.init();
         do Output.init();
-        // do Touch.init();
+        do Touch.init();
         do Main.main();
         do Sys.halt();
         return;

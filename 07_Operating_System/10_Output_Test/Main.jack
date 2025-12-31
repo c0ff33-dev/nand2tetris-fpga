@@ -13,7 +13,7 @@ class Main {
         var String s;
         var int colMax, rowMax;
         var boolean landscape;
-        let landscape = true;
+        let landscape = false;
         
         if (landscape) {
             let colMax = 39;

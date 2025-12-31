@@ -18,7 +18,7 @@ class ScreenExt {
         var boolean landscape;
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
-        let landscape = true;
+        let landscape = false;
 
         // ILI9341V initialization: config
         // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)

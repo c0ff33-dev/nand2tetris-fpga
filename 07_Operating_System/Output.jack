@@ -26,7 +26,7 @@ class Output {
         var boolean landscape;
         let rowIdx = 0;
         let colIdx = 0;
-        let landscape = true;
+        let landscape = false;
 
         if (landscape) {
             let colMax = 39;
@@ -194,7 +194,7 @@ class Output {
     // Internal API seen in reversed VM code only
     // Draw one 8x11 char bitmap without modifying indexes/cursor
     function void drawChar(char c) {
-        var int i, x, y, xMin, xMax, yMin, yMax;
+        var int x, y, xMin, xMax, yMin, yMax;
         var Array map;
 
         let map = Output.getMap(c);

@@ -6,15 +6,24 @@ class Touch{
     static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
     function void init() {
+        var boolean landscape;
         let RTP = 4106;
         let set_x_reg = 192; // 0xC0 (11000000), in[8]=0 for write
         let set_y_reg = 208; // 0xD0 (11010000), in[8]=0 for write
         let set_z_reg = 224; // 0xE0 (11100000), in[8]=0 for write
         let read_cmd = 256;  // in[8]=1 for read
-        let x_max = 240;
-        let y_max = 320;
         let adc_max = 4095;
         let pressure = 25;   // not sure about sensitivity / arbitrary threshold
+
+        let landscape = false;
+        if (landscape) {
+            let x_max = 320;
+            let y_max = 240;
+        } else {
+            let x_max = 240;
+            let y_max = 320;
+        }
+
         return;
     }
 
@@ -35,15 +44,15 @@ class Touch{
         do Touch.getY();
         do Touch.getPen();
         
-        if (pen) {
+        if (pen=1) {
             // do UART.writeChar(Util.logShiftByteRight(pen));
             // do UART.writeChar(pen);
-            do UART.writeChar(Util.logShiftByteRight(x_coord));
-            do UART.writeChar(x_coord);
-            do UART.writeChar(Util.logShiftByteRight(y_coord));
-            do UART.writeChar(y_coord);
-            do UART.writeChar(222); // 0xDE
-            do UART.writeChar(173); // 0xAD
+            // do UART.writeChar(Util.logShiftByteRight(x_coord));
+            // do UART.writeChar(x_coord);
+            // do UART.writeChar(Util.logShiftByteRight(y_coord));
+            // do UART.writeChar(y_coord);
+            // do UART.writeChar(222); // 0xDE
+            // do UART.writeChar(173); // 0xAD
 
             // ignore malformed data and 0xFFF touch event
             if (x_coord > adc_max | y_coord > adc_max | pen > (4094)) { 
