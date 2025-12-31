@@ -1,7 +1,6 @@
 class Main{
 	
 	function void main() {
-		var int i;
 		while (true) {
 			if (Touch.getEvent()) {
 				do Output.printString("Touch: ");
@@ -11,12 +10,6 @@ class Main{
 				do Output.printString(" ");
 				do Output.printInt(Touch.getPen());
 				do Output.println();
-			} else {
-				if (i = 0) {
-					do Output.printString("No touch detected");
-					do Output.println();
-				}
-				let i = i + 1;
 			}
 		}	
 		return;

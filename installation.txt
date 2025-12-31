@@ -75,3 +75,10 @@ apio upload
 mshr-h.veriloghdl
 throvn.nand2tetris
 roman-lukash.nand2tetris-jack-language-server
+
+# update hardware
+source ~/src/nand2tetris-fpga/.venv/bin/activate
+cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio clean && apio upload
+
+# upload program
+cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make && make upload

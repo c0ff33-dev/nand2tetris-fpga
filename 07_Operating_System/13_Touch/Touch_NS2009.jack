@@ -45,15 +45,6 @@ class Touch{
         do Touch.getPen();
         
         if (pen=1) {
-            // do UART.writeChar(Util.logShiftByteRight(pen));
-            // do UART.writeChar(pen);
-            // do UART.writeChar(Util.logShiftByteRight(x_coord));
-            // do UART.writeChar(x_coord);
-            // do UART.writeChar(Util.logShiftByteRight(y_coord));
-            // do UART.writeChar(y_coord);
-            // do UART.writeChar(222); // 0xDE
-            // do UART.writeChar(173); // 0xAD
-
             // ignore malformed data and 0xFFF touch event
             if (x_coord > adc_max | y_coord > adc_max | pen > (4094)) { 
                 return false; 
@@ -99,7 +90,6 @@ class Touch{
         // this is basically just integer division
         var int i, pos, out_range, in_range, scaled, accum;
 
-        // TODO: not sure about clamping vs throwing an error here
         if (data < in_min) { let data = in_min; }
         if (data > in_max) { let data = in_max; }
 
