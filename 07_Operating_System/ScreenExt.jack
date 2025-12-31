@@ -15,17 +15,27 @@ class ScreenExt {
     /** Initializes the Screen. */
     function void init() {
         var int i;
+        var boolean landscape;
         let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
         let LCD_WAIT = 120; // transition in milliseconds constant
-        
-        // TODO: lookup code to change orientation by swapping row/col?
-        // ILI9341V initialization: config
-        do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
-        do ScreenExt.writeCommand(72+512); // Param 0x48 MX=1 (flip x axis), BGR=1 (BGR bit order)
+        let landscape = true;
 
+        // ILI9341V initialization: config
+        // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)
+        do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
+
+        if (landscape) {
+            // landscape orientation
+            do ScreenExt.writeCommand(512+8+32); // BGR=1, MV=1 (row/col flip)
+        } else {
+            // original "portrait" orientation
+            // MX=1 (flip x axis), BGR=1 (BGR bit order)
+            do ScreenExt.writeCommand(512+64+8); 
+        }
+        
         // set RGB format
         do ScreenExt.writeCommand(58); // COLMOD 0x3A (8 bit param)
-        do ScreenExt.writeCommand(85+512); // Param 0x55 (16 bit RGB format)
+        do ScreenExt.writeCommand(512+85); // 16 bit RGB format
        
         // ILI9341V initialization: awaken
         do Sys.wait(LCD_WAIT); // wait in case coming out of reset
@@ -51,7 +61,6 @@ class ScreenExt {
 
     /** writes the 8 bit command with DCX wire set to low */
     function void writeCommand(int cmd) {
-        // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[0] = cmd; // send command byte
         let busy = -1;
@@ -140,11 +149,6 @@ class ScreenExt {
         return;
     }
 
-    function void fillScreen() {
-        do Screen.drawRectangle(0, 0, 239, 319);
-        return;
-    }
-
     /** draws the BitMap into the rectangle with upper left corner (x1,y1)
      *  and lower right corner (x2,y2) using the pen color for all 1s and the
      *  back color for all 0s in the BitMap. BitMap is an Array of h integers
@@ -160,7 +164,6 @@ class ScreenExt {
         // call writeData() w*h times
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
         
-        // FIXME: some corruption at the edges
         // unlike the rest of the drawing code pixel order actually matters here
         let height = y2-y1+1; // num of map entries to enum
         let width = x2-x1+1; // num of bits to enum in the row/mask

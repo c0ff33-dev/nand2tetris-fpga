@@ -17,16 +17,25 @@
  */
 class Output {
     // Character map for displaying characters
-    static int colIdx, rowIdx, maxCol, maxRow; 
+    static int colIdx, rowIdx, colMax, rowMax; 
     static String strInt;
     static Array charMaps;
 
     /** Initializes the screen, and locates the cursor at the screen's top-left. */
     function void init() {
+        var boolean landscape;
         let rowIdx = 0;
         let colIdx = 0;
-        let maxRow = 28;
-        let maxCol = 29;
+        let landscape = true;
+
+        if (landscape) {
+            let colMax = 39;
+            let rowMax = 20;
+        } else {
+            let colMax = 29;
+            let rowMax = 28;
+        }
+
         let strInt = String.new(6); // max strInt = -16384
         do Output.initMap();
         return;
@@ -204,7 +213,7 @@ class Output {
      *  and erases the character displayed there. */
     function void moveCursor(int i, int j) {
         // check row/column doesn't exceed bounds
-        if ((i < 0) | (i > maxRow) | (j < 0) | (j > maxCol)) {
+        if ((i < 0) | (i > rowMax) | (j < 0) | (j > colMax)) {
             do Sys.error(20);
         }
 
@@ -227,7 +236,7 @@ class Output {
             } else {
                 do Output.drawChar(c);
                 let colIdx = colIdx + 1;
-                if (colIdx > maxCol) {
+                if (colIdx > colMax) {
                     do Output.println();
                 }
             }
@@ -261,7 +270,7 @@ class Output {
         let rowIdx = rowIdx + 1;
 
         // return to start
-        if (rowIdx > maxRow) {
+        if (rowIdx > rowMax) {
             let rowIdx = 0;
         }
         return;
@@ -273,8 +282,8 @@ class Output {
             let colIdx = colIdx - 1;
         } else {
             // if at start return to end line/screen
-            let colIdx = maxCol;
-            let rowIdx = maxRow;
+            let colIdx = colMax;
+            let rowIdx = rowMax;
         }
         do Output.drawChar(32); // space
         return;

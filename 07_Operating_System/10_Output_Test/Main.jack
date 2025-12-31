@@ -11,15 +11,26 @@ class Main {
      *  methods of the Output class. */
     function void main() {
         var String s;
+        var int colMax, rowMax;
+        var boolean landscape;
+        let landscape = true;
+        
+        if (landscape) {
+            let colMax = 39;
+            let rowMax = 20;
+        } else {
+            let colMax = 29;
+            let rowMax = 28;
+        }
     
     	let s = String.new(1);
     	do s.appendChar(String.doubleQuote());
     
-        do Output.moveCursor(0, 29);
+        do Output.moveCursor(0, colMax);
         do Output.printChar(66);
-        do Output.moveCursor(28, 0);
+        do Output.moveCursor(rowMax, 0);
         do Output.printChar(67);
-        do Output.moveCursor(28, 29);
+        do Output.moveCursor(rowMax, colMax);
         do Output.printChar(68);
         do Output.printChar(65);
         

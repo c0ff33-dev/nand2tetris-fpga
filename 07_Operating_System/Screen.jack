@@ -12,29 +12,38 @@
 * RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
 */
 class Screen {
-    static boolean color; // setColor
+    static boolean color;
+    static int xMax, yMax;
 
     /** Initializes the Screen. */
     function void init() {
-        var int i;
-
+        var boolean landscape;
+        let landscape = true;
         let color = true;
+        
+        if (landscape) {
+            let xMax = 319;
+            let yMax = 239;
+        } else {
+            let xMax = 239;
+            let yMax = 319;
+        }
         return;
     }
 
     /** Erases the entire screen. */
     function void clearScreen() {
         var int i, j, c;
-        do ScreenExt.setWindow(0,0,239,319);
+        do ScreenExt.setWindow(0,0,xMax,yMax);
         let c = ScreenExt.getBackColor();
 
         // inline the remaining logic for perf
         // call writeData() w*h times
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
         
-        let i = 239; // width
+        let i = xMax; // width
         while (i > -1) {
-            let j = 319; // height
+            let j = yMax; // height
             while (j > -1) {
                 do ScreenExt.writeData(c);
                 let j = j - 1;
@@ -175,7 +184,7 @@ class Screen {
     function void drawCircle(int x, int y, int r) {
         // Bresenham's Circle Drawing Algorithm
         var int xOffset, yOffset, accumulator;
-        if (((x-r) < 0) | ((x+r) > 239) | ((y-r) < 0) | ((y+r) > 319)) {
+        if (((x-r) < 0) | ((x+r) > xMax) | ((y-r) < 0) | ((y+r) > yMax)) {
             do Sys.error(13); // radius bounds check
         }
 
