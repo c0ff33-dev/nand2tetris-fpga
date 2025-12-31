@@ -193,8 +193,8 @@ class Output {
         let y = rowIdx;
         let xMin = x * 8;
         let yMin = y * 11;
-        let xMax = xMin + 8;
-        let yMax = yMin + 11;
+        let xMax = xMin + 7;
+        let yMax = yMin + 10;
 
         do ScreenExt.drawBitMap(xMin, yMin, xMax, yMax, map);
         return;
