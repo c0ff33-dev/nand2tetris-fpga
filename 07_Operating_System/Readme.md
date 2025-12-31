@@ -130,20 +130,3 @@ sudo ln -sf ../Util.jack ./12_Tetris/Util.jack
 sudo ln -sf ./13_Touch/Touch_AR1021.jack ./Touch.jack
 sudo ln -sf ./13_Touch/Touch_NS2009.jack ./Touch.jack
 ```
-
-# TODO: wrap up 13_Temp
-```
-# sudo ln -sf ../Array.jack ./13_Temp/Array.jack
-sudo ln -sf ../GPIO.jack ./13_Temp/GPIO.jack
-sudo ln -sf ../Math.jack ./13_Temp/Math.jack
-# sudo ln -sf ../Memory.jack ./13_Temp/Memory.jack
-# sudo ln -sf ../Output.jack ./13_Temp/Output.jack
-sudo ln -sf ../Screen.jack ./13_Temp/Screen.jack
-sudo ln -sf ../ScreenExt.jack ./13_Temp/ScreenExt.jack
-# sudo ln -sf ../StdIO.jack ./13_Temp/StdIO.jack
-# sudo ln -sf ../String.jack ./13_Temp/String.jack
-sudo ln -sf ../Sys.jack ./13_Temp/Sys.jack
-sudo ln -sf ../Touch.jack ./13_Temp/Touch.jack
-sudo ln -sf ../UART.jack ./13_Temp/UART.jack
-sudo ln -sf ../Util.jack ./13_Temp/Util.jack
-```
