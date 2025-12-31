@@ -3,7 +3,7 @@ class Menu{
 	field int last;
 	field boolean pressed;
 	
-	constructor void new(String t0, String t1, String t2, String t3) {
+	constructor Menu new(String t0, String t1, String t2, String t3) {
 		let button = Array.new(4);
 		let button[0] = Button.new(0,t0);
 		let button[1] = Button.new(1,t1);

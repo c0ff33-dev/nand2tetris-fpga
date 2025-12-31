@@ -6,7 +6,7 @@ class Grid {
     constructor Grid new() {
 		var int i;
         let grid = Array.new(220);
-		do ScreenExt.setPenColor(Screen.DARKGREY());
+		do ScreenExt.setPenColor(ScreenExt.DARKGREY());
 		do Screen.drawRectangle(2,4,3,283);
 		do Screen.drawRectangle(2,284,147,285);
 		do Screen.drawRectangle(146,4,147,285);
@@ -42,7 +42,7 @@ class Grid {
 		return true;	
 	}
 	method boolean isClear(int x, int y) {
-		return (grid[(y*10)+x]=Screen.DARKGREY());
+		return (grid[(y*10)+x]=ScreenExt.DARKGREY());
 	}
 
 	method int clearRow() {
@@ -62,7 +62,7 @@ class Grid {
 				let r=r+1;
 				let x=0;
 				while (x<10) {
-					do draw(x,y,Screen.DARKGREY());
+					do draw(x,y,ScreenExt.DARKGREY());
 					let x=x+1;
 				}
 			}

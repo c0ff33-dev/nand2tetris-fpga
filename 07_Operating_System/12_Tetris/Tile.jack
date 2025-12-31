@@ -4,7 +4,7 @@
  */
 
 class Tile {
-    	field int x;
+    field int x;
 	field int y;
 	field int r;
 	field int type;
@@ -14,13 +14,13 @@ class Tile {
 
 	function void init() {
 		let colors = Array.new(7);
-		let colors[0] = Screen.YELLOW();
-		let colors[1] = Screen.TEAL();
-		let colors[2] = Screen.PURPLE();
-		let colors[3] = Screen.GREEN();
-		let colors[4] = Screen.RED();
-		let colors[5] = Screen.BLUE();
-		let colors[6] = Screen.ORANGE();
+		let colors[0] = ScreenExt.YELLOW();
+		let colors[1] = ScreenExt.TEAL();
+		let colors[2] = ScreenExt.PURPLE();
+		let colors[3] = ScreenExt.GREEN();
+		let colors[4] = ScreenExt.RED();
+		let colors[5] = ScreenExt.BLUE();
+		let colors[6] = ScreenExt.ORANGE();
 		
 		let bits = Array.new(28);
 		let bits[0] = 1632;
@@ -63,15 +63,14 @@ class Tile {
     /** Constructs a new Tile
 	*/
     constructor Tile new() {
-	var int r;
-	let grid = null;
-	let type=7;
-	while (type = 7) {
-		let type = Random.nextInt() & 7;
-	}
-	let x = 11;		
-	let y = 6;
-	let r = 0;
+		let grid = null;
+		let type=7;
+		while (type = 7) {
+			let type = Random.nextInt() & 7;
+		}
+		let x = 11;		
+		let y = 6;
+		let r = 0;
         return this;
     }
 

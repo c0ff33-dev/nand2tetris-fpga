@@ -59,7 +59,9 @@ class Touch{
     function int getX() {
         var int x;
         do Touch.writeRTP(set_x_reg);
-        let x_coord = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, x_max);
+        // FUTURE: Tetris expects the raw/unscaled values so no longer used
+        // let x_coord = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, x_max);
+        let x_coord = Touch.writeRTP(read_cmd);
         return x_coord;
     }
 
@@ -67,8 +69,10 @@ class Touch{
     function int getY() {
         var int y;
         do Touch.writeRTP(set_y_reg);
-        let y = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, y_max);
-        let y_coord = y_max - y; // NS2009 inverts the Y axis by default
+        // FUTURE: Tetris expects the raw/unscaled values so no longer used
+        // let y = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, y_max);
+        // let y_coord = y_max - y; // NS2009 inverts the Y axis by default
+        let y_coord = Touch.writeRTP(read_cmd);
         return y_coord;
     }
 
@@ -87,6 +91,7 @@ class Touch{
 
     /** Map 12 bit ADC coords to screen resolution */
     function int _map(int data, int in_min, int in_max, int out_min, int out_max) {
+        // FUTURE: Tetris expects the raw/unscaled values so no longer used
         // this is basically just integer division
         var int i, pos, out_range, in_range, scaled, accum;
 
