@@ -10,6 +10,6 @@ module And16(
 	output [15:0] out
 );
 
-	assign out = a&b; // bitwise AND
+	assign out = a&b; // bitwise AND (verilog primitive)
 
 endmodule

@@ -2,7 +2,7 @@
  * 8-way demultiplexor:
  * {a, b, c, d, e, f, g, h} = {in, 0, 0, 0, 0, 0, 0, 0} if sel == 000
  *                            {0, in, 0, 0, 0, 0, 0, 0} if sel == 001
- *                            etc.
+ *                            ...
  *                            {0, 0, 0, 0, 0, 0, 0, in} if sel == 111
  */
 

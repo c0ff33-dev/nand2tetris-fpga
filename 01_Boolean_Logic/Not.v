@@ -9,6 +9,6 @@ module Not(
 	output out
 );
 
-	not(out,in); // verilog primitive
+	not(out,in); // bitwise NOT (verilog primitive)
 
 endmodule

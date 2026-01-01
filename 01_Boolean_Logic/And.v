@@ -11,6 +11,6 @@ module And(
 	output out
 );
 
-	and(out,a,b); // verilog primitive
+	and(out,a,b); // bitwise AND (verilog primitive)
 
 endmodule

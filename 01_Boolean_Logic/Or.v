@@ -11,6 +11,6 @@ module Or(
 	output out
 );
 
-	or(out,a,b); // verilog primitive
+	or(out,a,b); // bitwise OR (verilog primitive)
 
 endmodule

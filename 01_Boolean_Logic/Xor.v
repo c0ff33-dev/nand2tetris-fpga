@@ -10,6 +10,6 @@ module Xor(
 	output out
 );
 
-	xor(out,a,b); // verilog primitive
+	xor(out,a,b); // bitwise XOR (verilog primitive)
 
 endmodule

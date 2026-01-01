@@ -4,13 +4,13 @@ Proceed and implement the chips `HalfAdder`, `FullAdder`, `Add16`, `Inc16` and `
 
 Keep in mind the following remarks:
 
-* in order to use the chips implemented in project `01_Boolean_Logic`, they must be listed in the file `Include.v`, which can be found in every subfolder.
+* In order to use the chips implemented in project `01_Boolean_Logic`, they must be listed in the file `Include.v`, which can be found in every sub-folder.
 
-* you dan use a `Buffer` to split the signal wires. e.g. `ng` signal of ALU can be derived from out[15].
+* You can use a `Buffer` to split the signal wires. e.g. `ng` signal of ALU can be derived from out[15].
 
-* clear cache every time you edit and change your implementation in the verilog file `<chipname>.v`.
+* Clear cache every time you edit and change your implementation in the Verilog file `<chipname>.v`.
 
-* test your chip implementation with:
+* Test your chip implementation with:
   
   ```
   $ cd <XX_chipname>
@@ -18,7 +18,7 @@ Keep in mind the following remarks:
   $ apio sim
   ```
 
-* the chip `HalfAdder` can be uploaded to iCE40HX1K-EVB and tested using BUT1/2 and LED1/2. Keep in mind, that due to pull up resistors at the buttons, the signals appear inverted:
+* The chip `HalfAdder` can be uploaded to iCE40HX1K-EVB and tested using BUT1/2 and LED1/2. Keep in mind, that due to pull up resistors at the buttons, the signals appear inverted:
   
   | pin    | function                                            |
   | ------ | --------------------------------------------------- |
