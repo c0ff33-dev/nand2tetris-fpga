@@ -18,9 +18,9 @@ Keep in mind the following remarks:
   $ apio sim
   ```
 
-* The chip `HalfAdder` can be uploaded to iCE40HX1K-EVB and tested using BUT1/2 and LED1/2. Keep in mind, that due to pull up resistors at the buttons, the signals appear inverted:
+* The chip `HalfAdder` can be uploaded to `iCE40HX1K-EVB` and tested using `BUT1/2` and `LED1/2`. Keep in mind that due to pull up resistors at the buttons the signals appear inverted:
   
   | pin    | function                                            |
   | ------ | --------------------------------------------------- |
-  | LED1/2 | =0 led is off, =1 led is on                         |
-  | BUT1/2 | =0 button is pressed down, =1 button is released up |
+  | LED1/2 | 0 led is off, 1 led is on                           |
+  | BUT1/2 | 0 button is pressed down, 1 button is released up   |
