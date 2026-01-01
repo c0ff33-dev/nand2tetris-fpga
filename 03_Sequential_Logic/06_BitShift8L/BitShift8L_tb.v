@@ -1,6 +1,8 @@
 `default_nettype none
 module BitShift8L_tb();
 
+	// FIXME: slightly out of sync with current implementation
+
 	// IN,OUT
 	reg clk=1;
 	reg [7:0] in;

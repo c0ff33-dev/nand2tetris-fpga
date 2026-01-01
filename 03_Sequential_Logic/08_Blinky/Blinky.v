@@ -1,7 +1,7 @@
 // Test to run on fpga with 100 MHz
 
 `default_nettype none
-module blinky(
+module Blinky(
 	input CLK,
 	output [1:0] LED
 );
