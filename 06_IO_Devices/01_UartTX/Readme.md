@@ -41,24 +41,24 @@ To test HACK with `UartTX` we need a little machine language programm `hello.asm
 
 ### UartTX in real hardware
 
-The programmer olimexino-32u4 can also be used as bridge to connect the PC to iCE40HX1K-EVB over UART. This can be done with the 10 wire UEXT cable which goes into the PGM1 connector of iCE40HX1K-EVB.
+The programmer `olimexino-32u4` can also be used as bridge to connect the PC to `iCE40HX1K-EVB` over UART. This can be done with the 10 wire UEXT cable which goes into the PGM1 connector of `iCE40HX1K-EVB`.
 
 ![](ICE40PGM.jpg)
 
-**Note:** To connect RX and TX lines of UEXT-connector with iCE40-chip on iCE40-HX1K-EVB find the solder-jumper-pads RxD_E1 and TxD_E1 near the UEXT connector (refer to [datasheets/iCE40HX1K-EVB](../datasheets/iCE40HX1K-EVB_Rev_B.pdf)) and solder them together as in the photo below. If you have a multimeter you can check for continuity with UEXT pin 3/4 for RX/TX respectively (optional).
+**Note:** To connect RX and TX lines of UEXT-connector with iCE40 chip on `iCE40HX1K-EVB` find the solder-jumper-pads RxD_E1 and TxD_E1 near the UEXT connector (refer to [datasheets/iCE40HX1K-EVB](../datasheets/iCE40HX1K-EVB_Rev_B.pdf)) and solder them together as in the photo below. If you have a multimeter you can check for continuity with UEXT pin 3/4 for RX/TX respectively (optional).
 
 ![](UARTJumper.jpg)
 
-The programmer olimexino-32u4 works in two different mode:
+The programmer `olimexino-32u4` works in two different mode:
 
-- Mode 1 (yellow led on): programmer of iCE40-board. Used with iceprogduino.
+- Mode 1 (yellow led on): programmer of iCE40 board. Used with iceprogduino.
 - Mode 2 (green led on): UART Bridge to iCE40 chip. Use with terminal programm (e.g. tio or screen on linux).
 
 The LED is only illuminated when a client is connected to `/dev/ttyACM0`.
 
 To switch between the modes press the hardware button on olimexino-32u4 (HWB).
 
-Now iCE40HX1K is connected to RX,TX of olimexino-32u4 according to `iCE40HX1K-EVB.pcf`. (Check by comparing the schematic of iCE40HX1K-EVB).
+Now `iCE40HX1K` is connected to RX/TX of `olimexino-32u4` according to `iCE40HX1K-EVB.pcf`. (Check by comparing the schematic of `iCE40HX1K-EVB`).
 
 ```
 set_io UART_RX 36    # PIO2_8/RxD connected to pin 3 of UEXT (PGM)
@@ -103,7 +103,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * open Terminal on your computer
 
-* press reset button on iCE40HX1K-EVB and see if you can recieve "Hi" on your Computer.
+* press reset button on `iCE40HX1K-EVB` and see if you can recieve "Hi" on your Computer.
 
 Note: If the TX line is read during FGPA initialization (e.g. after reset) there is a high chance of undefined signals being interpreted as UART traffic so you may see some random bytes in addition to "Hi". The general principle for solving this is to use a control signal to indicate when transmission is valid. For `iCE40HX1K-EVB` + `olimexino-32u4` the simplest way is probably to modify the arduino sketch so it only forwards the bytes when CDONE is high though there are several other ways a signal could be sent via hardware or software to achieve the same effect.
 

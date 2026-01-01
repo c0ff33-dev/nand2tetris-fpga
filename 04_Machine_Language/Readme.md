@@ -12,7 +12,7 @@ To test input and output capability of HACK we will write an endless loop, in wh
 | THIS            | 3           | pointer to object in heap                |
 | THAT            | 4           | pointer to object in heap                |
 | R0--R15         | 0-15        | register 0-15                            |
-| LED             | 4096        | 0 LED is off,1 LED is on                 |
+| LED             | 4096        | 0 LED is off, 1 LED is on                |
 | BUT             | 4097        | 0 BUT pushed down, 1 BUT released up     |
 | UART_TX         | 4098        | send byte over UART                      |
 | UART_RX         | 4099        | receive byte from UART                   |
@@ -23,7 +23,7 @@ To test input and output capability of HACK we will write an endless loop, in wh
 | LCD8            | 4104        | write 8bit to LCD                        |
 | LCD16           | 4105        | write 16bit to LCD                       |
 | RTP             | 4106        | read/write 8bit to RTP                   |
-| DEBUG0 - DEBUG4 | 4107 - 4111 | reserved for debugging                   |
+| DEBUG0 - DEBUG4 | 4107-4111   | reserved for debugging                   |
 
 ## mult.asm
 
@@ -44,18 +44,18 @@ To test `mult.asm` in real hardware, we can use the LED[1:0] to display if the r
 
 ### Use DEBUG0-4 register
 
-To test `mult.asm` in simulation, we can use the DEBUG registers. Every time we change the value of R0--R2 we store the new values also to the corresponding register DEBUG0--DEBUG2. This is done by replacing every instance of a code snippet that changes R1 (and R0,R2 accordingly):
+To test `mult.asm` in simulation, we can use the DEBUG registers. Every time we change the value of R0-R2 we store the new values also to the corresponding register DEBUG0-DEBUG2. This is done by replacing every instance of a code snippet that changes R1 (and R0/R2 accordingly):
 
 ```
 @R1
-M=<what so ever>
+M=<new value>
 ```
 
 with the code that additionally writes the new value to the DEBUG1 register:
 
 ```
 @R1
-DM=<what so ever>
+DM=<new value>
 @DEBUG1
 M=D
 ```

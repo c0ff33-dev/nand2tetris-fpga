@@ -8,7 +8,7 @@ In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which h
 
 ![](fpga.png)
 
-On iCE40HX1K-EVB board you will find:
+On `iCE40HX1K-EVB` board you will find:
 
 * FPGA-chip `iCE40HX1K`: holds 1280 logic cells and 64Kbits block ram, which can be routed programmatically.
 * Serial flash memory `W25Q16BV` (16MBit): holds the bitstream data, which is a binary representation of the circuits, you want to implement on the FPGA. At startup the FPGA loads the bitstream from serial flash memory and configures its logic cells to become the machine you want the FPGA to be.

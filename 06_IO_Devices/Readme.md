@@ -48,7 +48,7 @@ For every special function register we will need the appropriate software to tal
   $ apio clean
   $ apio sim
   ```
-* Run `HACK` in real hardware on iCE40HX1K-EVB with the device attached as real device.
+* Run `HACK` in real hardware on `iCE40HX1K-EVB` with the device attached as real device.
   
   ```
   $ cd 00_HACK

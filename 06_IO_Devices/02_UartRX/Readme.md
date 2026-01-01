@@ -69,7 +69,7 @@ To test HACK with `UartRX` we need a little machine language programm `echo.asm`
   
   ![](echo.png)
 
-- build and upload HACK with `echo.asm` preloaded into ROM to iCE40HX1K-EVB.
+- build and upload HACK with `echo.asm` preloaded into ROM to `iCE40HX1K-EVB`.
 
 - switch olimexino-32u4 to UART-Bridge (yellow led)
 

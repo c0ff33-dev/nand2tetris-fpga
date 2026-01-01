@@ -13,10 +13,6 @@ upload:
 	$(PYTHON) ../tools/Assembler/assembler.pyc leds.asm
 	$(PYTHON) ../tools/AsciiToBin.py leds.hack
 	iceprogduino -o 64k -w leds.bin
-64k:
-	$(PYTHON) ../tools/Assembler/assembler.pyc leds_64k.asm
-	$(PYTHON) ../tools/AsciiToBin.py leds_64k.hack
-	iceprogduino -o 64k -w leds_64k.bin
 clean:
 	rm -f *.hack *~ *.bin
 
