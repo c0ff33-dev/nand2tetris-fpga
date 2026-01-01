@@ -29,6 +29,6 @@
 `include "../../03_Sequential_Logic/PC.v"
 `include "../../03_Sequential_Logic/RAM256.v"
 `include "../../03_Sequential_Logic/RAM512.v"
-`include "../../03_Sequential_Logic/RAM3840.v"
+`include "../../03_Sequential_Logic/RAM3584.v"
 `include "../../03_Sequential_Logic/BitShift8L.v"
 `include "../../03_Sequential_Logic/BitShift9R.v"

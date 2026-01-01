@@ -1,5 +1,5 @@
 /**
-* RAM256 implements 256 Bytes of RAM addressed from 0 - 255
+* RAM256 implements 256 words of RAM addressed from 0-255
 * out = M[address]
 * if (load =i= 1) M[address][t+1] = in[t]
 */
@@ -29,7 +29,7 @@ module RAM256(
 		if (load) regRAM[address[7:0]] <= in;
 	end
 
-	// note: Timing changes here also need to propogate to ROM chip + RAM/ROM test benches.
+	// Note: Timing changes here also need to propogate to ROM chip + RAM/ROM test benches.
 
 	// new code: explicit syncronous read - its very likely the synthesis result for the 
 	// original code was also inferring syncronous negedge read with the iCE40 BRAM primitives

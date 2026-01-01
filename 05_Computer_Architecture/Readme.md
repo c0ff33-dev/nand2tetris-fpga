@@ -47,7 +47,7 @@ To add IO capability we add 7 more special function registers mapped to the foll
 
 | address     | I/O dev | function                                             |
 | ----------- | ------- | ---------------------------------------------------- |
-| 0 - 3839    | RAM     |                                                      |
+| 0 - 3583    | RAM     |                                                      |
 | 4096        | LED     | 0 = led off, 1 = led on                              |
 | 4097        | BUT     | 0 = button pressed "down", 1 = button released       |
 | 4098 - 4106 |         | reserved for IO devices (see. project 06_IO_Devices) |

@@ -33,7 +33,7 @@ For every special function register we will need the appropriate software to tal
 
 + Copy `HACK.v` from `05_Computer_Architecture` into `06_IO_Devices` and add one IO-Device at time at the designated memory mapped address. Implement the corresponding special function register and run the test bench.
   
-  ```shell
+  ```
   $ cd 0X_device
   $ apio clean
   $ apio sim
@@ -41,7 +41,7 @@ For every special function register we will need the appropriate software to tal
 
 + Implement the designated assembler program, install the binary into `00_HACK` and run the testbench:
   
-  ```shell
+  ```
   $ cd 0X_device
   $ make
   $ cd ../00_HACK
@@ -50,7 +50,7 @@ For every special function register we will need the appropriate software to tal
   ```
 * Run `HACK` in real hardware on iCE40HX1K-EVB with the device attached as real device.
   
-  ```shell
+  ```
   $ cd 00_HACK
   $ apio clean
   $ apio upload

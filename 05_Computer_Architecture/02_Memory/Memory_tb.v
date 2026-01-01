@@ -103,7 +103,7 @@ module Memory_tb();
 				       inRAM);
 	wire loadRAM_cmp,loadIO0_cmp,loadIO1_cmp,loadIO2_cmp,loadIO3_cmp,loadIO4_cmp,loadIO5_cmp,loadIO6_cmp,loadIO7_cmp,
 					 loadIO8_cmp,loadIO9_cmp,loadIOA_cmp,loadIOB_cmp,loadIOC_cmp,loadIOD_cmp,loadIOE_cmp,loadIOF_cmp;
-	assign loadRAM_cmp = (address<=3839)?load:0;
+	assign loadRAM_cmp = (address<=3583)?load:0;
 	assign loadIO0_cmp = (address==4096)?load:0;
 	assign loadIO1_cmp = (address==4097)?load:0;
 	assign loadIO2_cmp = (address==4098)?load:0;
@@ -164,7 +164,7 @@ module Memory_tb();
 				load=0;check();
 				load=1;check();
 			end
-		for (address=0; address<3840;address=address+1) 
+		for (address=0; address<3584;address=address+1) 
 			begin
 				inRAM=$random;
 				load=0;check();

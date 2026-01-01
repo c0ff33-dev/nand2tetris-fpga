@@ -42,7 +42,7 @@ module HACK(
 	Memory mem(
 		.address(addressM),
 		.load(writeM),
-		.inRAM(outRAM),// RAM (0-3839)
+		.inRAM(outRAM),// RAM (0-3583)
 		.inIO0(outLED),// LED (4096)
 		.inIO1(inIO1), // BUT (4097)
 		.inIO2(resIn), // reserved (undefined)
@@ -60,7 +60,7 @@ module HACK(
 		.inIOE(inIOE), // DEBUG3 (4110)
 		.inIOF(inIOF), // DEBUG4 (4111)
 		.out(inM),
-		.loadRAM(loadRAM), // RAM (0-3839)
+		.loadRAM(loadRAM), // RAM (0-3583)
 		.loadIO0(loadIO0), // LED (4096)
 		.loadIO1(loadIO1), // BUT (4097)
 		.loadIO2(resLoad), // reserved (undefined)
@@ -86,8 +86,8 @@ module HACK(
 		.instruction(instruction)
 	);
 
-	// BRAM (0-3839 x 16 bit words)
-	RAM3840 ram(
+	// BRAM (0-3583 x 16 bit words)
+	RAM3584 ram(
 		.clk(clk),
 		.address(addressM[11:0]),
 		.in(outM),

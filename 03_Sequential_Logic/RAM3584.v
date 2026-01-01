@@ -1,11 +1,12 @@
 /**
-* RAM3840 implements 3840 Bytes of RAM addressed from 0 - 3839
+* RAM3584 implements 3584 words of RAM addressed from 0-3583
+* Theoretical max is 4096 words (64K BRAM bits) but some BELs are used for routing
 * out = M[address]
 * if (load =i= 1) M[address][t+1] = in[t]
 */
 
 `default_nettype none
-module RAM3840(
+module RAM3584(
 	input clk,
 	input [11:0] address,
 	input [15:0] in,
@@ -25,12 +26,11 @@ module RAM3840(
     wire load4 = load & (bank_select == 3'd4);
     wire load5 = load & (bank_select == 3'd5);
     wire load6 = load & (bank_select == 3'd6);
-    // wire load7 = load & (bank_select == 3'd7);
 
     // Outputs from each bank
-    wire [15:0] out0, out1, out2, out3, out4, out5, out6; // out7
+    wire [15:0] out0, out1, out2, out3, out4, out5, out6;
 
-    // Instantiate 8 RAM512 blocks
+    // Instantiate 7 x RAM512 blocks
     RAM512 ram0 (.clk(clk), .address(local_address), .in(in), .load(load0), .out(out0));
     RAM512 ram1 (.clk(clk), .address(local_address), .in(in), .load(load1), .out(out1));
     RAM512 ram2 (.clk(clk), .address(local_address), .in(in), .load(load2), .out(out2));
@@ -38,8 +38,6 @@ module RAM3840(
     RAM512 ram4 (.clk(clk), .address(local_address), .in(in), .load(load4), .out(out4));
     RAM512 ram5 (.clk(clk), .address(local_address), .in(in), .load(load5), .out(out5));
     RAM512 ram6 (.clk(clk), .address(local_address), .in(in), .load(load6), .out(out6));
-    // TODO: ran out of BELs for additional BRAM
-    // RAM512 ram7 (.clk(clk), .address(local_address), .in(in), .load(load7), .out(out7));
 
     // Demux based on selected bank
     assign out = (bank_select == 3'd0) ? out0 :
@@ -49,7 +47,6 @@ module RAM3840(
                  (bank_select == 3'd4) ? out4 :
                  (bank_select == 3'd5) ? out5 :
                  (bank_select == 3'd6) ? out6 :
-                 //  (bank_select == 3'd7) ? out7 :
                  16'bx; // should never happen
 
 endmodule

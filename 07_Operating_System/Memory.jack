@@ -10,7 +10,7 @@
 /**
  * This library provides two services: direct access to the computer's main
  * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
- * consists of 3840 words, each holding a 16-bit binary number.
+ * consists of 3584 words, each holding a 16-bit binary number.
  */ 
 class Memory {
     static Array ram;
@@ -20,7 +20,7 @@ class Memory {
     function void init() {
         let ram = 0; // manually assign pointer value as zero
         let startHeap = 1024; // og: 2048
-        let endHeap = 3839; // new: BRAM, og: 16383
+        let endHeap = 3583; // new: BRAM, og: 16383
         let ram[startHeap] = endHeap-startHeap-1; // blockSize (init=1 max size free block)
         let ram[startHeap+1] = startHeap+2; // *nextPtr = &blockData
         // ram[startHeap+2] = 0; // &blockData

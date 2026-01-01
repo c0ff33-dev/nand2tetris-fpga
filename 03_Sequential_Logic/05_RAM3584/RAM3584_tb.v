@@ -1,5 +1,5 @@
 `default_nettype none
-module RAM3840_tb();
+module RAM3584_tb();
 
 	// IN,OUT
 	reg clk=1;
@@ -9,7 +9,7 @@ module RAM3840_tb();
 	wire [15:0] out;
 
 	// Part
-	RAM3840 RAM3840(
+	RAM3584 RAM3584(
 		.clk(clk),
 		.address(address),
 		.in(in),
@@ -21,12 +21,12 @@ module RAM3840_tb();
 	always #1 clk=~clk; // no time scale
 	always @(posedge clk) begin
 		in <= $random;	
-		address <= (n<3840)?n:n-3840;
-		load <= (n<3840);
+		address <= (n<3584)?n:n-3584;
+		load <= (n<3584);
 	end
 
 	// Compare
-	reg [15:0] regRAM [0:3839];
+	reg [15:0] regRAM [0:3583];
 	reg [15:0] out_cmp;
 	always @(posedge clk)
 		if (load) regRAM[address[11:0]] <= in;
@@ -47,13 +47,13 @@ module RAM3840_tb();
     endtask
 	  
   	initial begin
-  		$dumpfile("RAM3840_tb.vcd");
-  		$dumpvars(0, RAM3840_tb);
+  		$dumpfile("RAM3584_tb.vcd");
+  		$dumpvars(0, RAM3584_tb);
 		
 		$display("------------------------");
-		$display("Testbench: RAM3840");
+		$display("Testbench: RAM3584");
 
-		for (n=0; n<2*3840;n=n+1) 
+		for (n=0; n<2*3584;n=n+1) 
 			check();
 		
 		if (fail==0) $display("passed");

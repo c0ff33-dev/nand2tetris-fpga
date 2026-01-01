@@ -1,5 +1,5 @@
 /**
-* Data-Flip-Flop
+* Data Flip-Flop
 * out[t+1] = in[t]
 */
 
@@ -11,7 +11,7 @@ module DFF(
 );
 
 	// No need to implement this chip
-	// This chip is implemented in verilog using reg-variables
+	// This chip is implemented in verilog using reg variables
 	always @(posedge clk) begin
 		// in is sampled on posedge [t]
 		// out emits the state from [t-1]
