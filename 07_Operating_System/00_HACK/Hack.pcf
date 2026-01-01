@@ -1,4 +1,4 @@
-# physical constrain file
+# physical constraints file
 # assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40HX1K-EVB
 # compare to the schematic of the board and the datasheet of fpga
 
