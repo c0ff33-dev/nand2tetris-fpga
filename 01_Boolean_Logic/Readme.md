@@ -1,9 +1,8 @@
 # 01 Boolean Logic
 
-The hardware part of the project nand2tetris-fpga is implemented in verilog, a hardware description language similar to HDL used in the original nand2tetris course. There is no need to learn much verilog, as you can easily translate all your HDL-files into verilog following the given example for `Xor`.
+The hardware part of the project nand2tetris-fpga is implemented in verilog, a hardware description language similar to HDL used in the original nand2tetris course. There is no need to learn much verilog, as you can easily translate all your HDL files into verilog following the given example for `Xor`.
 
-**Note:**
-The following modules are considered primitive and thus there is no need to implement them.
+**Note:** The following modules are considered primitive and thus there is no need to implement them.
 
 | module     | description                                                           |
 | ---------- | --------------------------------------------------------------------- |
@@ -103,7 +102,7 @@ Your chip passes the test, when `out=out_cmp` and `fail=0` over the whole test t
 To upload the chip `Xor` onto your fpga board iCE40HX1K-EVB you need two additional files: `top.v` and  `iCE40HX1K.pcf` (physical constraints file). The pyhiscal constraints file assigns every io-signal wire of the top level module `top.v` to physical pins of the fpga chip iCE40HX1K. Pin numbering can be checked by consulting the schematic [iCE40HX1K-EVB](../doc/iCE40HX1K-EVB_Rev_B.pdf) in `doc/iCE40HX1K-EVB_Rev_B.pdf`.
 
 ```
-#  physical constrain file
+#  physical constraints file
 # assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40-HX1K-EVB
 # compare to the schematic of the board and the datasheet of fpga
 
@@ -116,11 +115,11 @@ set_io LED2 51    # LED2
 
 * Now you can build and upload  the chip `Xor` to iCE40-HX1K-EVB with:
   
-  ```
-  $ apio clean
-  $ apio build
-  $ apio upload
-  ```
+```
+$ apio clean
+$ apio build
+$ apio upload
+```
 
 * Press buttons BUT1 and BUT2 and see the result of your `Xor` chip on LED1.
 
@@ -131,4 +130,4 @@ set_io LED2 51    # LED2
 | LED1/2 | 0 led is off, 1 led is on                         |
 | BUT1/2 | 0 button is pressed down, 1 button is released up |
 
-Chips with note more than two in- and output signals can be uploaded and tested in real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.
+Chips with no more than two input/output signals can be uploaded and tested in real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.
