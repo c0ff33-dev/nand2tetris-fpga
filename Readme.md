@@ -40,7 +40,7 @@ In every project folder you find a file `Readme.md` containing specifications an
 > 
 > ---Morpheus
 
-### [00 Requirement](00_Requirement)
+### [00 Prerequisites](00_Prerequisites)
 
 Get the hardware and install the tools.
 

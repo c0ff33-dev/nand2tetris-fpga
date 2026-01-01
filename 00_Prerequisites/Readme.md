@@ -1,4 +1,4 @@
-## 00 Requirement
+## 00 Prerequisites
 
 ### FPGA-Board
 
