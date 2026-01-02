@@ -37,7 +37,7 @@ The special function register `RTP` is mapped to memory map of HACK according to
 
 ### RTP in real hardware
 
-The board MOD-LCD2.8RTP comes with a resistive touch panel controlled by a controller chip AR1021. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../doc/MOD-LCD2.8RTP_RevB.pdf)).
+The board MOD-LCD2.8RTP comes with a resistive touch panel controlled by a controller chip AR1021. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
 
 ```
 set_io RTP_SDI 7        # PIO3_3A connected to pin 13 of GPIO1

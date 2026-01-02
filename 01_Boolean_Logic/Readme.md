@@ -99,7 +99,7 @@ Your chip passes the test, when `out=out_cmp` and `fail=0` over the whole test t
 
 ### iCE40HX1K.pcf
 
-To upload the chip `Xor` onto your fpga board `iCE40HX1K-EVB` you need two additional files: `top.v` and  `iCE40HX1K.pcf` (physical constraints file). The pyhiscal constraints file assigns every io-signal wire of the top level module `top.v` to physical pins of the fpga chip `iCE40HX1K`. Pin numbering can be checked by consulting the schematic [iCE40HX1K-EVB](../doc/iCE40HX1K-EVB_Rev_B.pdf) in `doc/iCE40HX1K-EVB_Rev_B.pdf`.
+To upload the chip `Xor` onto your fpga board `iCE40HX1K-EVB` you need two additional files: `top.v` and  `iCE40HX1K.pcf` (physical constraints file). The pyhiscal constraints file assigns every io-signal wire of the top level module `top.v` to physical pins of the fpga chip `iCE40HX1K`. Pin numbering can be checked by consulting the schematic [iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf) in `docs/iCE40HX1K-EVB_Rev_B.pdf`.
 
 ```
 # physical constraints file

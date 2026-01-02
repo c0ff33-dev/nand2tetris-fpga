@@ -6,7 +6,7 @@
 
 This project is about building HACK on real hardware as proposed in Chapter 13 of the course [nand2tetris](https://www.nand2tetris.org/) using only FOSS, free and open source hardware and software.
 
- ![](doc/inside.jpg)
+ ![](docs/inside.jpg)
 
 Our final implementation of HACK will have the following specs:
 
@@ -28,7 +28,7 @@ Our final implementation of HACK will have the following specs:
 
 * Powerful enough to run Tetris!
   
-  ![](doc/tetris2.jpg)
+  ![](docs/tetris2.jpg)
 
 ***
 

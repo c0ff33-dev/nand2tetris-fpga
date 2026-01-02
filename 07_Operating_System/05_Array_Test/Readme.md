@@ -20,6 +20,6 @@ Represents an array. In the Jack language, arrays are instances of the Array cla
   $ apio sim
   ```
 
-* Check the content of special function register DEBUG0-DEBUG4.
+* Check the content of special function register `DEBUG0-4`.
   
   ![](array.png)

@@ -5,7 +5,7 @@ The connected LCD physical screen consists of 320 rows (indexed 0..319, top to b
 
 ### Special function register LCD
 
-The Screen is controlled by sending commands to special function register LCD, which connects to the ILI9341V controller on MOD-LCD2.8RTP. Every command is 8 bits long with DCX=0 pulled low followed by any number (or none) of parameters, which are send with DCX=1 pushed high. All commands are described in the datasheet of [ILI9341V](../../doc/ILI9341V_v1.0.pdf). (h denote hexadecimal and d denote decimal notation).
+The Screen is controlled by sending commands to special function register LCD, which connects to the ILI9341V controller on MOD-LCD2.8RTP. Every command is 8 bits long with DCX=0 pulled low followed by any number (or none) of parameters, which are send with DCX=1 pushed high. All commands are described in the datasheet of [ILI9341V](../../docs/ILI9341V_v1.0.pdf). (h denote hexadecimal and d denote decimal notation).
 
 **Attention**: Parameters vary in size per command and ILI9341V expects to receive all the parameters serially with no padding. For the parameters to be parsed correctly it is necessary to ensure that the relevant 8 bit or 16 bit data transmission method is used by selecting LCD8 for single byte parameters and LCD16 for the rest in software.
 

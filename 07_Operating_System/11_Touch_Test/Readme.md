@@ -2,7 +2,7 @@
 
 A library to read touch events from the resistive touch panel controller AR1021.
 
-See datasheet [AR1021](../../doc/AR1000.pdf):
+See datasheet [AR1021](../../docs/AR1000.pdf):
 
 To read the next touch event just read 5 consecutive bytes from RTP:
 pen,xlow,xhigh,ylow and yhigh. Between every byte there should be a delay of min. 50μs. When no data is available, the controller will answer with 4Dh (77d). The Event is only valid if the first byte is 128 or 129, and the x and y coordinates are in the range [0..4095].

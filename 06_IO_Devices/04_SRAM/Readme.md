@@ -72,7 +72,7 @@ To test HACK with SRAM we need a little machine language programm `buffer.asm`, 
 
 ### SRAM in real hardware
 
-The board iCE40HX1K-EVB comes with a static ram chip K6R4016V1D. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../doc/iCE40HX1K-EVB_Rev_B.pdf)).
+The board iCE40HX1K-EVB comes with a static ram chip K6R4016V1D. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
 ```
 set_io SRAM_ADDR[0] 79 # SA0

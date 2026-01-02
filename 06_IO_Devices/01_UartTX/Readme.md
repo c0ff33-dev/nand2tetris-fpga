@@ -45,7 +45,7 @@ The programmer `olimexino-32u4` can also be used as bridge to connect the PC to 
 
 ![](ICE40PGM.jpg)
 
-**Note:** To connect RX and TX lines of UEXT-connector with iCE40 chip on `iCE40HX1K-EVB` find the solder-jumper-pads RxD_E1 and TxD_E1 near the UEXT connector (refer to [datasheets/iCE40HX1K-EVB](../datasheets/iCE40HX1K-EVB_Rev_B.pdf)) and solder them together as in the photo below. If you have a multimeter you can check for continuity with UEXT pin 3/4 for RX/TX respectively (optional).
+**Note:** To connect RX and TX lines of UEXT-connector with iCE40 chip on `iCE40HX1K-EVB` find the solder-jumper-pads RxD_E1 and TxD_E1 near the UEXT connector (refer to [docs/iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf)) and solder them together as in the photo below. If you have a multimeter you can check for continuity with UEXT pin 3/4 for RX/TX respectively (optional).
 
 ![](UARTJumper.jpg)
 

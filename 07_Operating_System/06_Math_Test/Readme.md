@@ -22,5 +22,5 @@ A library of commonly used mathematical functions.
   $ apio sim
   ```
 
-* Compare the content of special function register DEBUG0-DEBUG4.
+* Compare the content of special function register `DEBUG0-4`.
   ![](math.png)

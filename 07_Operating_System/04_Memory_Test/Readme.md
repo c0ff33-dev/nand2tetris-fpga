@@ -30,6 +30,6 @@ Don't be afraid of the limited memory size of "only" 3584 words. Let the heap st
   $ apio sim
   ```
 
-* Check the content of special function register DEBUG0-DEBUG4.
+* Check the content of special function register `DEBUG0-4`.
   
   ![](memory.png)
