@@ -21,7 +21,7 @@ Build the following special function register to connect HACK to I/O-devices: `U
 | 4110    | DEBUG3    | used for debugging                                 |
 | 4111    | DEBUG4    | used for debugging                                 |
 
-For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (UART, SPI, SRAM and GO) can be implemented in assembler. After completing the devices UART, SPI, SRAM and GO we will be able to fill the SRAM chip with up to 64K words (16bit) of HACK code. This will enable us to run JACK-OS and applications on HACK. The more sofisticated device drivers for LCD and RTP will be implemented in JACK language.
+For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (UART, SPI, SRAM and GO) can be implemented in assembler. After completing the devices UART, SPI, SRAM and GO we will be able to fill the SRAM chip with up to 64K words (16bit) of HACK code. This will enable us to run Jack OS and applications on HACK. The more sofisticated device drivers for LCD and RTP will be implemented in Jack language.
 
 ### Proposed implementation
 

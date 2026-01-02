@@ -4,16 +4,16 @@ A library that supports various program execution services.
 
 **Hint:** To debug the next projects in real hardware, we can implement one or both of the following strategies into `Sys.jack`.
 
-1. Use LED to indicate the state of JACK-OS according to
+1. Use LED to indicate the state of Jack OS according to
 
-| LED[1:0] | Sys.jack       | JACK-OS state                      |
+| LED[1:0] | Sys.jack       | Jack OS state                      |
 | -------- | -------------- | ---------------------------------- |
 | 00       | at entry       | nothing happened yet               |
 | 01       | Sys.init()     | start execution of Main.main()     |
 | 10       | Sys.halt()     | Main.main() terminated succesfully |
 | 11       | Sys.error(int) | a system error occured             |
 
-2. We can use UART to send some chars according to the state of JACK-OS. e.g. send "GO" at `Sys.init()`, "HALT" at `Sys.halt()` and "ERR" at `Sys.error(int)`.
+2. We can use UART to send some chars according to the state of Jack OS. e.g. send "GO" at `Sys.init()`, "HALT" at `Sys.halt()` and "ERR" at `Sys.error(int)`.
 
 ***
 

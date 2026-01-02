@@ -107,9 +107,9 @@ Test the programmer with the test project provided by Olimex.
 
 ![](jumper3V.png)
 
-### JACK-HACK-tools
+### Jack-HACK-tools
 
-JACK-HACK-Tools: JackCompiler, VirtualMachine Translator and Assembler for Hack should be developed by yourself. Follow guidelines at [nand2tetris](https://www.nand2tetris.org/). If you don't have  your own JACK-HACK-tools yet, you can use the compiled python version the JACK-HACK-toolchain provided in the folder [tools](../tools).
+Jack-HACK-Tools: JackCompiler, VirtualMachine Translator and Assembler for Hack should be developed by yourself. Follow guidelines at [nand2tetris](https://www.nand2tetris.org/). If you don't have  your own Jack-HACK-tools yet, you can use the compiled python version the Jack-HACK toolchain provided in the folder [tools](../tools).
 
 ### Do some Verilog examples
 

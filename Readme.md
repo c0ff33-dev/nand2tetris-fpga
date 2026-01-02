@@ -71,13 +71,13 @@ We will expand HACK computer platform by adding chips to handle communication to
 * UART communicates with 115200 baud 8N1 to computer.
 * SPI reads the 2MB flash memory on `iCE40HX1K-EVB`.
 * SRAM writes data to the external SRAM chip.
-* GO enables booting JACK-OS software.
+* GO enables booting Jack OS software.
 * LCD connects a little color screen with 320x240 pixel.
 * RTP connects the resistive touch panel.
 
 ### [07 Operating System](07_Operating_System)
 
-Implement the operating system JACK-OS, written in the high level language JACK consisting of the classes `GPIO.jack`, `UART.jack`, `Memory.jack`, `Math.jack`, `Array.jack`, `String.jack`, `Screen.jack`, `Output.jack`, `Touch.jack` and `Sys.jack`
+Implement the operating system Jack OS, written in the high level language Jack consisting of the classes `GPIO.jack`, `UART.jack`, `Memory.jack`, `Math.jack`, `Array.jack`, `String.jack`, `Screen.jack`, `Output.jack`, `Touch.jack` and `Sys.jack`
 
 Finally you can compile and run Tetris!
 
@@ -87,17 +87,17 @@ We provide construction files to print a little case for your HACK computer with
 
 ## Credits
 
-* Noam Nisan and Shimon Schocken, "The Elements of Computing Systems", MIT Press
+* Noam Nisan and Shimon Schocken, "The Elements of Computing Systems", MIT Press.
 
 * Noam Nisan and Shimon Schocken: Visit [nand2tetris](https://nand2tetris.org) and learn to build a modern general-purpose computer system from ground up.
 
 * [Olimex Ltd](https://www.olimex.com/): Buy your hardware from the Company with highest number of registered OSHW projects :)
 
-* Wolf Clifford: The master of open source FPGA with iCE40 and  [Project IceStorm](http://www.clifford.at/icestorm/)
+* Wolf Clifford: The master of open source FPGA with iCE40 and [Project IceStorm](http://www.clifford.at/icestorm/).
 
-* Jesús Arroyo Torrens, Juan González (Obijuan): Open source ecosystem for open FPGA boards [APIO](https://github.com/FPGAwars/apio)
+* Jesús Arroyo Torrens, Juan González (Obijuan): Open source ecosystem for open FPGA boards [APIO](https://github.com/FPGAwars/apio).
 
-* Juan González-Gomez (Obijuan): Lern verilog with [open-fpga-verilog-tutorial](https://github.com/Obijuan/open-fpga-verilog-tutorial/), best tutorial!
+* Juan González-Gomez (Obijuan): Lern verilog with [open-fpga-verilog-tutorial](https://github.com/Obijuan/open-fpga-verilog-tutorial/).
 
 * Icons made by <a href="https://www.flaticon.com/free-icon/cpu_483131?term=cpu&page=3&position=86" title="Those Icons">Those Icons</a> from <a href="https://www.flaticon.com/" title="Flaticon"> www.flaticon.com</a>
 

@@ -1,6 +1,6 @@
 ## 05 GO
 
-The instruction memory ROM of HACK is limited to 256 words. In order to run bigger programs written in JACK (e.g. tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
+The instruction memory ROM of HACK is limited to 256 words. In order to run bigger programs written in Jack (e.g. tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
 
 1. A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) hack binary program previously stored on SPI memory chip starting at address 0x10000 and stores it to SRAM.
 
@@ -16,7 +16,7 @@ The special function register `GO` is memory mapped to address 4103
 
 | addr | R/W | function                                                                                                    |
 | ---- | --- | ----------------------------------------------------------------------------------------------------------- |
-| 4103 | W   | a write resets the HACK CPU and switches instrucion memory from ROM (bootloader) to SRAM (JACK application) |
+| 4103 | W   | a write resets the HACK CPU and switches instrucion memory from ROM (bootloader) to SRAM (Jack application) |
 
 ### boot.asm
 
@@ -79,4 +79,4 @@ M=D   // 0xE308
 
 * Check if iCE40HX1K-EVB runs the bootloader, which loads `leds.asm` from SPI and starts execution of leds.asm.
 
-If  `leds.asm` is working, you are ready to start implementing the operating system JACK-OS. Proceed to project `07_Operating_System`  and come back later to implement the last to IO-Devices `LCD` and `RTP`  to connect the screen with resitive touch panel MOD-LCD2.8RTP.
+If  `leds.asm` is working, you are ready to start implementing the operating system Jack OS. Proceed to project `07_Operating_System`  and come back later to implement the last to IO-Devices `LCD` and `RTP`  to connect the screen with resitive touch panel MOD-LCD2.8RTP.

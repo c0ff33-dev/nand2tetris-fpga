@@ -4,7 +4,7 @@ This library provides access to `BUT` and `LED`.
 
 ### GPIO-Test
 
-In the Testfolder `01_GPIO_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting JACK-OS. `Sys.init()` is the JACK-OS version of `leds.asm`, which reads the BUT and writes the values to LED in an endless loop:
+In the Testfolder `01_GPIO_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting Jack OS. `Sys.init()` is the Jack OS version of `leds.asm`, which reads the BUT and writes the values to LED in an endless loop:
 
 ```
 class Sys {

@@ -4,7 +4,7 @@ Library that provides character based access to `UART_TX` and `UART_RX`.
 
 ### UART_Test
 
-In the Testfolder `02_UART_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting JACK-OS. `Sys.init()` is the JACK-OS version of `echo.asm`, which reads the bytes received at `UART_RX` and writes the values to `UART_TX` in an endless loop:
+In the Testfolder `02_UART_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting Jack OS. `Sys.init()` is the Jack OS version of `echo.asm`, which reads the bytes received at `UART_RX` and writes the values to `UART_TX` in an endless loop:
 
 ```
 class Sys {

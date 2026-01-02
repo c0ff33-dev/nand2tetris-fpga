@@ -78,7 +78,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
   
   ![](LCD_tb.png)
 
-* Add special function register`LCD` to `HACK` at memory addresses 4104/4105 and upload to iCE40HX1K-EVB with the bootloader boot.asm preloaded into ROM
+* Add special function register `LCD` to `HACK` at memory addresses 4104/4105 and upload to iCE40HX1K-EVB with the bootloader boot.asm preloaded into ROM:
   
   ```
   $ cd ../05_GO
@@ -88,4 +88,4 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
   $ apio upload
   ```
 
-* Proceed to `07_Operating_System` and implement the driver class `Screen.jack` that sends command over `LCD` the controller chip ILI9341V on MOD-LCD2.8RTP
+* Proceed to `07_Operating_System` and implement the driver class `Screen.jack` that sends command over `LCD` the controller chip `ILI9341V` on `MOD-LCD2.8RTP`.
