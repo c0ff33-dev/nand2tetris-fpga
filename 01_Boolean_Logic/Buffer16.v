@@ -1,5 +1,5 @@
 /**
- * 16-bit bitwise Buffer:
+ * 16 bit bitwise Buffer:
  * for i = 0..15: out[i] = in[i]
  */
 

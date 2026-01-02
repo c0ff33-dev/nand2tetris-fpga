@@ -1,5 +1,5 @@
 /**
-* 8-bit Shiftregister (shifts to left)
+* 8 bit Shiftregister (shifts to left)
 * if      (load == 1)  out[t+1] = in[t]
 * else if (shift == 1) out[t+1] = out[t]<<1 | inLSB
 * (shift one position to left and insert inLSB as least significant bit)

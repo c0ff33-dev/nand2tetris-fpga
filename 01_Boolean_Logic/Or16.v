@@ -1,5 +1,5 @@
 /**
- * 16-bit bitwise Or:
+ * 16 bit bitwise Or:
  * for i = 0..15: out[i] = (a[i] or b[i])
  */
 

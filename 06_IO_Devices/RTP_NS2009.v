@@ -66,7 +66,7 @@ localparam [2:0]
     READ_BYTE   = 4'd4,
     END_COND    = 4'd5;
 
-localparam [6:0] DEV_ADDR = 7'h48; // 7-bit device address for NS2009
+localparam [6:0] DEV_ADDR = 7'h48; // 7 bit device address for NS2009
 
 reg [2:0] state = IDLE;
 reg [7:0] addr = 0, data = 0;

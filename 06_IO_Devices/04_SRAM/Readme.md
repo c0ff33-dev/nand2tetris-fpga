@@ -24,7 +24,7 @@ SRAM_A is a simple `Register` that stores the lower 16 bit of the 18 bit address
 
 | IN/OUT | wire            | function                   |
 | ------ | --------------- | -------------------------- |
-| IN     | clk             | system clock (25MHz)       |
+| IN     | clk             | system clock (25 MHz)      |
 | IN     | load            | initiate a write operation |
 | IN     | in[15:0]        | data to write to SRAM      |
 | OUT    | out[15:0]       | data read from SRAM        |

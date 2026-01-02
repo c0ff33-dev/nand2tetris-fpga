@@ -2,7 +2,7 @@
 
 The special function register `RTP`  memory mapped to addresses 4106 enables HACK to read bytes from the resistive touch panel controller chip AR1021 situated on MOD-LCD2.8RTP. The communication is protocol is SPI.
 
-**Attention:** The specification of AR1200 requires, that SCK is inverted (compare `03_SPI/Readme.md` with CPOL=1) and a slower transfer rate of max ~900kHz.
+**Attention:** The specification of AR1200 requires, that SCK is inverted (compare `03_SPI/Readme.md` with CPOL=1) and a slower transfer rate of max ~900 KHz.
 
 ### Chip specification
 

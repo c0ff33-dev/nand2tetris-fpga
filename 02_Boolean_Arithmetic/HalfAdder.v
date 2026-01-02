@@ -4,8 +4,8 @@
 
 `default_nettype none
 module HalfAdder(
-	input a,		// 1-bit input
-	input b,		// 1-bit input
+	input a,		// 1 bit input
+	input b,		// 1 bit input
 	output sum,	    // Right bit of a + b
 	output carry	// Left bit of a + b
 );

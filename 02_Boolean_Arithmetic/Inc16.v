@@ -1,5 +1,5 @@
 /**
- * 16-bit incrementer:
+ * 16 bit incrementer:
  * out = in + 1 (arithmetic addition)
  */
 

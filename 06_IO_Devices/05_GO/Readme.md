@@ -1,6 +1,6 @@
 ## 05 GO
 
-The instruction memory ROM of HACK is limited to 256 words. In order to run bigger programs written in Jack (e.g. tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
+The instruction memory ROM of HACK is limited to 256 words. In order to run bigger programs written in Jack (e.g. Tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
 
 1. A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) hack binary program previously stored on SPI memory chip starting at address 0x10000 and stores it to SRAM.
 

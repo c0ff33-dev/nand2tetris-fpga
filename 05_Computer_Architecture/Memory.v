@@ -4,7 +4,7 @@
  * The chip facilitates read and write operations, as follows:
  *     Read:  out(t) = Memory[address(t)](t)
  *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
- * In words: the chip always outputs the value stored at the memory 
+ * The chip always outputs the value stored at the memory 
  * location specified by address. If load==1, the in value is loaded 
  * into the memory location specified by address. This value becomes 
  * available through the out output from the next time step onward.
@@ -21,15 +21,15 @@ module Memory(
 	input [15:0] inRAM, // RAM (0-3583)
 	input [15:0] inIO0, // LED (4096)
 	input [15:0] inIO1, // BUT (4097)
-	input [15:0] inIO2, // UART_TX (4098)
-	input [15:0] inIO3, // UART_RX (4099)
-	input [15:0] inIO4, // SPI (4100)
-	input [15:0] inIO5, // SRAM_A (4101)
-	input [15:0] inIO6, // SRAM_D (4102)
-	input [15:0] inIO7, // GO (4103)
-	input [15:0] inIO8, // LCD8 [15:0]
-	input [15:0] inIO9, // LCD16 [15:0]
-	input [15:0] inIOA, // RTP (4106)
+	input [15:0] inIO2, // reserved (undefined)
+	input [15:0] inIO3, // reserved (undefined)
+	input [15:0] inIO4, // reserved (undefined)
+	input [15:0] inIO5, // reserved (undefined)
+	input [15:0] inIO6, // reserved (undefined)
+	input [15:0] inIO7, // reserved (undefined)
+	input [15:0] inIO8, // reserved (undefined)
+	input [15:0] inIO9, // reserved (undefined)
+	input [15:0] inIOA, // reserved (undefined)
 	input [15:0] inIOB, // DEBUG0 (4107)
 	input [15:0] inIOC, // DEBUG1 (4108)
 	input [15:0] inIOD, // DEBUG2 (4109)
@@ -39,15 +39,15 @@ module Memory(
 	output loadRAM, // RAM (0-3583)
 	output loadIO0, // LED (4096)
 	output loadIO1, // BUT (4097)
-	output loadIO2, // UART_TX (4098)
-	output loadIO3, // UART_RX (4099)
-	output loadIO4, // SPI (4100)
-	output loadIO5, // SRAM_A (4101)
-	output loadIO6, // SRAM_D (4102)
-	output loadIO7, // GO (4103)
-	output loadIO8, // LCD8 [15:0]
-	output loadIO9, // LCD16 [15:0]
-	output loadIOA, // RTP (4106)
+	output loadIO2, // reserved (undefined)
+	output loadIO3, // reserved (undefined)
+	output loadIO4, // reserved (undefined)
+	output loadIO5, // reserved (undefined)
+	output loadIO6, // reserved (undefined)
+	output loadIO7, // reserved (undefined)
+	output loadIO8, // reserved (undefined)
+	output loadIO9, // reserved (undefined)
+	output loadIOA, // reserved (undefined)
 	output loadIOB, // DEBUG0 (4107)
 	output loadIOC, // DEBUG1 (4108)
 	output loadIOD, // DEBUG2 (4109)

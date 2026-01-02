@@ -17,7 +17,7 @@ When clear = 1 the chip clears the data register and is ready to receive next by
 
 ### Proposed Implementation
 
-Use a `Bit` to store run state. run goes high, when rx=0 and run=0. run stops, when last bit is received. When run=1 a Counter increments every clock cycle. After 217 clock cycles the Counter resets. A second counter increments every 217 cycles to count the bits. At count number 108 the rx is shifted into a `BitShift9R`. When transmission of the byte completes (10-bit sampled), the content of the shiftregister is loaded into the data register with out[15] set to 0 (valid byte). The data register can be cleared by software (clear) at any time by setting the highest bit of data register to 1 (byte not ready yet).
+Use a `Bit` to store run state. run goes high, when rx=0 and run=0. run stops, when last bit is received. When run=1 a Counter increments every clock cycle. After 217 clock cycles the Counter resets. A second counter increments every 217 cycles to count the bits. At count number 108 the rx is shifted into a `BitShift9R`. When transmission of the byte completes (10 bits sampled), the content of the shiftregister is loaded into the data register with out[15] set to 0 (valid byte). The data register can be cleared by software (clear) at any time by setting the highest bit of data register to 1 (byte not ready yet).
 
 **Attention:** RX must pass a `DFF` to be registered in the clock domain of clk.
 

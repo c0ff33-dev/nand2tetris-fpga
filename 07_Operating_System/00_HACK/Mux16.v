@@ -1,5 +1,5 @@
 /**
- * 16-bit multiplexor: 
+ * 16 bit multiplexor: 
  * for i = 0..15 out[i] = a[i] if sel == 0 
  *                        b[i] if sel == 1
  */

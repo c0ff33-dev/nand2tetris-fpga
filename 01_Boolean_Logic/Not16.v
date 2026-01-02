@@ -1,5 +1,5 @@
 /**
- * 16-bit Not:
+ * 16 bit Not:
  * for i=0..15: out[i] = not in[i]
  */
 

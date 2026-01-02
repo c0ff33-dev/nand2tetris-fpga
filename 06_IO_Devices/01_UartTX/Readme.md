@@ -5,7 +5,7 @@ The special function register `UartTX` mapped to memory address 4098 enables HAC
 ![](timing.jpg)
 
 During idle TX line is high (logic 1). Transmission of a byte (8 bits) is initiated by the so called start bit, which always is low (logic 0), followed by the 8 data bits, starting with the least significant bit. The transmission is finished by sending the stop bit, which always is high (logic 1).
-This protocoll is refered as 8N1 meaning (8 data bits, no parity bit, 1 stop bit). We use a transmission speed of 115200 baud (bits per second), meaning that each bit takes 1s/115200 = 8.68μs or 217 cycles of the internal 25MHz clock clk.
+This protocol is refered as 8N1 meaning (8 data bits, no parity bit, 1 stop bit). We use a transmission speed of 115200 baud (bits per second), meaning that each bit takes 1s/115200 = 8.68μs or 217 cycles of the internal 25 MHz clock clk.
 
 ### Chip specification
 
@@ -20,7 +20,7 @@ When load = 1 the chip starts serial transmission of the byte in[7:0] to the TX 
 
 ### Proposed Implementation
 
-Use a `Bit` to store the state (0 = ready, 1 = busy). Use a counter `PC` to count from 0 to 216. When clocked at 25MHz, this counter will produce the baudrate of 115200 bits per second. A second counter `PC` counts from 0 to 9 (the 10 bits to send). Finally we need a `BitShift9R`. This will be loaded with the bit pattern to be send (startbit, 8 data bits).
+Use a `Bit` to store the state (0 = ready, 1 = busy). Use a counter `PC` to count from 0 to 216. When clocked at 25 MHz, this counter will produce the baudrate of 115200 bits per second. A second counter `PC` counts from 0 to 9 (the 10 bits to send). Finally we need a `BitShift9R`. This will be loaded with the bit pattern to be send (startbit, 8 data bits).
 
 ![](UartTX.png)
 

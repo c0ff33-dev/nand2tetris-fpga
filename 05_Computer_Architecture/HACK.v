@@ -1,6 +1,6 @@
 /**
  * The HACK computer, including CPU, ROM, RAM and the generator for
- * reset and clk (25MHz) signal. For approx. 20μs HACK CPU resets.
+ * reset and clk (25 MHz) signal. For ~20μs HACK CPU resets.
  * From this point onward the user is at the mercy of the software.
  * In particular, depending on the program's code, the LED may show
  * some output and the user may be able to interact with the computer

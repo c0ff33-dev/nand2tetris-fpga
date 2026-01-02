@@ -11,7 +11,7 @@
  * is completed out[15]=0 and RTP outputs the received byte to out[7:0].
  *
  * AR1021 shifts on posedge, samples negedge (CPHA=0, CPOL=1) with a maximum
- * bit rate of ~900kHz (~28 cycles @ 25 MHz clock) and requires an inter-byte delay
+ * bit rate of ~900 KHz (~28 cycles @ 25 MHz clock) and requires an inter-byte delay
  * of ~50μs (1250 cycles) however this latter implementation detail is currently 
  * handled in software.
  */

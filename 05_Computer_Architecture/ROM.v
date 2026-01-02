@@ -1,7 +1,7 @@
 /**
  * instruction memory at boot time 
  * The instruction memory is read only (ROM) and
- * preloaded with 256 x 16bit of Hack code holding the bootloader.
+ * preloaded with 256 x 16 bits of Hack code holding the bootloader.
  * 
  * instruction = ROM[pc]
  */

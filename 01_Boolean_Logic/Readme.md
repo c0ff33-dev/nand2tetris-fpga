@@ -103,7 +103,7 @@ To upload the chip `Xor` onto your fpga board `iCE40HX1K-EVB` you need two addit
 
 ```
 # physical constraints file
-# assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40-HX1K-EVB
+# assign io-pins to pin numbering of iCE40HX1K on olimex board iCE40HX1K-EVB
 # compare to the schematic of the board and the datasheet of fpga
 
 set_io BUT1 41    # BUT1
@@ -113,7 +113,7 @@ set_io LED1 40    # LED1
 set_io LED2 51    # LED2
 ```
 
-* Now you can build and upload  the chip `Xor` to iCE40-HX1K-EVB with:
+* Now you can build and upload  the chip `Xor` to iCE40HX1K-EVB with:
   
 ```
 $ apio clean

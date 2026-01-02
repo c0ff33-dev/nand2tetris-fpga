@@ -1,12 +1,14 @@
 # 05 Computer Architecture
 
-Build the `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, `RAM` and `ROM`. `ROM` uses a block ram structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
+Build the `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, `RAM` and `ROM`. `ROM` uses a block ram structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language`.
 
 ### 01 CPU
 
 The `CPU`  corresponds to the proposed implementation of nand2tetris course.
 
-![](01_CPU/CPU.png)**Attention:** In the original specification of HACK all C instruction have the binary form: 111xxxxxxxxxxxxx and A instruction have the form 0xxxxxxxxxxxxxxx. In order to use HACK with instruction memory ROM >32K (to play tetris), we will also interpret the machine language instructions starting with 000-110 as A-instructions, allowing the following jumps for all labels up to 56K!
+![](01_CPU/CPU.png)
+
+**Attention:** In the original specification of HACK all C instructions have the binary form: 111xxxxxxxxxxxxx and A instruction have the form 0xxxxxxxxxxxxxxx. In order to use HACK with instruction memory ROM >32K (to play Tetris), we will also interpret the machine language instructions starting with 000-110 as A-instructions, allowing up to 56K words of memory to be addressed.
 
 0x0-0xDFFF (56K words) = A instructions, a superset of the original range.
 
@@ -19,11 +21,11 @@ The `CPU`  corresponds to the proposed implementation of nand2tetris course.
 
 ### 02 Memory
 
-The chip `Memory.v`  maps all addresses 0 - 0x0FFF to RAM and the addresses 0x1000-0x100F to the 16 special function registers used for memory mapped IO-Devices and debugging.
+The chip `Memory.v`  maps all addresses 0-0x0FFF to RAM and the addresses 0x1000-0x100F to the 16 special function registers used for memory mapped IO-Devices and debugging.
 
 ### 03 Clock25_Reset20
 
-The 100 MHz (CLK) of the clock generator on the `iCE40HX1K-EVB` is to fast to drive our HACK design. Therefore we must scale down the external clock (CLK) of 100 MHz to the internal clock (clk) of 25Mhz using a counter `PC` .
+The 100 MHz (CLK) of the clock generator on the `iCE40HX1K-EVB` is to fast to drive our HACK design. Therefore we must scale down the external clock (CLK) of 100 MHz to the internal clock (clk) of 25 MHz using a counter `PC` .
 
 HACK CPU needs a reset signal to have a proper start of the complete computer system. The fpga chip nees some time delay to preload the ROM with ROM.hack code. Therefore the reset signal at startup should have a minimal length of approximately 20μs.
 
@@ -73,7 +75,7 @@ The test bench of `04_HACK` will:
   $ apio sim
   ```
 
-- Check the frequency of the internal clk signal to be 25MHz. So one clock cycle takes 40μs.
+- Check the frequency of the internal clk signal to be 25 MHz. So one clock cycle takes 40μs.
   
   ![](03_Clock25_Reset20/clock.png)
 

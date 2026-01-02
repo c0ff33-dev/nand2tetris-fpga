@@ -1,5 +1,5 @@
 /**
- * 16-bit bitwise And:
+ * 16 bit bitwise And:
  * for i = 0..15: out[i] = (a[i] and b[i])
  */
 

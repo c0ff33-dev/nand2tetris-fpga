@@ -1,13 +1,13 @@
 /**
-* Uses CLK of 100MHz to generate:
-* internal clock signal clk with 25MHz and
+* Uses CLK of 100 MHz to generate:
+* internal clock signal clk with 25 MHz and
 * a reset signal of ~20μs duration
 */
 
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,			// external clock 100 MHz	
-	output clk,			// internal clock 25 Mhz
+	output clk,			// internal clock 25 MHz
 	output reset 		// reset signal ~20μs
 );
 
@@ -24,7 +24,7 @@ module Clock25_Reset20(
 		.out(psout)
 	);
 	
-	// scale down 100MHz to 25MHz (1/4)
+	// scale down 100 MHz to 25 MHz (1/4)
 	// PC itself is clocked so only one update per cycle
 	// 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)
 	assign clk = psout[1]; // demux the 2nd bit

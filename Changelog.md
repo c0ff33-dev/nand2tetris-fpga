@@ -39,7 +39,7 @@ Pre-fork changelog.
 
 * `Hack/RAM.v`: replace `always @(negedge clk)` to `always @(posedge clk)`
 * `Hack/DFF.v`: replace `always @(negedge clk)` to `always @(posedge clk)`
-* `Hack/Clock.v`: 25MHz?
+* `Hack/Clock.v`: 25 MHz
 
 ### iceprog: programmer.ino
 

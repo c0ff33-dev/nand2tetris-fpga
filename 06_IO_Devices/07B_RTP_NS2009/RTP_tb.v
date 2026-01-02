@@ -1,7 +1,7 @@
 `timescale 10ns/1ns
 `default_nettype none
 
-// 100/400 KHz timings: 25MHz = 1 clk = 40ns = 1/25μs (25 clk/1μs)
+// 100/400 KHz timings: 25 MHz = 1 clk = 40ns = 1/25μs (25 clk/1μs)
 // generalized into rough timing buckets
 
 // free time between STOP/START: 4.7μs/1.3μs (~118/~32 clk cycles)

@@ -1,5 +1,5 @@
 # physical constraints file
-# assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40HX1K-EVB
+# assign io-pins to pin numbering of iCE40HX1K on olimex board iCE40HX1K-EVB
 # compare to the schematic of the board and the datasheet of fpga
 
 set_frequency CLK 25 # Clock frequency constraint (25 MHz)
