@@ -2,7 +2,7 @@
 
 ### leds.asm
 
-To test input and output capability of HACK we will write an endless loop, in which HACK reads the state of the buttons BUT[1:0] and writes the result to LED[1:0]. All devices for  input and output are mapped to memory addresses starting from 0x1000. The state of BUT[1:0] can be read at memory address 4097 and the two leds LED[1:0] can be switched on and of by writing to memory address 4096. The Assembler in `tools` already knows the following predefined symbols.
+To test input and output capability of HACK we will write an endless loop, in which HACK reads the state of the buttons `BUT[1:0]` and writes the result to `LED[1:0]`. All devices for  input and output are mapped to memory addresses starting from 0x1000. The state of `BUT[1:0]` can be read at memory address 4097 and the two leds `LED[1:0]` can be switched on and of by writing to memory address 4096. The Assembler in `tools` already knows the following predefined symbols.
 
 | symbol          | value       | function                                 |
 | --------------- | ----------- | ---------------------------------------- |
@@ -11,7 +11,7 @@ To test input and output capability of HACK we will write an endless loop, in wh
 | ARG             | 2           | argument of function/method call         |
 | THIS            | 3           | pointer to object in heap                |
 | THAT            | 4           | pointer to object in heap                |
-| R0--R15         | 0-15        | register 0-15                            |
+| R0-15           | 0-15        | register 0-15                            |
 | LED             | 4096        | 0 LED is off, 1 LED is on                |
 | BUT             | 4097        | 0 BUT pushed down, 1 BUT released up     |
 | UART_TX         | 4098        | send byte over UART                      |
@@ -23,17 +23,17 @@ To test input and output capability of HACK we will write an endless loop, in wh
 | LCD8            | 4104        | write 8bit to LCD                        |
 | LCD16           | 4105        | write 16bit to LCD                       |
 | RTP             | 4106        | read/write 8bit to RTP                   |
-| DEBUG0 - DEBUG4 | 4107-4111   | reserved for debugging                   |
+| DEBUG0-4        | 4107-4111   | reserved for debugging                   |
 
 ## mult.asm
 
-To test the ALU of HACK we will write a little assembler program, that calculates the multiplication of two integers stored in R0 and R1. The result shoud be stored into R2.
-
-To Test the result we have to load some test values into R0,R1 and R2. After the multiplication is finished we will check the result in R2. To show if the multiplication is correct, we use two strategies:
+To test the `ALU` of HACK we will write a little assembler program, that calculates the multiplication of two integers stored in `R0` and `R1`. The result shoud be stored into `R2`.
+`
+To Test the result we have to load some test values into `R0-2`. After the multiplication is finished we will check the result in `R2`. To show if the multiplication is correct, we use two strategies:
 
 #### Use LED to debug
 
-To test `mult.asm` in real hardware, we can use the LED[1:0] to display if the result is correct or wrong according to:
+To test `mult.asm` in real hardware, we can use the `LED[1:0]` to display if the result is correct or wrong according to:
 
 | LED[1:0] | output               |
 | -------- | -------------------- |
@@ -44,14 +44,14 @@ To test `mult.asm` in real hardware, we can use the LED[1:0] to display if the r
 
 ### Use DEBUG0-4 register
 
-To test `mult.asm` in simulation, we can use the DEBUG registers. Every time we change the value of R0-R2 we store the new values also to the corresponding register DEBUG0-DEBUG2. This is done by replacing every instance of a code snippet that changes R1 (and R0/R2 accordingly):
+To test `mult.asm` in simulation, we can use the `DEBUG` registers. Every time we change the value of `R0-2` we store the new values also to the corresponding register `DEBUG0-2`. This is done by replacing every instance of a code snippet that changes `R1` (and `R0/R2` accordingly):
 
 ```
 @R1
 M=<new value>
 ```
 
-with the code that additionally writes the new value to the DEBUG1 register:
+With the code that additionally writes the new value to the `DEBUG1` register:
 
 ```
 @R1

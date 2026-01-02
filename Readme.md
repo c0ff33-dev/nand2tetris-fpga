@@ -1,4 +1,4 @@
-# nand2tetris-FPGA (v2.0)
+# nand2tetris-fpga (v2.0)
 
 > _Wouldn't it be nice to make Hack or Jack also run on some "real platform" made from some "real stuff"?_
 > 

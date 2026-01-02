@@ -1,8 +1,8 @@
 ## 00 Prerequisites
 
-### FPGA-Board
+### FPGA Board
 
-In this project we will implement the HACK computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called field programmable array (FPGA). The fpga chip is a small piece of silicon holding lots of logic cells (LC) and block ram (BRAM), which can be routed programmatically.
+In this project we will implement the HACK computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called field programmable array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and block ram (BRAM), which can be routed programmatically.
 
 In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hardware and software, so everybody can build their own HACK following these instructions.
 
@@ -23,14 +23,14 @@ To communicate to the `iCE40HX1K-EVB` we need an Arduino-like board, which can b
 
 ### Tools
 
-The chips of our HACK computer (ALU, CPU, Register, Memory, IO-Devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the fpga board.
+The chips of our HACK computer (ALU, CPU, Register, Memory, IO-Devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the FPGA board.
 
 We will use `iCE40` FPGA from Lattice Semiconductors, because they have the nice property that there exists a complete free and open source toolchain [Project Icestorm](http://www.clifford.at/icestorm/) for programming:
 
 * `YoSYS`: Synthesize the Verilog code.
 * `nextpnr`: place and route tool.
 * `iceprogduino`: programmer.
-* `gtkwave`: tool to simulate and visualize signals in fpga circuits.
+* `gtkwave`: tool to simulate and visualize signals in FPGA circuits.
 
 ![](toolchain.png)
 
@@ -101,7 +101,7 @@ $ sudo make install
 
 Test the programmer with the test project provided by Olimex.
 
-**Tip:** Connect the solder jumper 3.3V_E1 on `iCE40HX1K-EVB` to power the fpga board `iCE40HX1K-EVB` over the IDC10 cable connected to `olimexino-32u4` over UEXT. This supersedes the need for the external 3.3V DC power supply but you can still use one if having power stability issues over USB.
+**Tip:** Connect the solder jumper 3.3V_E1 on `iCE40HX1K-EVB` to power the FPGA board `iCE40HX1K-EVB` over the IDC10 cable connected to `olimexino-32u4` over UEXT. This supersedes the need for the external 3.3V DC power supply but you can still use one if having power stability issues over USB.
 
  ![](ICE40PGM.jpg)
 
