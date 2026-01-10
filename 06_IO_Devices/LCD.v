@@ -21,10 +21,19 @@
  * In MOD-LCD2.8RTP the ILI9341V SDO (MISO) wire is not connected so we have no use for
  * an SDI wire on LCD and no way to read the response in any of the SPI commands that
  * return a response.
-*/
+ *
+ * Note: 2 cycles @ 25 MHz meets SCL pulse width requirements for write (twrh/twrl) 
+ * but runs faster than total time (twc) - this is 1/2 speed compared to the SPI
+ * implementation of the flash rom which runs at the full 25 MHz.
+ *
+ * 320x240x16 = ~1.25m bits which requires minimum 2 cycles to transmit each bit (~1.5MB/s) however
+ * Jack function call overheads are around ~600 cycles per 16 bits (~40 cycles/pixel, ~75KB/s) so even
+ * in the best case the draw rate will max out at around ~0.5 fps. In general the performance cost  
+ * to send the data over SPI contributes to but is a very minor part of the overall time taken.
+ */
 
-// Note: 2 cycles @ 25 MHz meets SCL pulse width requirements for write (twrh/twrl) 
-// but not total time (twc) - at best it will be 1/2 speed compared to SPI part.
+ // TODO: vs ~225 cycles (~14 cycles/pixel, ~215KB/s) to fill a word = 12.5 fps @ 25 MHz
+ // 2.85x faster, 16 x less bit depth = ~45x perf increase (and ~1.7x larger buffer)
 
 `default_nettype none
 module LCD(

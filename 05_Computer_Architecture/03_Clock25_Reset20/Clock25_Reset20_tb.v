@@ -21,9 +21,7 @@ module Clock25_Reset20_tb();
   	initial begin
   		$dumpfile("Clock25_Reset20_tb.vcd");
   		$dumpvars(0, Clock25_Reset20_tb);
-
-		// TODO: Add test
-		
+	
 		$display("------------------------");
 		$display("Testbench: Clock25_Reset10");
 

@@ -65,14 +65,12 @@ class Sys {
     /** Displays the given error code in the form "ERR<errorCode>",
      *  and halts the program's execution. */
     function void error(int errorCode) {
-        // TODO: NYI
-        // do Output.printChar(69); // E
-        // do Output.printChar(82); // R
-        // do Output.printChar(82); // R
-        // do Output.printInt(errorCode);
-        // do Sys.halt();
+        do Output.printChar(69); // E
+        do Output.printChar(82); // R
+        do Output.printChar(82); // R
+        do Output.printInt(errorCode);
         
-        while (true) { // unknown state
+        while (true) {
             do GPIO.writeLed(1);
             do Sys.wait(125);
             do GPIO.writeLed(2);
