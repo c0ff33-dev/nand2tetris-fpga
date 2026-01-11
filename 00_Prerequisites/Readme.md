@@ -23,7 +23,7 @@ To communicate to the `iCE40HX1K-EVB` we need an Arduino-like board, which can b
 
 ### Tools
 
-The chips of our HACK computer (ALU, CPU, Register, Memory, IO-Devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the FPGA board.
+The chips of our HACK computer (ALU, CPU, Register, Memory, IO devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the FPGA board.
 
 We will use `iCE40` FPGA from Lattice Semiconductors, because they have the nice property that there exists a complete free and open source toolchain [Project Icestorm](http://www.clifford.at/icestorm/) for programming:
 

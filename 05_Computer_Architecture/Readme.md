@@ -21,7 +21,7 @@ The `CPU` corresponds to the proposed implementation of nand2tetris course.
 
 ### 02 Memory
 
-The chip `Memory.v` maps all addresses 0-0x0FFF to RAM and the addresses 0x1000-0x100F to the 16 special function registers used for memory mapped IO-Devices and debugging.
+The chip `Memory.v` maps all addresses 0-0x0FFF to RAM and the addresses 0x1000-0x100F to the 16 special function registers used for memory mapped IO devices and debugging.
 
 ### 03 Clock25_Reset20
 

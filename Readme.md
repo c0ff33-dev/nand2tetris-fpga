@@ -54,7 +54,7 @@ Proceed and build `HalfAdder`, `FullAdder`, `Add16`, `Inc16` and the `ALU`.
 
 ### [03 Sequential Logic](03_Sequential_Logic)
 
-Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect HACK to different IO-Devices, which are connected using a serial protocol, where data is transmitted bitwise.
+Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect HACK to different IO devices, which are connected using a serial protocol, where data is transmitted bitwise.
 
 ### [04 Machine Language](04_Machine_Language)
 

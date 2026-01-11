@@ -21,9 +21,13 @@ module HACK_tb();
 	wire LCD_SDO;
 	wire LCD_SCK;
 	wire LCD_CSX;
+
+	// AR1021 wires
 	// wire RTP_SDI;
 	// wire RTP_SDO;
 	// wire RTP_SCK;
+
+	// NS2009 wires
 	wire RTP_SDA;
 	wire RTP_SCL;
 
@@ -47,9 +51,13 @@ module HACK_tb();
 		.LCD_SDO(LCD_SDO),			// LCD serial data out 
 		.LCD_SCK(LCD_SCK),			// LCD serial clock
 		.LCD_CSX(LCD_CSX),			// LCD chip select not
-		// .RTP_SDI(RTP_SDI),			// RTP serial data in
-		// .RTP_SDO(RTP_SDO),			// RTP serial data out in
-		// .RTP_SCK(RTP_SCK)			// RTP serial clock
+
+		// AR1021 wires
+		// .RTP_SDI(RTP_SDI),		// RTP serial data in
+		// .RTP_SDO(RTP_SDO),		// RTP serial data out in
+		// .RTP_SCK(RTP_SCK)		// RTP serial clock
+
+		// NS2009 wires
 		.RTP_SDA(RTP_SDA),			// RTP data line
 		.RTP_SCL(RTP_SCL)			// RTP serial clock
 	);

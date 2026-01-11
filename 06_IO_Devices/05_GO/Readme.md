@@ -79,4 +79,4 @@ M=D   // 0xE308
 
 * Check if iCE40HX1K-EVB runs the bootloader, which loads `leds.asm` from SPI and starts execution of leds.asm.
 
-If  `leds.asm` is working, you are ready to start implementing the operating system Jack OS. Proceed to project `07_Operating_System`  and come back later to implement the last to IO-Devices `LCD` and `RTP`  to connect the screen with resitive touch panel MOD-LCD2.8RTP.
+If  `leds.asm` is working, you are ready to start implementing the operating system Jack OS. Proceed to project `07_Operating_System`  and come back later to implement the last to IO devices `LCD` and `RTP`  to connect the screen with resitive touch panel MOD-LCD2.8RTP.

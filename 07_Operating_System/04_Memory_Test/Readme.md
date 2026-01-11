@@ -10,7 +10,7 @@ Don't be afraid of the limited memory size of "only" 3584 words. Let the heap st
 | 16-255    | static                        |
 | 256-1023  | stack                         |
 | 1024-3583 | heap                          |
-| 4096-4111 | IO-devices                    |
+| 4096-4111 | IO devices                    |
 
 ***
 
