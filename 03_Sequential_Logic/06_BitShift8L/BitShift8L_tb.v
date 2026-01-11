@@ -1,8 +1,5 @@
 `default_nettype none
 module BitShift8L_tb();
-
-	// FIXME: slightly out of sync with current implementation
-
 	// IN,OUT
 	reg clk=1;
 	reg [7:0] in;
@@ -30,7 +27,7 @@ module BitShift8L_tb();
 	
 	// Compare
 	reg [7:0] out_cmp;
-	always @(posedge clk)
+	always @(negedge clk)
 		out_cmp <= load?in:(shift?(out_cmp<<1)|inLSB:out_cmp);	
 	
 	reg fail = 0;
