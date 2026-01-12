@@ -127,7 +127,7 @@ $ apio upload
 
 | pin    | function                                          |
 | ------ | ------------------------------------------------- |
-| LED1/2 | 0 led is off, 1 led is on                         |
+| LED1/2 | 0 LED is off, 1 LED is on                         |
 | BUT1/2 | 0 button is pressed down, 1 button is released up |
 
 Chips with no more than two input/output signals can be uploaded and tested in real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.

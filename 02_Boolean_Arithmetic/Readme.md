@@ -22,5 +22,5 @@ Keep in mind the following remarks:
   
   | pin    | function                                            |
   | ------ | --------------------------------------------------- |
-  | LED1/2 | 0 led is off, 1 led is on                           |
+  | LED1/2 | 0 LED is off, 1 LED is on                           |
   | BUT1/2 | 0 button is pressed down, 1 button is released up   |

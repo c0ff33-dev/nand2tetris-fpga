@@ -1,6 +1,6 @@
 // led.asm
 // execute an infinite loop to
-// read the button state and output to led
+// read the button state and output to LED
 
 // tldr; LED1/2 on when BUT1/2 released & off when pushed respectively
 // LED and BUT are 2 bit wires that will split into their 

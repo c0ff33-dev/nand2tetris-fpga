@@ -4,7 +4,7 @@ Build the following special function register to connect HACK to I/O devices: `U
 
 | address | I/O dev   | function                                           |
 | ------- | --------- | -------------------------------------------------- |
-| 4096    | LED       | 0 = led off, 1 = led on                            |
+| 4096    | LED       | 0 = LED off, 1 = LED on                            |
 | 4097    | BUT       | 0 = button pressed "down", 1 = button released     |
 | 4098    | UART_TX   | transmit byte to UART with 115200 baud 8N1         |
 | 4099    | UART_RX   | receive byte from UART with 115200 baud 8N1        |
@@ -21,7 +21,7 @@ Build the following special function register to connect HACK to I/O devices: `U
 | 4110    | DEBUG3    | used for debugging                                 |
 | 4111    | DEBUG4    | used for debugging                                 |
 
-For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (UART, SPI, SRAM and GO) can be implemented in assembly. After completing the devices UART, SPI, SRAM and GO we will be able to fill the SRAM chip with up to 64K words (16 bits) of HACK code. This will enable us to run Jack OS and applications on HACK. The more sophisticated device drivers for LCD and RTP will be implemented in Jack.
+For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (`UART`, `SPI`, `SRAM` and `GO`) can be implemented in assembly. After completing the devices we will be able to fill the `SRAM` chip with up to 64K words (16 bits) of HACK code. This will enable us to run Jack OS and applications on HACK. The more sophisticated device drivers for `LCD` and `RTP` will be implemented in Jack.
 
 ### Proposed implementation
 
@@ -49,7 +49,7 @@ For every special function register we will need the appropriate software to tal
   $ apio sim
   ```
 
-* Run `HACK` in real hardware on `iCE40HX1K-EVB` with the real device attached:
+* Run `HACK` in real hardware on `iCE40HX1K-EVB` with the device attached:
   
   ```
   $ cd 00_HACK
