@@ -1,6 +1,6 @@
 # Tools
 
-This folder contains the toolchain for Hack/Jack development.
+This folder contains the toolchain for `HACK`/Jack development.
 
 ## vim
 
@@ -13,7 +13,7 @@ $ cp vim/ftdetect/* ~/.vim/ftdetect/
 
 ## Assembler
 
-Assembler translates Hack assembly files to machine code. Outputs the machine code to `filename.hack`.
+Assembler translates `HACK` assembly files to machine code. Outputs the machine code to `filename.hack`.
 
 `usage: ./Assembler/assembler.pyc [filename.asm]`
 

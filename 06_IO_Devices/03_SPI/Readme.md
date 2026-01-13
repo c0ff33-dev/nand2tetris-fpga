@@ -1,6 +1,6 @@
 ## 03 SPI
 
-The special function register `SPI`  memory mapped to address 4100 enables HACK to read/write bytes from the spi flash memory chip `W25Q16BV` situated on `iCE40HX1K-EVB`. The timing diagram for SPI communication looks like the following diagram (we use `CPOL=0` and `CPHA=0`).
+The special function register `SPI`  memory mapped to address 4100 enables `HACK` to read/write bytes from the `SPI` flash memory chip `W25Q16BV` situated on `iCE40HX1K-EVB`. The timing diagram for `SPI` communication looks like the following diagram (we use `CPOL=0` and `CPHA=0`).
 
 ![](spi-timing.png)
 
@@ -33,16 +33,16 @@ Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15].
 
 ### Memory map
 
-The special function register `SPI` is mapped to memory map of HACK according to:
+The special function register `SPI` is mapped to memory map of `HACK` according to:
 
-| address | I/O device | R/W | function                                  |
-| ------- | ---------- | --- | ----------------------------------------- |
-| 4100    | SPI        | R   | out[15]=1 if busy, out[7:0] received byte |
-| 4100    | SPI        | W   | start transmittion of byte in[7:0]        |
+| address | I/O device | R/W | function                                      |
+| ------- | ---------- | --- | --------------------------------------------- |
+| 4100    | `SPI`        | R   | `out[15]=1` if busy, `out[7:0]` received byte |
+| 4100    | `SPI`        | W   | Start transmission of byte `in[7:0]`          |
 
 ### cat.asm
 
-To test HACK with SPI we need a little machine language programm `cat.asm`, which reads 4 consecutive bytes of SPI flash memory chip W25Q16BV of `iCE40HX1K-EVB`, starting at address 0x040000 (256k) and sends them to UART_TX.
+To test `HACK` with `SPI` we need a little machine language program `cat.asm`, which reads 4 consecutive bytes of SPI flash memory chip W25Q16BV of `iCE40HX1K-EVB`, starting at address 0x040000 (256k) and sends them to UART_TX.
 
 According to the datasheet of spi flash rom chip W25Q16BV the commands needed to read the flash rom chip are:
 
@@ -105,7 +105,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
 
 * preload the SPI memory chip with some text file at address 0x040000.
 
-* build and upload HACK with `cat.asm` in ROM.BIN to `iCE40HX1K-EVB`.
+* build and upload `HACK` with `cat.asm` in ROM.BIN to `iCE40HX1K-EVB`.
   
   ```
   $ echo SPI! > spi.txt

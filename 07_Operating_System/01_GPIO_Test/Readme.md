@@ -39,7 +39,7 @@ class Sys {
   
   ![](gpio.png)
 
-* run in real hardware with HACK build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload GPIO_Test to iCE40HX1K-EVB with: 
+* run in real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload GPIO_Test to iCE40HX1K-EVB with: 
   
   ```
   $ cd 01_GPIO_Test

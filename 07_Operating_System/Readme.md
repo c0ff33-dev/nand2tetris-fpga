@@ -4,7 +4,7 @@ To run serious application like Tetris we need the operating system Jack OS, wri
 
 For every Jack OS class we provide a skeleton file, with the signatures of functions and methods. In the dedicated test folder you find implementation details and test classes.
 
-The folder `00_HACK` contains a simulation of HACK similar to the one in `06_IO_Devices/00_HACK` with the following differences:
+The folder `00_HACK` contains a simulation of `HACK` similar to the one in `06_IO_Devices/00_HACK` with the following differences:
 
 * uses build in chips from `01_Boolean_Logic` to `03_Sequential_Logic` instead of going down to the nand gate level.
 * has 64k words of instruction ROM preloaded with Jack OS and applications
@@ -15,7 +15,7 @@ The folder `00_HACK` contains a simulation of HACK similar to the one in `06_IO_
 Use `00_HACK` of `07_Operating_System` to test your Jack OS classes in simulation.
 
 ```
-$ cd <test folder>
+$ cd <XX_Class_Test>
 $ make
 $ cd ../00_HACK
 $ apio clean
@@ -24,10 +24,10 @@ $ apio sim
 
 ## Run Jack OS in real hardware on iCE40HX1K-EVB
 
-To test Jack OS on real hardware iCE40HX1K-EVB use the design of HACK developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach iCE40HX1K-EVB to your computer and run the following commands:
+To test Jack OS on real hardware iCE40HX1K-EVB use the design of `HACK` developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach iCE40HX1K-EVB to your computer and run the following commands:
 
 ```
-$ cd <test folder>
+$ cd <XX_Class_Test>
 $ make
 $ make upload
 ```

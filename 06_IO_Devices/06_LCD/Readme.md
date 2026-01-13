@@ -1,22 +1,22 @@
 ## 06 LCD
 
-The special function register `LCD`  memory mapped to addresses 4104 and 4105 enables HACK to write bytes to the LCD controller chip ILI9341V situated on MOD-LCD2.8RTP. The communication protocol is SPI with one additional wire DCX. The protocol defines transmission of 8 bit commands with DCX = 0 followed by data with DCX=1. Data packets can have any length depending on the launched command.
+The special function register `LCD`  memory mapped to addresses 4104 and 4105 enables `HACK` to write bytes to the LCD controller chip `ILI9341V` situated on `MOD-LCD2.8RTP`. The communication protocol is `SPI` with one additional wire DCX. The protocol defines transmission of 8 bit commands with DCX = 0 followed by data with DCX=1. Data packets can have any length depending on the launched command.
 
 ### Chip specification
 
-| IN/OUT | wire    | function                                           |
-| ------ | ------- | -------------------------------------------------- |
-| IN     | in[7:0] | byte to be sent.                                   |
-| IN     | in[8]   | =0 send byte and set CSX low                       |
-| IN     | in[8]   | =1 pull CSX high without sending byte              |
-| IN     | in[9]   | value of DCX when transmitting a byte.             |
-| IN     | load    | initiates the transmission of a byte, when in[8]=0 |
-| IN     | load16  | initiates the transmission of 16 bit in[15:0]      |
-| OUT    | out[15] | =0 chip is busy, =0 ready                          |
-| OUT    | DCX     | =0 command, =1 data                                |
-| OUT    | SDO     | serial data out                                    |
-| OUT    | SCK     | serial clock                                       |
-| OUT    | CSX     | chip select not                                    |
+| IN/OUT | wire      | function                                           |
+| ------ | --------- | -------------------------------------------------- |
+| IN     | `in[7:0]` | Byte to be sent                                    |
+| IN     | `in[8]`   | =0 send byte and set `CSX` low                     |
+| IN     | `in[8]`   | =1 pull CSX high without sending byte              |
+| IN     | `in[9]`   | Value of DCX when transmitting a byte.             |
+| IN     | `load`    | Initiates the transmission of a byte, when in[8]=0 |
+| IN     | `load16`  | Initiates the transmission of 16 bit in[15:0]      |
+| OUT    | `out[15]` | =0 chip is busy, =0 ready                          |
+| OUT    | `DCX`     | =0 command, =1 data                                |
+| OUT    | `SDO`     | Serial Data Out                                    |
+| OUT    | `SCK`     | Serial Clock                                       |
+| OUT    | `CSX`     | Chip Select NOT                                    |
 
 The special function register `LCD` communicates with ILI9341V LCD controller over 4 wire SPI.
 
@@ -34,7 +34,7 @@ Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15].
 
 ### Memory map
 
-The special function register `LCD` is mapped to memory map of HACK according to:
+The special function register `LCD` is mapped to memory map of `HACK` according to:
 
 | address   | I/O device | R/W | function                            |
 | --------- | ---------- | --- | ----------------------------------- |

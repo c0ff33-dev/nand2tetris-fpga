@@ -8,11 +8,11 @@ The `CPU` corresponds to the proposed implementation of nand2tetris course.
 
 ![](01_CPU/CPU.png)
 
-**Attention:** In the original specification of HACK all C instructions have the binary form: `111xxxxxxxxxxxxx` and A instruction have the form `0xxxxxxxxxxxxxxx`. In order to use `HACK` with instruction memory ROM >32K (to play Tetris), we will also interpret the machine language instructions starting with `000-110` as A-instructions, allowing up to 56K words of memory to be addressed.
+**Attention:** In the original specification of `HACK` all C instructions have the binary form: `111xxxxxxxxxxxxx` and A instruction have the form `0xxxxxxxxxxxxxxx`. In order to use `HACK` with instruction memory ROM >32K (to play Tetris), we will also interpret the machine language instructions starting with `000-110` as A-instructions, allowing up to 56K words of memory to be addressed.
 
-0x0-0xDFFF (56K words) = A instructions, a superset of the original range.
+`0x0-0xDFFF` (56K words) = A instructions, a superset of the original range.
 
-0xE000-FFFF (8K words) = C instructions, a subset of the original range.
+`0xE000-FFFF` (8K words) = C instructions, a subset of the original range.
 
 ```
 @label
@@ -21,11 +21,11 @@ The `CPU` corresponds to the proposed implementation of nand2tetris course.
 
 ### 02 Memory
 
-The chip `Memory.v` maps all addresses 0-0x0FFF to RAM and the addresses 0x1000-0x100F to the 16 special function registers used for memory mapped IO devices and debugging.
+The chip `Memory.v` maps all addresses `0-0x0FFF` to RAM and the addresses `0x1000-0x100F` to the 16 special function registers used for memory mapped I/O devices and debugging.
 
 ### 03 Clock25_Reset20
 
-The 100 MHz of the clock generator on the `iCE40HX1K-EVB` is too fast to drive our HACK design. Therefore we must scale down the external clock (`CLK`) of 100 MHz to the internal clock (`clk`) of 25 MHz using a counter `PC` .
+The 100 MHz of the clock generator on the `iCE40HX1K-EVB` is too fast to drive our `HACK` design. Therefore we must scale down the external clock (`CLK`) of 100 MHz to the internal clock (`clk`) of 25 MHz using a counter `PC` .
 
 `HACK` CPU needs a reset signal to have a proper start of the complete computer system. The fpga chip needs some time delay to preload the ROM with `ROM.hack` code. Therefore the reset signal at startup should have a minimal length of ~20μs.
 
@@ -37,25 +37,25 @@ The chip `HACK.v` is the top level module, that connects to the outer world.
 
 The signals wires `CLK`, `RST`, `BUT[1:0]` and `LED[1:0]` (by convention written in capital letters) connect to the outer pins of the fpga chip `iCE40HX1K` according to the file `iCE40HX1K.pcf`. The board `iCE40HX1K-EVB` comes with a clock generator of 100 MHz, two buttons and two leds connected to FPGA (refer to [docs/iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
-| wire   | iCE40HX1K (FPGA) | board iCE40HX1K-EVB     |
-| ------ | ---------------- | ----------------------- |
-| CLK    | 15               | 100 Mhz clock generator |
-| BUT[0] | 41               | BUT1                    |
-| BUT[1] | 42               | BUT2                    |
-| LED[0] | 40               | LED1                    |
-| LED[1] | 51               | LED2                    |
+| Wire     | iCE40HX1K (FPGA) | Board iCE40HX1K-EVB     |
+| -------- | ---------------- | ----------------------- |
+| `CLK`    | 15               | 100 Mhz clock generator |
+| `BUT[0]` | 41               | `BUT1`                  |
+| `BUT[1]` | 42               | `BUT2`                  |
+| `LED[0]` | 40               | `LED1`                  |
+| `LED[1]` | 51               | `LED2`                  |
 
-To add IO capability we add 7 more special function registers mapped to the following addresses:
+To add I/O capability we add 7 more special function registers mapped to the following addresses:
 
-| address     | I/O dev | function                                             |
-| ----------- | ------- | ---------------------------------------------------- |
-| 0 - 3583    | RAM     |                                                      |
-| 4096        | LED     | 0 = LED off, 1 = LED on                              |
-| 4097        | BUT     | 0 = button pressed "down", 1 = button released       |
-| 4098 - 4106 |         | reserved for IO devices (see project 06_IO_Devices)  |
-| 4107 - 4111 | DEBUG   | used for debugging                                   |
+| Address   | I/O Dev | Function                                               |
+| --------- | ------- | ------------------------------------------------------ |
+| 0-3583    | `RAM`   |                                                        |
+| 4096      | `LED`   | 0= `LED` off, 1= `LED` on                              |
+| 4097      | `BUT`   | 0= button pressed, 1= button released                  |
+| 4098-4106 |         | Reserved for I/O devices (see project `06_IO_Devices`) |
+| 4107-4111 | `DEBUG` | Used for debugging                                     |
 
-The HACK simulation needs a valid file `ROM.hack` (created in project `04_Machine_Language`) with the machine language instructions to perform.
+The `HACK` simulation needs a valid file `ROM.hack` (created in project `04_Machine_Language`) with the machine language instructions to perform.
 
 The test bench of `04_HACK` will:
 
@@ -70,7 +70,7 @@ The test bench of `04_HACK` will:
 - Implement the chips `CPU`, `Memory` and `Clock25_Reset20` and simulate with the corresponding test benches:
   
   ```
-  $ cd 0X_<chipname>
+  $ cd <0X_chip>
   $ apio clean
   $ apio sim
   ```
@@ -79,7 +79,7 @@ The test bench of `04_HACK` will:
   
   ![](03_Clock25_Reset20/clock.png)
 
-- Check the reset signal of HACK. You should see a reset signal of approximately 20μs.
+- Check the reset signal of `HACK`. You should see a reset signal of approximately 20μs.
   
   ![](03_Clock25_Reset20/reset.png)
 
@@ -111,7 +111,7 @@ The test bench of `04_HACK` will:
 
   ![](04_HACK/mult.png)
 
-* Finally upload the complete HACK design with `leds.asm` pre-loaded into instruction ROM and run in real hardware!
+* Finally upload the complete `HACK` design with `leds.asm` pre-loaded into instruction ROM and run in real hardware!
   
   ```
   $ cd ../04_Machine_Language

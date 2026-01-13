@@ -2,9 +2,9 @@
 
 ### FPGA Board
 
-In this project we will implement the HACK computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called field programmable array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and block ram (BRAM), which can be routed programmatically.
+In this project we will implement the `HACK` computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called field programmable array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and block ram (BRAM), which can be routed programmatically.
 
-In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hardware and software, so everybody can build their own HACK following these instructions.
+In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hardware and software, so everybody can build their own `HACK` following these instructions.
 
 ![](fpga.png)
 
@@ -12,20 +12,20 @@ On `iCE40HX1K-EVB` board you will find:
 
 * FPGA-chip `iCE40HX1K`: holds 1280 logic cells and 64K bits block ram, which can be routed programmatically.
 * Serial flash memory `W25Q16BV` (16M bits): holds the bitstream data, which is a binary representation of the circuits, you want to implement on the FPGA. At startup the FPGA loads the bitstream from serial flash memory and configures its logic cells to become the machine you want the FPGA to be.
-* LED, BUT: The development board come with two leds and two buttons. This are user programmable and can be used to enter data or for debugging.
-* SRAM (256K x 16 bits): `iCE40HX1K-EVB` has a static RAM chip on board. This is useful, because more memory is needed than available with blockram inside FPGA. We will use the SRAM chip as instruction memory ROM to run serious applications like Tetris or pong on on HACK.
-* GPIO1 34 pin connector: the board come with a lot of general purpose in-/output pins. This pins can be used to connect external hardware. We will use this pins to connect an LCD screen with Touchpanel `MOD-LCD2.8RTP`.
+* `LED`, `BUT`: The development board comes with two LEDs and two buttons. These are user programmable and can be used to enter data or for debugging.
+* SRAM (256K x 16 bits): `iCE40HX1K-EVB` has a static RAM chip on board. This is useful, because more memory is needed than available with BRAM inside FPGA. We will use the SRAM chip as instruction memory ROM to run serious applications like Tetris or Pong on `HACK`.
+* GPIO 34 pin connector: the board come with a lot of general purpose in-/output pins. This pins can be used to connect external hardware. We will use this pins to connect an LCD screen with touch panel `MOD-LCD2.8RTP`.
 
 To communicate to the `iCE40HX1K-EVB` we need an Arduino-like board, which can be connected to `iCE40HX1K` over the 10 pin UEXT connector. We will use `olimexino-32u4` board, which has two modes:
 
 * Programmer: used to upload the bitstream file to serial flash memory.
-* UART bridge: used to communicate to HACK at runtime.
+* UART bridge: used to communicate to `HACK` at runtime.
 
 ### Tools
 
-The chips of our HACK computer (ALU, CPU, Register, Memory, IO devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the FPGA board.
+The chips of our `HACK` computer (`ALU`, `CPU`, `Register`, `Memory`, I/O devices) are implemented in verilog, an industrial standard hardware description language similar to HDL from nand2tetris. So we need tools to translate Verilog code to the so called bitstream, which is a binary representation of all the wires between the logic cells we want to activate. Finally we need tools to upload the bitstream file to the FPGA board.
 
-We will use `iCE40` FPGA from Lattice Semiconductors, because they have the nice property that there exists a complete free and open source toolchain [Project Icestorm](http://www.clifford.at/icestorm/) for programming:
+We will use iCE40 FPGA from Lattice Semiconductors, because they have the nice property that there exists a complete free and open source toolchain [Project Icestorm](http://www.clifford.at/icestorm/) for programming:
 
 * `YoSYS`: Synthesize the Verilog code.
 * `nextpnr`: place and route tool.
@@ -34,7 +34,7 @@ We will use `iCE40` FPGA from Lattice Semiconductors, because they have the nice
 
 ![](toolchain.png)
 
-To run HACK we also need some software written for HACK. The simpler projects like a blinking LED can be programmed direcly in Assembler. Harder tasks like the driver for the LCD-screen are programmed in Jack, translated for the virtual machine and finally compiled to HACK code.
+To run `HACK` we also need some software written for `HACK`. The simpler projects like a blinking LED can be programmed direcly in Assembler. Harder tasks like the driver for the LCD screen are programmed in Jack, translated for the virtual machine and finally compiled to `HACK` code.
 
 ***
 
@@ -42,7 +42,7 @@ To run HACK we also need some software written for HACK. The simpler projects li
 
 ### Buy the hardware
 
-To build projects 1-5 any FPGA board will work. If you want to run serious application like Pong or Tetris on top of the Jack OS you need an FPGA board with more memory and connect to I/O-Devices like a screen and a touchpanel. The project has been tested with the following devices:
+To build Projects 1-5 any FPGA board will work. If you want to run serious application like Pong or Tetris on top of the Jack OS you need an FPGA board with more memory and connect to I/O devices like a screen and a touch panel. The project has been tested with the following devices:
 
 * iCE40 Board: [iCE40HX1K-EVB](https://www.olimex.com/Products/FPGA/iCE40/)
 * Programmer: [olimexino-32u4](https://www.olimex.com/Products/Duino/AVR/OLIMEXINO-32U4/open-source-hardware)
@@ -90,7 +90,7 @@ $ apio upload
 
 If you go with Olimex boards you additionally have to install the programmer software [iceprogduino](https://github.com/OLIMEX/iCE40HX1K-EVB/tree/master/programmer/olimexino-32u4%20firmware). The firmware has to be flashed on `olimexino-32u4` with the Arduino development platform, alternatively refer to the official Olimex [documentation](https://www.olimex.com/wiki/ICE40HX1K-EVB#Preparing_OLIMEXINO-32U4_as_programmer) for more detailed instructions.
 
-Additionally you have to install the programm iceprogduino on your computer:
+Additionally you have to install the program iceprogduino on your computer:
 
 ```
 $ git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
@@ -109,10 +109,14 @@ Test the programmer with the test project provided by Olimex.
 
 ### Jack-HACK-tools
 
-Jack-HACK-Tools: JackCompiler, VirtualMachine Translator and Assembler for Hack should be developed by yourself. Follow guidelines at [nand2tetris](https://www.nand2tetris.org/). If you don't have  your own Jack-HACK-tools yet, you can use the compiled python version the Jack-HACK toolchain provided in the folder [tools](../tools).
+Jack-HACK-Tools: JackCompiler, VirtualMachine Translator and Assembler for `HACK` should be developed by yourself. Follow guidelines at [nand2tetris](https://www.nand2tetris.org/). If you don't have  your own Jack-HACK-tools yet, you can use the compiled python version the Jack-HACK toolchain provided in the folder [tools](../tools).
 
 ### Do some Verilog examples
 
 There is no need to learn much Verilog at first. Just dig into the example `Xor` and learn how to "translate" your HDL files from nand2tetris into Verilog.
 
 If you want to have some Verilog background I recommend doing the tutorial of Juan González-Gomez (Obijuan), which starts at an absolute beginners level [open-fpga-verilog-tutorial](https://github.com/Obijuan/open-fpga-verilog-tutorial/).
+
+### Appendix
+
+Abridged notes for end to end environment setup are available in [Appendix.md](Appendix.md).

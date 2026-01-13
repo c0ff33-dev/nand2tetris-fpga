@@ -8,9 +8,9 @@ This project is about building HACK on real hardware as proposed in Chapter 13 o
 
  ![](docs/inside.jpg)
 
-Our final implementation of HACK will have the following specs:
+Our final implementation of `HACK` will have the following specs:
 
-* Original CPU/ALU design of HACK from nand2tetris.
+* Original CPU/ALU design of `HACK` from nand2tetris.
 
 * Implemented on `iCE40HX1K-EVB` from Olimex.
 
@@ -20,7 +20,7 @@ Our final implementation of HACK will have the following specs:
 
 * SRAM 64K x 16 bit (instruction memory).
 
-* Bootloader boots HACK code from flash ROM into SRAM.
+* Bootloader boots `HACK` code from flash ROM into SRAM.
 
 * 2.8 inch color LCD with 320x240 pixel.
 
@@ -54,26 +54,26 @@ Proceed and build `HalfAdder`, `FullAdder`, `Add16`, `Inc16` and the `ALU`.
 
 ### [03 Sequential Logic](03_Sequential_Logic)
 
-Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect HACK to different IO devices, which are connected using a serial protocol, where data is transmitted bitwise.
+Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect `HACK` to different I/O devices, which are connected using a serial protocol, where data is transmitted bitwise.
 
 ### [04 Machine Language](04_Machine_Language)
 
-Write two little machine language programms to run on HACK. The first programm `leds.asm` will test I/O capability of HACK. Every time the user presses the buttons BUT1/2 on the `iCE40HX1K-EVB` board  the LEDs will change accordingly. With the second programm `mult.asm` we will calculate the product of two numbers to test the arithmetic capabilities of the CPU/ALU.
+Write two little machine language programms to run on `HACK`. The first program `leds.asm` will test I/O capability of `HACK`. Every time the user presses the buttons BUT1/2 on the `iCE40HX1K-EVB` board  the LEDs will change accordingly. With the second program `mult.asm` we will calculate the product of two numbers to test the arithmetic capabilities of the CPU/ALU.
 
 ### [05 Computer Architecture](05_Computer_Architecture)
 
 Build `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, `RAM` and `ROM`. `ROM` uses a block ram structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
 
-### [06 IO Devices](06_IO_Devices)
+### [06 I/O Devices](06_IO_Devices)
 
-We will expand HACK computer platform by adding chips to handle communication to I/O devices, which we connect to HACK.
+We will expand `HACK` computer platform by adding chips to handle communication to I/O devices, which we connect to `HACK`.
 
-* UART communicates with 115200 baud 8N1 to computer.
-* SPI reads the 2MB flash memory on `iCE40HX1K-EVB`.
-* SRAM writes data to the external SRAM chip.
-* GO enables booting Jack OS software.
-* LCD connects a little color screen with 320x240 pixel.
-* RTP connects the resistive touch panel.
+* `UART` communicates with 115200 baud 8N1 to computer.
+* `SPI` reads the 2MB flash memory on `iCE40HX1K-EVB`.
+* `SRAM` writes data to the external SRAM chip.
+* `GO` enables booting Jack OS software.
+* `LCD` connects a little color screen with 320x240 pixel.
+* `RTP` connects the resistive touch panel.
 
 ### [07 Operating System](07_Operating_System)
 
@@ -83,7 +83,7 @@ Finally you can compile and run Tetris!
 
 ### [08 3D Printer](08_3D_Printer)
 
-We provide construction files to print a little case for your HACK computer with a 3D-Printer. The case is designed with FOSS software blender.
+We provide construction files to print a little case for your `HACK` computer with a 3D printer. The case is designed with FOSS software blender.
 
 ## Credits
 

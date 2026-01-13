@@ -8,7 +8,7 @@ The evaluation board iCE40HX1K-EVB includes an 512KB static ram chip K6R4016V1D.
 - SRAM_OEX (output enable not)
 - SRAM_WEX (write enable not)
 
-To read and write to the SRAM chip we will add two special function register to HACK:
+To read and write to the SRAM chip we will add two special function register to `HACK`:
 
 1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_A controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
 
@@ -57,7 +57,7 @@ Use a `DFF` to delay the load signal. Use a `Register` to store the data in[15:0
 
 ### Memory map
 
-The special function register `SRAM_A` and `SRAM_D`  are mapped to memory map of HACK according to:
+The special function register `SRAM_A` and `SRAM_D` are mapped to memory map of `HACK` according to:
 
 | address | I/O device | R/W | function                       |
 | ------- | ---------- | --- | ------------------------------ |
@@ -68,7 +68,7 @@ The special function register `SRAM_A` and `SRAM_D`  are mapped to memory map of
 
 ### buffer.asm
 
-To test HACK with SRAM we need a little machine language programm `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the SPI flash memory chip W25Q16BV of iCE40HX1K-EVB, starting at address 0x040000 (256k) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
+To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the SPI flash memory chip W25Q16BV of iCE40HX1K-EVB, starting at address 0x040000 (256k) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
 
 ### SRAM in real hardware
 
@@ -154,7 +154,7 @@ set_io SRAM_DATA[15] 52 # SD15
 
 * preload the SPI memory chip with some text file at address 0x040000.
 
-* build and upload HACK with `buffer.asm` in ROM.BIN to iCE40HX1K-EVB.
+* build and upload `HACK` with `buffer.asm` in ROM.BIN to iCE40HX1K-EVB.
 - press reset button on iCE40HX1K-EVB and see if wou can receive the preloaded text file on your Computer.
   
   ```

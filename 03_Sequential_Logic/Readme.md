@@ -1,6 +1,6 @@
 # 03 Sequential Logic
 
-Build sequential chips `Bit` , `Register` and `PC`, that make use of the Data Flip-Flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram (BRAM) structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect HACK to different IO devices which are connected using a serial protocol where data is transmitted bitwise.
+Build sequential chips `Bit` , `Register` and `PC`, that make use of the Data Flip-Flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram (BRAM) structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect `HACK` to different I/O devices which are connected using a serial protocol where data is transmitted bitwise.
 
 ## 08 Blinky
 
@@ -17,7 +17,7 @@ The folder `08_Blinky` contains a project to test the counter `PC` in real hardw
 * For every chip we provide a test bench in the dedicated folder:
   
   ```
-  $ cd <test folder>
+  $ cd <0X_chip>
   $ apio clean
   $ apio sim
   ```

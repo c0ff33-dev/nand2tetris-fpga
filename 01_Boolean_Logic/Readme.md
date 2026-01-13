@@ -4,13 +4,13 @@ The hardware part of the project `nand2tetris-fpga` is implemented in Verilog, a
 
 **Note:** The following modules are considered primitive and thus there is no need to implement them.
 
-| module     | description                                                           |
+| Module     | Description                                                           |
 | ---------- | --------------------------------------------------------------------- |
 | `Nand.v`   | Nand-gate. Basic building block for combinatorial logic               |
 | `DFF.v`    | Data Flip Flop. Basic building block for sequential logic             |
-| `RAM256.v` | uses Block Ram (BRAM) of iCE40                                        |
-| `ROM.v`    | uses Block Ram (BRAM) of iCE40 preloaded with HACK-code at startup    |
-| `InOut.v`  | Tristate buffer, used to connect to the bidirectional databus of SRAM |
+| `RAM256.v` | Uses Block Ram (BRAM) of iCE40                                        |
+| `ROM.v`    | Uses Block Ram (BRAM) of iCE40 preloaded with `HACK` code at startup  |
+| `InOut.v`  | Tristate buffer, used to connect to the bidirectional bus of SRAM     |
 
 ***
 
@@ -125,9 +125,9 @@ $ apio upload
 
 **Attention:** Due to pull up resistors at the buttons, the signals appear inverted:
 
-| pin    | function                                          |
-| ------ | ------------------------------------------------- |
-| LED1/2 | 0 LED is off, 1 LED is on                         |
-| BUT1/2 | 0 button is pressed down, 1 button is released up |
+| Pin      | Function                                            |
+| -------- | --------------------------------------------------- |
+| `LED1/2` | =0 `LED` is off, =1 `LED` is on                     |
+| `BUT1/2` | =0 button is pressed down, =1 button is released up |
 
 Chips with no more than two input/output signals can be uploaded and tested in real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.
