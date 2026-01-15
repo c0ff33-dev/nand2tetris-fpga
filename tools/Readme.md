@@ -43,5 +43,5 @@ For this you first have to upload firmware to `olimexino-32u4`.
 
 Connect:
 
-1. `iCE40HX18K-EVB` to `olimexino-32u4` (over UEXT).
-2. `olimexino-32u4` (with installed firmware) to PC over USB.
+* `iCE40HX18K-EVB` to `olimexino-32u4` (over UEXT).
+* `olimexino-32u4` (with installed firmware) to PC over USB.

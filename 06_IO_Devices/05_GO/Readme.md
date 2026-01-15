@@ -2,15 +2,15 @@
 
 The instruction memory ROM of `HACK` is limited to 256 words. In order to run bigger programs written in Jack (e.g. Tetris) we will write the program to SRAM and use the SRAM memory chip as instruction memory. For this we need:
 
-1. A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) `HACK` binary program previously stored on `SPI` memory chip starting at address 0x10000 and stores it to SRAM.
+* A bootloader program written in assembler (which is stored in the 256 words of ROM), that reads a (bigger) `HACK` binary program previously stored on `SPI` memory chip starting at address 0x10000 and stores it to SRAM.
 
-2. A multiplexer, that switches instruction memory from ROM to SRAM.
+* A multiplexer, that switches instruction memory from ROM to SRAM.
 
-### Chip specification
+### Chip Specification
 
 When `load=1` `GO` switches `HACK` operation from boot mode to run mode. In boot mode instruction=ROM_data and SRAM_ADDR=sram_addr. In run mode instruction=sram_data and SRAM_ADDR=pc.
 
-### Memory map
+### Memory Map
 
 The special function register `GO` is memory mapped to address 4103
 
@@ -67,7 +67,7 @@ M=D   // 0xE308
   $ make upload
   ```
 
-* upload `HACK` with bootloader to iCE40HX1K-EVB
+* upload `HACK` with bootloader to `iCE40HX1K-EVB`
   
   ```
   $ cd 05_GO

@@ -4,7 +4,7 @@ The special function register `RTP`  memory mapped to addresses 4106 enables `HA
 
 **Attention:** The specification of AR1200 requires, that `SCK` is inverted (compare `03_SPI/Readme.md` with CPOL=1) and a slower transfer rate of max ~900kHz.
 
-### Chip specification
+### Chip Specification
 
 | IN/OUT | wire     | function                      |
 | ------ | -------- | ----------------------------- |
@@ -26,7 +26,7 @@ Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15].
 
 ![](RTP.png)
 
-### Memory map
+### Memory Map
 
 The special function register `RTP` is mapped to memory map of `HACK` according to:
 
@@ -37,7 +37,7 @@ The special function register `RTP` is mapped to memory map of `HACK` according 
 
 ### RTP in real hardware
 
-The board MOD-LCD2.8RTP comes with a resistive touch panel controlled by a controller chip AR1021. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
+The board `MOD-LCD2.8RTP` comes with a resistive touch panel controlled by a controller chip `AR1021`. `MOD-LCD2.8RTP` must be connected to `iCE40HX1K-EVB` with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
 
 ```
 set_io RTP_SDI 7        # PIO3_3A connected to pin 13 of GPIO1
@@ -59,16 +59,16 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 **Attention:** To enable `SPI` communication on the RTP controller chip AR1021 we must modify two solder jumpers. (Compare with schematic of MOD-LCD2.8RTP together with Datasheet of AR1021). The latest iteration of MOD-LCD2.8RTP is Rev D which has a different layout than pictured (Rev B) but same modifications apply.
 
-- Cut connection SJ1-GND with a sharp knife (green). A craft knife, scalpel or similar should do - be very careful not to sever any other traces!
-  - Optional: If you have a multimeter check that continuity is broken between SJ1-GND and SJ1-2 (can also check for continuity with UEXT pin 2 for ground).
-  - Alternatively if you're not confident doing this then you can implement I2C instead of `SPI` for the RTP controller but this is an exercise left to the reader.
+* Cut connection SJ1-GND with a sharp knife (green). A craft knife, scalpel or similar should do - be very careful not to sever any other traces!
+  * Optional: If you have a multimeter check that continuity is broken between SJ1-GND and SJ1-2 (can also check for continuity with UEXT pin 2 for ground).
+  * Alternatively if you're not confident doing this then you can implement I2C instead of `SPI` for the RTP controller but this is an exercise left to the reader.
 
-- Connect M1 to VDD (+3.3V) by soldering SJ1-VDD to activate `SPI` mode of AR1021 (yellow).
-  - After the cut + solder on SJ1 the M1 pin on AR1021 should now be powered instead of being drained to ground.
-  - Optional: check for continuity between SJ1 and UEXT pin 1 for VDD (while powered off) then check for ~3.3V on M1 and SJ1.
+* Connect M1 to VDD (+3.3V) by soldering SJ1-VDD to activate `SPI` mode of AR1021 (yellow).
+  * After the cut + solder on SJ1 the M1 pin on AR1021 should now be powered instead of being drained to ground.
+  * Optional: check for continuity between SJ1 and UEXT pin 1 for VDD (while powered off) then check for ~3.3V on M1 and SJ1.
 
-- Connect UEXT pin 4 (IRQ/`SDO`) by soldering SJ3 (yellow).
-  - Optional: check for continuity between SJ3 and UEXT pin 4.
+* Connect UEXT pin 4 (IRQ/`SDO`) by soldering SJ3 (yellow).
+  * Optional: check for continuity between SJ3 and UEXT pin 4.
 
 ![](jumper_rtp.jpg)
 
@@ -88,7 +88,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
   
   ![](rtp_tb.png)
 
-* Add special function register `RTP` to `HACK` at memory addresses 4106 and upload to iCE40HX1K-EVB with bootloader boot.asm preloaded into ROM (build test only, no test bench data for RTP).
+* Add special function register `RTP` to `HACK` at memory addresses 4106 and upload to `iCE40HX1K-EVB` with bootloader `boot.asm` preloaded into ROM (build test only, no test bench data for RTP).
   
   ```
   $ cd ../05_GO
@@ -98,4 +98,4 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
   $ apio upload
   ```
 
-* Proceed to `07_Operating_System` and implement the driver class `Touch.jack` that sends command over `RTP` the controller chip AR1021 on MOD-LCD2.8RTP
+* Proceed to `07_Operating_System` and implement the driver class `Touch.jack` that sends command over `RTP` the controller chip `AR1021` on `MOD-LCD2.8RTP`.

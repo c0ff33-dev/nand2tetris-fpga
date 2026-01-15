@@ -2,7 +2,7 @@
 
 ### FPGA Board
 
-In this project we will implement the `HACK` computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called field programmable array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and block ram (BRAM), which can be routed programmatically.
+In this project we will implement the `HACK` computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called Field Programmable Gate Array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and BRAM, which can be routed programmatically.
 
 In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hardware and software, so everybody can build their own `HACK` following these instructions.
 
@@ -10,10 +10,10 @@ In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which h
 
 On `iCE40HX1K-EVB` board you will find:
 
-* FPGA-chip `iCE40HX1K`: holds 1280 logic cells and 64K bits block ram, which can be routed programmatically.
+* FPGA-chip `iCE40HX1K`: holds 1280 logic cells and 64K bits BRAM, which can be routed programmatically.
 * Serial flash memory `W25Q16BV` (16M bits): holds the bitstream data, which is a binary representation of the circuits, you want to implement on the FPGA. At startup the FPGA loads the bitstream from serial flash memory and configures its logic cells to become the machine you want the FPGA to be.
 * `LED`, `BUT`: The development board comes with two LEDs and two buttons. These are user programmable and can be used to enter data or for debugging.
-* SRAM (256K x 16 bits): `iCE40HX1K-EVB` has a static RAM chip on board. This is useful, because more memory is needed than available with BRAM inside FPGA. We will use the SRAM chip as instruction memory ROM to run serious applications like Tetris or Pong on `HACK`.
+* SRAM (256K x 16 bits): `iCE40HX1K-EVB` has a Static RAM (SRAM) chip on board. This is useful, because more memory is needed than available with BRAM inside FPGA. We will use the SRAM chip as instruction memory ROM to run serious applications like Tetris or Pong on `HACK`.
 * GPIO 34 pin connector: the board come with a lot of general purpose in-/output pins. This pins can be used to connect external hardware. We will use this pins to connect an LCD screen with touch panel `MOD-LCD2.8RTP`.
 
 To communicate to the `iCE40HX1K-EVB` we need an Arduino-like board, which can be connected to `iCE40HX1K` over the 10 pin UEXT connector. We will use `olimexino-32u4` board, which has two modes:

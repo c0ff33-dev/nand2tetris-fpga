@@ -31,7 +31,7 @@ Use a `Bit` to store the state (`0=ready`, `1=busy`) which is output to `out[15]
 
 ![](SPI.png)
 
-### Memory map
+### Memory Map
 
 The special function register `SPI` is mapped to memory map of `HACK` according to:
 
@@ -99,7 +99,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
   
   ![](spi_read040000.png)
 
-* Check reading of string `SPI!` output to `UartTX`.
+* Check reading of string "SPI!" output to `UartTX`.
   
   ![](echo.png)
 
@@ -116,4 +116,4 @@ set_io SPI_CSX 49 # iCE40-SS_B
   $ tio /dev/ttyACM0
   ```
 
-* Check if you see `SPI!` in your terminal.
+* Check if you see "SPI!" in your terminal.

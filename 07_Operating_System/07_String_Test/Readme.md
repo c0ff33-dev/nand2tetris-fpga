@@ -20,7 +20,7 @@ Represents character strings. In addition for constructing and disposing strings
   
   ![](string.png)
 
-* Run String_Test in real hardware on iCE40HX1K-EVB using a terminal program connected to UART.
+* Run `String_Test` in real hardware on `iCE40HX1K-EVB` using a terminal program connected to UART.
 
 * Compare your terminal output with:
   

@@ -9,16 +9,16 @@ The Screen is controlled by sending commands to special function register LCD, w
 
 **Attention**: Parameters vary in size per command and ILI9341V expects to receive all the parameters serially with no padding. For the parameters to be parsed correctly it is necessary to ensure that the relevant 8 bit or 16 bit data transmission method is used by selecting LCD8 for single byte parameters and LCD16 for the rest in software.
 
-1. **Memory access control (36h)**: send 54d (DCX=0) followed by the parameter 72d (1 byte + DCX=1) to set the iteration pattern(s) for memory access on ILI9341V. Specifically inverted column and RGB order.
-2. **COLMOD Pixel Format Set (3Ah)**: send 58d (DCX=0) followed by the parameter 85d (1 byte + DCX=1) to set the pixel format to rgb 16 bit.
-3. **Sleep Out (11h)**: send 17d (DCX=0) and wait 120ms to wake ILI9341V from sleep mode.
-4. **Display ON (29h)**: send 41d (DCX=0) and wait 120ms to switch the display on.
+* **Memory access control (36h)**: send 54d (DCX=0) followed by the parameter 72d (1 byte + DCX=1) to set the iteration pattern(s) for memory access on ILI9341V. Specifically inverted column and RGB order.
+* **COLMOD Pixel Format Set (3Ah)**: send 58d (DCX=0) followed by the parameter 85d (1 byte + DCX=1) to set the pixel format to rgb 16 bit.
+* **Sleep Out (11h)**: send 17d (DCX=0) and wait 120ms to wake ILI9341V from sleep mode.
+* **Display ON (29h)**: send 41d (DCX=0) and wait 120ms to switch the display on.
 
 After initialisation with commands 1-4, the screen turns on showing a random pattern of RGB colors. To paint something on the screen, we must send the following three commands to LCD.
 
-5. **Column address set (2Ah)**: To set the x-range of the window into which to paint, send command 42d with DCX=0 followed by 2 x 16 bit parameters `x1` and `x2` with DCX=1. `x1` and `x2` must be in the range [0:239] with x2>=x1.
-6. **Page address set (2Bh):** To set the y-range of the window into which to paint, send 43d with DCX=0 followed by 2 x 16 bit parameters `y1` and `y2` with DCX=1. `y1` and `y2` must be in the range [0:319] with y2>=y1.
-7. **Memory write (2Ch):** To paint the pixel in the rectangle defined by (x1,y1)-(x2,y2) send 44d with DCX=0 followed by `w*h` 16 bit RGB values (DCX=1) of every individual pixel in the rectangle starting at top left and ending at bottom right.
+* **Column address set (2Ah)**: To set the x-range of the window into which to paint, send command 42d with DCX=0 followed by 2 x 16 bit parameters `x1` and `x2` with DCX=1. `x1` and `x2` must be in the range [0:239] with x2>=x1.
+* **Page address set (2Bh):** To set the y-range of the window into which to paint, send 43d with DCX=0 followed by 2 x 16 bit parameters `y1` and `y2` with DCX=1. `y1` and `y2` must be in the range [0:319] with y2>=y1.
+* **Memory write (2Ch):** To paint the pixel in the rectangle defined by (x1,y1)-(x2,y2) send 44d with DCX=0 followed by `w*h` 16 bit RGB values (DCX=1) of every individual pixel in the rectangle starting at top left and ending at bottom right.
 
 For convenience the commands 1-7 are distributed to three functions of Screen.jack:
 
@@ -61,7 +61,7 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
   * `SDO` shows the serial binary representation of the send command/data
   * `SCK` shows 8 cycles
 
-* Run Screen_Test in real hardware on iCE40HX1K-EVB with MOD-LCD2.8RTP connected as described in `06_IO_Devices/LCD`.
+* Run `Screen_Test` in real hardware on `iCE40HX1K-EVB` with `MOD-LCD2.8RTP` connected as described in `06_IO_Devices/LCD`.
   
   ```
   $ cd 09_Screen_Test

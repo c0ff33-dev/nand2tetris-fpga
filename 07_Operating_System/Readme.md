@@ -8,7 +8,7 @@ The folder `00_HACK` contains a simulation of `HACK` similar to the one in `06_I
 
 * uses build in chips from `01_Boolean_Logic` to `03_Sequential_Logic` instead of going down to the nand gate level.
 * has 64k words of instruction ROM preloaded with Jack OS and applications
-* is not uploadable to iCE40HX1K-EVB
+* is not uploadable to `iCE40HX1K-EVB`
 
 ## Simulation of Jack OS classes
 
@@ -24,7 +24,7 @@ $ apio sim
 
 ## Run Jack OS in real hardware on iCE40HX1K-EVB
 
-To test Jack OS on real hardware iCE40HX1K-EVB use the design of `HACK` developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach iCE40HX1K-EVB to your computer and run the following commands:
+To test Jack OS on real hardware `iCE40HX1K-EVB` use the design of `HACK` developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach `iCE40HX1K-EVB` to your computer and run the following commands:
 
 ```
 $ cd <XX_Class_Test>

@@ -1,6 +1,6 @@
 # 05 Computer Architecture
 
-Build the `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, `RAM` and `ROM`. `ROM` uses a block ram structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language`.
+Build the `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, RAM and `ROM`. `ROM` uses a BRAM structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language`.
 
 ### 01 CPU
 
@@ -47,27 +47,27 @@ The signals wires `CLK`, `RST`, `BUT[1:0]` and `LED[1:0]` (by convention written
 
 To add I/O capability we add 7 more special function registers mapped to the following addresses:
 
-| Address   | I/O Dev | Function                                               |
-| --------- | ------- | ------------------------------------------------------ |
-| 0-3583    | `RAM`   |                                                        |
-| 4096      | `LED`   | 0= `LED` off, 1= `LED` on                              |
-| 4097      | `BUT`   | 0= button pressed, 1= button released                  |
-| 4098-4106 |         | Reserved for I/O devices (see project `06_IO_Devices`) |
-| 4107-4111 | `DEBUG` | Used for debugging                                     |
+| Address   | I/O Dev    | Function                                               |
+| --------- | ---------- | ------------------------------------------------------ |
+| 0-3583    | RAM        |                                                        |
+| 4096      | `LED`      | 0= `LED` off, 1= `LED` on                              |
+| 4097      | `BUT`      | 0= button pressed, 1= button released                  |
+| 4098-4106 |            | Reserved for I/O devices (see project `06_IO_Devices`) |
+| 4107-4111 | `DEBUG0-4` | Used for debugging                                     |
 
 The `HACK` simulation needs a valid file `ROM.hack` (created in project `04_Machine_Language`) with the machine language instructions to perform.
 
 The test bench of `04_HACK` will:
 
-1. Occasionally press the user buttons `BUT1/2`.
-2. Show the result of `LED1/2`.
-3. Show the content of `DEBUG0-4`.
+* Occasionally press the user buttons `BUT1/2`.
+* Show the result of `LED1/2`.
+* Show the content of `DEBUG0-4`.
 
 ***
 
 ### Project
 
-- Implement the chips `CPU`, `Memory` and `Clock25_Reset20` and simulate with the corresponding test benches:
+* Implement the chips `CPU`, `Memory` and `Clock25_Reset20` and simulate with the corresponding test benches:
   
   ```
   $ cd <0X_chip>
@@ -75,11 +75,11 @@ The test bench of `04_HACK` will:
   $ apio sim
   ```
 
-- Check the frequency of the internal clk signal to be 25 MHz so one clock cycle takes 40μs.
+* Check the frequency of the internal clk signal to be 25 MHz so one clock cycle takes 40μs.
   
   ![](03_Clock25_Reset20/clock.png)
 
-- Check the reset signal of `HACK`. You should see a reset signal of approximately 20μs.
+* Check the reset signal of `HACK`. You should see a reset signal of approximately 20μs.
   
   ![](03_Clock25_Reset20/reset.png)
 
@@ -93,7 +93,7 @@ The test bench of `04_HACK` will:
   $ apio sim
   ```
 
-* Check, if LEDs change state accoring to BUT:
+* Check, if `LED` change state accoring to `BUT`:
   
   ![](04_HACK/leds.png)
 

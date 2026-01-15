@@ -4,9 +4,9 @@ Cliff notes for environment setup/installation.
 
 ### Notes
 
-- `iceprogduino` is targeting POSIX dependencies not available on Windows.
-- `winiceprogduino` does not support writing to offsets.
-- `usbipd` is needed for WSL as the COM passthrough doesn't support the necessary IOCTLs.
+* `iceprogduino` is targeting POSIX dependencies not available on Windows.
+* `winiceprogduino` does not support writing to offsets.
+* `usbipd` is needed for WSL as the COM passthrough doesn't support the necessary IOCTLs.
 
 ## Install dependencies
 

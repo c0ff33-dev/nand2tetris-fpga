@@ -7,7 +7,7 @@ The special function register `UartTX` mapped to memory address 4098 enables `HA
 During idle `TX` line is high (logic 1). Transmission of a byte (8 bits) is initiated by the so called start bit, which always is low (logic 0), followed by the 8 data bits, starting with the least significant bit. The transmission is finished by sending the stop bit, which always is high (logic 1).
 This protocol is refered as 8N1 (8 data bits, no parity bit, 1 stop bit). We use a transmission speed of 115200 baud (bits per second), meaning that each bit takes 1/115200s = 8.68μs or 217 cycles of the internal 25 MHz clock clk.
 
-### Chip specification
+### Chip Specification
 
 | IN/OUT | Wire      | Function                                            |
 | ------ | --------- | --------------------------------------------------- |
@@ -35,7 +35,7 @@ The special function register `UartTX` is mapped to memory map of `HACK` accordi
 
 ### hello.asm
 
-To test `HACK` with `UartTX` we need a little machine language program `hello.asm`, which sends the String `"Hi"` to UART.
+To test `HACK` with `UartTX` we need a little machine language program `hello.asm`, which sends the String "Hi" to UART.
 
 **Attention:** Use a loop to wait until UartTX is ready to send the next byte.
 
@@ -51,8 +51,8 @@ The programmer `olimexino-32u4` can also be used as bridge to connect the PC to 
 
 The programmer `olimexino-32u4` works in two different modes:
 
-- Mode 1 (yellow LED on): programmer of iCE40 board. Used with `iceprogduino`.
-- Mode 2 (green LED on): UART Bridge to iCE40 chip. Use with terminal program (e.g. `tio` or `screen` on Linux).
+* Mode 1 (yellow LED on): programmer of iCE40 board. Used with `iceprogduino`.
+* Mode 2 (green LED on): UART Bridge to iCE40 chip. Use with terminal program (e.g. `tio` or `screen` on Linux).
 
 The LED is only illuminated when a client is connected to `/dev/ttyACM0`.
 
@@ -93,7 +93,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
   $ apio sim
   ```
 
-* Check the `TX` wire of the simulation and look for the transmission of `"Hi"`.
+* Check the `TX` wire of the simulation and look for the transmission of "Hi".
   
   ![](hi.png)
 
@@ -103,7 +103,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * Open terminal on your computer.
 
-* Press reset button on `iCE40HX1K-EVB` and see if you can recieve "Hi" on your computer.
+* Press `RST` button on `iCE40HX1K-EVB` and see if you can recieve "Hi" on your computer.
 
   ```
   $ cd 00_HACK
@@ -114,6 +114,6 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 ### Cleaning up the Signal
 
-If the `TX` line is read during FGPA initialization (e.g. after reset) there is a high chance of undefined signals being interpreted as UART traffic so you may see some random bytes in addition to `"Hi"`. The general principle for solving this is to use a control signal to indicate when transmission is valid. For `iCE40HX1K-EVB` + `olimexino-32u4` one way is to modify the Arduino sketch so it only forwards the bytes when `CDONE` is high though there are several other ways a signal could be sent via hardware or software to achieve the same effect.
+If the `TX` line is read during FGPA initialization (e.g. after reset) there is a high chance of undefined signals being interpreted as UART traffic so you may see some random bytes in addition to "Hi". The general principle for solving this is to use a control signal to indicate when transmission is valid. For `iCE40HX1K-EVB` + `olimexino-32u4` one way is to modify the Arduino sketch so it only forwards the bytes when `CDONE` is high though there are several other ways a signal could be sent via hardware or software to achieve the same effect.
 
 The sketch at `tools/iceprogduino/iceprogduino.c` implements this filtering mechanism if you would prefer to use this over the stock sketch provided by Olimex.

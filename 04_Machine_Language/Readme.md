@@ -19,7 +19,7 @@ To test input and output capability of `HACK` we will write an endless loop, in 
 | `SPI`           | 4100        | Read/Write to `SPI` flash rom            |
 | `SRAM_A`        | 4101        | Address of SRAM chip for next Read/Write |
 | `SRAM_D`        | 4102        | Read/write data from/to SRAM chip        |
-| `GO`            | 4103        | Switch from bootloader to RAM            |
+| `GO`            | 4103        | Switch from bootloader to SRAM           |
 | `LCD8`          | 4104        | Write 8 bits to `LCD`                    |
 | `LCD16`         | 4105        | Write 16 bits to `LCD`                   |
 | `RTP`           | 4106        | Read/Write 8 bits to `RTP`               |
@@ -64,9 +64,9 @@ M=D
 
 ### Project
 
-- Implement `leds.asm`  and `mult.asm`.
+* Implement `leds.asm`  and `mult.asm`.
 
-- Put your code in the skeleton file `<filename>.asm`. To build the `.hack` binary file, which can than be preloaded to the instruction ROM of `HACK` in `05_Computer_Architecture/04_HACK`, just type:
+* Put your code in the skeleton file `<filename>.asm`. To build the `.hack` binary file, which can than be preloaded to the instruction ROM of `HACK` in `05_Computer_Architecture/04_HACK`, just type:
   
   ```
   $ make leds
@@ -80,4 +80,4 @@ M=D
   
   This will invoke the assembler and copy the produced binary file `ROM.hack` in the appropriate folder `05_Computer_Architecture/04_HACK`.
 
-- To run the programms you first have to build a `HACK` computer. This is done in `05_Computer_Architecture`.
+* To run the programms you first have to build a `HACK` computer. This is done in `05_Computer_Architecture`.

@@ -8,8 +8,8 @@ The hardware part of the project `nand2tetris-fpga` is implemented in Verilog, a
 | ---------- | --------------------------------------------------------------------- |
 | `Nand.v`   | Nand-gate. Basic building block for combinatorial logic               |
 | `DFF.v`    | Data Flip Flop. Basic building block for sequential logic             |
-| `RAM256.v` | Uses Block Ram (BRAM) of iCE40                                        |
-| `ROM.v`    | Uses Block Ram (BRAM) of iCE40 preloaded with `HACK` code at startup  |
+| `RAM256.v` | Uses BRAM of iCE40                                                    |
+| `ROM.v`    | Uses BRAM of iCE40 preloaded with `HACK` code at startup              |
 | `InOut.v`  | Tristate buffer, used to connect to the bidirectional bus of SRAM     |
 
 ***
@@ -103,7 +103,7 @@ To upload the chip `Xor` onto your FPGA board `iCE40HX1K-EVB` you need two addit
 
 ```
 # physical constraints file
-# assign io-pins to pin numbering of iCE40HX1K on olimex board iCE40HX1K-EVB
+# assign io-pins to pin numbering of iCE40HX1K on Olimex board iCE40HX1K-EVB
 # compare to the schematic of the board and the datasheet of FPGA
 
 set_io BUT1 41    # BUT1
@@ -113,7 +113,7 @@ set_io LED1 40    # LED1
 set_io LED2 51    # LED2
 ```
 
-* Now you can build and upload  the chip `Xor` to iCE40HX1K-EVB with:
+* Now you can build and upload  the chip `Xor` to `iCE40HX1K-EVB` with:
   
 ```
 $ apio clean
@@ -121,7 +121,7 @@ $ apio build
 $ apio upload
 ```
 
-* Press buttons BUT1 and BUT2 and see the result of your `Xor` chip on LED1.
+* Press buttons `BUT1/2` and see the result of your `Xor` chip on `LED1`.
 
 **Attention:** Due to pull up resistors at the buttons, the signals appear inverted:
 

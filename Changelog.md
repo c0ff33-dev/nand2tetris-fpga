@@ -10,13 +10,13 @@ Pre-fork changelog.
 
 ### Update tools to Python3.11
 
-- `tools/Assembler/assembler.pyc`
-- `tools/Jack/JackCompiler.pyc`
-- `tools/Jack/VMTranslator.pyc`
+* `tools/Assembler/assembler.pyc`
+* `tools/Jack/JackCompiler.pyc`
+* `tools/Jack/VMTranslator.pyc`
 
 ### Fixes
 
-- Corrected diagrams: `leds.png`, `mult.png`.
+* Corrected diagrams: `leds.png`, `mult.png`.
 
 ## Update 18.10.2022
 

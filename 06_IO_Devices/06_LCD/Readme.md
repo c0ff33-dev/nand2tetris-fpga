@@ -2,7 +2,7 @@
 
 The special function register `LCD`  memory mapped to addresses 4104 and 4105 enables `HACK` to write bytes to the LCD controller chip `ILI9341V` situated on `MOD-LCD2.8RTP`. The communication protocol is `SPI` with one additional wire DCX. The protocol defines transmission of 8 bit commands with DCX = 0 followed by data with DCX=1. Data packets can have any length depending on the launched command.
 
-### Chip specification
+### Chip Specification
 
 | IN/OUT | wire      | function                                           |
 | ------ | --------- | -------------------------------------------------- |
@@ -32,19 +32,19 @@ Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15].
 
 ![](LCD.png)
 
-### Memory map
+### Memory Map
 
 The special function register `LCD` is mapped to memory map of `HACK` according to:
 
-| address   | I/O device | R/W | function                            |
-| --------- | ---------- | --- | ----------------------------------- |
-| 4104      | LCD        | W   | start transmittion of byte `in[7:0]`  |
-| 4105      | LCD        | W   | start transmittion of word in[15:0] |
-| 4104/4105 | LCD        | R   | out[15]=1 busy, out[15]=0 idle      |
+| address   | I/O device | R/W | function                              |
+| --------- | ---------- | --- | ------------------------------------- |
+| 4104      | `LCD8`     | W   | Start transmittion of byte `in[7:0]`  |
+| 4105      | `LCD16`    | W   | Start transmittion of word `in[15:0]` |
+| 4104/4105 | `LCD8/16`  | R   | `out[15]=1` busy, `out[15]=0` idle    |
 
 ### LCD in real hardware
 
-The board MO-LCD2.8RTP comes with a 2.8 inch LCD screen controlled by a controller chip ILI8341V. MOD-LCD2.8RTP must be connected to iCE40HX1K-EVB with 6 jumper wire cables: +3.3V, GND plus 4 data wires according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
+The board `MOD-LCD2.8RTP` comes with a 2.8 inch LCD screen controlled by a controller chip `ILI8341V`. `MOD-LCD2.8RTP` must be connected to `iCE40HX1K-EVB` with 6 jumper wire cables: +3.3V, GND plus 4 data wires according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
 
 ```
 set_io LCD_DCX 1        # PIO3_1A connected to pin 5 of GPIO1
@@ -59,7 +59,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
 | GND     | 4                     | 2 GND                |
 | LCD_DCX | 5                     | 7 D/C                |
 | LCD_SDO | 7                     | 8 MOSI               |
-| LCD_SCK | 9                     | 9 `SCK`                |
+| LCD_SCK | 9                     | 9 SCK                |
 | LCD_CSX | 11                    | 10 CS                |
 
 ***
@@ -78,7 +78,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
   
   ![](LCD_tb.png)
 
-* Add special function register `LCD` to `HACK` at memory addresses 4104/4105 and upload to iCE40HX1K-EVB with the bootloader boot.asm preloaded into ROM:
+* Add special function register `LCD` to `HACK` at memory addresses 4104/4105 and upload to `iCE40HX1K-EVB` with the bootloader boot.asm preloaded into ROM:
   
   ```
   $ cd ../05_GO

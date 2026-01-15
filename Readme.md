@@ -54,15 +54,15 @@ Proceed and build `HalfAdder`, `FullAdder`, `Add16`, `Inc16` and the `ALU`.
 
 ### [03 Sequential Logic](03_Sequential_Logic)
 
-Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses block ram structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect `HACK` to different I/O devices, which are connected using a serial protocol, where data is transmitted bitwise.
+Build sequential chips `Bit` , `Register` and `PC`, that make use of the data flip flop (DFF) to store the state. `DFF` is considered primitive, so it's not necessary to implement it. The memory chips `RAM512` and `RAM3584` are based on the primitive `RAM256`, which uses Block RAM (BRAM) structures integrated in `iCE40HX1K`. `BitShift9R` and `BitShift8L` are new chips not explained in the original nand2tetris course. They serve to connect `HACK` to different I/O devices, which are connected using a serial protocol, where data is transmitted bitwise.
 
 ### [04 Machine Language](04_Machine_Language)
 
-Write two little machine language programms to run on `HACK`. The first program `leds.asm` will test I/O capability of `HACK`. Every time the user presses the buttons BUT1/2 on the `iCE40HX1K-EVB` board  the LEDs will change accordingly. With the second program `mult.asm` we will calculate the product of two numbers to test the arithmetic capabilities of the CPU/ALU.
+Write two little machine language programms to run on `HACK`. The first program `leds.asm` will test I/O capability of `HACK`. Every time the user presses the buttons `BUT1/2` on the `iCE40HX1K-EVB` board  the `LED` will change accordingly. With the second program `mult.asm` we will calculate the product of two numbers to test the arithmetic capabilities of the CPU/ALU.
 
 ### [05 Computer Architecture](05_Computer_Architecture)
 
-Build `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, `RAM` and `ROM`. `ROM` uses a block ram structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
+Build `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, RAM and `ROM`. `ROM` uses a BRAM structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
 
 ### [06 I/O Devices](06_IO_Devices)
 

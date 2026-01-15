@@ -11,7 +11,7 @@
  * Address space rules:
  * RAM 0x0000 - 0x0DFF (3584 words)
  * IO  0x1000 - 0x100F (maps to 16 different devices)
- * The behavior of IO addresses is described in 06_IO devices
+ * The behavior of IO addresses is described in 06_IO_Devices
  */
 
 `default_nettype none

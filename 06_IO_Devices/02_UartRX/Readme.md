@@ -23,7 +23,7 @@ Use a `Bit` to store run state: run goes high, when `RX=0` and `run=0` run stops
 
 ![](UartRX.png)
 
-### Memory map
+### Memory Map
 
 The special function register `UartRX` is mapped to memory map of `HACK` according to:
 
@@ -55,7 +55,8 @@ To test `HACK` with `UartRX` we need a little machine language program `echo.asm
   ![](UartRX_tb.png)
 
 * Edit `HACK.v` and add special function register `UartRX` to memory address 4099.
-- Implement `echo.asm` and run in simulation:
+
+* Implement `echo.asm` and run in simulation:
   
   ```
   $ cd 02_UartRX
@@ -65,17 +66,17 @@ To test `HACK` with `UartRX` we need a little machine language program `echo.asm
   $ apio sim
   ```
 
-- Check the `TX` wire of the simulation and compare with the received bytes at `RX`.
+* Check the `TX` wire of the simulation and compare with the received bytes at `RX`.
   
   ![](echo.png)
 
-- Build and upload `HACK` with `echo.asm` preloaded into ROM to `iCE40HX1K-EVB`.
+* Build and upload `HACK` with `echo.asm` preloaded into ROM to `iCE40HX1K-EVB`.
 
-- Switch `olimexino-32u4` to UART bridge (yellow LED).
+* Switch `olimexino-32u4` to UART bridge (yellow LED).
 
-- Open terminal on your computer.
+* Open terminal on your computer.
 
-- Type chars in the terminal and see if they are echoed by `HACK`. `tio` doesn't echo the local input by default unless passing `-e` so any chars returned are from `HACK`.
+* Type chars in the terminal and see if they are echoed by `HACK`. `tio` doesn't echo the local input by default unless passing `-e` so any chars returned are from `HACK`.
   
   ```
   $ cd 00_HACK

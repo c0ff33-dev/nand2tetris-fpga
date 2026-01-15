@@ -4,7 +4,7 @@ This library provides access to `BUT` and `LED`.
 
 ### GPIO-Test
 
-In the Testfolder `01_GPIO_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting Jack OS. `Sys.init()` is the Jack OS version of `leds.asm`, which reads the BUT and writes the values to LED in an endless loop:
+In the Testfolder `01_GPIO_Test` you find a minimal version of `Sys.jack` containing the init function `Sys.init()`, which is called after starting Jack OS. `Sys.init()` is the Jack OS version of `leds.asm`, which reads the `BUT` and writes the values to `LED` in an endless loop:
 
 ```
 class Sys {
@@ -35,11 +35,11 @@ class Sys {
   $ apio sim
   ```
   
-  The test bench will simulate the pushing of BUT1/2. Check if the LED change accordingly.
+  The test bench will simulate the pushing of `BUT1/2`. Check if the `LED` change accordingly.
   
   ![](gpio.png)
 
-* run in real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload GPIO_Test to iCE40HX1K-EVB with: 
+* run in real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload `GPIO_Test` to `iCE40HX1K-EVB` with: 
   
   ```
   $ cd 01_GPIO_Test
@@ -47,4 +47,4 @@ class Sys {
   $ make upload
   ```
 
-* push buttons BUT on iCE40HX1K-EVB and check the LED.
+* push buttons `BUT1/2` on `iCE40HX1K-EVB` and check the `LED`.

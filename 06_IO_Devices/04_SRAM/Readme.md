@@ -1,78 +1,78 @@
 ## 04 SRAM
 
-The evaluation board iCE40HX1K-EVB includes an 512KB static ram chip K6R4016V1D. The SRAM chip connects to iCE40HX1K with 37 wires;
+`iCE40HX1K-EVB` includes 512KB SRAM chip `K6R4016V1D`. The SRAM chip connects to `iCE40HX1K` with 37 wires:
 
-- SRAM_ADDR 18 bit
-- SRAM_DATA 16 bit (bidiretional inout)
-- SRAM_CSX (Chip Select NOT)
-- SRAM_OEX (output enable not)
-- SRAM_WEX (write enable not)
+* `SRAM_ADDR` 18 bit
+* `SRAM_DATA` 16 bit (bidirectional `InOut`)
+* `SRAM_CSX` (Chip Select NOT)
+* `SRAM_OEX` (Output Enable NOT)
+* `SRAM_WEX` (Write Enable NOT)
 
-To read and write to the SRAM chip we will add two special function register to `HACK`:
+To read and write to the SRAM chip we will add two special function registers to `HACK`:
 
-1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_A controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
+* `SRAM_A` is a 16 bit register mapped at memory location 4101. `SRAM_A` controls the 16 lower bits of the 18 bit address bus. The two most significant bits are always 0, so we can only address 64K x 16 bit words of SRAM memory.
 
-2. SRAM_D is a special function register mapped at memory location 4103. SRAM_D controls the bidirectional data bus and the control wires `CSX`, OEX and WEX.
+* `SRAM_D` is a special function register mapped at memory location 4102. `SRAM_D` controls the bidirectional bus and the control wires `SRAM_CSX`, `SRAM_OEX` and `SRAM_WEX`.
 
-**Note:** the 16 bit data bus is bidirectional and has therefore to be connected over a tristate buffer. This is done with `InOut.v` which is considered primitive and must not be implemented.
+**Note:** The 16 bit bus is bidirectional and therefore has to be connected over a tristate buffer. This is done with `InOut.v` which is considered primitive and must not be implemented.
 
-### Chip specification SRAM_A
+### Chip Specification SRAM_A
 
-SRAM_A is a simple `Register` that stores the lower 16 bit of the 18 bit address of the SRAM chip.
+`SRAM_A` is a simple `Register` that stores the lower 16 bits of the 18 bit address of the SRAM chip.
 
-### Chip specification SRAM_D
+### Chip Specification SRAM_D
 
-| IN/OUT | wire            | function                   |
-| ------ | --------------- | -------------------------- |
-| IN     | clk             | system clock (25 MHz)      |
-| IN     | load            | initiate a write operation |
-| IN     | in[15:0]        | data to write to SRAM      |
-| OUT    | out[15:0]       | data read from SRAM        |
-| INOUT  | SRAM_DATA[15:0] | bidirectional data bus     |
-| OUT    | SRAM_CSX        | Chip Select NOT            |
-| OUT    | SRAM_OEX        | output enable not          |
-| OUT    | SRAM_WEX        | write enable not           |
+| IN/OUT | wire              | function                   |
+| ------ | ----------------- | -------------------------- |
+| IN     | `clk`             | System clock (25 MHz)      |
+| IN     | `load`            | Initiate a write operation |
+| IN     | `in[15:0]`        | Data to write to SRAM      |
+| OUT    | `out[15:0]`       | Data read from SRAM        |
+| INOUT  | `SRAM_DATA[15:0]` | Bidirectional bus          |
+| OUT    | `SRAM_CSX`        | Chip Select NOT            |
+| OUT    | `SRAM_OEX`        | Output Enable NOT          |
+| OUT    | `SRAM_WEX`        | Write Enable NOT           |
 
-When load[t]=1 transmission of word in[15:0] is initiated. The word is send to SRAM over the bidirectional wires SRAM_DATA (direction out) and a write pulse will be triggered for one cycle at t+1:
+When `load[t]=1` transmission of word `in[15:0]` is initiated. The word is sent to SRAM over the bidirectional wires `SRAM_DATA` and a write pulse will be triggered for one cycle at `t+1`:
 
-* SRAM_OEX=1
+* `SRAM_OEX=1`
 
-* SRAM_WEX=0
+* `SRAM_WEX=0`
 
-When load=0 SRAM_DATA will be used as input and the data of the SRAM chip will be presented at out[15:0]
+When `load=0` `SRAM_DATA` will be used as input and the data of the SRAM chip will be presented at `out[15:0]`:
 
-- SRAM_OEX=0
+* `SRAM_OEX=0`
 
-- SRAM_WEX=1
+* `SRAM_WEX=1`
 
-SRAM_CSX can be set to low all the time.
+`SRAM_CSX` can be set to low all the time to leave the SRAM chip permanently selected.
 
 ### Proposed Implementation ADDR_A
 
-Use a `Register` to store the lower 16 bit of SRAM_A (The two most significant bits are hardwired to 0).
+Use a `Register` to store the lower 16 bits of `SRAM_A` (the two most significant bits are hardwired to 0).
 
 ### Proposed Implementation ADDR_D
 
-Use a `DFF` to delay the load signal. Use a `Register` to store the data in[15:0] to be stored. Use a tristate buffer `InOut.v` to control the direction of the bidirectional SRAM_DATA data bus.
+Use a `DFF` to delay the load signal by one cycle. Use a `Register` to store the data `in[15:0]` to be stored. Use a tristate buffer `InOut.v` to control the direction of the bidirectional `SRAM_DATA` bus.
 
-### Memory map
+### Memory Map
 
-The special function register `SRAM_A` and `SRAM_D` are mapped to memory map of `HACK` according to:
+The special function registers `SRAM_A` and `SRAM_D` are mapped to memory of `HACK` according to:
 
-| address | I/O device | R/W | function                       |
-| ------- | ---------- | --- | ------------------------------ |
-| 4102    | SRAM_A     | R   | read SRAM_A value [15:0]       |
-| 4102    | SRAM_A     | W   | update SRAM_A value [15:0]     |
-| 4103    | SRAM_D     | R   | read data from SRAM            |
-| 4103    | SRAM_D     | W   | initiate a write cycle to SRAM |
+| Address | I/O Device | R/W | Function                         |
+| ------- | ---------- | --- | -------------------------------- |
+| 4101    | `SRAM_A`   | R   | Read `SRAM_A` value `[15:0]`     |
+| 4101    | `SRAM_A`   | W   | Update `SRAM_A` value `[15:0]`   |
+| 4102    | `SRAM_D`   | R   | Read data from `SRAM`            |
+| 4102    | `SRAM_D`   | W   | Initiate a write cycle to `SRAM` |
 
 ### buffer.asm
 
-To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the `SPI` flash memory chip `W25Q16BV` of iCE40HX1K-EVB, starting at address 0x040000 (256k) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
+To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the `SPI` flash memory chip `W25Q16BV` of `iCE40HX1K-EVB`, starting at address `0x040000` (256K) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
 
 ### SRAM in real hardware
 
-The board iCE40HX1K-EVB comes with a static ram chip K6R4016V1D. The chip is already connected to iCE40HX1K according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
+The board `iCE40HX1K-EVB` comes with a SRAM chip `K6R4016V1D`. The chip is already connected to `iCE40HX1K` according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
 ```
 set_io SRAM_ADDR[0] 79 # SA0
@@ -121,46 +121,49 @@ set_io SRAM_DATA[15] 52 # SD15
 * Implement `SRAM_D.v` and simulate with testbench:
   
   ```
-  $ cd 04_SRAM_D
+  $ cd 04_SRAM
   $ apio clean
   $ apio sim
   ```
 
-* Compare output of your chip `OUT` with `CMP`.
+* Compare output of your chip `OUT` with `CMP`:
   
   ![](sram_tb.png)
 
-* Edit `HACK.v` and add a `Register` for SRAM_A memory mapped to 4101.
+* Edit `HACK.v` and add a `Register` for `SRAM_A` memory mapped to 4101.
 
 * Edit `HACK.v` and add a special function register `SRAM_D` to memory address 4102.
 
 * Implement `buffer.asm` and test with the testbench:
   
   ```
-  $ cd 04_SRAM_D
+  $ cd 04_SRAM
   $ make
   $ cd ../00_HACK
   $ apio clean
   $ apio sim
   ```
 
-* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in `SPI` chip at memory address 0x040000 of the testbench).
+* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in `SPI` chip at memory address `0x040000` of the testbench). You can change the display format of the `SRAM_DATA` field to ASCII.
   
   ![](buffer1.png)
 
-* Check the output at UART_TX in the long run. You should see the string "SPI!" output to UART_TX:
+* Check the output at `UART_TX`. You should see the string "SPI!" output to `UART_TX`:
   
   ![](buffer.png)
 
-* preload the `SPI` memory chip with some text file at address 0x040000.
+To run on real hardware:
 
-* build and upload `HACK` with `buffer.asm` in ROM.BIN to iCE40HX1K-EVB.
-- press reset button on iCE40HX1K-EVB and see if wou can receive the preloaded text file on your Computer.
+* Preload the `SPI` memory chip with some text file at address `0x040000`.
+
+* Build and upload `HACK` with `buffer.asm` in `ROM.BIN` to `iCE40HX1K-EVB`.
+
+* Press `RST` button on `iCE40HX1K-EVB` and see if wou can receive the preloaded text file on your computer.
   
   ```
   $ echo SPI! > spi.txt
   $ iceprogduino -o 256k -w spi.txt
-  $ cd 04_SRAM_D
+  $ cd 04_SRAM
   $ make
   $ cd ../00_HACK
   $ apio clean
