@@ -8,9 +8,9 @@ The special function register `LCD`  memory mapped to addresses 4104 and 4105 en
 | ------ | --------- | -------------------------------------------------- |
 | IN     | `in[7:0]` | Byte to be sent                                    |
 | IN     | `in[8]`   | =0 send byte and set `CSX` low                     |
-| IN     | `in[8]`   | =1 pull CSX high without sending byte              |
+| IN     | `in[8]`   | =1 pull `CSX` high without sending byte              |
 | IN     | `in[9]`   | Value of DCX when transmitting a byte.             |
-| IN     | `load`    | Initiates the transmission of a byte, when in[8]=0 |
+| IN     | `load`    | Initiates the transmission of a byte, when `in[8]=0` |
 | IN     | `load16`  | Initiates the transmission of 16 bit in[15:0]      |
 | OUT    | `out[15]` | =0 chip is busy, =0 ready                          |
 | OUT    | `DCX`     | =0 command, =1 data                                |
@@ -18,17 +18,17 @@ The special function register `LCD`  memory mapped to addresses 4104 and 4105 en
 | OUT    | `SCK`     | Serial Clock                                       |
 | OUT    | `CSX`     | Chip Select NOT                                    |
 
-The special function register `LCD` communicates with ILI9341V LCD controller over 4 wire SPI.
+The special function register `LCD` communicates with ILI9341V LCD controller over 4 wire `SPI`.
 
-When load=1 and in[8]=0 transmission of byte in[7:0] is initiated. CSX is goes low (and stays low even when transmission is completed). DCX is set to in[9]. The byte in[7:0] is send to SDO bitwise together with 8 clock signals on SCK. During transmission out[15] is 1. After 16 clock cycles transmission is completed and out[15] is set to 0.
+When `load=1` and `in[8]=0` transmission of byte `in[7:0]` is initiated. `CSX` is goes low (and stays low even when transmission is completed). DCX is set to in[9]. The byte `in[7:0]` is send to `SDO` bitwise together with 8 clock signals on `SCK`. During transmission out[15] is 1. After 16 clock cycles transmission is completed and out[15] is set to 0.
 
-When load=1 and in[8]=1 CSX goes high and DCX=in[9] without transmission of any bit.
+When `load=1` and in[8]=1 `CSX` goes high and DCX=in[9] without transmission of any bit.
 
-When load16=1 transmission of word in[15:0] is initiated. CSX is goes low (and stays low even when transmission is completed). DCX is set to 1 (data). After 32 clock cycles transmission is completed and out[15] is set to 0.
+When load16=1 transmission of word in[15:0] is initiated. `CSX` is goes low (and stays low even when transmission is completed). DCX is set to 1 (data). After 32 clock cycles transmission is completed and out[15] is set to 0.
 
 ### Proposed Implementation
 
-Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Another two `Bit` store the state of DCX and CSX. Use a counter `PC` to count from 0 to 15 or 31 according to load/load16. Finally we need two connected `BitShift8L`. They will be loaded with the byte in[7:0] or the word in[15:0] to be sent.  After 8/16 bits are transmitted the module clears out[15].
+Use a `Bit` to store the state (0 = ready, 1 = busy) which is output to out[15]. Another two `Bit` store the state of DCX and `CSX`. Use a counter `PC` to count from 0 to 15 or 31 according to load/load16. Finally we need two connected `BitShift8L`. They will be loaded with the byte `in[7:0]` or the word in[15:0] to be sent.  After 8/16 bits are transmitted the module clears out[15].
 
 ![](LCD.png)
 
@@ -38,7 +38,7 @@ The special function register `LCD` is mapped to memory map of `HACK` according 
 
 | address   | I/O device | R/W | function                            |
 | --------- | ---------- | --- | ----------------------------------- |
-| 4104      | LCD        | W   | start transmittion of byte in[7:0]  |
+| 4104      | LCD        | W   | start transmittion of byte `in[7:0]`  |
 | 4105      | LCD        | W   | start transmittion of word in[15:0] |
 | 4104/4105 | LCD        | R   | out[15]=1 busy, out[15]=0 idle      |
 
@@ -59,7 +59,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
 | GND     | 4                     | 2 GND                |
 | LCD_DCX | 5                     | 7 D/C                |
 | LCD_SDO | 7                     | 8 MOSI               |
-| LCD_SCK | 9                     | 9 SCK                |
+| LCD_SCK | 9                     | 9 `SCK`                |
 | LCD_CSX | 11                    | 10 CS                |
 
 ***

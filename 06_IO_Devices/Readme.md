@@ -92,22 +92,22 @@ Update `06_IO_Devices/00_HACK/HACK_tb.v` refs:
   // ...
 
   // AR1021 wires
-  // .RTP_SDI(RTP_SDI),   // RTP serial data in
-  // .RTP_SDO(RTP_SDO),   // RTP serial data out in
+  // .RTP_SDI(RTP_SDI),   // RTP Serial Data In
+  // .RTP_SDO(RTP_SDO),   // RTP serial Data Out
   // .RTP_SCK(RTP_SCK)    // RTP serial clock
 
   // NS2009 wires
-  .RTP_SDA(RTP_SDA),      // RTP data line
-  .RTP_SCL(RTP_SCL)       // RTP serial clock
+  .RTP_SDA(RTP_SDA),      // RTP Data line
+  .RTP_SCL(RTP_SCL)       // RTP Serial Clock
 ```
 
 Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
 
 ```
 # AR1021 pins
-# set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
-# set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
-# set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP
+# set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (`SDO`) on MOD-LCD2.8RTP
+# set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (`SDI`) on MOD-LCD2.8RTP
+# set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (`SCK`) on MOD-LCD2.8RTP
 
 # NS2009 pins
 set_io RTP_SDA 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP

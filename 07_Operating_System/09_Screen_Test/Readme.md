@@ -56,10 +56,10 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
 
 * Check for the correct init sequence:
   
-  * CSX is low starting from the first command.
+  * `CSX` is low starting from the first command.
   * DCX is low while sending commands and high while sending data
-  * SDO shows the serial binary representation of the send command/data
-  * SCK shows 8 cycles
+  * `SDO` shows the serial binary representation of the send command/data
+  * `SCK` shows 8 cycles
 
 * Run Screen_Test in real hardware on iCE40HX1K-EVB with MOD-LCD2.8RTP connected as described in `06_IO_Devices/LCD`.
   

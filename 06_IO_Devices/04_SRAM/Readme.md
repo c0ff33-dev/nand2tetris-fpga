@@ -4,7 +4,7 @@ The evaluation board iCE40HX1K-EVB includes an 512KB static ram chip K6R4016V1D.
 
 - SRAM_ADDR 18 bit
 - SRAM_DATA 16 bit (bidiretional inout)
-- SRAM_CSX (chip select not)
+- SRAM_CSX (Chip Select NOT)
 - SRAM_OEX (output enable not)
 - SRAM_WEX (write enable not)
 
@@ -12,7 +12,7 @@ To read and write to the SRAM chip we will add two special function register to 
 
 1. SRAM_A is a 16 bit register mapped at memory location 4102. SRAM_A controls the 16 lower bits of the 18 bit address bus. The two most significant bits are allways 0, so we can only access 64k x 16 bit words of SRAM chip.
 
-2. SRAM_D is a special function register mapped at memory location 4103. SRAM_D controls the bidirectional data bus and the control wires CSX, OEX and WEX.
+2. SRAM_D is a special function register mapped at memory location 4103. SRAM_D controls the bidirectional data bus and the control wires `CSX`, OEX and WEX.
 
 **Note:** the 16 bit data bus is bidirectional and has therefore to be connected over a tristate buffer. This is done with `InOut.v` which is considered primitive and must not be implemented.
 
@@ -29,7 +29,7 @@ SRAM_A is a simple `Register` that stores the lower 16 bit of the 18 bit address
 | IN     | in[15:0]        | data to write to SRAM      |
 | OUT    | out[15:0]       | data read from SRAM        |
 | INOUT  | SRAM_DATA[15:0] | bidirectional data bus     |
-| OUT    | SRAM_CSX        | chip select not            |
+| OUT    | SRAM_CSX        | Chip Select NOT            |
 | OUT    | SRAM_OEX        | output enable not          |
 | OUT    | SRAM_WEX        | write enable not           |
 
@@ -68,7 +68,7 @@ The special function register `SRAM_A` and `SRAM_D` are mapped to memory map of 
 
 ### buffer.asm
 
-To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the SPI flash memory chip W25Q16BV of iCE40HX1K-EVB, starting at address 0x040000 (256k) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
+To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the `SPI` flash memory chip `W25Q16BV` of iCE40HX1K-EVB, starting at address 0x040000 (256k) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
 
 ### SRAM in real hardware
 
@@ -144,7 +144,7 @@ set_io SRAM_DATA[15] 52 # SD15
   $ apio sim
   ```
 
-* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in SPI chip at memory address 0x040000 of the testbench).
+* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in `SPI` chip at memory address 0x040000 of the testbench).
   
   ![](buffer1.png)
 
@@ -152,7 +152,7 @@ set_io SRAM_DATA[15] 52 # SD15
   
   ![](buffer.png)
 
-* preload the SPI memory chip with some text file at address 0x040000.
+* preload the `SPI` memory chip with some text file at address 0x040000.
 
 * build and upload `HACK` with `buffer.asm` in ROM.BIN to iCE40HX1K-EVB.
 - press reset button on iCE40HX1K-EVB and see if wou can receive the preloaded text file on your Computer.

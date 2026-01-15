@@ -39,9 +39,9 @@ yhigh[4:0]*128+ylow[6:0] represent a 12 bit y-coordinate in the range 0-4095
 
 * Check for the inter byte delay of approximately 50μs.
 
-* SDO is low while reading data from RTP
+* `SDO` is low while reading data from RTP
 
-* SCK shows 5 blocks of 8 clocks cycles
+* `SCK` shows 5 blocks of 8 clocks cycles
 
 * Connect the resitive touch panel controller AR1021 of MOD-LCD2.8RTP to iCE40HX1K-EVB as described in `06_IO_Devices/07_RTP` 
 

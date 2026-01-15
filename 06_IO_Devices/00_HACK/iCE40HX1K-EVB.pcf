@@ -15,9 +15,9 @@ set_io UART_RX 36	# PIO2_8/RxD connected to pin 3 of UEXT (PGM)
 set_io UART_TX 37	# PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 set_io SPI_SDO 45	# iCE40-SDO
-set_io SPI_SDI	46	# iCE40-SDI
-set_io SPI_SCK  48	# iCE40-SCK
-set_io SPI_CSX  49	# iCE40-SS_B
+set_io SPI_SDI 46	# iCE40-SDI
+set_io SPI_SCK 48	# iCE40-SCK
+set_io SPI_CSX 49	# iCE40-SS_B
 
 set_io SRAM_ADDR[0] 79		# SA0
 set_io SRAM_ADDR[1] 80		# SA1
