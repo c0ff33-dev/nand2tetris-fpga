@@ -44,7 +44,7 @@ The special function register `SPI` is mapped to memory map of `HACK` according 
 
 To test `HACK` with `SPI` we need a little machine language program `cat.asm`, which reads 4 consecutive bytes of `SPI` flash memory chip `W25Q16BV` of `iCE40HX1K-EVB`, starting at address `0x040000` (256K) and sends them to `UART_TX`.
 
-According to the datasheet of `SPI` flash rom chip `W25Q16BV` the commands needed to read the flash rom chip are:
+According to the datasheet of `SPI` flash ROM chip `W25Q16BV` the commands needed to read the flash ROM chip are:
 
 | Command               | Function                                                               |
 | --------------------- | ---------------------------------------------------------------------- |
@@ -52,9 +52,9 @@ According to the datasheet of `SPI` flash rom chip `W25Q16BV` the commands neede
 | `0x03 0x04 0x00 0x00` | Read data (command `0x03`) starting at address `0x040000` (256K)       |
 | `0xB9`                | Enter deep power down mode (wait 3μs)                                  |
 
-### SPI in real hardware
+### SPI on real hardware
 
-The board `iCE40HX1K-EVB` comes with a `SPI` flash rom chip `W25Q16BV`. The chip is already connected to `iCE40HX1K` according to `iCE40HX1K-EVB.pcf` (compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
+The board `iCE40HX1K-EVB` comes with a `SPI` flash ROM chip `W25Q16BV`. The chip is already connected to `iCE40HX1K` according to `iCE40HX1K-EVB.pcf` (compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
 ```
 set_io SPI_SDO 45 # iCE40-SDO

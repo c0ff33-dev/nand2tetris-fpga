@@ -8,11 +8,11 @@ The `CPU` corresponds to the proposed implementation of nand2tetris course.
 
 ![](01_CPU/CPU.png)
 
-**Attention:** In the original specification of `HACK` all C instructions have the binary form: `111xxxxxxxxxxxxx` and A instruction have the form `0xxxxxxxxxxxxxxx`. In order to use `HACK` with instruction memory ROM >32K (to play Tetris), we will also interpret the machine language instructions starting with `000-110` as A-instructions, allowing up to 56K words of memory to be addressed.
+**Attention:** In the original specification of `HACK` all C instructions have the binary form: `111xxxxxxxxxxxxx` and A instruction have the form `0xxxxxxxxxxxxxxx`. In order to use `HACK` with instruction memory ROM >32K (to play Tetris), we will also interpret the machine language instructions starting with `000-110` as A-instructions, allowing up to 112KB (56K words) of memory to be addressed:
 
-`0x0-0xDFFF` (56K words) = A instructions, a superset of the original range.
+`0x0-0xDFFF` (112KB / 56K words) = A instructions, a superset of the original range.
 
-`0xE000-FFFF` (8K words) = C instructions, a subset of the original range.
+`0xE000-FFFF` (16KB / 8K words) = C instructions, a subset of the original range.
 
 ```
 @label
@@ -111,7 +111,7 @@ The test bench of `04_HACK` will:
 
   ![](04_HACK/mult.png)
 
-* Finally upload the complete `HACK` design with `leds.asm` pre-loaded into instruction ROM and run in real hardware!
+* Finally upload the complete `HACK` design with `leds.asm` pre-loaded into instruction ROM and run on real hardware!
   
   ```
   $ cd ../04_Machine_Language

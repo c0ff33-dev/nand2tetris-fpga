@@ -1,8 +1,8 @@
 ## Memory.jack
 
-This library provides two services: direct access to the computer's main memory (RAM), and allocation and recycling of memory blocks. The `HACK` RAM consists of  3584 words, each holding a 16 bit binary number.
+This library provides two services: direct access to the computer's main memory (RAM), and allocation and recycling of memory blocks. The `HACK` RAM consists of 7KB (3584 words) each holding 16 bits of data.
 
-Don't be afraid of the limited memory size of "only" 3584 words. Let the heap start at address 1024 with `do Memory.init()` in the `Sys.init()`. This will leave 768 words of stack, which is surely enough to run Tetris.
+The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. This will leave 1.5KB (768 words) of stack, enough to run Tetris.
 
 | Address   | Segment                                     |
 | --------- | ------------------------------------------- |

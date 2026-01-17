@@ -62,7 +62,7 @@ Write two little machine language programms to run on `HACK`. The first program 
 
 ### [05 Computer Architecture](05_Computer_Architecture)
 
-Build `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, RAM and `ROM`. `ROM` uses a BRAM structure (256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
+Build `HACK` computer system consisting of the chips `CPU`, `Memory`, `Clock25_Reset20`, RAM and `ROM`. `ROM` uses a BRAM structure (512 bytes / 256 words) of `iCE40HX1K` and can be considered primitive. It can be preloaded with the instructions of the assembler programs implemented in `04_Machine_Language` .
 
 ### [06 I/O Devices](06_IO_Devices)
 

@@ -39,7 +39,7 @@ To test `HACK` with `UartTX` we need a little machine language program `hello.as
 
 **Attention:** Use a loop to wait until UartTX is ready to send the next byte.
 
-### UartTX in real hardware
+### UartTX on real hardware
 
 The programmer `olimexino-32u4` can also be used as bridge to connect the PC to `iCE40HX1K-EVB` over UART. This can be done with the 10 wire UEXT cable which goes into the PGM1 connector of `iCE40HX1K-EVB`.
 

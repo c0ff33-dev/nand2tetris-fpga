@@ -42,7 +42,7 @@ The special function register `LCD` is mapped to memory map of `HACK` according 
 | 4105      | `LCD16`    | W   | Start transmittion of word `in[15:0]` |
 | 4104/4105 | `LCD8/16`  | R   | `out[15]=1` busy, `out[15]=0` idle    |
 
-### LCD in real hardware
+### LCD on real hardware
 
 The board `MOD-LCD2.8RTP` comes with a 2.8 inch LCD screen controlled by a controller chip `ILI8341V`. `MOD-LCD2.8RTP` must be connected to `iCE40HX1K-EVB` with 6 jumper wire cables: +3.3V, GND plus 4 data wires according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
 

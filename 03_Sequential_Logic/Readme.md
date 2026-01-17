@@ -4,7 +4,7 @@ Build sequential chips `Bit` , `Register` and `PC`, that make use of the Data Fl
 
 ## 08 Blinky
 
-The folder `08_Blinky` contains a project to test the counter `PC` in real hardware. Blinky uses counters `PC` to scale down the frequency of 100 MHz provided by the clock oscillator on `iCE40HX1K-EVB` and finally drives the `LED1/2`.
+The folder `08_Blinky` contains a project to test the counter `PC` on real hardware. Blinky uses counters `PC` to scale down the frequency of 100 MHz provided by the clock oscillator on `iCE40HX1K-EVB` and finally drives the `LED1/2`.
 
 ***
 
@@ -38,7 +38,7 @@ The folder `08_Blinky` contains a project to test the counter `PC` in real hardw
   
   ![](08_Blinky/counter.png)
 
-* Upload the project to `iCE40HX1K-EVB` end test in real hardware:
+* Upload the project to `iCE40HX1K-EVB` end test on real hardware:
   
   ```
   $ cd 08_Blinky

@@ -2,7 +2,7 @@
 
 ### FPGA Board
 
-In this project we will implement the `HACK` computer of the nand2tetris course in real hardware. This is done with a development board featuring a so called Field Programmable Gate Array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and BRAM, which can be routed programmatically.
+In this project we will implement the `HACK` computer of the nand2tetris course on real hardware. This is done with a development board featuring a so called Field Programmable Gate Array (FPGA). The FPGA chip is a small piece of silicon holding lots of logic cells (LC) and BRAM, which can be routed programmatically.
 
 In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which has the nice property of being completely open source. The whole project uses only FOSS free and open source hardware and software, so everybody can build their own `HACK` following these instructions.
 

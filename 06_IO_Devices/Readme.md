@@ -21,7 +21,7 @@ Build the following special function register to connect `HACK` to I/O devices: 
 | 4110    | `DEBUG3`  | Used for debugging                                 |
 | 4111    | `DEBUG4`  | Used for debugging                                 |
 
-For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (`UART`, `SPI`, `SRAM` and `GO`) can be implemented in assembly. After completing the devices we will be able to fill the `SRAM` chip with up to 64K words (16 bits) of `HACK` code. This will enable us to run Jack OS and applications on `HACK`. The more sophisticated device drivers for `LCD` and `RTP` will be implemented in Jack.
+For every special function register we will need the appropriate software to talk to the device. The simpler device drivers (`UART`, `SPI`, `SRAM` and `GO`) can be implemented in assembly. After completing the devices we will be able to fill the `SRAM` chip with up to 128KB (64K words) of `HACK` code. This will enable us to run Jack OS and applications on `HACK`. The more sophisticated device drivers for `LCD` and `RTP` will be implemented in Jack.
 
 ### Proposed implementation
 
@@ -49,7 +49,7 @@ For every special function register we will need the appropriate software to tal
   $ apio sim
   ```
 
-* Run `HACK` in real hardware on `iCE40HX1K-EVB` with the device attached:
+* Run `HACK` on real hardware on `iCE40HX1K-EVB` with the device attached:
   
   ```
   $ cd 00_HACK

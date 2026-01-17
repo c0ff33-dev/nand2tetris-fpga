@@ -39,7 +39,7 @@ class Sys {
   
   ![](uart.png)
 
-* run in real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload the `UART_Test` to `iCE40HX1K-EVB` with:
+* run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload the `UART_Test` to `iCE40HX1K-EVB` with:
   
   ```
   $ cd 02_UART_Test

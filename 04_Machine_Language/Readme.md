@@ -16,7 +16,7 @@ To test input and output capability of `HACK` we will write an endless loop, in 
 | `BUT`           | 4097        | 0 `BUT` pushed down, 1 `BUT` released up |
 | `UART_TX`       | 4098        | Send byte over UART                      |
 | `UART_RX`       | 4099        | Receive byte from UART                   |
-| `SPI`           | 4100        | Read/Write to `SPI` flash rom            |
+| `SPI`           | 4100        | Read/Write to `SPI` flash ROM            |
 | `SRAM_A`        | 4101        | Address of SRAM chip for next Read/Write |
 | `SRAM_D`        | 4102        | Read/write data from/to SRAM chip        |
 | `GO`            | 4103        | Switch from bootloader to SRAM           |
@@ -33,7 +33,7 @@ To Test the result we have to load some test values into `R0-2`. After the multi
 
 #### Use LED to debug
 
-To test `mult.asm` in real hardware, we can use the `LED[1:0]` to display if the result is correct or wrong according to:
+To test `mult.asm` on real hardware, we can use the `LED[1:0]` to display if the result is correct or wrong according to:
 
 | LED[1:0] | output               |
 | -------- | -------------------- |

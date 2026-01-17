@@ -7,7 +7,7 @@ For every Jack OS class we provide a skeleton file, with the signatures of funct
 The folder `00_HACK` contains a simulation of `HACK` similar to the one in `06_IO_Devices/00_HACK` with the following differences:
 
 * uses build in chips from `01_Boolean_Logic` to `03_Sequential_Logic` instead of going down to the nand gate level.
-* has 64k words of instruction ROM preloaded with Jack OS and applications
+* has 64K words of instruction ROM preloaded with Jack OS and applications
 * is not uploadable to `iCE40HX1K-EVB`
 
 ## Simulation of Jack OS classes
@@ -22,7 +22,7 @@ $ apio clean
 $ apio sim
 ```
 
-## Run Jack OS in real hardware on iCE40HX1K-EVB
+## Run Jack OS on real hardware on iCE40HX1K-EVB
 
 To test Jack OS on real hardware `iCE40HX1K-EVB` use the design of `HACK` developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach `iCE40HX1K-EVB` to your computer and run the following commands:
 
@@ -32,7 +32,7 @@ $ make
 $ make upload
 ```
 
-This will compile all classes in the test folder and upload the binary file to `SPI` flash rom starting at address 64k (0x10000), where the bootloader can find it.
+This will compile all classes in the test folder and upload the binary file to `SPI` flash ROM starting at address 64k (0x10000), where the bootloader can find it.
 
 **Attention:** All used classes must be linked to the folder in which you run the compiler. To add the class `<Jack OS class>.jack` simply make a soft link in the working directory:
 

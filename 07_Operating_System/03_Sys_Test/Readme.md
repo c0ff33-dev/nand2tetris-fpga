@@ -2,7 +2,7 @@
 
 A library that supports various program execution services.
 
-**Hint:** To debug the next projects in real hardware, we can implement one or both of the following strategies into `Sys.jack`.
+**Hint:** To debug the next projects on real hardware, we can implement one or both of the following strategies into `Sys.jack`.
 
 * Use LED to indicate the state of Jack OS according to
 
@@ -37,7 +37,9 @@ A library that supports various program execution services.
   
   ![](sys.png)
 
-* Run in real hardware. Set the delay to 1s = 1000ms with `Sys.wait(1000)` in `Main.main()`.
+### Run on real hardware
+
+* Set the delay to 1s = 1000ms with `Sys.wait(1000)` in `Main.main()`.
   
   ```
   $ cd 03_Sys_Test
@@ -45,4 +47,4 @@ A library that supports various program execution services.
   $ make upload
   ```
 
-* Check if the LED changes state every 1 second.
+* Check if the LEDs change state every 1 second.

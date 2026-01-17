@@ -61,7 +61,7 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
   * `SDO` shows the serial binary representation of the send command/data
   * `SCK` shows 8 cycles
 
-* Run `Screen_Test` in real hardware on `iCE40HX1K-EVB` with `MOD-LCD2.8RTP` connected as described in `06_IO_Devices/LCD`.
+* Run `Screen_Test` on real hardware on `iCE40HX1K-EVB` with `MOD-LCD2.8RTP` connected as described in `06_IO_Devices/LCD`.
   
   ```
   $ cd 09_Screen_Test

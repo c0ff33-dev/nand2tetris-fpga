@@ -10,7 +10,7 @@
 
 To read and write to the SRAM chip we will add two special function registers to `HACK`:
 
-* `SRAM_A` is a 16 bit register mapped at memory location 4101. `SRAM_A` controls the 16 lower bits of the 18 bit address bus. The two most significant bits are always 0, so we can only address 64K x 16 bit words of SRAM memory.
+* `SRAM_A` is a 16 bit register mapped at memory location 4101. `SRAM_A` controls the 16 lower bits of the 18 bit address bus. The two most significant bits are always 0, so we can only address 128KB (64K words) of SRAM memory.
 
 * `SRAM_D` is a special function register mapped at memory location 4102. `SRAM_D` controls the bidirectional bus and the control wires `SRAM_CSX`, `SRAM_OEX` and `SRAM_WEX`.
 
@@ -70,7 +70,7 @@ The special function registers `SRAM_A` and `SRAM_D` are mapped to memory of `HA
 
 To test `HACK` with SRAM we need a little machine language program `buffer.asm`, which reads the first four bytes of an ASCII file previosuly stored to the `SPI` flash memory chip `W25Q16BV` of `iCE40HX1K-EVB`, starting at address `0x040000` (256K) and stores the four bytes to SRAM. Finally we read the four bytes from SRAM and write them to UART.
 
-### SRAM in real hardware
+### SRAM on real hardware
 
 The board `iCE40HX1K-EVB` comes with a SRAM chip `K6R4016V1D`. The chip is already connected to `iCE40HX1K` according `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 

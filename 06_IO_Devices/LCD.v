@@ -24,7 +24,7 @@
  *
  * Note: 2 cycles @ 25 MHz meets SCL pulse width requirements for write (twrh/twrl) 
  * but runs faster than total time (twc) - this is 1/2 speed compared to the SPI
- * implementation of the flash rom which runs at the full 25 MHz.
+ * implementation of the flash ROM which runs at the full 25 MHz.
  *
  * 320x240x16 = ~1.25m bits which requires minimum 2 cycles to transmit each bit (~1.5MB/s) however
  * Jack function call overheads are around ~600 cycles per 16 bits (~40 cycles/pixel, ~75KB/s) so even

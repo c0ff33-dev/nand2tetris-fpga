@@ -2,7 +2,7 @@
 // the string to SRAM. Finally read the string from SRAM and send
 // the string to UART_TX
 //
-// load spi flash rom starting at address 0x040000 and write the data to UART_TX
+// load spi flash ROM starting at address 0x040000 and write the data to UART_TX
 // read command is 0x03 followed by 3 x address bytes
 // e.g. send read data command @ 0x40000 [256k]: 0x03, 0x04, 0x00, 0x00
 // out[15]=1 (busy), [7:0] continues shifting while busy

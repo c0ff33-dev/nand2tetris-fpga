@@ -45,7 +45,7 @@ yhigh[4:0]*128+ylow[6:0] represent a 12 bit y-coordinate in the range 0-4095
 
 * Connect the resitive touch panel controller `AR1021` of `MOD-LCD2.8RTP` to `iCE40HX1K-EVB` as described in `06_IO_Devices/07_RTP` 
 
-* Run `Touch_Test` in real hardware on `iCE40HX1K-EVB`. Create some touch events on the resistive touch panel `RTP` and check the messages send to `UART_TX`.
+* Run `Touch_Test` on real hardware on `iCE40HX1K-EVB`. Create some touch events on the resistive touch panel `RTP` and check the messages send to `UART_TX`.
   
   ```
   $ cd 11_Touch_Test
