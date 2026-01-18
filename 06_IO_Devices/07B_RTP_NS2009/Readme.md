@@ -1,17 +1,20 @@
+# TODO: update for NS2009
+
 ## 07 RTP (NS2009)
 
-Ensure you actually have the `AR1021` chip installed in `U1` before proceeding, refer to the `RTP` section in [06_IO_Devices](../Readme.md).
+Ensure you actually have the `NS2009` chip installed in `U2` before proceeding, refer to the `RTP` section in [06_IO_Devices](../Readme.md).
 
 ### Protocol Selection
 
-The special function register `RTP` memory mapped to address 4106 enables `HACK` to read bytes from the touch panel controller `AR1021` on `MOD-LCD2.8RTP` which supports both `SPI` and `I2C` protocols for communication. The former is simpler to implement but requires a hardware modification to enable, see `07B_RTP_NS2009` for notes on `I2C` implementation. `SPI` will be used in the proposed implementation in this instance.
-
-**Attention:** The specification of `AR1021` requires that `SCK` is inverted (compare [03_SPI/Readme.md](../03_SPI/Readme.md) with `CPOL=1`) and a slower transfer rate of max ~900 KHz.
+The special function register `RTP` memory mapped to address 4106 enables `HACK` to read bytes from the touch panel controller `NS2009` on `MOD-LCD2.8RTP`. Unlike `AR1021` it only supports `I2C` as the communication protocol.
 
 ### Chip Specification
 
+# TODO: update closer to end
+
 | IN/OUT | Wire       | Function                      |
 | ------ | ---------- | ----------------------------- |
+| IN     | `clk`      | System clock (25 MHz)         |
 | IN     | `in[7:0]`  | Byte to be sent               |
 | IN     | `load`     | =1 initiates the transmission |
 | OUT    | `out[15]`  | =0 chip is busy, =0 ready     |
@@ -41,7 +44,7 @@ The special function register `RTP` is mapped to memory map of `HACK` according 
 
 ### RTP on real hardware
 
-`MOD-LCD2.8RTP` comes with a touch panel controlled by `AR1021`. `MOD-LCD2.8RTP` must be connected to `iCE40HX1K-EVB` with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
+`MOD-LCD2.8RTP` comes with a touch panel controlled by `NS2009`. `MOD-LCD2.8RTP` must be connected to `iCE40HX1K-EVB` with 3 more jumper wire cables according to `iCE40HX1K-EVB.pcf` (Compare with schematic [iCE40HX1K_EVB](../../docs/iCE40HX1K-EVB_Rev_B.pdf) and [MOD-LCD2.8RTP_RevB.pdf](../../docs/MOD-LCD2.8RTP_RevB.pdf)).
 
 ```
 set_io RTP_SDI 7        # PIO3_3A connected to pin 13 of GPIO1
@@ -61,14 +64,14 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 | `RTP_SDO` | 15 (31)                 | 6 `SDA`                                |
 | `RTP_SCK` | 17 (33)                 | 5 `SCL`                                |
 
-**Attention:** To enable `SPI` communication on the `RTP` controller chip `AR1021` we must modify two solder jumpers. (Compare with schematic of `MOD-LCD2.8RTP` together with datasheet of `AR1021`). The latest iteration of `MOD-LCD2.8RTP` is `Rev D` which has a different layout than pictured (`Rev B`) but the same modifications apply.
+**Attention:** To enable `SPI` communication on the `RTP` controller chip `NS2009` we must modify two solder jumpers. (Compare with schematic of `MOD-LCD2.8RTP` together with datasheet of `NS2009`). The latest iteration of `MOD-LCD2.8RTP` is `Rev D` which has a different layout than pictured (`Rev B`) but the same modifications apply.
 
 * Cut connection `SJ1-GND` with a sharp knife (green). A craft knife, scalpel or similar should do - be very careful not to sever any other traces!
   * Optional: If you have a multimeter check that continuity is broken between `SJ1-GND` and `SJ1-2` (can also check for continuity with UEXT pin 2 for ground).
   * Alternatively if you're not confident doing this then you can implement `I2C` instead of `SPI` for the `RTP` controller but this is an exercise left to the reader. 
 
-* Connect `M1` to `VDD` (`+3.3V`) by soldering `SJ1-VDD` to activate `SPI` mode of `AR1021` (yellow).
-  * After the cut + solder on `SJ1` the `M1` pin on `AR1021` should now be powered instead of being drained to ground.
+* Connect `M1` to `VDD` (`+3.3V`) by soldering `SJ1-VDD` to activate `SPI` mode of `NS2009` (yellow).
+  * After the cut + solder on `SJ1` the `M1` pin on `NS2009` should now be powered instead of being drained to ground.
   * Optional: check for continuity between `SJ1` and UEXT pin 1 for `VDD` (while powered off) then check for ~3.3V on `M1` and `SJ1`.
 
 * Connect UEXT pin 4 (`IRQ/SDO`) by soldering `SJ3` (yellow).
@@ -102,4 +105,4 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
   $ apio upload
   ```
 
-* Proceed to `07_Operating_System` and implement the driver class `Touch.jack` that sends command over `RTP` the controller chip `AR1021` on `MOD-LCD2.8RTP`.
+* Proceed to `07_Operating_System` and implement the driver class `Touch.jack` that sends command over `RTP` the controller chip `NS2009` on `MOD-LCD2.8RTP`.

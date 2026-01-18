@@ -27,11 +27,12 @@ To read and write to the SRAM chip we will add two special function registers to
 | IN     | `clk`             | System clock (25 MHz)      |
 | IN     | `load`            | Initiate a write operation |
 | IN     | `in[15:0]`        | Data to write to SRAM      |
+| IN     | `mode[15:0]`      | =0 boot mode, =1 run mode  |
 | OUT    | `out[15:0]`       | Data read from SRAM        |
-| INOUT  | `SRAM_DATA[15:0]` | Bidirectional bus          |
-| OUT    | `SRAM_CSX`        | Chip Select NOT            |
-| OUT    | `SRAM_OEX`        | Output Enable NOT          |
-| OUT    | `SRAM_WEX`        | Write Enable NOT           |
+| INOUT  | `DATA[15:0]`      | Bidirectional bus          |
+| OUT    | `CSX`             | Chip Select NOT            |
+| OUT    | `OEX`             | Output Enable NOT          |
+| OUT    | `WEX`             | Write Enable NOT           |
 
 When `load[t]=1` transmission of word `in[15:0]` is initiated. The word is sent to SRAM over the bidirectional wires `SRAM_DATA` and a write pulse will be triggered for one cycle at `t+1`:
 

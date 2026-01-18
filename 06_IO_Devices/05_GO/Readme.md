@@ -9,6 +9,18 @@ The instruction memory ROM of `HACK` is limited to 512 bytes (256 words). In ord
 ### Chip Specification
 
 When `load=1` `GO` switches `HACK` operation from boot mode to run mode. In boot mode `instruction=rom_data` and `SRAM_ADDR=sram_addr_out`. In run mode `instruction=sram_data` and `SRAM_ADDR=pc`.
+ 
+| IN/OUT | Wire            | Function                                  |
+| ------ | --------------- | ----------------------------------------- |
+| IN     | `clk`           | System clock (25 MHz)                     |
+| IN     | `load`          | =1 initiate switch to run mode            |
+| IN     | `pc`            | Program Counter (boot mode)               |
+| IN     | `rom_data`      | BRAM instruction data (boot mode)         |
+| IN     | `sram_addr_in`  | SRAM instruction address (run mode)       |
+| IN     | `sram_data`     | SRAM instruction data (run mode)          |
+| OUT    | `sram_addr_out` | BRAM/SRAM address that data was read from |
+| OUT    | `instruction`   | Instruction data read from BRAM/SRAM      |
+| OUT    | `out`           | =0 boot moade, =1 run mode                |
 
 ### Memory Map
 

@@ -11,6 +11,7 @@ This protocol is refered as 8N1 (8 data bits, no parity bit, 1 stop bit). We use
 
 | IN/OUT | Wire      | Function                                            |
 | ------ | --------- | --------------------------------------------------- |
+| IN     | `clk`     | System clock (25 MHz)                               |
 | IN     | `in[7:0]` | Byte to be sent                                     |
 | IN     | `load`    | =1 initiates the transmission                       |
 | OUT    | `out[15]` | =1 chip is busy, =0 chip is ready to send next byte |

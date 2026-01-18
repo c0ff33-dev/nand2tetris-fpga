@@ -6,6 +6,7 @@ The special function register `LCD`  memory mapped to addresses 4104 and 4105 en
 
 | IN/OUT | wire      | function                                             |
 | ------ | --------- | ---------------------------------------------------- |
+| IN     | `clk`     | System clock (25 MHz)                                |
 | IN     | `in[7:0]` | Byte to be sent                                      |
 | IN     | `in[8]`   | =0 send byte and set `CSX` low                       |
 | IN     | `in[8]`   | =1 pull `CSX` high without sending byte              |

@@ -8,6 +8,7 @@ The special function register `UartRX` receives bytes over UART with 8N1 at 1152
 
 | IN/OUT | Wire       | Function                                                                |
 | ------ | ---------- | ----------------------------------------------------------------------- |
+| IN     | `clk`      | System clock (25 MHz)                                                   |
 | IN     | `clear`    | =1 clears the data register, chip is now ready to receive the next byte |
 | IN     | `RX`       | Receive wire                                                            |
 | OUT    | `out[15]`  | =1 waiting for next byte, =0 byte completed                             |

@@ -8,6 +8,7 @@ The special function register `SPI` memory mapped to address 4100 enables `HACK`
 
 | IN/OUT | Wire       | Function                                                |
 | ------ | ---------- | ------------------------------------------------------- |
+| IN     | `clk`      | System clock (25 MHz)                                   |
 | IN     | `in[7:0]`  | Byte to be sent                                         |
 | IN     | `in[8]`    | =0 (and `load=1`) send byte and set `CSX` low           |
 | IN     | `in[8]`    | =1 (and `load=1`) pull `CSX` high without sending byte  |

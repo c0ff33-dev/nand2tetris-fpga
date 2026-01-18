@@ -12,6 +12,7 @@ The special function register `RTP` memory mapped to address 4106 enables `HACK`
 
 | IN/OUT | Wire       | Function                      |
 | ------ | ---------- | ----------------------------- |
+| IN     | `clk`      | System clock (25 MHz)         |
 | IN     | `in[7:0]`  | Byte to be sent               |
 | IN     | `load`     | =1 initiates the transmission |
 | OUT    | `out[15]`  | =0 chip is busy, =0 ready     |
