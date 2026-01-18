@@ -10,11 +10,11 @@ In this tutorial we use the FPGA-board `iCE40HX1K-EVB` from Olimex Ltd., which h
 
 On `iCE40HX1K-EVB` board you will find:
 
-* FPGA-chip `iCE40HX1K`: holds 1280 logic cells and 64K bits BRAM, which can be routed programmatically.
-* Serial flash memory `W25Q16BV` (16M bits): holds the bitstream data, which is a binary representation of the circuits, you want to implement on the FPGA. At startup the FPGA loads the bitstream from serial flash memory and configures its logic cells to become the machine you want the FPGA to be.
+* FPGA chip `iCE40HX1K`: holds 1280 logic cells and 64K bits BRAM which can be routed programmatically.
+* Serial flash memory `W25Q16BV` (16M bits): holds the bitstream data which is a binary representation of the circuits you want to implement on the FPGA. At startup the FPGA loads the bitstream from serial flash memory and configures its logic cells to become the machine you want the FPGA to be.
 * `LED`, `BUT`: The development board comes with two LEDs and two buttons. These are user programmable and can be used to enter data or for debugging.
 * SRAM (256K x 16 bits): `iCE40HX1K-EVB` has a Static RAM (SRAM) chip on board. This is useful, because more memory is needed than available with BRAM inside FPGA. We will use the SRAM chip as instruction memory ROM to run serious applications like Tetris or Pong on `HACK`.
-* GPIO 34 pin connector: the board come with a lot of general purpose in-/output pins. This pins can be used to connect external hardware. We will use this pins to connect an LCD screen with touch panel `MOD-LCD2.8RTP`.
+* GPIO 34 pin connector: the board come with a lot of general purpose I/O pins. These pins can be used to connect external hardware and we will use these pins to connect an `LCD` screen with touch panel `MOD-LCD2.8RTP`.
 
 To communicate to the `iCE40HX1K-EVB` we need an Arduino-like board, which can be connected to `iCE40HX1K` over the 10 pin UEXT connector. We will use `olimexino-32u4` board, which has two modes:
 
@@ -46,7 +46,7 @@ To build Projects 1-5 any FPGA board will work. If you want to run serious appli
 
 * iCE40 Board: [iCE40HX1K-EVB](https://www.olimex.com/Products/FPGA/iCE40/)
 * Programmer: [olimexino-32u4](https://www.olimex.com/Products/Duino/AVR/OLIMEXINO-32U4/open-source-hardware)
-* 2.8 Inch LCD color screen with resistive touch panel: [MOD-LCD2.8RTP](https://www.olimex.com/Products/Modules/LCD/MOD-LCD2-8RTP)
+* 2.8 Inch `LCD` color screen with `RTP`: [MOD-LCD2.8RTP](https://www.olimex.com/Products/Modules/LCD/MOD-LCD2-8RTP)
 
 Check the bill of material and consider to buy at Olimex Ltd., the company with the highest number of registered OSHW-projects.
 

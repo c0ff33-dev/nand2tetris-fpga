@@ -37,13 +37,13 @@ The chip `HACK.v` is the top level module, that connects to the outer world.
 
 The signals wires `CLK`, `RST`, `BUT[1:0]` and `LED[1:0]` (by convention written in capital letters) connect to the outer pins of the fpga chip `iCE40HX1K` according to the file `iCE40HX1K.pcf`. The board `iCE40HX1K-EVB` comes with a clock generator of 100 MHz, two buttons and two leds connected to FPGA (refer to [docs/iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
-| Wire     | iCE40HX1K (FPGA) | Board iCE40HX1K-EVB     |
-| -------- | ---------------- | ----------------------- |
-| `CLK`    | 15               | 100 Mhz clock generator |
-| `BUT[0]` | 41               | `BUT1`                  |
-| `BUT[1]` | 42               | `BUT2`                  |
-| `LED[0]` | 40               | `LED1`                  |
-| `LED[1]` | 51               | `LED2`                  |
+| Wire     | `iCE40HX1K` (FPGA) | Board `iCE40HX1K-EVB`   |
+| -------- | ------------------ | ----------------------- |
+| `CLK`    | 15                 | 100 Mhz clock generator |
+| `BUT[0]` | 41                 | `BUT1`                  |
+| `BUT[1]` | 42                 | `BUT2`                  |
+| `LED[0]` | 40                 | `LED1`                  |
+| `LED[1]` | 51                 | `LED2`                  |
 
 To add I/O capability we add 7 more special function registers mapped to the following addresses:
 

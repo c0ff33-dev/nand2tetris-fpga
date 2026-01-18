@@ -14,7 +14,7 @@ Build the following special function register to connect `HACK` to I/O devices: 
 | 4103    | `GO`      | Start execution of instructions from external SRAM |
 | 4104    | `LCD8`    | Write 8 bit command/data to `LCD` screen           |
 | 4105    | `LCD16`   | Write 16 bit data to `LCD` screen                  |
-| 4106    | `RTP`     | Read/write byte from/to resistive touch panel      |
+| 4106    | `RTP`     | Read/write byte from/to `RTP` controller           |
 | 4107    | `DEBUG0`  | Used for debugging                                 |
 | 4108    | `DEBUG1`  | Used for debugging                                 |
 | 4109    | `DEBUG2`  | Used for debugging                                 |

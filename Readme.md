@@ -24,7 +24,7 @@ Our final implementation of `HACK` will have the following specs:
 
 * 2.8 inch color LCD with 320x240 pixel.
 
-* Touch-panel support.
+* Resistive Touch Panel (`RTP`) support.
 
 * Powerful enough to run Tetris!
   
@@ -72,8 +72,8 @@ We will expand `HACK` computer platform by adding chips to handle communication 
 * `SPI` reads the 2MB flash memory on `iCE40HX1K-EVB`.
 * `SRAM` writes data to the external SRAM chip.
 * `GO` enables booting Jack OS software.
-* `LCD` connects a little color screen with 320x240 pixel.
-* `RTP` connects the resistive touch panel.
+* `LCD` connects a little color screen with 320x240 resolution.
+* `RTP` connects the touch panel.
 
 ### [07 Operating System](07_Operating_System)
 

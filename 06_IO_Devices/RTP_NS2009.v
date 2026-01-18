@@ -8,13 +8,10 @@ module RTP (
     input  wire        clk,
     input  wire        load,
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
-    // inout  wire        SDA,   // I2C data line (inout to allow open-drain)
-    // inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
 
-    // output reg         led_load = 1,
-    // output reg [15:0]  led_out = 0,
-
+    // inout  wire        SDA,   // I2C data line (inout to allow open-drain)
+    // inout  wire        SCL,   // I2C clock (inout to allow open-drain)
     output reg sda_oe,
     output reg scl_oe,
     input wire sda_in,

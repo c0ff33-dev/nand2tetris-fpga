@@ -141,12 +141,8 @@ module HACK(
 		.clk(clk),
 		.in(outM),
 		.load(loadIO0),
-		// .in(debug_led_out),
-		// .load(debug_led_load),
 		.out(outLED) // 16 bit output going back to memory
 	);
-	// wire [15:0] debug_led_out;
-	// wire debug_led_load;
 	assign LED = outLED[1:0]; // 2 bit output (pin)
 
 	// BUT 1/2 (4097), sharing 1 x 2 bit register
@@ -172,12 +168,12 @@ module HACK(
 	// UART_RX (4099) @ 115200 baud (~14KB/sec)
 	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
 	// W: 1 = clear data register
-	UartRX uartRX(
-		.clk(clk),
-		.clear(loadIO3),
-		.RX(UART_RX), // serial rx bit (pin)
-		.out(inIO3) // memory map 
-	);
+	// UartRX uartRX(
+	// 	.clk(clk),
+	// 	.clear(loadIO3),
+	// 	.RX(UART_RX), // serial rx bit (pin)
+	// 	.out(inIO3) // memory map 
+	// );
 
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
@@ -263,21 +259,18 @@ module HACK(
 	assign inIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel NS2009
-	// RTP rtp(
-	// 	.clk(clk),
-	// 	.load(loadIOA),
-	// 	.in(outM),
-	// 	.out(inIOA),
-	// 	// .SDA(RTP_SDA),
-	// 	// .SCL(RTP_SCL),
-	// 	// .led_load(debug_led_load),
-	// 	// .led_out(debug_led_out),
-
-	// 	.sda_oe(sda_oe),
-	// 	.scl_oe(scl_oe),
-	// 	.sda_in(sda_in),
-	// 	.scl_in(scl_in)
-	// );
+	RTP rtp(
+		.clk(clk),
+		.load(loadIOA),
+		.in(outM),
+		.out(inIOA),
+		// .SDA(RTP_SDA),
+		// .SCL(RTP_SCL),
+		.sda_oe(sda_oe),
+		.scl_oe(scl_oe),
+		.sda_in(sda_in),
+		.scl_in(scl_in)
+	);
 
 	// TODO: not convinced this is different to what was synthesized before
 	wire sda_oe, scl_oe;

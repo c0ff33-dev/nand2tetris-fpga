@@ -79,4 +79,4 @@ M=D   // 0xE308
 
 * If `leds.asm` is working extend `boot.asm` to load 128KB (64K words) from `SPI` flash memory to SRAM.
 
-* You are now ready to start implementing the operating system Jack OS. Proceed to project `07_Operating_System` and come back later to implement the last I/O devices `LCD` and `RTP` to connect the screen with resitive touch panel `MOD-LCD2.8RTP`.
+* You are now ready to start implementing the operating system Jack OS. Proceed to project `07_Operating_System` and come back later to implement the last I/O devices `LCD` and `RTP` to connect the screen with touch panel `MOD-LCD2.8RTP`.
