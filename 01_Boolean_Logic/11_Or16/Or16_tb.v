@@ -33,7 +33,7 @@ module Or16_tb();
   		$dumpvars(0, Or16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Or16");
+		$display("Test bench: Or16");
 				
 		for (n=0; n<10000;n=n+1) 
 			begin

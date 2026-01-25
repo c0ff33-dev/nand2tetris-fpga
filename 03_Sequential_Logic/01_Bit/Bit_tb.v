@@ -40,7 +40,7 @@ module Bit_tb();
   		$dumpvars(0, Bit_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Bit");
+		$display("Test bench: Bit");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

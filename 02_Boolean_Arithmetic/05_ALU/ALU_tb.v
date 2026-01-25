@@ -47,7 +47,7 @@ module ALU_tb();
   		$dumpvars(0, ALU_tb);
 		
 		$display("------------------------");
-		$display("Testbench: ALU");
+		$display("Test bench: ALU");
 		
 		for (n=0; n<100;n=n+1) 
 			begin

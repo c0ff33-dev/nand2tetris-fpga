@@ -32,7 +32,7 @@ module Inc16_tb();
   		$dumpvars(0, Inc16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Inc16");
+		$display("Test bench: Inc16");
 
 		in=0;check();
 		in=16'b1111111111111111;check();

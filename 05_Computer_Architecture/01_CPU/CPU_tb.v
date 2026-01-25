@@ -73,7 +73,7 @@ module CPU_tb();
   		$dumpvars(0, CPU_tb);
 		
 		$display("------------------------");
-		$display("Testbench: CPU");
+		$display("Test bench: CPU");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

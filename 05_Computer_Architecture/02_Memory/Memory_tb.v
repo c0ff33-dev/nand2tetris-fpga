@@ -140,7 +140,7 @@ module Memory_tb();
   		$dumpvars(0, Memory_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Memory");
+		$display("Test bench: Memory");
 		
 		inRAM=$random;
 		inIO0=$random;

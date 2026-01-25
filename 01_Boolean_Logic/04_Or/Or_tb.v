@@ -32,7 +32,7 @@ module Or_tb();
   		$dumpvars(0, Or_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Or");
+		$display("Test bench: Or");
 		
 		a=0;b=0;check();
 		a=0;b=1;check();

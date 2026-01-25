@@ -31,7 +31,7 @@ module Buffer_tb();
   		$dumpvars(0, Buffer_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Buffer");
+		$display("Test bench: Buffer");
 		
 		in=0;check();
 		in=1;check();

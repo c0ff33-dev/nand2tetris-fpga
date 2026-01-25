@@ -47,7 +47,7 @@ module BitShift8L_tb();
   		$dumpvars(0, BitShift8L_tb);
 		
 		$display("------------------------");
-		$display("Testbench: BitShift8L");
+		$display("Test bench: BitShift8L");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

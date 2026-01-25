@@ -17,11 +17,11 @@ The special function register `RTP` memory mapped to address 4106 enables `HACK`
 | IN     | `load`     | =1 initiates the transmission |
 | OUT    | `out[15]`  | =0 chip is busy, =0 ready     |
 | OUT    | `out[7:0]` | Received byte                 |
-| IN     | `SDI`      | Serial Data In                |
-| OUT    | `SDO`      | Serial Data Out               |
-| OUT    | `SCK`      | Serial Clock                  |
+| IN     | `SDI`      | `SPI` Serial Data In          |
+| OUT    | `SDO`      | `SPI` Serial Data Out         |
+| OUT    | `SCK`      | `SPI` Serial Clock            |
 
-When `load=1` transmission of byte `in[7:0]` is initiated. The byte is send to `SDO` bitwise together with 8 clock signals on `SCK`. At the same time `RTP` receives a byte at `SDI` and during transmission `out[15]=1`. The transmission of a byte takes 256 clock cycles where every 32 clock cycles one bit is shifted out. In the middle of each bit at counter number 15 the bit `SDI` is sampled. When transmission is completed `out[15]=0` and `RTP` outputs the received byte to `out[7:0]`.
+When `load=1` transmission of byte `in[7:0]` is initiated. The byte is sent to `SDO` bitwise together with 8 clock signals on `SCK`. At the same time `RTP` receives a byte at `SDI` and during transmission `out[15]=1`. The transmission of a byte takes 256 clock cycles where every 32 clock cycles one bit is shifted out. In the middle of each bit at counter number 15 the bit `SDI` is sampled. When transmission is completed `out[15]=0` and `RTP` outputs the received byte to `out[7:0]`.
 
 ### Proposed Implementation
 
@@ -66,7 +66,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 * Cut connection `SJ1-GND` with a sharp knife (green). A craft knife, scalpel or similar should do - be very careful not to sever any other traces!
   * Optional: If you have a multimeter check that continuity is broken between `SJ1-GND` and `SJ1-2` (can also check for continuity with UEXT pin 2 for ground).
-  * Alternatively if you're not confident doing this then you can implement `I2C` instead of `SPI` for the `RTP` controller but this is an exercise left to the reader. 
+  * Alternatively if you're not confident doing this then you can implement `I2C` instead of `SPI` for the `RTP` controller but this is an exercise left to the reader. See `AR1021` [datasheet](../../docs/AR1000.pdf) for implementation details.
 
 * Connect `M1` to `VDD` (`+3.3V`) by soldering `SJ1-VDD` to activate `SPI` mode of `AR1021` (yellow).
   * After the cut + solder on `SJ1` the `M1` pin on `AR1021` should now be powered instead of being drained to ground.
@@ -81,7 +81,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 ### Project
 
-* Implement special function register `RTP` and test with testbench:
+* Implement special function register `RTP` and test with test bench:
   
   ```
   $ cd 07_RTP

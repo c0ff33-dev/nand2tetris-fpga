@@ -62,7 +62,7 @@ module GO_tb();
   		$dumpvars(0, GO_tb);
 		
 		$display("------------------------");
-		$display("Testbench: GO");
+		$display("Test bench: GO");
 
 		for (n=0; n<20;n=n+1) 
 				check();

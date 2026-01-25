@@ -32,7 +32,7 @@ module Nand_tb();
   		$dumpvars(0, Nand_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Nand");
+		$display("Test bench: Nand");
 		
 		a=0;b=0;check();
 		a=0;b=1;check();

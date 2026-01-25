@@ -39,7 +39,7 @@ module DFF_tb();
   		$dumpvars(0, DFF_tb);
 		
 		$display("------------------------");
-		$display("Testbench: DFF");
+		$display("Test bench: DFF");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

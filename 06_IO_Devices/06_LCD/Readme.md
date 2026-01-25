@@ -14,14 +14,14 @@ The special function register `LCD`  memory mapped to addresses 4104 and 4105 en
 | IN     | `load`    | Initiates the transmission of a byte when `in[8]=0`  |
 | IN     | `load16`  | Initiates the transmission of `bit in[15:0]`         |
 | OUT    | `out[15]` | =0 chip is busy, =0 ready                            |
-| OUT    | `DCX`     | Data/Command, =0 command, =1 data                    |
-| OUT    | `SDO`     | Serial Data Out                                      |
-| OUT    | `SCK`     | Serial Clock                                         |
-| OUT    | `CSX`     | Chip Select NOT                                      |
+| OUT    | `DCX`     | `SPI` Data/Command, =0 command, =1 data              |
+| OUT    | `SDO`     | `SPI` Serial Data Out                                |
+| OUT    | `SCK`     | `SPI` Serial Clock                                   |
+| OUT    | `CSX`     | `SPI` Chip Select NOT                                |
 
 The special function register `LCD` communicates with `ILI9341V` `LCD` controller over 4 wire `SPI`.
 
-When `load=1` and `in[8]=0` transmission of byte `in[7:0]` is initiated. `CSX` goes low (and stays low even when transmission is completed). `DCX` is set to `in[9]`. The byte `in[7:0]` is send to `SDO` bitwise together with 8 clock signals on `SCK`. During transmission `out[15]=1` and after 16 clock cycles transmission is completed and `out[15]=0`.
+When `load=1` and `in[8]=0` transmission of byte `in[7:0]` is initiated. `CSX` goes low (and stays low even when transmission is completed). `DCX` is set to `in[9]`. The byte `in[7:0]` is sent to `SDO` bitwise together with 8 clock signals on `SCK`. During transmission `out[15]=1` and after 16 clock cycles transmission is completed and `out[15]=0`.
 
 When `load=1` and `in[8]=1` `CSX` goes high and `DCX=in[9]` without transmission of any bit.
 
@@ -58,16 +58,16 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
 | --------- | ----------------------- | ---------------------- |
 | `+3.3V`   | 3                       | 1 `+3.3V`              |
 | `GND`     | 4                       | 2 `GND`                |
-| `LCD_DCX` | 5                       | 7 D/C                  |
-| `LCD_SDO` | 7                       | 8 MOSI                 |
-| `LCD_SCK` | 9                       | 9 SCK                  |
-| `LCD_CSX` | 11                      | 10 CS                  |
+| `LCD_DCX` | 5                       | 7 `D/C`                |
+| `LCD_SDO` | 7                       | 8 `MOSI`               |
+| `LCD_SCK` | 9                       | 9 `SCK`                |
+| `LCD_CSX` | 11                      | 10 `CS`                |
 
 ***
 
 ### Project
 
-* Implement `LCD.v` and test with testbench:
+* Implement `LCD.v` and test with test bench:
   
   ```
   $ cd 06_LCD

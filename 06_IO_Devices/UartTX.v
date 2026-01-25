@@ -6,6 +6,8 @@
  * out[15] is set to high (busy). The transmission is finished after 2170 clock 
  * cycles (10 byte at 217 cycles each). When transmission completes out[15] goes
  * low again (ready).
+ *
+ * https://en.wikipedia.org/wiki/Universal_asynchronous_receiver-transmitter
  */
 
 `default_nettype none

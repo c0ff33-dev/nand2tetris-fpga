@@ -33,7 +33,7 @@ module Mux_tb();
   		$dumpvars(0, Mux_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Mux");
+		$display("Test bench: Mux");
 		
 		a=0;b=0;sel=0;check();
 		a=0;b=0;sel=1;check();

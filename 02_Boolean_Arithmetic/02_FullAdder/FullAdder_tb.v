@@ -33,7 +33,7 @@ module FullAdder_tb();
   		$dumpvars(0, FullAdder_tb);
 		
 		$display("------------------------");
-		$display("Testbench: FullAdder");
+		$display("Test bench: FullAdder");
 		
 		a=0;b=0;c=0;check();
 		a=0;b=0;c=1;check();

@@ -8,7 +8,7 @@ A library of functions for text based input and output over UART.
 
 * Implement `StdIO.jack`.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Math`, `Memory`, `String`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
 * Run `StdIO_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to UART.
 

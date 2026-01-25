@@ -34,7 +34,7 @@ module DMux_tb();
   		$dumpvars(0, DMux_tb);
 		
 		$display("------------------------");
-		$display("Testbench: DMux");
+		$display("Test bench: DMux");
 		
 		in=0;sel=0;check();
 		in=0;sel=1;check();

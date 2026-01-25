@@ -9,7 +9,7 @@ The `HACK` physical screen consists of 320 rows of 240 pixels each. The library 
 
 * Implement `Output.jack`.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Math`, `Memory`, `Output`, `Screen`, `String`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`, `Screen`, `ScreenExt`, `Output`).
 
 * Test on real hardware.
 

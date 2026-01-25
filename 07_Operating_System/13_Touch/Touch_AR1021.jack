@@ -50,7 +50,7 @@ class Touch{
         // screen initial byte for 0x4D (no data)
         let initial = Touch.writeRTP(0);
         if (initial = 77) {
-            // TODO: not sure the remaining 4 bytes need to be cycled
+            // FUTURE: not sure if the remaining 4 bytes need to be cycled
             return false;
         }
         let loX = Touch.writeRTP(0);
@@ -58,7 +58,7 @@ class Touch{
         let loY = Touch.writeRTP(0);
         let hiY = Touch.writeRTP(0);
         
-        // TODO: add a note to docs if shift logic actually needed here
+        // FUTURE: add a note to docs if shift logic actually needed here
         let pen = initial - 128; // 1------P
         let x_coord = Util.shiftByteLeft(hiX, loX);
         let y_coord = Util.shiftByteLeft(hiY, loY);

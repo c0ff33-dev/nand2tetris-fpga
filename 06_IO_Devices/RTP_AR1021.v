@@ -2,7 +2,7 @@
  * The special function register RTP receives bytes from the touch panel
  * controller AR1021.
  * 
- * When load=1 transmission of byte in[7:0] is initiated. The byte is send to
+ * When load=1 transmission of byte in[7:0] is initiated. The byte is sent to
  * SDO bitwise together with 8 clock signals on SCK. At the same time RTP
  * receives a byte at SDI. During transmission out[15] is 1. The transmission
  * of a byte takes 256 clock cycles (32 cycles for each bit to achieve a slower

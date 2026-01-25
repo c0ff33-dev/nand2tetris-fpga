@@ -1,19 +1,23 @@
-// NS2009 Resistive Touch Panel (RTP) controller
-// 400 KHz I2C interface
-// 7 bit device address: 0x48 (0x90 write, 0x91 read)
-// no response other than the ACK bit for writes
-// 12 bit response for reads (two bytes, MSB first, last 4 bits zero)
+/**
+ * NS2009 Resistive Touch Panel (RTP) controller
+ * 400 KHz I2C interface
+ * 7 bit device address: 0x48 (0x90 write, 0x91 read)
+ * No response other than the ACK bit for writes
+ * 12 bit response for reads (two bytes, MSB first, last 4 bits are zero)
+ *
+ * https://en.wikipedia.org/wiki/I2C
+ */
 
 module RTP (
     input  wire        clk,
     input  wire        load,
-    input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
-    inout  wire        SDA,   // I2C data line (inout to allow open drain)
-    inout  wire        SCL,    // I2C clock (inout to allow open drain)
+    input  wire [15:0] in,   // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
+    inout  wire        SCL,  // I2C clock (inout to allow open-drain)
+    inout  wire        SDA,  // I2C data line (inout to allow open-drain)
     output wire [15:0] out   // out[15]=busy, [7:0]=data (if read)
 );
 
-// 400 KHz SCL further divided by 4 (2 tick/tock x 2 sub-phases per high/low)
+// 400 KHz SCL further divided by 2 tick/tock x 2 sub-phases per high/low
 localparam integer DIVIDER = 25_000_000 / (400_000 * 2 * 2); 
 
 reg [9:0] clk_cnt;
@@ -72,13 +76,13 @@ reg next_byte = 0;
 always @(posedge clk) begin
     case (state)
         IDLE: begin // 0
-            scl_oe <= 0; // SCL high (release)
-            sda_oe <= 0; // SDA high (release)
+            scl_oe <= 0;             // SCL high (release)
+            sda_oe <= 0;             // SDA high (release)
             phase <= 0;
             next_byte <= 0;
             if (load) begin
-                rw <= in[8];   // read/write bit
-                next_out[15] <= 1;  // busy
+                rw <= in[8];         // read/write bit
+                next_out[15] <= 1;   // busy
                 addr <= {DEV_ADDR, in[8]}; // 7 bit address + r/w bit
                 if (in[8] == 0)
                     data <= in[7:0]; // command byte for write

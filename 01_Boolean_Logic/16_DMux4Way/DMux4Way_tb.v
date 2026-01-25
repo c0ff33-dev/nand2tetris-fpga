@@ -38,7 +38,7 @@ module DMux4Way_tb();
   		$dumpvars(0, DMux4Way_tb);
 		
 		$display("------------------------");
-		$display("Testbench: DMux4Way");
+		$display("Test bench: DMux4Way");
 		
 		in=0;sel=0;check();
 		in=0;sel=1;check();

@@ -53,7 +53,7 @@ class Touch{
             do Touch.writeRTP(set_x_reg);
             let x_coord = Touch.writeRTP(read_cmd);
 
-            // set y coord: NS2009 inverts the Y axis by default
+            // set y coord: NS2009 inverts the Y axis
             do Touch.writeRTP(set_y_reg);
             let y_coord = adc_max - Touch.writeRTP(read_cmd);
 
@@ -91,7 +91,7 @@ class Touch{
 
     /** Map 12 bit ADC coords to screen resolution */
     function int _map(int data, int in_min, int in_max, int out_min, int out_max) {
-        // FUTURE: Tetris expects the raw/unscaled values so no longer used
+        // FUTURE: Tetris expects the raw/unscaled values so not currently used
         // this is basically just integer division
         var int i, pos, out_range, in_range, scaled, accum;
 

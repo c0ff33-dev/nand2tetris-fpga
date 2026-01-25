@@ -51,7 +51,7 @@ module RAM512_tb();
   		$dumpvars(0, RAM512_tb);
 		
 		$display("------------------------");
-		$display("Testbench: RAM512");
+		$display("Test bench: RAM512");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

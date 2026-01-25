@@ -38,7 +38,9 @@ class Menu{
 			let i=i+1;
 		}
 		return;
-	}	
+	}
+
+	// FIXME: button gets "stuck" in pressed state
 	method int getButton() {
 		var boolean t;
 		var Button b;
@@ -53,7 +55,7 @@ class Menu{
 				do b.draw(false);
 			}
 		} else {
-			if ((Touch.getPen()=1) & (Touch.getY()<1024)) {
+			if ((Touch.getPen()=1) & (Touch.getY()>3072)) {
 	    		let pressed = true;
 				let b = button[last];
 				do b.draw(false);

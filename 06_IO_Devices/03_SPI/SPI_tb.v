@@ -79,7 +79,7 @@ module SPI_tb();
   		$dumpvars(0, SPI_tb);
 		
 		$display("------------------------");
-		$display("Testbench: SPI");
+		$display("Test bench: SPI");
 
 		for (n=0; n<400;n=n+1) 
 				check();

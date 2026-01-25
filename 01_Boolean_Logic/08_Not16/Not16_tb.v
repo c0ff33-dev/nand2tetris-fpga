@@ -32,7 +32,7 @@ module Not16_tb();
   		$dumpvars(0, Not16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Not16");
+		$display("Test bench: Not16");
 		
 		for (n=0; n<10000;n=n+1) 
 			begin

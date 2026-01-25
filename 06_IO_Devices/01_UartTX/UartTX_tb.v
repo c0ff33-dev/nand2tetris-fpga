@@ -61,7 +61,7 @@ module UartTX_tb();
   		$dumpvars(0, UartTX_tb);
 		
 		$display("------------------------");
-		$display("Testbench: UartTX");
+		$display("Test bench: UartTX");
 
 		for (n=0; n<12000;n=n+1) 
 				check();

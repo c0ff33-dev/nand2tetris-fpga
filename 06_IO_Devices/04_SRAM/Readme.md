@@ -119,7 +119,7 @@ set_io SRAM_DATA[15] 52 # SD15
 
 ### Project
 
-* Implement `SRAM_D.v` and simulate with testbench:
+* Implement `SRAM_D.v` and simulate with test bench:
   
   ```
   $ cd 04_SRAM
@@ -135,7 +135,7 @@ set_io SRAM_DATA[15] 52 # SD15
 
 * Edit `HACK.v` and add a special function register `SRAM_D` to memory address 4102.
 
-* Implement `buffer.asm` and test with the testbench:
+* Implement `buffer.asm` and test with the test bench:
   
   ```
   $ cd 04_SRAM
@@ -145,7 +145,7 @@ set_io SRAM_DATA[15] 52 # SD15
   $ apio sim
   ```
 
-* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in `SPI` chip at memory address `0x040000` of the testbench). You can change the display format of the `SRAM_DATA` field to ASCII.
+* Check the SRAM wires of the simulation and look for the storing of "SPI!" (which was preloaded in `SPI` chip at memory address `0x040000` of the test bench). You can change the display format of the `SRAM_DATA` field to ASCII.
   
   ![](buffer1.png)
 

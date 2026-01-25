@@ -51,7 +51,7 @@ module RAM3584_tb();
   		$dumpvars(0, RAM3584_tb);
 		
 		$display("------------------------");
-		$display("Testbench: RAM3584");
+		$display("Test bench: RAM3584");
 
 		for (n=0; n<2*3584;n=n+1) 
 			check();

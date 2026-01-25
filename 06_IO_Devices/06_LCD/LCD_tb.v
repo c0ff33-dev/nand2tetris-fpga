@@ -76,7 +76,7 @@ module LCD_tb();
   		$dumpvars(0, LCD_tb);
 		
 		$display("------------------------");
-		$display("Testbench: LCD");
+		$display("Test bench: LCD");
 
 		for (n=0; n<400;n=n+1) 
 				check();

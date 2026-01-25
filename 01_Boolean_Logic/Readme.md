@@ -74,7 +74,7 @@ module Xor(
 
 ### Simulation
 
-For every chip wie provide a test folder e.g. `05_Xor`, in which you find a so called testbench (`Xor_tb.v`). To run the test bench cd into the test directory and run apio:
+For every chip wie provide a test folder e.g. `05_Xor`, in which you find a so called test bench (`Xor_tb.v`). To run the test bench cd into the test directory and run apio:
 
 ```
 $ cd 05_Xor

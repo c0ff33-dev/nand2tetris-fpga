@@ -34,7 +34,7 @@ The special function register `GO` is memory mapped to address 4103:
 
 A bootloader that reads 128KB (64K words) from `SPI` flash ROM memory starting from address `0x10000` and writes them to SRAM (the first 64KB page `0x0-FFFF` is reserved for the FPGA configuration data). Finally it resets the CPU and starts program execution from SRAM.
 
-To run the testbench initially it will only be necessary to read the first 12 bytes (6 words). The `SPI` in the testbench is preloaded with the following 6 assembler instructions of the program `leds.asm` translated into `HACK` machine language:
+To run the test bench initially it will only be necessary to read the first 12 bytes (6 words). The `SPI` in the test bench is preloaded with the following 6 assembler instructions of the program `leds.asm` translated into `HACK` machine language:
 
 ```
 @BUT  // 0x1001
@@ -49,7 +49,7 @@ M=D   // 0xE308
 
 ### Project
 
-* Implement `boot.asm` (read the first 12 bytes / 6 words) and run the testbench:
+* Implement `boot.asm` (read the first 12 bytes / 6 words) and run the test bench:
   
   ```
   $ cd ../05_GO

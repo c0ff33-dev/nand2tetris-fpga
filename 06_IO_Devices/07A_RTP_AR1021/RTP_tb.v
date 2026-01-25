@@ -68,7 +68,7 @@ module RTP_tb();
   		$dumpvars(0, RTP_tb);
 		
 		$display("------------------------");
-		$display("Testbench: RTP");
+		$display("Test bench: RTP");
 
 		for (n=0; n<2000;n=n+1) 
 				check();

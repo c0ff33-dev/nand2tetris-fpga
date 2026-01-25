@@ -21,7 +21,7 @@ A library that supports various program execution services.
 
 * Implement `Sys.jack`
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`).
 
 * Test in simulation. Change the delay time in `Main.jack` to 1ms.
   

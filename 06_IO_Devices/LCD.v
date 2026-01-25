@@ -3,7 +3,7 @@
  * 
  * When load=1 and in[8]=0 transmission of byte in[7:0] is initiated.
  * CSX is goes low (and stays low even when transmission is completed).
- * DCX is set to in[9]. The byte in[7:0] is send to SDO bitwise together
+ * DCX is set to in[9]. The byte in[7:0] is sent to SDO bitwise together
  * with 8 clock signals on SCK. During transmission out[15] is 1.
  * After 16 clock cycles transmission is completed and out[15] is set to 0.
  * 
@@ -31,9 +31,6 @@
  * in the best case the draw rate will max out at around ~0.5 fps. In general the performance cost  
  * to send the data over SPI contributes to but is a very minor part of the overall time taken.
  */
-
- // TODO: vs ~225 cycles (~14 cycles/pixel, ~215KB/s) to fill a word = 12.5 fps @ 25 MHz
- // 2.85x faster, 16 x less bit depth = ~45x perf increase (and ~1.7x larger buffer)
 
 `default_nettype none
 module LCD(

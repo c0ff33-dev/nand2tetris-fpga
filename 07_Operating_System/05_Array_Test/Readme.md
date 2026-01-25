@@ -8,7 +8,7 @@ Represents an array. In the Jack language, arrays are instances of the Array cla
 
 * Implement `Array.jack`
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Memory`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`).
 
 * Test in simulation:
   

@@ -25,6 +25,8 @@ yhigh[4:0]*128+ylow[6:0] represent a 12 bit y-coordinate in the range 0-4095
 
 * Implement `Touch.jack`.
 
+**Attention:** From this point forward all Jack libraries in `Sys.init()` can be initialized. 
+
 * Test in simulation:
   
   ```

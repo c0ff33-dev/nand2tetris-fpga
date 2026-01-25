@@ -32,7 +32,7 @@ module Buffer16_tb();
   		$dumpvars(0, Buffer16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Buffer16");
+		$display("Test bench: Buffer16");
 		
 		for (n=0; n<10000;n=n+1) 
 			begin

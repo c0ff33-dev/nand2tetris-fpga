@@ -31,7 +31,7 @@ module Not_tb();
   		$dumpvars(0, Not_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Not");
+		$display("Test bench: Not");
 		
 		in=0;check();
 		in=1;check();

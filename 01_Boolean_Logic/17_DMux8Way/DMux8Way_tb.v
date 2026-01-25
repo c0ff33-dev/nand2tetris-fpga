@@ -47,7 +47,7 @@ module DMux8Way_tb();
   		$dumpvars(0, DMux8Way_tb);
 		
 		$display("------------------------");
-		$display("Testbench: DMux8Way");
+		$display("Test bench: DMux8Way");
 		
 		in=0;sel=0;check();
 		in=0;sel=1;check();

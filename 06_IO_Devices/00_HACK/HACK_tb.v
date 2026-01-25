@@ -156,7 +156,7 @@ module HACK_tb();
   		$dumpvars(0, HACK_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Hack");
+		$display("Test bench: Hack");
 
 		#45000
 		$finish;

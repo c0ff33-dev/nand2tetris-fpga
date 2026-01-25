@@ -23,7 +23,7 @@ module Clock25_Reset20_tb();
   		$dumpvars(0, Clock25_Reset20_tb);
 	
 		$display("------------------------");
-		$display("Testbench: Clock25_Reset10");
+		$display("Test bench: Clock25_Reset10");
 
 		#4000	
 		$finish;

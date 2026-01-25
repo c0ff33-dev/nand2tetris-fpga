@@ -48,7 +48,7 @@ module BitShift9R_tb();
   		$dumpvars(0, BitShift9R_tb);
 		
 		$display("------------------------");
-		$display("Testbench: BitShift9R");
+		$display("Test bench: BitShift9R");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

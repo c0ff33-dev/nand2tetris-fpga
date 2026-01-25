@@ -32,7 +32,7 @@ module Or8Way_tb();
   		$dumpvars(0, Or8Way_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Or8Way");
+		$display("Test bench: Or8Way");
 
 		in=0;
 		check();				

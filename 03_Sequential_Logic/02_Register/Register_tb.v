@@ -40,7 +40,7 @@ module Register_tb();
   		$dumpvars(0, Register_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Register");
+		$display("Test bench: Register");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

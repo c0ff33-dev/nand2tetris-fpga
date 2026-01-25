@@ -32,7 +32,7 @@ module HalfAdder_tb();
   		$dumpvars(0, HalfAdder_tb);
 		
 		$display("------------------------");
-		$display("Testbench: HalfAdder");
+		$display("Test bench: HalfAdder");
 		
 		a=0;b=0;check();
 		a=0;b=1;check();

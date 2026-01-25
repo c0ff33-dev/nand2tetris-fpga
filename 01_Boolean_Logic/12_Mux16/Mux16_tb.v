@@ -35,7 +35,7 @@ module Mux16_tb();
   		$dumpvars(0, Mux16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Mux16");
+		$display("Test bench: Mux16");
 		
 		for (n=0; n<10000;n=n+1) 
 			begin

@@ -33,7 +33,7 @@ module And16_tb();
   		$dumpvars(0, And16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: And16");
+		$display("Test bench: And16");
 				
 		for (n=0; n<10000;n=n+1) 
 			begin

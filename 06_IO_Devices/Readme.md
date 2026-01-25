@@ -1,6 +1,6 @@
 # 06 I/O Devices
 
-Build the following special function register to connect `HACK` to I/O devices: `UART_TX`, `UART_RX`, `SPI`, `SRAM`, `GO`, `LCD` and `RTP`. For every special function register we provide a folder with implementation details and a testbench. The special function register must be memory mapped, so `HACK` can read/write data from/to the I/O device.
+Build the following special function register to connect `HACK` to I/O devices: `UART_TX`, `UART_RX`, `SPI`, `SRAM`, `GO`, `LCD` and `RTP`. For every special function register we provide a folder with implementation details and a test bench. The special function register must be memory mapped, so `HACK` can read/write data from/to the I/O device.
 
 | address | I/O dev   | function                                           |
 | ------- | --------- | -------------------------------------------------- |
@@ -39,7 +39,7 @@ For every special function register we will need the appropriate software to tal
   $ apio sim
   ```
 
-+ Implement the designated assembler program, install the binary into `00_HACK` and run the testbench:
++ Implement the designated assembler program, install the binary into `00_HACK` and run the test bench:
   
   ```
   $ cd <0X_device>
@@ -80,25 +80,25 @@ sudo ln -s 07B_RTP_NS2009 07_RTP
 Update `06_IO_Devices/00_HACK/HACK_tb.v` refs:
 
 ```
-	// AR1021 wires
-	// wire RTP_SDI;
-	// wire RTP_SDO;
-	// wire RTP_SCK;
+// AR1021 wires
+// wire RTP_SDI;
+// wire RTP_SDO;
+// wire RTP_SCK;
 
-	// NS2009 wires
-	wire RTP_SDA;
-	wire RTP_SCL;
+// NS2009 wires
+wire RTP_SDA;
+wire RTP_SCL;
 
-  // ...
+// ...
 
-  // AR1021 wires
-  // .RTP_SDI(RTP_SDI),   // RTP Serial Data In
-  // .RTP_SDO(RTP_SDO),   // RTP serial Data Out
-  // .RTP_SCK(RTP_SCK)    // RTP serial clock
+// AR1021 wires
+// .RTP_SDI(RTP_SDI),   // RTP Serial Data In
+// .RTP_SDO(RTP_SDO),   // RTP serial Data Out
+// .RTP_SCK(RTP_SCK)    // RTP serial clock
 
-  // NS2009 wires
-  .RTP_SDA(RTP_SDA),      // RTP Data line
-  .RTP_SCL(RTP_SCL)       // RTP Serial Clock
+// NS2009 wires
+.RTP_SDA(RTP_SDA),      // RTP Data line
+.RTP_SCL(RTP_SCL)       // RTP Serial Clock
 ```
 
 Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
@@ -113,3 +113,5 @@ Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
 set_io RTP_SDA 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
 set_io RTP_SCL 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
 ```
+
+Towards the end of the project the logic cell budget may become tight especially if implementing `I2C` for the `RTP` chip on `iCE40HX8K-EVB`. In that instance you can disable `UartTX/RX` by commenting out the relevant parts in `HACK.v` and swap debug implementation to printing to `Screen` (when complete) to reclaim some LCs if needed. An `iCE40HX8K-EVB` should have more than enough LC budget but hasn't been tested / may need other minor changes.

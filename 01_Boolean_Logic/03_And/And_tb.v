@@ -32,7 +32,7 @@ module And_tb();
   		$dumpvars(0, And_tb);
 		
 		$display("------------------------");
-		$display("Testbench: And");
+		$display("Test bench: And");
 		
 		a=0;b=0;check();
 		a=0;b=1;check();

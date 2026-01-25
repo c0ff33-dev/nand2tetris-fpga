@@ -9,7 +9,7 @@ class GPIO {
     function void init() {
         let LED = 4096;
         let BUT = 4097;
-        let DEBUG0 = 4107; // DEBUG0-4=4107-4111
+        let DEBUG0 = 4107; // DEBUG0-4 (4107-4111)
         return;
     }
 

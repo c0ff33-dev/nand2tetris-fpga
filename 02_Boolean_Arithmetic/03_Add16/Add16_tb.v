@@ -32,7 +32,7 @@ module Add16_tb();
   		$dumpvars(0, Add16_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Add16");
+		$display("Test bench: Add16");
 		
 		for (n=0; n<1000;n=n+1) 
 			begin

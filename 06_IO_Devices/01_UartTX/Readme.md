@@ -70,7 +70,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 ### Project
 
-* Implement `UartTX` and simulate with testbench.
+* Implement `UartTX` and simulate with test bench:
   
   ```
   $ cd 01_UartTX

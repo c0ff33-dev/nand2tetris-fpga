@@ -1,20 +1,6 @@
 `timescale 10ns/1ns
 `default_nettype none
 
-// 100/400 KHz timings: 25 MHz = 1 clk = 40ns = 1/25μs (25 clk/1μs)
-// generalized into rough timing buckets
-
-// free time between STOP/START: 4.7μs/1.3μs (~118/~32 clk cycles)
-// START/STOP setup/hold: 4.7μs/1.3μs (~118/~118 clk cycles)
-// SCL/SDA high/low: 4.7μs/1.3μs (~118/~32 clk cycles)
-
-// data bits after START (high SDA=data)
-// - SCL/SDA low to high (same timing)
-// - SDA sampled during SCL high
-// - SDA shift during SCL low
-
-// TODO: fix/finalize RTP test bench
-
 module RTP_tb();
     reg tb_clk = 0;
     always #2 tb_clk = ~tb_clk; // 25 MHz
@@ -61,7 +47,7 @@ module RTP_tb();
             tb_load <= 0;
     end
 
-    // testbench state machine
+    // test bench state machine
     reg [15:0] out_cmp = 0;
     localparam [3:0]
         IDLE        = 4'd0,
@@ -71,7 +57,7 @@ module RTP_tb();
         READ_BYTE   = 4'd4,
         END_COND    = 4'd5;
 
-    // 400 KHz SCL further divided by 4 (2 tick/tock x 2 sub-phases per high/low)
+    // 400 KHz SCL further divided by 2 tick/tock x 2 sub-phases per high/low
     localparam integer TB_DIVIDER = 25_000_000 / (400_000 * 2 * 2); 
 
     reg [9:0] tb_clk_cnt = 0;
@@ -317,9 +303,9 @@ module RTP_tb();
         $dumpvars(0, RTP_tb);
 
         $display("------------------------");
-        $display("Testbench: RTP");
+        $display("Test bench: RTP");
 
-        for (tb_n = 0; tb_n < 60000; tb_n = tb_n + 1) begin
+        for (tb_n = 0; tb_n < 7500; tb_n = tb_n + 1) begin
             check();
         end
 

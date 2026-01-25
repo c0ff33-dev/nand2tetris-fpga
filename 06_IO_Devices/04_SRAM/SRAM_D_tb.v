@@ -61,7 +61,7 @@ module SRAM_D_tb();
   		$dumpvars(0, SRAM_D_tb);
 		
 		$display("------------------------");
-		$display("Testbench: SRAM_D");
+		$display("Test bench: SRAM_D");
 
 		for (n=0; n<24;n=n+1) 
 				check();

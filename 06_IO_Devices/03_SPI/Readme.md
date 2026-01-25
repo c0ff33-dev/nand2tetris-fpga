@@ -15,12 +15,12 @@ The special function register `SPI` memory mapped to address 4100 enables `HACK`
 | IN     | `load`     | =1 initiates the transmission, when `in[8]=0`           |
 | OUT    | `out[15]`  | =1 chip is busy, =0 chip is ready                       |
 | OUT    | `out[7:0]` | Received byte (when out[15]=0)                          |
-| OUT    | `CSX`      | Chip Select NOT                                         |
-| OUT    | `SDO`      | Serial Data Out                                         |
-| OUT    | `SCK`      | Serial Clock                                            |
-| IN     | `SDI`      | Serial Data In                                          |
+| OUT    | `CSX`      | `SPI` Chip Select NOT                                   |
+| OUT    | `SDO`      | `SPI` Serial Data Out                                   |
+| OUT    | `SCK`      | `SPI` Serial Clock                                      |
+| IN     | `SDI`      | `SPI` Serial Data In                                    |
 
-When `load=1` and `in[8]=0` transmission of byte `in[7:0]` is initiated. `CSX` goes low (and stays low even when transmission is completed). The byte is send to `SDO` bitwise together with 8 clock signals on `SCK`. At the same time the `SPI` receives a byte at `SDI`. During transmission `out[15]=1`. After 8 clock cycles the transmission of one byte is completed. `out[15]` goes low and `SPI` outputs the received byte to `out[7:0]`.
+When `load=1` and `in[8]=0` transmission of byte `in[7:0]` is initiated. `CSX` goes low (and stays low even when transmission is completed). The byte is sent to `SDO` bitwise together with 8 clock signals on `SCK`. At the same time the `SPI` receives a byte at `SDI`. During transmission `out[15]=1`. After 8 clock cycles the transmission of one byte is completed. `out[15]` goes low and `SPI` outputs the received byte to `out[7:0]`.
 
 When `load=1` and `in[8]=1` then `CSX` goes high without transmission of any bit.
 
@@ -68,7 +68,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
 
 ### Project
 
-* Implement `SPI.v` and test with testbench:
+* Implement `SPI.v` and test with test bench:
   
   ```
   $ cd 03_SPI

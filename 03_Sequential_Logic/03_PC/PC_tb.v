@@ -47,7 +47,7 @@ module PC_tb();
   		$dumpvars(0, PC_tb);
 		
 		$display("------------------------");
-		$display("Testbench: PC");
+		$display("Test bench: PC");
 
 		for (n=0; n<1000;n=n+1) 
 			check();

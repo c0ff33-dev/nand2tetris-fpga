@@ -40,7 +40,7 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
 
 * implement `Screen.jack`
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `Math`, `Memory`, `Screen`, `String`, `Sys`, `UART`).
+**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`, `Screen`, `ScreenExt`).
 
 * Test in simulation:
   

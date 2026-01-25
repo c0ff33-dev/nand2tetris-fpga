@@ -32,7 +32,7 @@ module Xor_tb();
   		$dumpvars(0, Xor_tb);
 		
 		$display("------------------------");
-		$display("Testbench: Xor");
+		$display("Test bench: Xor");
 		
 		a=0;b=0;check();
 		a=0;b=1;check();
