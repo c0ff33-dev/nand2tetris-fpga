@@ -1,6 +1,6 @@
 ## Memory.jack
 
-This library provides two services: direct access to the computer's main memory (RAM), and allocation and recycling of memory blocks. The `HACK` RAM consists of 7KB (3584 words) each holding 16 bits of data.
+This library provides two services: direct access to the computer's main memory (RAM) and allocation and recycling of memory blocks. The `HACK` RAM consists of 7KB (3584 words) each holding 16 bits of data.
 
 The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. This will leave 1.5KB (768 words) of stack, enough to run Tetris.
 
@@ -16,7 +16,7 @@ The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. Thi
 
 ### Project
 
-* Implement `Memory.jack`
+* Implement `Memory.jack`.
 
 **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`).
 
@@ -30,6 +30,6 @@ The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. Thi
   $ apio sim
   ```
 
-* Check the content of special function register `DEBUG0-4`.
+* Check the content of special function register `DEBUG0-4`:
   
   ![](memory.png)
