@@ -21,21 +21,20 @@ class ScreenExt {
         let landscape = false;
 
         // ILI9341V initialization: config
-        // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)
         do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
 
         if (landscape) {
             // landscape orientation
-            do ScreenExt.writeCommand(512+8+32); // BGR=1, MV=1 (row/col flip)
+            do ScreenExt._write8BitData(8+32); // BGR=1, MV=1 (row/col flip)
         } else {
             // original "portrait" orientation
             // MX=1 (flip x axis), BGR=1 (BGR bit order)
-            do ScreenExt.writeCommand(512+64+8); 
+            do ScreenExt._write8BitData(64+8); 
         }
         
         // set RGB format
         do ScreenExt.writeCommand(58); // COLMOD 0x3A (8 bit param)
-        do ScreenExt.writeCommand(512+85); // 16 bit RGB format
+        do ScreenExt._write8BitData(85); // 16 bit RGB format
        
         // ILI9341V initialization: awaken
         do Sys.wait(LCD_WAIT); // wait in case coming out of reset
@@ -67,6 +66,12 @@ class ScreenExt {
         while (~(busy = 0)) {
             let busy = LCD[0]; // read response
         }
+        return;
+    }
+
+    // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)
+    function void _write8BitData(int data) {
+        do ScreenExt.writeCommand(512+data);
         return;
     }
 
