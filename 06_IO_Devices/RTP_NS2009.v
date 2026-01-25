@@ -8,19 +8,13 @@ module RTP (
     input  wire        clk,
     input  wire        load,
     input  wire [15:0] in,    // in[8]=r/w (0=write/1=read), in[7:0]=command (if write)
-    output wire [15:0] out,   // out[15]=busy, [7:0]=data (if read)
-
-    // inout  wire        SDA,   // I2C data line (inout to allow open-drain)
-    // inout  wire        SCL,   // I2C clock (inout to allow open-drain)
-    output reg sda_oe,
-    output reg scl_oe,
-    input wire sda_in,
-    input wire scl_in
+    inout  wire        SDA,   // I2C data line (inout to allow open drain)
+    inout  wire        SCL,    // I2C clock (inout to allow open drain)
+    output wire [15:0] out   // out[15]=busy, [7:0]=data (if read)
 );
 
-// 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL (currently 125/100 KHz)
-// 2=tick/tock x 2=sub-phases per high/low
-localparam integer DIVIDER = 25_000_000 / (100_000 * 2 * 2); 
+// 400 KHz SCL further divided by 4 (2 tick/tock x 2 sub-phases per high/low)
+localparam integer DIVIDER = 25_000_000 / (400_000 * 2 * 2); 
 
 reg [9:0] clk_cnt;
 reg tick; // SCL clock: tick/tock every DIVIDER clk cycles
@@ -33,10 +27,10 @@ assign out = next_out;
 // clock divider for I2C SCL timing
 always @(posedge clk) begin
     if (out[15]) begin // busy
-        if (clk_cnt == DIVIDER - 1) begin
+        if (clk_cnt == (DIVIDER-1)) begin
             clk_cnt <= 0;
             tick <= 1'b1;
-        end else if (clk_cnt == DIVIDER/2) begin
+        end else if (clk_cnt == (DIVIDER/2)) begin
             clk_cnt <= clk_cnt + 1;
         end else begin
             clk_cnt <= clk_cnt + 1;
@@ -48,12 +42,11 @@ always @(posedge clk) begin
     end
 end
 
-// TODO: not totally convinced this is different to explicit SB_IO in synthesis
 // 1 = drive low, 0 = release (pulled high if not driven)
-// reg sda_oe = 0;         
-// reg scl_oe = 0;
-// assign sda_in = sda_oe ? 1'b0 : 1'bz;
-// assign scl_in = scl_oe ? 1'b0 : 1'bz;
+reg sda_oe = 0;         
+reg scl_oe = 0;
+assign SDA = sda_oe ? 1'b0 : 1'bz;
+assign SCL = scl_oe ? 1'b0 : 1'bz;
 
 localparam [2:0]
     IDLE        = 4'd0,
@@ -212,21 +205,21 @@ always @(posedge clk) begin
                         if (bit_cnt > 0) begin
                             // adjust offset for reduced count in 2nd byte
                             if (~next_byte)
-                                hi_byte[bit_cnt-1] <= sda_in;
+                                hi_byte[bit_cnt-1] <= SDA;
                             else
-                                lo_byte[bit_cnt] <= sda_in;
+                                lo_byte[bit_cnt-1] <= SDA;
                         end
                         if (bit_cnt==0) begin
                             if (~next_byte) begin
                                 next_out <= {8'h80,hi_byte}; // first byte shifted in, still busy
                                 next_byte <= 1;
-                                bit_cnt <= 7;           // start next count at 7 (no start bit)
+                                bit_cnt <= 8;                // start next count
                             end else begin
-                                next_out <= {
+                                next_out <= {                // second byte shifted in, still busy
                                     4'h8,
                                     hi_byte,
                                     lo_byte[7:4]
-                                }; // second byte shifted in, still busy
+                                };
                                 state <= END_COND;
                                 rw <= 0;
                             end

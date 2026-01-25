@@ -2,7 +2,7 @@
  * NS2009. */
 
 class Touch{
-    static int RTP, x_coord, y_coord, pen, x_max, y_max, adc_max, pressure;
+    static int RTP, x_coord, y_coord, z_coord, pen, x_max, y_max, adc_max, touch_threshold;
     static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
     function void init() {
@@ -12,17 +12,18 @@ class Touch{
         let set_y_reg = 208; // 0xD0 (11010000), in[8]=0 for write
         let set_z_reg = 224; // 0xE0 (11100000), in[8]=0 for write
         let read_cmd = 256;  // in[8]=1 for read
-        let adc_max = 4095;
-        let pressure = 25;   // not sure about sensitivity / arbitrary threshold
+        let adc_max = 4094;  // 4095 (0xFFF) is invalid event
+        let touch_threshold = 100;   // not sure about sensitivity / arbitrary threshold
 
-        let landscape = false;
-        if (landscape) {
-            let x_max = 320;
-            let y_max = 240;
-        } else {
-            let x_max = 240;
-            let y_max = 320;
-        }
+        // only relevant if using converted coords
+        // let landscape = false;
+        // if (landscape) {
+        //     let x_max = 320;
+        //     let y_max = 240;
+        // } else {
+        //     let x_max = 240;
+        //     let y_max = 320;
+        // }
 
         return;
     }
@@ -40,52 +41,51 @@ class Touch{
     /** trys to read a valid touch event report. returns true on success.
      *  returns false, if no valid touch event is available. */
     function boolean getEvent() {
-        do Touch.getX();
-        do Touch.getY();
-        do Touch.getPen();
-        
-        if (pen=1) {
-            // ignore malformed data and 0xFFF touch event
-            if (x_coord > adc_max | y_coord > adc_max | pen > (4094)) { 
+        // set pen state
+        do Touch.writeRTP(set_z_reg);
+        let z_coord = Touch.writeRTP(read_cmd);
+
+        // filter for valid touch events
+        if ((z_coord > touch_threshold) & (z_coord < adc_max)) {
+            let pen = 1;
+            
+            // set x coord        
+            do Touch.writeRTP(set_x_reg);
+            let x_coord = Touch.writeRTP(read_cmd);
+
+            // set y coord: NS2009 inverts the Y axis by default
+            do Touch.writeRTP(set_y_reg);
+            let y_coord = adc_max - Touch.writeRTP(read_cmd);
+
+            // ignore malformed data
+            if (x_coord > adc_max | y_coord > adc_max) { 
                 return false; 
             } else {
                 return true;
             }
+        } else {
+            let pen = 0;
         }
         return false;
     }
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getX() {
-        var int x;
-        do Touch.writeRTP(set_x_reg);
-        // FUTURE: Tetris expects the raw/unscaled values so no longer used
-        // let x_coord = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, x_max);
-        let x_coord = Touch.writeRTP(read_cmd);
         return x_coord;
     }
 
     /** returns the x coordinate in the range [0..4095] of the last touch event report */
     function int getY() {
-        var int y;
-        do Touch.writeRTP(set_y_reg);
-        // FUTURE: Tetris expects the raw/unscaled values so no longer used
-        // let y = Touch._map(Touch.writeRTP(read_cmd), 0, adc_max, 0, y_max);
-        // let y_coord = y_max - y; // NS2009 inverts the Y axis by default
-        let y_coord = Touch.writeRTP(read_cmd);
         return y_coord;
+    }
+
+    /** returns the z coordinate (touch pressure) in the range [0..4095] of the last touch event report */
+    function int getZ() {
+        return z_coord;
     }
 
     /** returns the pen value (1 = down, 0 = up) of the last touch event report */
     function boolean getPen() {
-        var int p;
-        do Touch.writeRTP(set_z_reg);
-        let p = Touch.writeRTP(read_cmd);
-        if (p > pressure) {
-            let pen = 1;
-        } else {
-            let pen = 0;
-        }
         return pen;
     }
 

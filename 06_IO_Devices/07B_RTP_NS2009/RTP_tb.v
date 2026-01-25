@@ -27,40 +27,13 @@ module RTP_tb();
     pullup(SDA);
     pullup(SCL);
 
-    // TODO: not convinced this is different to what was synthesized before
-    wire sda_oe, scl_oe;
-	wire sda_in, scl_in;
-	SB_IO #(
-		.PIN_TYPE(6'b1010_01), // 1 = input, 0 = output, bidir
-		.PULLUP(1'b1)          // enable internal pull-up if desired
-	) sda_buf (
-		.PACKAGE_PIN(SDA),
-		.OUTPUT_ENABLE(sda_oe),
-		.D_OUT_0(1'b0),        // drive 0 when OE=1
-		.D_IN_0(sda_in)
-	);
-
-	SB_IO #(
-		.PIN_TYPE(6'b1010_01),
-		.PULLUP(1'b1)
-	) scl_buf (
-		.PACKAGE_PIN(SCL),
-		.OUTPUT_ENABLE(scl_oe),
-		.D_OUT_0(1'b0),
-		.D_IN_0(scl_in)
-	);
-
     RTP rtp (
         .clk(tb_clk),
-        // .SDA(SDA),
-        // .SCL(SCL),
+        .SDA(SDA),
+        .SCL(SCL),
         .in(tb_in),
         .out(tb_out),
-        .load(tb_load),
-		.sda_oe(sda_oe),
-		.scl_oe(scl_oe),
-		.sda_in(sda_in),
-		.scl_in(scl_in)
+        .load(tb_load)
     );
 
     // drive low for data when set, else release (high z)
@@ -98,9 +71,8 @@ module RTP_tb();
         READ_BYTE   = 4'd4,
         END_COND    = 4'd5;
 
-    // 125/~31 clk cycles @ 25 MHz = 100/400 KHz SCL (currently 125/100 KHz)
-    // 2=tick/tock x 2=sub-phases per high/low
-    localparam integer TB_DIVIDER = 25_000_000 / (100_000 * 2 * 2); 
+    // 400 KHz SCL further divided by 4 (2 tick/tock x 2 sub-phases per high/low)
+    localparam integer TB_DIVIDER = 25_000_000 / (400_000 * 2 * 2); 
 
     reg [9:0] tb_clk_cnt = 0;
     reg tb_tick = 0;
@@ -123,17 +95,19 @@ module RTP_tb();
         tb_mdata[2] = 8'h91; // read cmd
         
         // delivers 12 bits serially MSB first and pads the last 4 bits
-        tb_rnd_nibble = 4'hA; //$random;
-        tb_mdata[3] = 8'hDE; //$random; // read bytes
+        tb_rnd_nibble = 4'hA; // $random;
+        tb_mdata[3] = 8'hDE; // $random; // read bytes
         tb_mdata[4] = {tb_rnd_nibble,4'd0};
     end
 
     // generate tick
     always @(posedge tb_clk) begin
         if (out_cmp[15]) begin
-            if (tb_clk_cnt == TB_DIVIDER - 1) begin
+            if (tb_clk_cnt == (TB_DIVIDER-1)) begin
                 tb_clk_cnt <= 0;
                 tb_tick <= 1'b1;
+            end else if (tb_clk_cnt == (TB_DIVIDER/2)) begin
+                tb_clk_cnt <= tb_clk_cnt + 1;
             end else begin
                 tb_clk_cnt <= tb_clk_cnt + 1;
                 tb_tick <= 1'b0;
@@ -175,7 +149,7 @@ module RTP_tb();
                             tb_phase <= 2; // continue SCL/SDA high
                         end
                         2: begin
-                            sda_cmp <= 0; // SDA low (drive)
+                            sda_cmp <= 0;  // SDA low (drive)
                             tb_phase <= 3;
                         end
                         3: begin
@@ -195,7 +169,7 @@ module RTP_tb();
                         end
                         1: begin
                             if (tb_bit_cnt > 0)
-                                sda_cmp <= tb_shiftreg[tb_bit_cnt-1];   // SDA=data (skip 9th bit)
+                                sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;           // slave ACK (drive low)
@@ -232,7 +206,7 @@ module RTP_tb();
                         end
                         1: begin
                             if (tb_bit_cnt > 0)
-                                sda_cmp <= tb_shiftreg[tb_bit_cnt-1];// SDA=data (skip 9th bit)
+                                sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             if (tb_bit_cnt == 0) begin
                                 sda_cmp <= 0;                  // slave ACK (drive low)
@@ -248,7 +222,6 @@ module RTP_tb();
                         3: begin
                             if (tb_bit_cnt > 8) begin
                                 tb_state <= END_COND;
-                                sda_cmp <= 1;                   // release SDA
                                 tb_shiftreg <= 0;
                             end
                             tb_phase <= 0;
@@ -261,36 +234,32 @@ module RTP_tb();
                 if (tb_tick) begin
                     case (tb_phase)
                         0: begin
-                            scl_cmp <= 0;                          // SCL low
+                            scl_cmp <= 0; // SCL low
                             tb_phase <= 1;
                         end
                         1: begin
-                            if (tb_bit_cnt > 0 && tb_bit_cnt < 8) begin
-                                if (tb_next_byte) begin
-                                    sda_cmp <= tb_shiftreg[tb_bit_cnt]; // SDA=data (skip 9th bit)
-                                    tb_sda_drv <= ~tb_shiftreg[tb_bit_cnt];
-                                end else begin
-                                    sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data (skip 9th bit)
-                                    tb_sda_drv <= ~tb_shiftreg[tb_bit_cnt-1];
-                                end
-                                
-                            end else
-                                tb_sda_drv <= 0; // clear ACK
+                            if (tb_bit_cnt > 0) begin
+                                sda_cmp <= tb_shiftreg[tb_bit_cnt-1]; // SDA=data
+                                tb_sda_drv <= ~tb_shiftreg[tb_bit_cnt-1];
+                            end else begin
+                                tb_sda_drv <= 0;  // release SDA for master [N]ACK
+                                sda_cmp <= tb_next_byte; // master [N]ACK
+                            end
                             tb_phase <= 2;
                         end
                         2: begin
-                            scl_cmp <= 1;                          // SCL high (release) - data bit/master [N]ACK
+                            scl_cmp <= 1; // SCL high (release) - data bit/master [N]ACK
                             tb_phase <= 3;
                         end
                         3: begin
                             tb_bit_cnt <= tb_bit_cnt - 1;
                             if (tb_bit_cnt==0) begin
-                                sda_cmp <= tb_next_byte;            // master [N]ACK
+                                sda_cmp <= tb_next_byte; // master [N]ACK
                                 if (~tb_next_byte) begin
                                     tb_shiftreg <= tb_mdata[tb_midx];
                                     out_cmp <= {8'h80,tb_mdata[tb_midx-1]}; // first byte shifted in, still busy
                                     tb_next_byte <= 1;
-                                    tb_bit_cnt <= 7;
+                                    tb_bit_cnt <= 8; // start next count
                                     tb_sda_drv <= 0; // clear ACK
                                 end else begin
                                     out_cmp <= {

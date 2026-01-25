@@ -49,7 +49,8 @@ module HACK(
 	// GO: mode update posedge clk else combinational
 	// TODO: LCD/RTP
 
-	wire clk,writeM,loadRAM,clkRST,RST,resLoad;
+	wire clk,writeM,loadRAM,clkRST,RST,resLoad;	
+	wire sda_oe,scl_oe,sda_in,scl_in;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
 	wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
@@ -153,18 +154,18 @@ module HACK(
 		.out(inIO1) // memory map
 	);
 
+	// FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
 	// UART_TX (4098) @ 115200 baud (~14KB/sec)
 	// R: busy signal, [15]=1 busy, [15]=0 ready
 	// W: send byte
-	UartTX uartTX(
-		.clk(clk),
-		.load(loadIO2),
-		.in(outM), // transmit outM[7:0]
-		.TX(UART_TX), // serial tx bit (pin)
-		.out(inIO2) // memory map
-	);
-
-	// FUTURE: not enough logic cells to run UartRX + RTP concurrently
+	// UartTX uartTX(
+	// 	.clk(clk),
+	// 	.load(loadIO2),
+	// 	.in(outM), // transmit outM[7:0]
+	// 	.TX(UART_TX), // serial tx bit (pin)
+	// 	.out(inIO2) // memory map
+	// );
+	
 	// UART_RX (4099) @ 115200 baud (~14KB/sec)
 	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
 	// W: 1 = clear data register
@@ -264,42 +265,8 @@ module HACK(
 		.load(loadIOA),
 		.in(outM),
 		.out(inIOA),
-		// .SDA(RTP_SDA),
-		// .SCL(RTP_SCL),
-		.sda_oe(sda_oe),
-		.scl_oe(scl_oe),
-		.sda_in(sda_in),
-		.scl_in(scl_in)
-	);
-
-	// TODO: not convinced this is different to what was synthesized before
-	wire sda_oe, scl_oe;
-	wire sda_in, scl_in;
-	SB_IO #(
-		.PIN_TYPE(6'b1010_01),  // direct/unregistered inout
-		// [5]: OUTPUT_ENABLE=1
-		// [4]: OUTPUT_CLK=0
-		// [3]: D_OUT_0_DIRECT=1
-		// [2]: D_OUT_0_INVERT=0
-		// [1]: D_IN_1_LATCH=0
-		// [0]: D_IN_0_DIRECT=1
-
-		.PULLUP(1'b1)           // enable pullup
-	) sda_buf (
-		.PACKAGE_PIN(RTP_SDA),  // top level module inout pin
-		.OUTPUT_ENABLE(sda_oe), // select whether D_OUT_0 is driven
-		.D_OUT_0(1'b0),         // drive low when selected (OE=1)
-		.D_IN_0(sda_in)			// line to read when high Z
-	);
-
-	SB_IO #(
-		.PIN_TYPE(6'b1010_01),
-		.PULLUP(1'b1)
-	) scl_buf (
-		.PACKAGE_PIN(RTP_SCL),
-		.OUTPUT_ENABLE(scl_oe),
-		.D_OUT_0(1'b0),
-		.D_IN_0(scl_in)
+		.SDA(RTP_SDA),
+		.SCL(RTP_SCL)
 	);
 
 	// additional registers

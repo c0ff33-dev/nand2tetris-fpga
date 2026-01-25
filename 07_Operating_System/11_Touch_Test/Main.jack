@@ -8,7 +8,7 @@ class Main{
 				do Output.printString(" ");
 				do Output.printInt(Touch.getY());
 				do Output.printString(" ");
-				do Output.printInt(Touch.getPen());
+				do Output.printInt(Touch.getZ());
 				do Output.println();
 			}
 		}	
