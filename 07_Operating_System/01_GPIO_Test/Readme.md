@@ -39,10 +39,23 @@ class Sys {
   
   ![](gpio.png)
 
-* Run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload `GPIO_Test` to `iCE40HX1K-EVB` with: 
+
+* Run on real hardware with `HACK`, build and upload `GPIO_Test` to `iCE40HX1K-EVB`:
+
+  First prepare the bootloader and any hardware updates. In future tests this will be considered implicit and doesn't need to be repeated unless there are changes to either.
   
   ```
-  $ cd 01_GPIO_Test
+  $ cd ../../06_IO_Devices/05_GO
+  $ make
+  $ cd ../00_HACK
+  $ apio clean
+  $ apio upload
+  ```
+
+  Then compile & upload the test application:
+
+  ```
+  $ cd ../../07_Operating_System/01_GPIO_Test
   $ make
   $ make upload
   ```

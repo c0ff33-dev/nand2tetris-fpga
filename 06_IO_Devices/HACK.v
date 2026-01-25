@@ -155,26 +155,26 @@ module HACK(
 	);
 
 	// FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
-	// // UART_TX (4098) @ 115200 baud (~14KB/sec)
-	// // R: busy signal, [15]=1 busy, [15]=0 ready
-	// // W: send byte
-	// UartTX uartTX(
-	// 	.clk(clk),
-	// 	.load(loadIO2),
-	// 	.in(outM), // transmit outM[7:0]
-	// 	.TX(UART_TX), // serial tx bit (pin)
-	// 	.out(inIO2) // memory map
-	// );
+	// UART_TX (4098) @ 115200 baud (~14KB/sec)
+	// R: busy signal, [15]=1 busy, [15]=0 ready
+	// W: send byte
+	UartTX uartTX(
+		.clk(clk),
+		.load(loadIO2),
+		.in(outM), // transmit outM[7:0]
+		.TX(UART_TX), // serial tx bit (pin)
+		.out(inIO2) // memory map
+	);
 	
-	// // UART_RX (4099) @ 115200 baud (~14KB/sec)
-	// // R: out[15]=1 no data (0x8000), else out[7:0]=byte
-	// // W: 1 = clear data register
-	// UartRX uartRX(
-	// 	.clk(clk),
-	// 	.clear(loadIO3),
-	// 	.RX(UART_RX), // serial rx bit (pin)
-	// 	.out(inIO3) // memory map 
-	// );
+	// UART_RX (4099) @ 115200 baud (~14KB/sec)
+	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
+	// W: 1 = clear data register
+	UartRX uartRX(
+		.clk(clk),
+		.clear(loadIO3),
+		.RX(UART_RX), // serial rx bit (pin)
+		.out(inIO3) // memory map 
+	);
 
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
@@ -260,14 +260,14 @@ module HACK(
 	assign inIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel NS2009
-	RTP rtp(
-		.clk(clk),
-		.load(loadIOA),
-		.in(outM),
-		.out(inIOA),
-		.SDA(RTP_SDA),
-		.SCL(RTP_SCL)
-	);
+	// RTP rtp(
+	// 	.clk(clk),
+	// 	.load(loadIOA),
+	// 	.in(outM),
+	// 	.out(inIOA),
+	// 	.SDA(RTP_SDA),
+	// 	.SCL(RTP_SCL)
+	// );
 
 	// additional registers
 	// DEBUG0 (4107)
