@@ -39,7 +39,7 @@ class Sys {
   
   ![](uart.png)
 
-* run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload the `UART_Test` to `iCE40HX1K-EVB` with:
+* Run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload the `UART_Test` to `iCE40HX1K-EVB` with:
   
   ```
   $ cd 02_UART_Test
@@ -47,7 +47,7 @@ class Sys {
   $ make upload
   ```
 
-* Connect `HACK` with your computer over UART, open a terminal program and type some chars. Check if `HACK` can echo them.
+* Connect `HACK` with your computer over UART, open a terminal program and type some chars. Check if `HACK` can echo them:
   
   ```
   $ tio /dev/ttyACM0

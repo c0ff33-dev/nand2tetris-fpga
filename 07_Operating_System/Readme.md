@@ -1,14 +1,14 @@
 # 07 Operating System
 
-To run serious application like Tetris we need the operating system Jack OS, written in the high level language Jack. 
+To run serious applications like Tetris we need the operating system Jack OS, written in the high level language Jack. 
 
-For every Jack OS class we provide a skeleton file, with the signatures of functions and methods. In the dedicated test folder you find implementation details and test classes.
+For every Jack OS class we provide a skeleton file with the signatures of functions and methods. In the dedicated test folder you can find implementation details and test classes.
 
 The folder `00_HACK` contains a simulation of `HACK` similar to the one in `06_IO_Devices/00_HACK` with the following differences:
 
-* uses build in chips from `01_Boolean_Logic` to `03_Sequential_Logic` instead of going down to the nand gate level.
-* has 64K words of instruction ROM preloaded with Jack OS and applications
-* is not uploadable to `iCE40HX1K-EVB`
+* Uses built-in chips from `01_Boolean_Logic` to `03_Sequential_Logic` instead of going down to the gate level.
+* Has 64K words of instruction ROM preloaded with Jack OS and applications.
+* Is not uploadable to `iCE40HX1K-EVB`.
 
 ## Simulation of Jack OS classes
 
@@ -32,13 +32,16 @@ $ make
 $ make upload
 ```
 
-This will compile all classes in the test folder and upload the binary file to `SPI` flash ROM starting at address 64k (0x10000), where the bootloader can find it.
+This will compile all classes in the test folder and upload the binary file to the flash ROM starting at address 64K (0x10000) where the bootloader will begin execution in `run` mode.
 
-**Attention:** All used classes must be linked to the folder in which you run the compiler. To add the class `<Jack OS class>.jack` simply make a soft link in the working directory:
+**Attention:** All used classes must be linked to the folder in which you run the compiler. To add the class `<Jack OS class>.jack` simply make a soft link in the working directory (see Appendix for examples).
 
 Finally you can run Tetris!
 
-# TODO: symlinks (some early dirs specifically have cut-down versions of the supporting libs)
+## Appendix
+
+For completeness here is the full list of class files to link per project:
+
 ```
 sudo ln -sf ../GPIO.jack ./01_GPIO_Test/GPIO.jack
 sudo ln -sf ../UART.jack ./02_UART_Test/UART.jack
@@ -124,9 +127,8 @@ sudo ln -sf ../Sys.jack ./12_Tetris/Sys.jack
 sudo ln -sf ../Touch.jack ./12_Tetris/Touch.jack
 sudo ln -sf ../UART.jack ./12_Tetris/UART.jack
 sudo ln -sf ../Util.jack ./12_Tetris/Util.jack
-```
 
-```
+# Link whichever one is relevant to your case
 sudo ln -sf ./13_Touch/Touch_AR1021.jack ./Touch.jack
 sudo ln -sf ./13_Touch/Touch_NS2009.jack ./Touch.jack
 ```

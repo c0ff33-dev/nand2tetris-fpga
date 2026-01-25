@@ -39,7 +39,7 @@ class Sys {
   
   ![](gpio.png)
 
-* run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload `GPIO_Test` to `iCE40HX1K-EVB` with: 
+* Run on real hardware with `HACK` build at `06_IO_Devices/05_GO` (together with the bootloader). Build and upload `GPIO_Test` to `iCE40HX1K-EVB` with: 
   
   ```
   $ cd 01_GPIO_Test
@@ -47,4 +47,4 @@ class Sys {
   $ make upload
   ```
 
-* push buttons `BUT1/2` on `iCE40HX1K-EVB` and check the `LED`.
+* Push buttons `BUT1/2` on `iCE40HX1K-EVB` and check the `LED`.

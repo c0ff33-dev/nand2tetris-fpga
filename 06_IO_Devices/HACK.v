@@ -8,7 +8,7 @@
  * with the computer via the BUT.
  */
 
-// TODO: sync 5/6/7 HACK files
+// TODO: sync 6/7 HACK files
 
 `default_nettype none
 module HACK(
@@ -155,9 +155,9 @@ module HACK(
 	);
 
 	// FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
-	// UART_TX (4098) @ 115200 baud (~14KB/sec)
-	// R: busy signal, [15]=1 busy, [15]=0 ready
-	// W: send byte
+	// // UART_TX (4098) @ 115200 baud (~14KB/sec)
+	// // R: busy signal, [15]=1 busy, [15]=0 ready
+	// // W: send byte
 	// UartTX uartTX(
 	// 	.clk(clk),
 	// 	.load(loadIO2),
@@ -166,9 +166,9 @@ module HACK(
 	// 	.out(inIO2) // memory map
 	// );
 	
-	// UART_RX (4099) @ 115200 baud (~14KB/sec)
-	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
-	// W: 1 = clear data register
+	// // UART_RX (4099) @ 115200 baud (~14KB/sec)
+	// // R: out[15]=1 no data (0x8000), else out[7:0]=byte
+	// // W: 1 = clear data register
 	// UartRX uartRX(
 	// 	.clk(clk),
 	// 	.clear(loadIO3),
