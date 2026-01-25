@@ -10,7 +10,7 @@ A library of commonly used mathematical functions.
 
 * Implement `Math.jack`.
 
-  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
 * Test in simulation:
   

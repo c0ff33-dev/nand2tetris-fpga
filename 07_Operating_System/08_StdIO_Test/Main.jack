@@ -51,8 +51,6 @@ class Main {
 	    let ok = false;
         do StdIO.printString("readInt test:");
         do StdIO.println();
-        do StdIO.printString("(Verify echo and usage of 'backspace')");
-        do StdIO.println();
         while (~ok) {
   	        let i = StdIO.readInt("Please type '-32123' and press enter: ");
 

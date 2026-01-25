@@ -8,7 +8,7 @@ Represents character strings. In addition for constructing and disposing strings
 
 * Implement `String.jack` and at least the function `StdIO.printString(String s)`.
 
-  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
 * Test by running `String_Test`, which performs several String operation and outputs them to `StdIO` (`UART`).
   
