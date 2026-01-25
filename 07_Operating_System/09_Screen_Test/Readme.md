@@ -73,6 +73,6 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
   $ make upload
   ```
 
-* Compare the pattern on the LCD with the following picture:
+* Compare the pattern on the screen with the following picture:
   
   ![](screen.png)
