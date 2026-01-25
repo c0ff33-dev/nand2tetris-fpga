@@ -58,7 +58,7 @@ $ sudo make install
 
 ```
 $ cd ~ && curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
-$ sudo ln -s ~/bin/arduino-cli /usr/local/bin/arduino-cli
+$ sudo ln -sf ~/bin/arduino-cli /usr/local/bin/arduino-cli
 $ arduino-cli core install arduino:avr
 $ arduino-cli lib install "Adafruit GFX Library@1.2.3"
 $ wget https://github.com/Marzogh/SPIMemory/archive/refs/tags/v2.2.0.zip -O SPIMemory-2.2.0.zip

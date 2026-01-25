@@ -70,11 +70,24 @@ Once you have identified which chip is installed comment/uncomment the relevant 
 Create symlinks to instantiate the relevant template:
 
 ```
-sudo ln -s RTP_AR1021.v RTP.v
-sudo ln -s 07A_RTP_AR1021 07_RTP
+sudo ln -sf RTP_AR1021.v RTP.v
+sudo ln -sf 07A_RTP_AR1021 07_RTP
 
-sudo ln -s RTP_NS2009.v RTP.v
-sudo ln -s 07B_RTP_NS2009 07_RTP
+sudo ln -sf RTP_NS2009.v RTP.v
+sudo ln -sf 07B_RTP_NS2009 07_RTP
+```
+
+Update `06_IO_Devices/00_HACK/HACK.v` refs:
+
+```
+// AR1021 wires
+// input  RTP_SDI(RTP_SDI), // RTP Serial Data In
+// output RTP_SDO(RTP_SDO), // RTP serial Data Out
+// output RTP_SCK(RTP_SCK)  // RTP serial clock
+
+// NS2009 wires
+inout RTP_SDA,              // RTP data line
+inout RTP_SCL               // RTP serial clock
 ```
 
 Update `06_IO_Devices/00_HACK/HACK_tb.v` refs:
@@ -92,13 +105,13 @@ wire RTP_SCL;
 // ...
 
 // AR1021 wires
-// .RTP_SDI(RTP_SDI),   // RTP Serial Data In
-// .RTP_SDO(RTP_SDO),   // RTP serial Data Out
-// .RTP_SCK(RTP_SCK)    // RTP serial clock
+// inout RTP_SDA,        // RTP data line
+// inout RTP_SCL         // RTP serial clock
 
 // NS2009 wires
-.RTP_SDA(RTP_SDA),      // RTP Data line
-.RTP_SCL(RTP_SCL)       // RTP Serial Clock
+input  RTP_SDI,          // RTP Serial Data In
+output RTP_SDO,          // RTP serial Data Out
+output RTP_SCK           // RTP serial clock
 ```
 
 Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
@@ -114,20 +127,26 @@ set_io RTP_SDA 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD
 set_io RTP_SCL 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
 ```
 
-Update `07_Operating_System/00_HACK/HACK_tb.v` refs - `NS2009` is not currently implemented in this test bench so comment out the following blocks if `AR2021` is not present/implemented:
+Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
 
-```
-// .RTP_SDO(RTP_SDO),
-// .RTP_SDI(RTP_SDI),
-// .RTP_SCK(RTP_SCK)
+* `NS2009` is not currently implemented in this test bench so comment out the following blocks if `AR2021` is not present/implemented:
 
-// ...
+  ```
+  // wire RTP_SDI,RTP_SCK,RTP_SDO;
 
-// Simulate RTP
-// reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
-// assign RTP_SDI = spi[40];
-// always @(posedge (RTP_SCK))
-// 	spi <= {spi[39:0],1'b0};
-```
+  // ...
+
+  // .RTP_SDO(RTP_SDO),
+  // .RTP_SDI(RTP_SDI),
+  // .RTP_SCK(RTP_SCK)
+
+  // ...
+
+  // Simulate RTP (AR1021)
+  // reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
+  // assign RTP_SDI = spi[40];
+  // always @(posedge (RTP_SCK))
+  // 	spi <= {spi[39:0],1'b0};
+  ```
 
 Towards the end of the project the logic cell budget may become tight especially if implementing `I2C` for the `RTP` chip on `iCE40HX8K-EVB`. In that instance you can disable `UartTX/RX` by commenting out the relevant parts in `HACK.v` and swap debug implementation to printing to `Screen` (when complete) to reclaim some LCs if needed. An `iCE40HX8K-EVB` should have more than enough LC budget but hasn't been tested / may need other minor changes.

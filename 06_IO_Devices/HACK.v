@@ -14,26 +14,34 @@
 module HACK(
 	// inputs/outputs at this layer = wires to interfaces external to lattice
 	// see .pcf files for mapping
-    input  CLK,				// external clock 100 MHz	
-	input  [1:0] BUT,		// user button  ("pushed down" == 0) ("up" == 1)
-	output [1:0] LED,		// leds (0 off, 1 on)
-	input  UART_RX,			// UART recieve
-	output UART_TX,			// UART transmit
-	output SPI_SDO,			// SPI data out
-	input  SPI_SDI,			// SPI data in
-	output SPI_SCK,			// SPI serial clock
-	output SPI_CSX,			// SPI chip select not
-	output [17:0] SRAM_ADDR,// SRAM address 18 Bit = 256KB (64KB addressable)
-	inout [15:0] SRAM_DATA,	// SRAM data 16 Bit
-	output SRAM_WEX,		// SRAM write_enable_not
-	output SRAM_OEX,		// SRAM output_enable_not
-	output SRAM_CSX, 		// SRAM chip_select_not
-	output LCD_DCX,			// LCD data/command not
-	output LCD_SDO,			// LCD data out 
-	output LCD_SCK,			// LCD serial clock
-	output LCD_CSX,			// LCD chip select not
-	inout RTP_SDA,          // RTP data line
-	inout RTP_SCL           // RTP serial clock
+    input  CLK,				 // external clock 100 MHz	
+	input  [1:0] BUT,		 // user button  ("pushed down" == 0) ("up" == 1)
+	output [1:0] LED,		 // leds (0 off, 1 on)
+	input  UART_RX,			 // UART recieve
+	output UART_TX,			 // UART transmit
+	output SPI_SDO,			 // SPI data out
+	input  SPI_SDI,			 // SPI data in
+	output SPI_SCK,			 // SPI serial clock
+	output SPI_CSX,			 // SPI chip select not
+	output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
+	inout [15:0] SRAM_DATA,	 // SRAM data 16 Bit
+	output SRAM_WEX,		 // SRAM write_enable_not
+	output SRAM_OEX,		 // SRAM output_enable_not
+	output SRAM_CSX, 		 // SRAM chip_select_not
+	output LCD_DCX,			 // LCD data/command not
+	output LCD_SDO,			 // LCD data out 
+	output LCD_SCK,			 // LCD serial clock
+	output LCD_CSX,			 // LCD chip select not
+
+	// AR1021 wires
+    // input  RTP_SDI,       // RTP Serial Data In
+    // output RTP_SDO,       // RTP serial Data Out
+    // output RTP_SCK        // RTP serial clock
+	
+	// NS2009 wires
+	inout RTP_SDA,           // RTP data line
+	inout RTP_SCL            // RTP serial clock
+
 );
 	
 	// timing index
@@ -155,26 +163,26 @@ module HACK(
 	);
 
 	// FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
-	// UART_TX (4098) @ 115200 baud (~14KB/sec)
-	// R: busy signal, [15]=1 busy, [15]=0 ready
-	// W: send byte
-	UartTX uartTX(
-		.clk(clk),
-		.load(loadIO2),
-		.in(outM), // transmit outM[7:0]
-		.TX(UART_TX), // serial tx bit (pin)
-		.out(inIO2) // memory map
-	);
+	// // UART_TX (4098) @ 115200 baud (~14KB/sec)
+	// // R: busy signal, [15]=1 busy, [15]=0 ready
+	// // W: send byte
+	// UartTX uartTX(
+	// 	.clk(clk),
+	// 	.load(loadIO2),
+	// 	.in(outM), // transmit outM[7:0]
+	// 	.TX(UART_TX), // serial tx bit (pin)
+	// 	.out(inIO2) // memory map
+	// );
 	
-	// UART_RX (4099) @ 115200 baud (~14KB/sec)
-	// R: out[15]=1 no data (0x8000), else out[7:0]=byte
-	// W: 1 = clear data register
-	UartRX uartRX(
-		.clk(clk),
-		.clear(loadIO3),
-		.RX(UART_RX), // serial rx bit (pin)
-		.out(inIO3) // memory map 
-	);
+	// // UART_RX (4099) @ 115200 baud (~14KB/sec)
+	// // R: out[15]=1 no data (0x8000), else out[7:0]=byte
+	// // W: 1 = clear data register
+	// UartRX uartRX(
+	// 	.clk(clk),
+	// 	.clear(loadIO3),
+	// 	.RX(UART_RX), // serial rx bit (pin)
+	// 	.out(inIO3) // memory map 
+	// );
 
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
@@ -260,13 +268,24 @@ module HACK(
 	assign inIO9 = lcdBusy;
 
 	// RTP (4106) controller for Resistive Touch Panel NS2009
+	RTP rtp(
+		.clk(clk),
+		.load(loadIOA),
+		.in(outM),
+		.out(inIOA),
+		.SDA(RTP_SDA),
+		.SCL(RTP_SCL)
+	);
+
+	// RTP (4106) controller for Resistive Touch Panel AR1021 (sim only)
 	// RTP rtp(
 	// 	.clk(clk),
 	// 	.load(loadIOA),
 	// 	.in(outM),
 	// 	.out(inIOA),
-	// 	.SDA(RTP_SDA),
-	// 	.SCL(RTP_SCL)
+	// 	.SDI(RTP_SDI),   // RTP Serial Data In
+	// 	.SDO(RTP_SDO),   // RTP serial Data Out
+	// 	.SCK(RTP_SCK)    // RTP serial clock
 	// );
 
 	// additional registers
