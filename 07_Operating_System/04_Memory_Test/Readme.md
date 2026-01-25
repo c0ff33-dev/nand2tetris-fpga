@@ -18,7 +18,7 @@ The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. Thi
 
 * Implement `Memory.jack`.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`).
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`).
 
 * Test in simulation:
   

@@ -1,26 +1,26 @@
 ## String.jack
 
-Represents character strings. In addition for constructing and disposing strings, the class features methods for getting and setting individual characters of the string, for erasing the string's last character, for appending a character to the string's end, and more typical string-oriented operations.
+Represents character strings. In addition for constructing and disposing strings, the class features methods for getting and setting individual characters of the string, for erasing the string's last character, for appending a character to the string's end, and more typical string operations.
 
 ***
 
 ### Project
 
-* Implement `String.jack` and at least the function `StdIO.printString(String s)`
+* Implement `String.jack` and at least the function `StdIO.printString(String s)`.
 
-**Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what it is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
-* Test by running `String_Test`, which performs several String operation and outputs them to StdIO (UART)
+* Test by running `String_Test`, which performs several String operation and outputs them to `StdIO` (`UART`).
   
-  **Hint:** Use the debug register to show which caracters are transmitted over `UartTX`. Add the following code in function UART.writeChar():
+  **Hint:** Optionally use `DEBUG0` register to show which characters are transmitted over `UartTX`. Add the following code in function `UART.writeChar()`:
   
   ```
-  do Memory.Poke(4107,data)
+  do Memory.poke(4107,data);
   ```
   
   ![](string.png)
 
-* Run `String_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to UART.
+* Run `String_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to `UART`.
 
 * Compare your terminal output with:
   
