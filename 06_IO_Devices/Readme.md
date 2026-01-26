@@ -65,7 +65,7 @@ Later hardware revisions (Rev C onwards) of `MOD-LCD2.8RTP` may ship with differ
 
 ![](RTP.png)
 
-Once you have identified which chip is installed comment/uncomment the relevant set from each pair.
+Once you have identified which chip is installed comment/uncomment the relevant set from each pair. Currently the default configuration in the project is for `NS2009`.
 
 Create symlinks to instantiate the relevant template:
 
@@ -75,6 +75,9 @@ sudo ln -sf 07A_RTP_AR1021 07_RTP
 
 sudo ln -sf RTP_NS2009.v RTP.v
 sudo ln -sf 07B_RTP_NS2009 07_RTP
+
+sudo ln -sf ../07_Operating_System/13_Touch/Touch_AR1021.jack ../07_Operating_System/Touch.jack
+sudo ln -sf ../07_Operating_System/13_Touch/Touch_NS2009.jack ../07_Operating_System/Touch.jack
 ```
 
 Update `06_IO_Devices/00_HACK/HACK.v` refs:
@@ -147,6 +150,16 @@ Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
   // assign RTP_SDI = spi[40];
   // always @(posedge (RTP_SCK))
   // 	spi <= {spi[39:0],1'b0};
+  ```
+
+Update `07_Operating_System/11_Touch_Test/Main.jack` refs:
+
+* For `AR1021` comment out the block below / there is no equivalent:
+
+  ```
+  // NS2009 only
+  do Output.printString(" ");
+  do Output.printInt(Touch.getZ());
   ```
 
 Towards the end of the project the logic cell budget may become tight especially if implementing `I2C` for the `RTP` chip on `iCE40HX8K-EVB`. In that instance you can disable `UartTX/RX` by commenting out the relevant parts in `HACK.v` and swap debug implementation to printing to `Screen` (when complete) to reclaim some LCs if needed. An `iCE40HX8K-EVB` should have more than enough LC budget but hasn't been tested / may need other minor changes.

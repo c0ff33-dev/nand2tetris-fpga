@@ -15,9 +15,8 @@ class Touch{
         // busy=0x8000(+), else byte=0x0-FF
         var int rx;        
         let RTP[0] = c; // start RTP_SCK
-        while (RTP[0] < 0) {
-            let rx = RTP[0]; // read RTP
-        }
+        while (RTP[0] < 0) {} // wait, don't save yet or it'll read the busy bit
+        let rx = RTP[0];
         do Sys.wait(1); // wait before clocking next byte
         return rx;
     }

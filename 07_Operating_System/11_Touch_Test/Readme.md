@@ -39,9 +39,9 @@ Send a write operation to select the register for the x, y and z (touch pressure
 
   **Attention:** From this point forward all Jack libraries in `Sys.init()` should be initialized. 
 
-# TODO: Test with Touch_AR1021.jack
-
 * Test in simulation (`AR1021` only):
+
+  **Attention:** May need a longer simulation time or temporarily disabling compute intensive `init()` calls like `Screen`/`ScreenExt`/`Output` - only `Touch.getEvent()` needs to be reachable for this test.
   
   ```
   $ cd 11_Touch_Test
@@ -53,9 +53,11 @@ Send a write operation to select the register for the x, y and z (touch pressure
   
   * Check for the inter-byte delay of ~50μs.
 
-  * Check `SDO` is low while reading data from `RTP`.
+  * Check `RTP_SCK` shows 5 blocks of 8 clock cycles.
 
-  * Check `SCK` shows 5 blocks of 8 clock cycles.
+  * Check `RTP_SDI` traffic corresponds to the values in `../00_HACK/HACK_tb.v`.
+
+  * Check `RTP_SDO` is low while reading data from `RTP`.
 
   ![](touch.png)
 

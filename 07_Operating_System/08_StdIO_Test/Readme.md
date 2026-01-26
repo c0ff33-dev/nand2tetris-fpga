@@ -12,6 +12,13 @@ A library of functions for text based input and output over `UART`.
 
 * Run `StdIO_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to `UART`.
 
+  ```
+  $ cd 08_StdIO_Test
+  $ make
+  $ make upload
+  $ tio /dev/ttyACM0
+  ```
+
 * Compare your terminal output with:
   
   ```

@@ -10,17 +10,32 @@ Represents character strings. In addition for constructing and disposing strings
 
   **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
-* Test by running `String_Test`, which performs several String operation and outputs them to `StdIO` (`UART`).
+* Test by running `String_Test` in simulation, which performs several String operation and outputs them to `StdIO` (`UART`).
   
   **Hint:** Optionally use `DEBUG0` register to show which characters are transmitted over `UartTX`. Add the following code in function `UART.writeChar()`:
   
   ```
   do Memory.poke(4107,data);
   ```
+ 
+  ```
+  $ cd 07_String_Test
+  $ make
+  $ cd ../00_HACK
+  $ apio clean
+  $ apio sim
+  ```
   
   ![](string.png)
 
 * Run `String_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to `UART`.
+
+  ```
+  $ cd 07_String_Test
+  $ make
+  $ make upload
+  $ tio /dev/ttyACM0
+  ```
 
 * Compare your terminal output with:
   

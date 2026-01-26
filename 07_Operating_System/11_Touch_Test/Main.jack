@@ -7,8 +7,11 @@ class Main{
 				do Output.printInt(Touch.getX());
 				do Output.printString(" ");
 				do Output.printInt(Touch.getY());
+
+				// NS2009 only
 				do Output.printString(" ");
 				do Output.printInt(Touch.getZ());
+				
 				do Output.println();
 			}
 		}	
