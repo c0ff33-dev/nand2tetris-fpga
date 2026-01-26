@@ -12,6 +12,9 @@ module Register(
 	input load,
 	output reg [15:0] out = 0
 );
+	
+	// No need to implement this chip
 	always @(posedge clk)
 		out <= load?in:out;
+
 endmodule

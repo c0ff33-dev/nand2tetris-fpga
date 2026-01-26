@@ -2,7 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Memory.jack
-// Changes: doc only changes for heap size.
+// Changes: Doc only changes for heap size.
 
 // Algorithm is discussed in more detail here:
 // http://nand2tetris-questions-and-answers-forum.52.s1.nabble.com/New-Heap-Management-algorithm-Coursera-version-td4032026.html 

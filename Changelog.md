@@ -4,9 +4,21 @@
 
 * Appendix / end to end install
 * wire/yosys updates (smaller bram, bram/rom/sram timings/sync)
-* test fixes + documentation updates
-* NS2009 support
+* testbench/jack fixes/enhancements + documentation updates
+* Split RTP into AR1021 + NS2009 support (+docs, tests, etc)
 * UART filter for iceprogduino sketch
+* restored original Jack api/copyright (+changelog)
+* new funcs in ScreenExt
+* landscape support (output)
+
+```
+- TODO: continue PR review from Screen.jack
+
+- TODO: your code here - various Sys.jack? Touch*.jack? 07_OS/*.jack
+- TODO: change unused new functions back to private functions (+nand2tetris)
+  - drawChar
+- TODO: replace tab with spaces (repo wide)
+```
 
 ***
 

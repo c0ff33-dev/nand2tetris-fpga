@@ -12,6 +12,7 @@ module Mux(
 	output out
 );
 
+	// No need to implement this chip
 	assign out = sel?b:a;
 
 endmodule

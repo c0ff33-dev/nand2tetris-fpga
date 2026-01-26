@@ -2,7 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Output.jack
-// Changes: doc only changes to screen dimensions.
+// Changes: Doc only changes to screen dimensions.
 
 /**
  * A library of functions for writing text on the screen.
@@ -193,7 +193,7 @@ class Output {
 
     // Internal API seen in reversed VM code only
     // Draw one 8x11 char bitmap without modifying indexes/cursor
-    function void drawChar(char c) {
+    function void _drawChar(char c) {
         var int x, y, xMin, xMax, yMin, yMax;
         var Array map;
 
@@ -221,7 +221,7 @@ class Output {
         let rowIdx = i;
         let colIdx = j;
 
-        do Output.drawChar(32); // space
+        do Output._drawChar(32); // space
         return;
     }
 
@@ -234,7 +234,7 @@ class Output {
             if (c = String.backSpace()) {
                 do Output.backSpace();
             } else {
-                do Output.drawChar(c);
+                do Output._drawChar(c);
                 let colIdx = colIdx + 1;
                 if (colIdx > colMax) {
                     do Output.println();
@@ -285,7 +285,7 @@ class Output {
             let colIdx = colMax;
             let rowIdx = rowMax;
         }
-        do Output.drawChar(32); // space
+        do Output._drawChar(32); // space
         return;
     }
 }

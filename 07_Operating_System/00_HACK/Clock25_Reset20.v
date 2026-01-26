@@ -5,7 +5,7 @@ module Clock25_Reset20(
 	output reset 		// reset signal
 );
 
-	// put your code here:
+	// No need to implement this chip
 	reg [15:0] n=0;
 	always @(posedge CLK)
 		n <= n + 1;

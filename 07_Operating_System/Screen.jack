@@ -2,7 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/Screen.jack
-// Changes: doc changes for screen dimensions and colors
+// Changes: Doc changes for screen dimensions and colors.
 
 /**
 * A library of functions for displaying graphics on the screen.

@@ -13,6 +13,7 @@ module Switch(
 	output reg out = 0
 );
 
+	// No need to implement this chip
 	always @(posedge clk)
 		out <= (on&off)?(~out):(on?1:(off?0:(out?1:0)));
 

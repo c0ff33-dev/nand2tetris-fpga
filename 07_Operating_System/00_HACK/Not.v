@@ -9,7 +9,7 @@ module Not(
 	output out
 );
 
-	// Put your code here:
+	// No need to implement this chip
 	not(out,in);
 
 endmodule

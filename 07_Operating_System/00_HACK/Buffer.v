@@ -9,6 +9,7 @@ module Buffer(
 	output out
 );
 
+	// No need to implement this chip
 	assign out = in;
 
 endmodule

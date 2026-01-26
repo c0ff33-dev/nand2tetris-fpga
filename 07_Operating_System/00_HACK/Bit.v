@@ -12,6 +12,7 @@ module Bit(
 	output reg out = 0
 );
 
+	// No need to implement this chip
 	always @(posedge clk)
 		out <= load?in:out;
 

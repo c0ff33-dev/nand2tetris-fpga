@@ -11,7 +11,7 @@ module And(
 	output out
 );
 
-	// Put your code here:
+	// No need to implement this chip
 	and(out,a,b);
 
 endmodule

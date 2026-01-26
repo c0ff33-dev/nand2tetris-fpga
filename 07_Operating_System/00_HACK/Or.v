@@ -11,7 +11,7 @@ module Or(
 	output out
 );
 
-	// Put your code here:
+	// No need to implement this chip
 	or(out,a,b);
 
 endmodule

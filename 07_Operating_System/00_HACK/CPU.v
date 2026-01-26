@@ -10,7 +10,7 @@ module CPU(
     output reg [15:0] pc = 0
 );
 
-	// Compare	
+	// No need to implement this chip
 	reg [15:0] regD=0;
 	wire [15:0] x,y;
 	wire zr,ng;

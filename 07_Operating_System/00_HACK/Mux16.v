@@ -12,6 +12,7 @@ module Mux16(
 	output [15:0] out
 );
 
+	// No need to implement this chip
 	assign out = sel?b:a;
 
 endmodule

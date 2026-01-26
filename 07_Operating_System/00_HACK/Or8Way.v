@@ -9,6 +9,7 @@ module Or8Way(
 	output out
 );
 
-	// Put your code here:
+	// No need to implement this chip
 	assign out = |in;
+
 endmodule

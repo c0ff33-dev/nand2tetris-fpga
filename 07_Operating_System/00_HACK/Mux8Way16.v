@@ -17,6 +17,8 @@ module Mux8Way16(
    	input [2:0] sel,
 	output reg [15:0] out
 );
+	
+	// No need to implement this chip
 	always @(*) begin
 		case (sel)
 			0 : out = a;

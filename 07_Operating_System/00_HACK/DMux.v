@@ -12,6 +12,7 @@ module DMux(
 	output b
 );
 
+	// No need to implement this chip
 	assign a = ~sel&in;
 	assign b = sel&in;
 

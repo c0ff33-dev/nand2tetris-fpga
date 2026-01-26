@@ -15,6 +15,7 @@ module BitShift8L(
 	output reg [7:0] out = 0
 );
 
+	// No need to implement this chip
 	always @(posedge clk)
 		out <= load?in:(shift?{out[6:0],inLSB}:out);
 
