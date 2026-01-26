@@ -4,13 +4,14 @@
 class Touch{
     static int RTP, x_coord, y_coord, pen;
 
+    /** Initializes the library. */
     function void init() {
         let RTP = 4106;
         return;
     }
 
-    /** writes 8 bits of c to RTP and returns the response of RTP.
-     *  also responsible for the inter byte delay of ~50μs */
+    /** Writes 8 bits of c to RTP and returns the response of RTP.
+     *  also responsible for the inter byte delay of ~50μs. */
     function int writeRTP(int c) {
         // busy=0x8000(+), else byte=0x0-FF
         var int rx;        
@@ -21,8 +22,8 @@ class Touch{
         return rx;
     }
 
-    /** trys to read a valid touch event report. returns true on success.
-     *  returns false, if no valid touch event is available. */
+    /** Tries to read a valid touch event report: returns true on success,
+     *  returns false if no valid touch event is available. */
     function boolean getEvent() {
         // read in 5 bytes and update internal fields if valid
         // else last report is retained
@@ -41,22 +42,22 @@ class Touch{
         
         // FUTURE: add a note to docs if shift logic actually needed here
         let pen = initial - 128; // 1------P
-        let x_coord = Util.shiftByteLeft(hiX, loX);
-        let y_coord = Util.shiftByteLeft(hiY, loY);
+        let x_coord = Util._shiftByteLeft(hiX, loX);
+        let y_coord = Util._shiftByteLeft(hiY, loY);
         return true;
     }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
     function int getX() {
         return x_coord;
     }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
     function int getY() {
         return y_coord;
     }
 
-    /** returns the pen value (1 = down, 0 = up) of the last touch event report */
+    /** Returns the pen value (1 = down, 0 = up) of the last touch event report. */
     function boolean getPen() {
         return pen;
     }

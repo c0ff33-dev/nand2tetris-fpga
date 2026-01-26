@@ -4,8 +4,8 @@
 class GPIO {
     static int LED, BUT, DEBUG0;
  
-    /** Initialize LED and BUT. LED is memory mapped to addr.
-     *  BUT is memory mapepd to addr +1 */
+    /** Initialize LED and BUT. LED is memory mapped to addr
+     *  and BUT is memory mapped to addr+1. */
     function void init() {
         let LED = 4096;
         let BUT = 4097;

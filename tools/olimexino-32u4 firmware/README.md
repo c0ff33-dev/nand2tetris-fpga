@@ -21,6 +21,6 @@ Build & Upload:
     platformio run
     platformio run --target upload
 
-Alternatively you can use `SPI` programmer to burn firmware into OLIMEXINO-32u4, e.g.:
+Alternatively you can use SPI programmer to burn firmware into OLIMEXINO-32u4, e.g.:
 
     avrdude -p atmega32u4 -P /dev/ttyUSB0 -c buspirate -b115200 -D -Uflash:w:[.pioenvs/leonardo/firmware.hex]:i

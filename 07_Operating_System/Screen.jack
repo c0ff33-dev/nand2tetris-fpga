@@ -73,9 +73,8 @@ class Screen {
         return;
     }
 
-    // Internal API seen in reversed VM code only
-    // optionally flip x/y coords
-    function void drawConditional(int x, int y, boolean flip) {
+    /** Optionally flip x/y coords. */
+    function void _drawConditional(int x, int y, boolean flip) {
         if (flip) {
             do Screen.drawPixel(y, x);
         } else {
@@ -124,7 +123,7 @@ class Screen {
         let accumulator = (2 * height) - width;
         let horDelta = (2 * height);
         let diagDelta = 2 * (height-width);
-        do Screen.drawConditional(x,y,flip);
+        do Screen._drawConditional(x,y,flip);
 
         while (x < end) {
             if (accumulator < 0) {
@@ -140,7 +139,7 @@ class Screen {
                 }
             }
             let x = x + 1;
-            do Screen.drawConditional(x,y,flip);
+            do Screen._drawConditional(x,y,flip);
         }
         return;
     }
@@ -170,9 +169,8 @@ class Screen {
         return;
     }
 
-    // Internal API seen in reversed VM code only
-    // efficiently mirror a circle octant to fill the remaining shape
-    function void drawSymetric(int x1, int y1, int x2, int y2) {
+    /** Efficiently mirror a circle octant to fill the remaining shape. */
+    function void _drawSymetric(int x1, int y1, int x2, int y2) {
         do Screen.drawRectangle(x1+x2, y1-y2, x1-x2, y1-y2); // bottom
         do Screen.drawRectangle(x1+x2, y1+y2, x1-x2, y1+y2); // top
         do Screen.drawRectangle(x1-y2, y1-x2, x1+y2, y1-x2); // middle-bottom
@@ -189,10 +187,10 @@ class Screen {
         }
 
         // approximate the circle without using sqrt()
-        // calculates one octant then mirrors the rest using drawSymetric()
+        // calculates one octant then mirrors the rest using _drawSymetric()
         let yOffset = r;
         let accumulator = 1 - r;
-        do Screen.drawSymetric(x, y, xOffset, yOffset);
+        do Screen._drawSymetric(x, y, xOffset, yOffset);
         while (yOffset > xOffset) {
             if (accumulator < 0) {
                 let accumulator = accumulator + (2 * xOffset) + 3;
@@ -201,7 +199,7 @@ class Screen {
                 let yOffset = yOffset - 1;
             }
             let xOffset = xOffset + 1;
-            do Screen.drawSymetric(x, y, xOffset, yOffset);
+            do Screen._drawSymetric(x, y, xOffset, yOffset);
         }
         return;
     }

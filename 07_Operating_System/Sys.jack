@@ -7,7 +7,8 @@
  * A library that supports various program execution services.
  */
 class Sys {
-    /** Performs all the initializations required by the OS */
+    
+    /** Performs all the initializations required by the OS. */
     function void init() {
         do GPIO.init();
         do UART.init();
@@ -29,7 +30,7 @@ class Sys {
     }
 
     // FUTURE: can fine tune with sim
-    /** Attempts to sleep for duration milliseconds and returns */
+    /** Attempts to sleep for duration milliseconds and returns. */
     function void wait(int duration) {
         // ~255 total instructions
         // ~86 instructions before/after loops

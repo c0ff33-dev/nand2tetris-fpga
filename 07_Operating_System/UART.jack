@@ -4,8 +4,8 @@
 class UART {
     static int UART_TX, UART_RX;
 
-    /** initializes UART. UART_TX is memory mapped at addr.
-     *  UART_RX is memory mapped at addr+1 */
+    /** Initializes UART. UART_TX is memory mapped at addr,
+     *  UART_RX is memory mapped at addr+1. */
     function void init() { // int addr
         let UART_TX = 4098;
         let UART_RX = 4099;
@@ -14,7 +14,7 @@ class UART {
         return;
     }
 
-    /** wait for UART_TX to be ready to send next byte and send c. */
+    /** Wait for UART_TX to be ready to send next byte and send c. */
     function void writeChar(int c) {
         // 0x0=ready, 0x8000=busy
         let UART_TX[0] = c; // assume wire clear for first tx
@@ -22,7 +22,7 @@ class UART {
         return;
     }
 
-    /** wait until UART_RX receives the next char and return the value. */
+    /** Wait until UART_RX receives the next char and return the value. */
     function int readChar() {
         // ready=0x8000, else byte=0x0-0xFF
         var int rx;

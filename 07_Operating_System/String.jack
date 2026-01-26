@@ -16,7 +16,7 @@ class String {
     field Array strArray;
     field int len;
 
-    /** constructs a new empty string with a maximum length of maxLength
+    /** Constructs a new empty string with a maximum length of maxLength
      *  and initial length of 0. */
     constructor String new(int _maxLength) {
         if (_maxLength < 0) {

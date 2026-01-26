@@ -127,7 +127,7 @@ class Memory {
     }
 
     /** De-allocates the given object (cast as an array) by making
-     *  it available for future allocations (appended to end of freeList) */
+     *  it available for future allocations (appended to end of freeList). */
     function void deAlloc(Array o) {
         var Array blockPtr;
         var Array nextPtr;

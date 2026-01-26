@@ -4,7 +4,7 @@
 */
 class StdIO {
 
-    /** Prints the String s to UART_TX and disposes the String s */
+    /** Prints the String s to UART_TX and disposes the String s. */
     function void printString(String s) {
         var int i, len;
         let i = 0;
@@ -16,7 +16,7 @@ class StdIO {
         return;
     }
 
-    /** Prints the decimal representation of i to UART_TX */
+    /** Prints the decimal representation of i to UART_TX. */
     function void printInt(int i) {
         var String s;
         let s = String.new(6); // max strInt = -16384
@@ -26,7 +26,7 @@ class StdIO {
         return;
     }
 
-    /** Prints the new line character to UART_TX */
+    /** Prints the new line character to UART_TX. */
     function void println() {
         do UART.writeChar(13); // ascii CR (carriage return)
         do UART.writeChar(10); // ascii LF (line feed)

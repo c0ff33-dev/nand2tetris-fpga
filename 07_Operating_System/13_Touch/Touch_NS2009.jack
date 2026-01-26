@@ -5,6 +5,7 @@ class Touch{
     static int RTP, x_coord, y_coord, z_coord, pen, x_max, y_max, adc_max, touch_threshold;
     static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
+    /** Initializes the library. */
     function void init() {
         var boolean landscape;
         let RTP = 4106;
@@ -28,8 +29,8 @@ class Touch{
         return;
     }
 
-    /** writes 8 bits of c to RTP and returns the response of RTP.
-     *  (no inter-byte delay needed for NS2009) */
+    /** Writes 8 bits of c to RTP and returns the response of RTP
+     *  (no inter-byte delay needed for NS2009). */
     function int writeRTP(int c) {
         // busy=0x8000(+), else 12 bit ADC data 0x0-0xFFF (0-4095)
         // response is zero for write commands
@@ -38,8 +39,8 @@ class Touch{
         return RTP[0];
     }
 
-    /** trys to read a valid touch event report. returns true on success.
-     *  returns false, if no valid touch event is available. */
+    /** Tries to read a valid touch event report: returns true on success,
+     *  returns false if no valid touch event is available. */
     function boolean getEvent() {
         // set pen state
         do Touch.writeRTP(set_z_reg);
@@ -69,27 +70,27 @@ class Touch{
         return false;
     }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
     function int getX() {
         return x_coord;
     }
 
-    /** returns the x coordinate in the range [0..4095] of the last touch event report */
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
     function int getY() {
         return y_coord;
     }
 
-    /** returns the z coordinate (touch pressure) in the range [0..4095] of the last touch event report */
+    /** Returns the z coordinate (touch pressure) in the range [0..4095] of the last touch event report. */
     function int getZ() {
         return z_coord;
     }
 
-    /** returns the pen value (1 = down, 0 = up) of the last touch event report */
+    /** Returns the pen value (1 = down, 0 = up) of the last touch event report. */
     function boolean getPen() {
         return pen;
     }
 
-    /** Map 12 bit ADC coords to screen resolution */
+    /** Map 12 bit ADC coords to screen resolution. */
     function int _map(int data, int in_min, int in_max, int out_min, int out_max) {
         // FUTURE: Tetris expects the raw/unscaled values so not currently used
         // this is basically just integer division

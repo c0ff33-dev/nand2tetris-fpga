@@ -58,7 +58,7 @@ class ScreenExt {
         return;
     }
 
-    /** writes the 8 bit command with DCX wire set to low */
+    /** Writes the 8 bit command with DCX wire set to low. */
     function void writeCommand(int cmd) {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[0] = cmd; // send command byte
@@ -69,13 +69,13 @@ class ScreenExt {
         return;
     }
 
-    // Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD)
+    /** Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD). */
     function void _write8BitData(int data) {
         do ScreenExt.writeCommand(512+data);
         return;
     }
 
-    /** writes 16 bit data to LCD with DCX wire set to high. */
+    /** Write 16 bits of data to LCD with DCX wire set to high. */
     function void writeData(int data) {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[1] = data; // send data byte(s)
@@ -88,32 +88,34 @@ class ScreenExt {
 
     /** Sets the current pen color, to be used for all subsequent drawXXX
      *  commands. colors are represented by 16 bit RGB values with
-     *  binary representation: rrrrrggggggbbbbb */
+     *  binary representation: rrrrrggggggbbbbb. */
     function void setPenColor(int color) {
         let fgcolor = color;
         return;
     }
 
+    /** Return current foreground colour of pen. */
     function int getPenColor() {
         return fgcolor;
     }
 
     /** Sets the current background color, to be used for clearScreen()
-     *  and drawBitMap() commands.
-     *  colors are represented by 16 bit RGB values: rrrrrggggggbbbbb */
+     *  and drawBitMap() commands. Colors are represented by 16 bit RGB 
+     *  values: rrrrrggggggbbbbb. */
     function void setBackColor(int color) {
         let bgcolor = color;
         return;
     }
 
+    /** Return current background colour of pen. */
     function int getBackColor() {
         return bgcolor;
     }
    
-    /** sets the Window to a rectangle with upper left corner (x1,y1)
+    /** Sets the Window to a rectangle with upper left corner (x1,y1)
      * and lower right corner (x2,y2). The next w*h calls to
      * writeRgbData(int color) will paint the w*h pixels in the rectangle
-     * in the corresponding color.*/ 
+     * in the corresponding color. */ 
     function void setWindow(int x1, int y1, int x2, int y2) {
         // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
         // otherwise ignored by ILI9341V
@@ -132,8 +134,8 @@ class ScreenExt {
         return;
     }
 
-    /** sets the 16 bit rgb color for the next pixel in the rectangle 
-     * set by setWindow(int x1, int y1, int x2, int y2). */
+    /** Sets the 16 bit RGB color for the next pixel in the rectangle 
+     * set by setWindow(). */
     function void writeRgbData(int color) {
         // Unused but provided for completeness
         do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
@@ -142,8 +144,8 @@ class ScreenExt {
         return;
     }
 
-    // drive CSX high/DCX low without sending a byte
-    // it is fine to leave CSX low for multiple SPI transactions
+    /** Drive CSX high/DCX low without sending a byte -
+     * it is fine to leave CSX low for multiple SPI transactions. */
     function void _completeTransaction() {
         var int busy; // 0x0=ready, 0x8000=busy
         let LCD[0] = 256; // send command byte
@@ -154,11 +156,11 @@ class ScreenExt {
         return;
     }
 
-    /** draws the BitMap into the rectangle with upper left corner (x1,y1)
+    /** Draws the BitMap into the rectangle with upper left corner (x1,y1)
      *  and lower right corner (x2,y2) using the pen color for all 1s and the
      *  back color for all 0s in the BitMap. BitMap is an Array of h integers
      *  representing up to 16 pixels in the row. The rectangle is limited
-     *  to maximal 16 pixels in width.*/ 
+     *  to maximal 16 pixels in width. */ 
     function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
         var int i, j, fg, bg, width, height;
         do ScreenExt.setWindow(x1,y1,x2,y2);

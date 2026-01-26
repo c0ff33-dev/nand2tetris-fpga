@@ -1,5 +1,3 @@
-# TODO: Summarize changes
-
 # Revision v3.0
 
 * Appendix / end to end install
@@ -8,15 +6,16 @@
 * Split RTP into AR1021 + NS2009 support (+docs, tests, etc)
 * UART filter for iceprogduino sketch
 * restored original Jack api/copyright (+changelog)
-* new funcs in ScreenExt
+* migrated new graphics funcs to ScreenExt (writeData16 > writeRgbData)
+* optional util module
 * landscape support (output)
+* new/updated datasheets
 
 ```
-- TODO: continue PR review from Screen.jack
-
-- TODO: your code here - various Sys.jack? Touch*.jack? 07_OS/*.jack
-- TODO: change unused new functions back to private functions (+nand2tetris)
-  - drawChar
+- TODO: complete changelog (cleanup tools, formatting etc)
+- TODO: update top level readme
+- TODO: jig files
+- TODO: diff Jack files (nand2tetris)
 - TODO: replace tab with spaces (repo wide)
 ```
 

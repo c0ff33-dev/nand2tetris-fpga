@@ -3,13 +3,13 @@
  */
 class Util {
 
-    /** Performs all the initializations required by the OS. */
+    /** Initializes the library. */
     function void init() {
         return;
     }
 
-    // take a 16 bit word and shift the upper byte right by 8
-    function int logShiftByteRight(int word) {
+    /** Take a 16 bit word and shift the upper byte right by 8. */
+    function int _logShiftByteRight(int word) {
         var int result;
         // psuedo division by 256
         while (word > 255) {
@@ -20,7 +20,7 @@ class Util {
     }
 
     // take two bytes and return a 16 bit word
-    function int shiftByteLeft(int hiByte, int loByte) {
+    function int _shiftByteLeft(int hiByte, int loByte) {
         var int sum;
         // shift the left hiByte by 8 (2^8=256)
         let sum = hiByte + hiByte; // 2
@@ -36,9 +36,9 @@ class Util {
     }
 
     // take a word and emit two bytes over UART
-    function void debugWord(int word) {
+    function void _debugWord(int word) {
         var int hiByte;
-        let hiByte = Util.logShiftByteRight(word);
+        let hiByte = Util._logShiftByteRight(word);
         do UART.writeChar(hiByte);
         do UART.writeChar(word);
         return;
