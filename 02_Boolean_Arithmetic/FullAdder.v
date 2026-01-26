@@ -11,6 +11,7 @@ module FullAdder(
 	output carry	// Left bit of a + b + c
 );
 
+	// Put your code here:
 	assign sum  = a ^ b ^ c;
 	assign carry = (a & b) | (b & c) | (a & c);
 

@@ -37,19 +37,20 @@ module ALU(
     output ng 			// 1 if (out < 0),  0 otherwise
 );
 
+    // Put your code here:
     // Local intermediate wires
     wire [15:0] xx;
     wire [15:0] yy;
 
     // pre-compute x/y z/n (zero/negate)
-	assign xx = nx ? (zx ? ~0 : ~x) : (zx ? 0 : x);
-	assign yy = ny ? (zy ? ~0 : ~y) : (zy ? 0 : y);
+    assign xx = nx ? (zx ? ~0 : ~x) : (zx ? 0 : x);
+    assign yy = ny ? (zy ? ~0 : ~y) : (zy ? 0 : y);
 
     // compute f (add/and) and no (negate out)
-	assign out = no ? (f ? ~(xx + yy) : ~(xx & yy)) : (f ? (xx + yy) : (xx & yy));
+    assign out = no ? (f ? ~(xx + yy) : ~(xx & yy)) : (f ? (xx + yy) : (xx & yy));
 	
     // compute zr (out == 0) and ng (out < 0)
     assign zr = (out == 0);
-	assign ng = out[15];
+    assign ng = out[15];
 
 endmodule

@@ -4,7 +4,7 @@
 
 * Appendix / end to end install
 * wire/yosys updates
-
+* documentation updates
 
 ***
 
