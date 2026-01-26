@@ -6,11 +6,12 @@
 
 `default_nettype none
 module Clock25_Reset20( 
-    input CLK,			// external clock 100 MHz	
-	output clk,			// internal clock 25 MHz
-	output reset 		// reset signal ~20μs
+	input CLK,	 // external clock 100 MHz	
+	output clk,	 // internal clock 25 MHz
+	output reset // reset signal ~20μs
 );
 
+	// Put your code here:
 	// assign CLK to a counter
 	wire [15:0] psout;
 	wire low;
@@ -28,19 +29,19 @@ module Clock25_Reset20(
 	// PC itself is clocked so only one update per cycle
 	// 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)
 	assign clk = psout[1]; // demux the 2nd bit
-	
+
 	// Reset high for first 20μs @ 100 MHz
 	// 1 cycle = 100 million / second or 10ns (ns = 1 billion / second)
 	// 1000ns = 1μs (microsecond = 1 million / second)
 	// therefore 20μs = 20 x 1000 / 10 = 2000 cycles
-    assign low = (psout <= 16'd2000);
+	assign low = (psout <= 16'd2000);
 
 	// latch start so it doesn't continue resetting when PC overflows
 	reg start = 0;
 	always @(posedge CLK) begin
-        if (!low && !start)
+	    if (!low && !start)
 			start <= 1'b1;
-    end
+	end	
 
 	// ...but still assign immediately
 	assign reset = ~start;

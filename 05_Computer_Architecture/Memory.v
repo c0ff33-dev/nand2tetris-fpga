@@ -55,9 +55,10 @@ module Memory(
 	output loadIOF  // DEBUG4 (4111)
 );
 
+	// Put your code here:
 	// map adressses to wires for RAM3584 and the IO registers
 	// mux input via address (memory mapped IO or RAM)
-    assign out = (
+	assign out = (
 		(address==4096) ? inIO0 :
 		(address==4097) ? inIO1 :
 		(address==4098) ? inIO2 :

@@ -3,7 +3,7 @@
 # compare to the schematic of the board and the datasheet of FPGA
 
 set_frequency CLK 25 # Clock frequency constraint (25 MHz)
-set_io CLK 15		 # SYSCLOCK 100 MHz
+set_io CLK 15        # SYSCLOCK 100 MHz
 
 set_io BUT[0] 41
 set_io BUT[1] 42

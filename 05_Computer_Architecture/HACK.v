@@ -14,6 +14,7 @@ module HACK(
 	output [1:0] LED	// leds (0 off, 1 on)
 );
 
+	// Put your code here:
 	wire RST,clk,writeM,loadRAM,resLoad;
 	wire loadIO0,loadIO1,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
 	wire [15:0] inIO1,inIOB,inIOC,inIOD,inIOE,inIOF,outLED,outRAM;
