@@ -1,5 +1,6 @@
 // memory.asm
 // test consecutive memory read/writes
+// no need to implement this program / for debugging purposes only
 
 @1
 D=A

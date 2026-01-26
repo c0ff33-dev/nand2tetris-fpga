@@ -19,7 +19,6 @@ D=A
 M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
 
 // Put your code here:
-
 // sum += num1
 // loop num2 times
 // R0 = num1, R1 = num2, R2 = sum, R3 = i
