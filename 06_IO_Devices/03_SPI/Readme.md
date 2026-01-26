@@ -14,7 +14,7 @@ The special function register `SPI` memory mapped to address 4100 enables `HACK`
 | IN     | `in[8]`    | =1 (and `load=1`) pull `CSX` high without sending byte  |
 | IN     | `load`     | =1 initiates the transmission, when `in[8]=0`           |
 | OUT    | `out[15]`  | =1 chip is busy, =0 chip is ready                       |
-| OUT    | `out[7:0]` | Received byte (when out[15]=0)                          |
+| OUT    | `out[7:0]` | Received byte (when `out[15]=0`)                        |
 | OUT    | `CSX`      | `SPI` Chip Select NOT                                   |
 | OUT    | `SDO`      | `SPI` Serial Data Out                                   |
 | OUT    | `SCK`      | `SPI` Serial Clock                                      |

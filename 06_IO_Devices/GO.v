@@ -17,6 +17,7 @@ module GO(
 	output [15:0] out
 );
 	
+	// Put your code here:
 	// 0 = boot mode (flash), 1 = run mode (sram)
 	reg [15:0] run_mode = 0;
 	always @(posedge clk)

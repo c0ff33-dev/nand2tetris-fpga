@@ -1,5 +1,5 @@
 /**
- * SRAM_DATA controller for K6R4016V1D:
+ * SRAM controller for K6R4016V1D:
  * If load[t] == 1 then out[t+1] = in[t]
  *                      OEX[t+1] = 1
  *                      WEX[t+1] = 0
@@ -22,10 +22,12 @@ module SRAM_D(
 	output reg [15:0] out, // SRAM_DATA (read)
 	inout [15:0] DATA, // SRAM_DATA data line
 	input [15:0] mode, // run_mode
-	output CSX,        // SRAM_CSX chip_enable_not
-	output OEX,        // SRAM_OEX output_enable_not
-	output WEX         // SRAM_WEX write_enable_not
+	output CSX,        // Chip Select NOT
+	output OEX,        // Output Enable NOT
+	output WEX         // Write Enable NOT
 );
+	
+	// Put your code here:
 	wire _load, dffLoad;
 	wire [15:0] _dataOut, data, dataOut;
 

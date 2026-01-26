@@ -45,6 +45,7 @@ module LCD(
 		output SCK			// SPI serial clock
 );
 
+	// Put your code here:
 	wire csx, dcx, busy, busy16, reset, reset16;
 	wire [7:0] shiftOut, shiftOut16;
 	wire [15:0] clkCount;

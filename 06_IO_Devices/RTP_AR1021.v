@@ -29,7 +29,8 @@ module RTP(
 	// CSX is optional for AR1021
 );
 	
-	// Note: current implementation passes sim but has not been tested on real hardware
+	// Put your code here:
+	// current implementation passes sim but has not been tested on real hardware
 
 	reg miso = 0;
 	wire busy, reset, sckReset;

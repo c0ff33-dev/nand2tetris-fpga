@@ -11,6 +11,7 @@
 // iceprogduino -r flash.bin
 // hexdump -C -n 4 -s 0x40000 flash.bin
 
+// Put your code here:
 // ====================================
 // send command bytes
 // ====================================

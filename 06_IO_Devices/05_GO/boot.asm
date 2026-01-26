@@ -1,4 +1,6 @@
 // Bootloader: loads 64K words of HACK code starting at SPI address 0x10000 (64K) into SRAM.
+
+// Put your code here:
 // R0=jmp_target, R1=spi_byte, R2=outer_loop, R3=write_idx, R4=odd_even, R5=spi_sum, R6=inner_idx
 // DEBUG1=spi_byte, DEBUG2=spi_sum
 

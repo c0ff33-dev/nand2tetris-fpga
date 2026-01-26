@@ -9,7 +9,8 @@
 //
 // SRAM_A = SRAM address register, updates in [t+1]
 // SRAM_D = SRAM data register, updates in [t+1], persists last result from [t+1]
-//
+
+// Put your code here:
 // R0=jmp address for SPI loops
 // R1-4=SPI (ROM) bytes, R5-8=SRAM bytes
 // DEBUG0=checksum, DEBUG1-3=SPI/SRAM (ADDR/DATA) bytes

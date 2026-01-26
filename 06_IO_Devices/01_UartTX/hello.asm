@@ -2,6 +2,7 @@
 // Outputs "Hi\r\n" on UART_TX
 // out[15]=1 (busy) or out[15]=0 (ready)
 
+// Put your code here:
 // ===============================
 // sync / send message header
 // ===============================

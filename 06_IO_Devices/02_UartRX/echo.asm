@@ -4,6 +4,7 @@
 // out[7:0] (byte), write any data to clear buffer & return to ready state
 // out[15]=1 (ready), latched to only be in either state
 
+// Put your code here:
 @1
 D=A
 @LED

@@ -13,35 +13,36 @@ module HACK(
 	// inputs/outputs at this layer = wires to interfaces external to lattice
 	// see .pcf files for mapping
     input  CLK,				 // external clock 100 MHz	
-	input  [1:0] BUT,		 // user button  ("pushed down" == 0) ("up" == 1)
+	input  [1:0] BUT,		 // user button (pushed "down"=0, "up"=1)
 	output [1:0] LED,		 // leds (0 off, 1 on)
 	input  UART_RX,			 // UART recieve
 	output UART_TX,			 // UART transmit
-	output SPI_SDO,			 // SPI data out
-	input  SPI_SDI,			 // SPI data in
-	output SPI_SCK,			 // SPI serial clock
-	output SPI_CSX,			 // SPI chip select not
+	output SPI_SDO,			 // SPI Serial Data Out
+	input  SPI_SDI,			 // SPI Serial Data In
+	output SPI_SCK,			 // SPI Serial Clock
+	output SPI_CSX,			 // SPI Chip Select NOT
 	output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
 	inout [15:0] SRAM_DATA,	 // SRAM data 16 Bit
-	output SRAM_WEX,		 // SRAM write_enable_not
-	output SRAM_OEX,		 // SRAM output_enable_not
-	output SRAM_CSX, 		 // SRAM chip_select_not
-	output LCD_DCX,			 // LCD data/command not
-	output LCD_SDO,			 // LCD data out 
-	output LCD_SCK,			 // LCD serial clock
-	output LCD_CSX,			 // LCD chip select not
+	output SRAM_WEX,		 // SRAM Write Enable NOT
+	output SRAM_OEX,		 // SRAM Output Enable NOT
+	output SRAM_CSX, 		 // SRAM Chip Select NOT
+	output LCD_DCX,			 // LCD Data/Command NOT
+	output LCD_SDO,			 // LCD Serial Data Out
+	output LCD_SCK,			 // LCD Serial Clock
+	output LCD_CSX,			 // LCD Chip Select NOT
 
 	// AR1021 wires
     // input  RTP_SDI,       // RTP Serial Data In
-    // output RTP_SDO,       // RTP serial Data Out
-    // output RTP_SCK        // RTP serial clock
+    // output RTP_SDO,       // RTP Serial Data Out
+    // output RTP_SCK        // RTP Serial Clock
 	
 	// NS2009 wires
-	inout RTP_SDA,           // RTP data line
-	inout RTP_SCL            // RTP serial clock
+	inout RTP_SDA,           // RTP Data line
+	inout RTP_SCL            // RTP Serial Clock
 
 );
 	
+	// Put your code here:
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;	
 	wire sda_oe,scl_oe,sda_in,scl_in;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
@@ -179,10 +180,10 @@ module HACK(
 		.in(outM), // [7:0] byte to send (address/command)
 		.out(inIO4), // memory map
 		.load(loadIO4), // SPI_* outputs wired to pins
-		.SDI(SPI_SDI), // serial data in (MISO)
-		.SCK(SPI_SCK), // serial clock
-		.CSX(SPI_CSX), // chip select not (active low)
-		.SDO(SPI_SDO) // serial data out (MOSI)
+		.SDI(SPI_SDI), // Serial Data In (MISO)
+		.SCK(SPI_SCK), // Serial Clock
+		.CSX(SPI_CSX), // Chip Select NOT (active low)
+		.SDO(SPI_SDO) // Serial Data Out (MOSI)
 	);
 
 	// SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
@@ -200,9 +201,9 @@ module HACK(
 		.out(inIO6), // output data (ignored on write)
 		.mode(inIO7), // run_mode
 		.DATA(SRAM_DATA), // data line (inout)
-		.CSX(SRAM_CSX), // chip select not
-		.OEX(SRAM_OEX), // output enable not
-		.WEX(SRAM_WEX)  // write enable not
+		.CSX(SRAM_CSX), // Chip Select NOT
+		.OEX(SRAM_OEX), // Output Enable NOT
+		.WEX(SRAM_WEX)  // Write Enable NOT
 	);
 
 	// GO (4103): emit instruction from BRAM/SRAM
@@ -227,10 +228,10 @@ module HACK(
 		.load16(loadIO9),
 		.in(outM),
 		.out(lcdBusy), // LCD8/16 share one common circuit & busy signal
-		.DCX(LCD_DCX),
-		.CSX(LCD_CSX),
-		.SDO(LCD_SDO),
-		.SCK(LCD_SCK)
+		.DCX(LCD_DCX), // Data/Command NOT
+		.CSX(LCD_CSX), // Chip Select NOT
+		.SDO(LCD_SDO), // Serial Data Out
+		.SCK(LCD_SCK)  // Serial Clock
 	);
 	assign inIO8 = lcdBusy;
 	assign inIO9 = lcdBusy;
@@ -253,7 +254,7 @@ module HACK(
 	// 	.out(inIOA),
 	// 	.SDI(RTP_SDI),   // RTP Serial Data In
 	// 	.SDO(RTP_SDO),   // RTP serial Data Out
-	// 	.SCK(RTP_SCK)    // RTP serial clock
+	// 	.SCK(RTP_SCK)    // RTP Serial Clock
 	// );
 
 	// DEBUG0 (4107)
@@ -296,4 +297,4 @@ module HACK(
 		.out(inIOF)
 	);
 
-	endmodule
+endmodule

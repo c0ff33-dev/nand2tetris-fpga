@@ -3,8 +3,10 @@
 # Revision v3.0
 
 * Appendix / end to end install
-* wire/yosys updates (smaller bram, bram/rom timings/sync)
-* documentation updates
+* wire/yosys updates (smaller bram, bram/rom/sram timings/sync)
+* test fixes + documentation updates
+* NS2009 support
+* UART filter for iceprogduino sketch
 
 ***
 

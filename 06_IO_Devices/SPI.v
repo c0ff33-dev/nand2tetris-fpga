@@ -26,6 +26,8 @@ module SPI(
 	output SDO, // serial data out (MOSI)
 	output [15:0] out // out[15]=1 if busy, out[7:0] received byte
 );
+	
+	// Put your code here:
 	reg miso = 0;
 	wire csx, busy, reset;
 	wire [7:0] shiftOut;

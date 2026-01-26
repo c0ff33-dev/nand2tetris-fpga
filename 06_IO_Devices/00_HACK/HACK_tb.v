@@ -38,28 +38,28 @@ module HACK_tb();
 		.LED(LED),					// leds (0 off, 1 on)
 		.UART_RX(UART_RX),			// UART receive
 		.UART_TX(UART_TX),			// UART transmit
-		.SPI_SDO(SPI_SDO),			// SPI serial data out 
-		.SPI_SDI(SPI_SDI),			// SPI serial data in 
-		.SPI_SCK(SPI_SCK),			// SPI serial clock
-		.SPI_CSX(SPI_CSX),			// SPI chip select not
+		.SPI_SDO(SPI_SDO),			// SPI Serial Data Out
+		.SPI_SDI(SPI_SDI),			// SPI Serial Data In
+		.SPI_SCK(SPI_SCK),			// SPI Serial Clock
+		.SPI_CSX(SPI_CSX),			// SPI Chip Select NOT
 		.SRAM_ADDR(SRAM_ADDR),		// SRAM address 18 Bit = 256K
 		.SRAM_DATA(SRAM_DATA),		// SRAM data 16 Bit
-		.SRAM_WEX(SRAM_WEX),		// SRAM write_enable_not
-		.SRAM_OEX(SRAM_OEX),		// SRAM output_enable_not
-		.SRAM_CSX(SRAM_CSX), 		// SRAM chip_select_not
-		.LCD_DCX(LCD_DCX),			// LCD data/command not
-		.LCD_SDO(LCD_SDO),			// LCD serial data out 
-		.LCD_SCK(LCD_SCK),			// LCD serial clock
-		.LCD_CSX(LCD_CSX),			// LCD chip select not
+		.SRAM_WEX(SRAM_WEX),		// SRAM Write Enable NOT
+		.SRAM_OEX(SRAM_OEX),		// SRAM Output Enable NOT
+		.SRAM_CSX(SRAM_CSX), 		// SRAM Chip Select NOT
+		.LCD_DCX(LCD_DCX),			// LCD Data/Command NOT
+		.LCD_SDO(LCD_SDO),			// LCD Serial Data Out 
+		.LCD_SCK(LCD_SCK),			// LCD Serial Clock
+		.LCD_CSX(LCD_CSX),			// LCD Chip Select NOT
 
 		// AR1021 wires
-		// .RTP_SDI(RTP_SDI),		// RTP serial data in
-		// .RTP_SDO(RTP_SDO),		// RTP serial data out in
-		// .RTP_SCK(RTP_SCK)		// RTP serial clock
+		// .RTP_SDI(RTP_SDI),		// RTP Serial Data In
+		// .RTP_SDO(RTP_SDO),		// RTP Serial Data Out
+		// .RTP_SCK(RTP_SCK)		// RTP Serial Clock
 
 		// NS2009 wires
-		.RTP_SDA(RTP_SDA),			// RTP data line
-		.RTP_SCL(RTP_SCL)			// RTP serial clock
+		.RTP_SDA(RTP_SDA),			// RTP Data line
+		.RTP_SCL(RTP_SCL)			// RTP Serial Clock
 	);
 
 	// Simulate
@@ -77,7 +77,7 @@ module HACK_tb();
 		// pack 82 (0x52) and 88 (0x58) into UART frames at 50/150µs respectively
 		uart <= (n==5000)?((82<<2)+1):(n==15000)?((88<<2)+1):((baudrate==864)?{1'b1,uart[9:1]}:uart);
 	end
-	wire shift = (baudrate==864); // debug only
+	wire shift = (baudrate==864);
 	assign UART_RX = uart[0];
 	
 	//Simulate SPI
