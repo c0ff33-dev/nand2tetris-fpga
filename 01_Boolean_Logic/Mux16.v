@@ -12,6 +12,7 @@ module Mux16(
 	output [15:0] out
 );
 
+	// Put your code here:
 	// condition ? value_if_true : value_if_false
 	assign out = sel ? b : a;
 

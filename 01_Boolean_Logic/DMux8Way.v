@@ -20,6 +20,7 @@ module DMux8Way(
 	output h
 );
 
+	// Put your code here:
 	assign a = (sel==0) ? in : 0;
 	assign b = (sel==1) ? in : 0;
 	assign c = (sel==2) ? in : 0;

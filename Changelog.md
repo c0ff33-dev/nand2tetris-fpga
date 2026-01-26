@@ -1,5 +1,11 @@
 # TODO: Summarize changes
 
+# Revision v3.0
+
+* Appendix / end to end install
+* wire/yosys updates
+
+
 ***
 
 Pre-fork changelog.

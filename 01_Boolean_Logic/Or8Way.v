@@ -9,6 +9,7 @@ module Or8Way(
 	output out
 );
 
+	// Put your code here:
 	assign out = |in; // reduction OR (in[0] or in[1] ... or in[7])
 
 endmodule

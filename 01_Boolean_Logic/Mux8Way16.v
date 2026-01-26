@@ -18,6 +18,7 @@ module Mux8Way16(
 	output [15:0] out
 );
 
+	// Put your code here:
 	assign out = (sel == 3'b000) ? a :
                  (sel == 3'b001) ? b :
                  (sel == 3'b010) ? c :
