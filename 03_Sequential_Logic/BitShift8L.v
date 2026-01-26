@@ -15,6 +15,7 @@ module BitShift8L(
 	output reg [7:0] out
 );
 
+	// Put your code here:
 	// See SPI for timing explanation
 	always @(negedge clk) begin
 		if (load)

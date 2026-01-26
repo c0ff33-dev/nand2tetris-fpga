@@ -15,6 +15,7 @@ module BitShift9R(
 	output reg [8:0] out
 );
 
+	// Put your code here:
 	always @(posedge clk) begin
 		if (load)
 			out <= in;

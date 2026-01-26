@@ -14,7 +14,8 @@ module RAM3584(
 	output [15:0] out
 );
 	
-	// Address decoding mux
+	// Put your code here:
+    // Address decoding mux
     wire [2:0] bank_select = address[11:9];
     wire [8:0] local_address = address[8:0];
 

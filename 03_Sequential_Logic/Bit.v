@@ -12,9 +12,10 @@ module Bit(
 	output out
 );
 
-	// Multiplexer for load functionality:
+    // Put your code here:
+    // Multiplexer for load functionality
     // If load=1, feed 'in' to DFF,
-	// else feed previous output to DFF to hold state
+    // else feed previous output to DFF to hold state
     DFF dff (
         .clk(clk),
         .in(load ? in : out),

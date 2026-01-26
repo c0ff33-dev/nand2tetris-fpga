@@ -22,7 +22,7 @@ module RAM256(
 	// - expression result (in) is combinationally eval'd [t]
 	// - write new regRAM[address] (out) at [t+1]
 
-	// Syncronized dual port pattern - only this specific wave pattern works
+	// Syncronized dual port pattern
 	always @(posedge clk) begin
 		// in is sampled on posedge [t]
 		// but won't be written to regRAM[address] until [t+1]

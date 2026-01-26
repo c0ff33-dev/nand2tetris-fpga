@@ -27,7 +27,7 @@ The chip `Memory.v` maps all addresses `0-0x0FFF` to RAM and the addresses `0x10
 
 The 100 MHz of the clock generator on the `iCE40HX1K-EVB` is too fast to drive our `HACK` design. Therefore we must scale down the external clock (`CLK`) of 100 MHz to the internal clock (`clk`) of 25 MHz using a counter `PC` .
 
-`HACK` CPU needs a reset signal to have a proper start of the complete computer system. The fpga chip needs some time delay to preload the ROM with `ROM.hack` code. Therefore the reset signal at startup should have a minimal length of ~20μs.
+`HACK` CPU needs a reset signal to have a proper start of the complete computer system. The FPGA chip needs some time delay to preload the ROM with `ROM.hack` code. Therefore the reset signal at startup should have a minimal length of ~20μs.
 
 ### 04 HACK
 
@@ -35,7 +35,7 @@ The chip `HACK.v` is the top level module, that connects to the outer world.
 
 ![](04_HACK/HACK.png)
 
-The signals wires `CLK`, `RST`, `BUT[1:0]` and `LED[1:0]` (by convention written in capital letters) connect to the outer pins of the fpga chip `iCE40HX1K` according to the file `iCE40HX1K.pcf`. The board `iCE40HX1K-EVB` comes with a clock generator of 100 MHz, two buttons and two leds connected to FPGA (refer to [docs/iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf)).
+The signals wires `CLK`, `RST`, `BUT[1:0]` and `LED[1:0]` (by convention written in capital letters) connect to the outer pins of the FPGA chip `iCE40HX1K` according to the file `iCE40HX1K.pcf`. The board `iCE40HX1K-EVB` comes with a clock generator of 100 MHz, two buttons and two leds connected to FPGA (refer to [docs/iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf)).
 
 | Wire     | `iCE40HX1K` (FPGA) | Board `iCE40HX1K-EVB`   |
 | -------- | ------------------ | ----------------------- |

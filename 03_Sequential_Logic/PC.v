@@ -15,14 +15,16 @@ module PC(
 	input reset,
 	output [15:0] out
 );	
-	wire [15:0] next_out;
+
+    // Put your code here:
+    wire [15:0] next_out;
 
     // Compute next value of the counter
     assign next_out = reset ? 16'b0 :
                       load  ? in :
                       inc   ? (out + 1) :
-                      out;
-
+                      out;  
+    
     Register register (
         .clk(clk),
         .in(next_out),

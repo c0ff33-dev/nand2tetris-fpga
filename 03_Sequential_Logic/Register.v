@@ -11,7 +11,8 @@ module Register(
 	input load,
 	output [15:0] out
 );
-
+    
+    // Put your code here:
     genvar i;
     generate
         for (i = 0; i < 16; i = i + 1) begin : bit_array

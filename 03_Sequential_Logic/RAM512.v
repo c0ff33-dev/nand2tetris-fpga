@@ -13,9 +13,10 @@ module RAM512(
 	output [15:0] out
 );
 	
-	// Mux using address[8] to select between two RAM256 blocks
-	// Split address into high and low parts
-	wire [7:0] addr_low = address[7:0];
+    // Put your code here:
+    // Mux using address[8] to select between two RAM256 blocks
+    // Split address into high and low parts
+    wire [7:0] addr_low = address[7:0];
     wire sel_high = address[8];
     wire [15:0] out_low, out_high;
     

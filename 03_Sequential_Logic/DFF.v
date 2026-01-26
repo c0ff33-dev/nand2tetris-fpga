@@ -5,9 +5,9 @@
 
 `default_nettype none
 module DFF(
-		input clk,
-		input in,
-		output reg out
+	input clk,
+	input in,
+	output reg out
 );
 
 	// No need to implement this chip

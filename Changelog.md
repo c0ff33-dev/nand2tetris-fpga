@@ -3,7 +3,7 @@
 # Revision v3.0
 
 * Appendix / end to end install
-* wire/yosys updates
+* wire/yosys updates (smaller bram, bram timings)
 * documentation updates
 
 ***

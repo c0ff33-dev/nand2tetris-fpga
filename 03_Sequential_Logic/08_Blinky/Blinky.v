@@ -1,4 +1,4 @@
-// Test to run on fpga with 100 MHz
+// Test to run on FPGA with 100 MHz
 
 `default_nettype none
 module Blinky(
