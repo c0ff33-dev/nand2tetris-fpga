@@ -2,7 +2,7 @@
 // R0=jmp_target, R1=spi_byte, R2=outer_loop, R3=write_idx, R4=odd_even, R5=spi_sum, R6=inner_idx
 // DEBUG1=spi_byte, DEBUG2=spi_sum
 
-// TODO: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
+// FUTURE: optimize @[0|1|-1] > D=A instructions & M=D[0|1|-1] instructions (globally)
 
 // ====================================
 // SPI: send command bytes

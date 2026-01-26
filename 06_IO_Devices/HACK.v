@@ -8,8 +8,6 @@
  * with the computer via the BUT.
  */
 
-// TODO: sync 6/7 HACK files
-
 `default_nettype none
 module HACK(
 	// inputs/outputs at this layer = wires to interfaces external to lattice
@@ -44,19 +42,6 @@ module HACK(
 
 );
 	
-	// timing index
-	// clk: posedge CLK
-	// Register (A/D/PC/BUT/LED/DEBUG0-4): posedge clk
-	// CPU/ALU/Memory: combinational
-	// ROM: read negedge clk
-	// RAM: write posedge clk, read negedge clk
-	// UartTX/RX: sample/shift posedge clk
-	// SPI: sample posedge clk, shift negedge clk // TODO: fix ~clk refs
-	// SRAM_ADDR: posedge clk
-	// SRAM_DATA: update posedge clk, read negedge clk
-	// GO: mode update posedge clk else combinational
-	// TODO: LCD/RTP
-
 	wire clk,writeM,loadRAM,clkRST,RST,resLoad;	
 	wire sda_oe,scl_oe,sda_in,scl_in;
 	wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
@@ -76,7 +61,6 @@ module HACK(
 	assign RST = clkRST | loadIO7;
 
 	// CPU (ALU, A, D, PC)
-	// ALU outputs are combinational, rest are clocked
 	CPU cpu(
 		.clk(clk),
 		.inM(inM),
@@ -164,8 +148,6 @@ module HACK(
 
 	// FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
 	// // UART_TX (4098) @ 115200 baud (~14KB/sec)
-	// // R: busy signal, [15]=1 busy, [15]=0 ready
-	// // W: send byte
 	// UartTX uartTX(
 	// 	.clk(clk),
 	// 	.load(loadIO2),
@@ -175,8 +157,6 @@ module HACK(
 	// );
 	
 	// // UART_RX (4099) @ 115200 baud (~14KB/sec)
-	// // R: out[15]=1 no data (0x8000), else out[7:0]=byte
-	// // W: 1 = clear data register
 	// UartRX uartRX(
 	// 	.clk(clk),
 	// 	.clear(loadIO3),
@@ -187,16 +167,13 @@ module HACK(
 	// In the following component descriptions only 64KB or 
 	// 32K x 16 bit words is addressable in current spec.
 	
-	// TODO: Document new spec in interpreter
+	// FUTURE: Document new spec in interpreter
 		// original A instructions: 0x0-7FFF (32K words)
 		// original C instructions: 0x8000-0xFFFF (32K words, 8K reserved)
 		// new A instructions: 0x0-0xDFFF (56k words)
 		// new C instructions: 0xE000-FFFF (8K words)
 
 	// SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
-	// R: out[15]=1 if busy, out[7:0] received byte
-	// W: command byte outM[7:0] +
-	// W: outM[8]=1 pull CSX high (no send), outM[8]=0 send (CSX=0)
 	SPI spi(
 		.clk(clk),
 		.in(outM), // [7:0] byte to send (address/command)
@@ -208,20 +185,14 @@ module HACK(
 		.SDO(SPI_SDO) // serial data out (MOSI)
 	);
 
-	// SRAM_A (4101): 16 bit address register for 
+	// SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
 	// K6R4016V1D (512KB SRAM @ 100 MHz read/write)
-	// W: update address in [t+1]
-	// R: return stored address in [t+1]
 	Register sram_addr (
         .clk(clk),
         .load(loadIO5),
 		.in(outM),
         .out(inIO5)
     );
-
-	// SRAM_D (4102): 16 bit data register for K6R4016V1D (512KB SRAM)
-	// W: write data to SRAM[SRAM_A] in [t+1]
-	// R: read data from SRAM[SRAM_A] in [t+1]
 	SRAM_D sram_data (
 		.clk(clk),
 		.load(loadIO6), // 1=write enabled, else read enabled
@@ -235,8 +206,6 @@ module HACK(
 	);
 
 	// GO (4103): emit instruction from BRAM/SRAM
-	// switch to run_mode & reset pc in [t+1] after load=1
-	// routes inputs to outputs combinationally
 	GO go(
 		.clk(clk),
 		.load(loadIO7),
@@ -251,8 +220,7 @@ module HACK(
 	// K6R4016V1D uses 18 bits but we address 16 LSB
 	assign SRAM_ADDR = {2'd0, go_sram_addr};
 
-	// TODO: LCD8/16 (4104/4105)
-	// ILI9341V: 168KB VRAM (240x320 x 16bit colour depth)
+	// LCD8/16 (4104/4105): ILI9341V 168KB VRAM (240x320 x 16bit colour depth)
 	LCD lcd(
 		.clk(clk), 
 		.load(loadIO8),
@@ -267,7 +235,7 @@ module HACK(
 	assign inIO8 = lcdBusy;
 	assign inIO9 = lcdBusy;
 
-	// RTP (4106) controller for Resistive Touch Panel NS2009
+	// RTP (4106): Resistive Touch Panel NS2009
 	RTP rtp(
 		.clk(clk),
 		.load(loadIOA),
@@ -277,7 +245,7 @@ module HACK(
 		.SCL(RTP_SCL)
 	);
 
-	// RTP (4106) controller for Resistive Touch Panel AR1021 (sim only)
+	// RTP (4106): Resistive Touch Panel AR1021 (sim only)
 	// RTP rtp(
 	// 	.clk(clk),
 	// 	.load(loadIOA),
@@ -288,7 +256,6 @@ module HACK(
 	// 	.SCK(RTP_SCK)    // RTP serial clock
 	// );
 
-	// additional registers
 	// DEBUG0 (4107)
 	Register debug0(
 		.clk(clk),

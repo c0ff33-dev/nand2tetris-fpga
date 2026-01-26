@@ -23,7 +23,6 @@ class Sys {
         return;
     }
 
-    // TODO: can fine tune with sim
     /** Attempts to sleep for duration milliseconds and returns */
     function void wait(int duration) {
         // ~255 total instructions

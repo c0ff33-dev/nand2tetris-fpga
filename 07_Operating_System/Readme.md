@@ -43,26 +43,23 @@ Finally you can run Tetris!
 For completeness here is the full list of class files to link per project:
 
 ```
+# Sys.jack uses slightly modified copies in 1-10
 sudo ln -sf ../GPIO.jack ./01_GPIO_Test/GPIO.jack
 sudo ln -sf ../UART.jack ./02_UART_Test/UART.jack
 sudo ln -sf ../GPIO.jack ./03_Sys_Test/GPIO.jack
-sudo ln -sf ../Sys.jack ./03_Sys_Test/Sys.jack
 sudo ln -sf ../UART.jack ./03_Sys_Test/UART.jack
 sudo ln -sf ../Array.jack ./04_Memory_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./04_Memory_Test/GPIO.jack
 sudo ln -sf ../Memory.jack ./04_Memory_Test/Memory.jack
-sudo ln -sf ../Sys.jack ./04_Memory_Test/Sys.jack
 sudo ln -sf ../UART.jack ./04_Memory_Test/UART.jack
 sudo ln -sf ../Array.jack ./05_Array_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./05_Array_Test/GPIO.jack
 sudo ln -sf ../Memory.jack ./05_Array_Test/Memory.jack
-sudo ln -sf ../Sys.jack ./05_Array_Test/Sys.jack
 sudo ln -sf ../UART.jack ./05_Array_Test/UART.jack
 sudo ln -sf ../Array.jack ./06_Math_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./06_Math_Test/GPIO.jack
 sudo ln -sf ../Math.jack ./06_Math_Test/Math.jack
 sudo ln -sf ../Memory.jack ./06_Math_Test/Memory.jack
-sudo ln -sf ../Sys.jack ./06_Math_Test/Sys.jack
 sudo ln -sf ../UART.jack ./06_Math_Test/UART.jack
 sudo ln -sf ../Array.jack ./07_String_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./07_String_Test/GPIO.jack
@@ -70,7 +67,6 @@ sudo ln -sf ../Math.jack ./07_String_Test/Math.jack
 sudo ln -sf ../Memory.jack ./07_String_Test/Memory.jack
 sudo ln -sf ../StdIO.jack ./07_String_Test/StdIO.jack
 sudo ln -sf ../String.jack ./07_String_Test/String.jack
-sudo ln -sf ../Sys.jack ./07_String_Test/Sys.jack
 sudo ln -sf ../UART.jack ./07_String_Test/UART.jack
 sudo ln -sf ../Array.jack ./08_StdIO_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./08_StdIO_Test/GPIO.jack
@@ -78,7 +74,6 @@ sudo ln -sf ../Math.jack ./08_StdIO_Test/Math.jack
 sudo ln -sf ../Memory.jack ./08_StdIO_Test/Memory.jack
 sudo ln -sf ../StdIO.jack ./08_StdIO_Test/StdIO.jack
 sudo ln -sf ../String.jack ./08_StdIO_Test/String.jack
-sudo ln -sf ../Sys.jack ./08_StdIO_Test/Sys.jack
 sudo ln -sf ../UART.jack ./08_StdIO_Test/UART.jack
 sudo ln -sf ../Array.jack ./09_Screen_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./09_Screen_Test/GPIO.jack
@@ -88,7 +83,6 @@ sudo ln -sf ../Screen.jack ./09_Screen_Test/Screen.jack
 sudo ln -sf ../ScreenExt.jack ./09_Screen_Test/ScreenExt.jack
 sudo ln -sf ../StdIO.jack ./09_Screen_Test/StdIO.jack
 sudo ln -sf ../String.jack ./09_Screen_Test/String.jack
-sudo ln -sf ../Sys.jack ./09_Screen_Test/Sys.jack
 sudo ln -sf ../UART.jack ./09_Screen_Test/UART.jack
 sudo ln -sf ../Array.jack ./10_Output_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./10_Output_Test/GPIO.jack
@@ -99,7 +93,6 @@ sudo ln -sf ../Screen.jack ./10_Output_Test/Screen.jack
 sudo ln -sf ../ScreenExt.jack ./10_Output_Test/ScreenExt.jack
 sudo ln -sf ../StdIO.jack ./10_Output_Test/StdIO.jack
 sudo ln -sf ../String.jack ./10_Output_Test/String.jack
-sudo ln -sf ../Sys.jack ./10_Output_Test/Sys.jack
 sudo ln -sf ../UART.jack ./10_Output_Test/UART.jack
 sudo ln -sf ../Array.jack ./11_Touch_Test/Array.jack
 sudo ln -sf ../GPIO.jack ./11_Touch_Test/GPIO.jack
