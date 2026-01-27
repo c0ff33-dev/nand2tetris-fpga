@@ -7,14 +7,14 @@
 `default_nettype none
 
 module Register(
-	input clk,
-	input [15:0] in,
-	input load,
-	output reg [15:0] out = 0
+    input clk,
+    input [15:0] in,
+    input load,
+    output reg [15:0] out = 0
 );
-	
-	// No need to implement this chip
-	always @(posedge clk)
-		out <= load?in:out;
+    
+    // No need to implement this chip
+    always @(posedge clk)
+        out <= load?in:out;
 
 endmodule

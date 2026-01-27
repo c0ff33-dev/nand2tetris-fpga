@@ -24,17 +24,17 @@
 
 `default_nettype none
 module ALU(
-	input [15:0] x,		// input x (16 bit)
-	input [15:0] y,		// input y (16 bit)
-    input zx, 			// zero the x input?
-    input nx, 			// negate the x input?
-    input zy, 			// zero the y input?
-    input ny, 			// negate the y input?
-    input f,  			// compute out = x + y (if 1) or x & y (if 0)
-    input no, 			// negate out
-    output [15:0] out, 	// 16 bit output
-    output zr, 			// 1 if (out == 0), 0 otherwise
-    output ng 			// 1 if (out < 0),  0 otherwise
+    input [15:0] x,       // input x (16 bit)
+    input [15:0] y,       // input y (16 bit)
+    input zx,             // zero the x input?
+    input nx,             // negate the x input?
+    input zy,             // zero the y input?
+    input ny,             // negate the y input?
+    input f,              // compute out = x + y (if 1) or x & y (if 0)
+    input no,             // negate out
+    output [15:0] out,    // 16 bit output
+    output zr,            // 1 if (out == 0), 0 otherwise
+    output ng             // 1 if (out < 0),  0 otherwise
 );
 
     // Put your code here:
@@ -48,7 +48,7 @@ module ALU(
 
     // compute f (add/and) and no (negate out)
     assign out = no ? (f ? ~(xx + yy) : ~(xx & yy)) : (f ? (xx + yy) : (xx & yy));
-	
+    
     // compute zr (out == 0) and ng (out < 0)
     assign zr = (out == 0);
     assign ng = out[15];

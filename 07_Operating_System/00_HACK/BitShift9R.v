@@ -7,16 +7,16 @@
 
 `default_nettype none
 module BitShift9R(
-	input clk,
-	input [8:0] in,
-	input inMSB,
-	input load,
-	input shift,
-	output reg [8:0] out = 0
+    input clk,
+    input [8:0] in,
+    input inMSB,
+    input load,
+    input shift,
+    output reg [8:0] out = 0
 );
 
-	// No need to implement this chip
-	always @(posedge clk)
-		out <= load?in:(shift?{inMSB,out[8:1]}:out);
+    // No need to implement this chip
+    always @(posedge clk)
+        out <= load?in:(shift?{inMSB,out[8:1]}:out);
 
 endmodule

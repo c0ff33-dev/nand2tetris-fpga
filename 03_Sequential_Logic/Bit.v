@@ -6,10 +6,10 @@
 
 `default_nettype none
 module Bit(
-	input clk,
-	input in,
-	input load,
-	output out
+    input clk,
+    input in,
+    input load,
+    output out
 );
 
     // Put your code here:

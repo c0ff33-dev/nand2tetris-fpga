@@ -5,11 +5,11 @@
 
 `default_nettype none
 module Inc16(
-	input [15:0] in,
-	output [15:0] out
+    input [15:0] in,
+    output [15:0] out
 );
 
-	// Put your code here:
-	assign out = in + 1;
+    // Put your code here:
+    assign out = in + 1;
 
 endmodule

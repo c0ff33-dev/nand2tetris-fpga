@@ -4,7 +4,7 @@
 " Latest Revision: 15 November 2014
 
 if version < 600
-	syntax clear
+    syntax clear
 endif
 
 setl iskeyword+=.,$,:

@@ -1,95 +1,95 @@
 class Main {
-	
-	function void main() {
-		var int x;
-		var int vx;
-		var Array map;
+    
+    function void main() {
+        var int x;
+        var int vx;
+        var Array map;
 
-		do ScreenExt.setPenColor(ScreenExt.BLACK());
-		do Screen.drawRectangle(5,5,35,35);
-		do ScreenExt.setPenColor(ScreenExt.NAVY());
-		do Screen.drawRectangle(45,5,75,35);
-		do ScreenExt.setPenColor(ScreenExt.BLUE());
-		do Screen.drawRectangle(85,5,115,35);
-		do ScreenExt.setPenColor(ScreenExt.GREEN());
-		do Screen.drawRectangle(125,5,155,35);
-		do ScreenExt.setPenColor(ScreenExt.CYAN());
-		do Screen.drawRectangle(165,5,195,35);
-		do ScreenExt.setPenColor(ScreenExt.MAROON());
-		do Screen.drawRectangle(205,5,235,35);
-		do ScreenExt.setPenColor(ScreenExt.PURPLE());
-		do Screen.drawRectangle(5,45,35,75);
-		do ScreenExt.setPenColor(ScreenExt.OLIVE());
-		do Screen.drawRectangle(45,45,75,75);
-		do ScreenExt.setPenColor(ScreenExt.MAGENTA());
-		do Screen.drawRectangle(85,45,115,75);
-		do ScreenExt.setPenColor(ScreenExt.DARKGREY());
-		do Screen.drawRectangle(125,45,155,75);
-		do ScreenExt.setPenColor(ScreenExt.LIGHTGREY());
-		do Screen.drawRectangle(165,45,195,75);
-		do ScreenExt.setPenColor(ScreenExt.RED());
-		do Screen.drawRectangle(205,45,235,75);
-		do ScreenExt.setPenColor(ScreenExt.YELLOW());
-		do Screen.drawRectangle(5,85,35,115);
-		do ScreenExt.setPenColor(ScreenExt.ORANGE());
-		do Screen.drawRectangle(45,85,75,115);
-		do ScreenExt.setPenColor(ScreenExt.LIME());
-		do Screen.drawRectangle(85,85,115,115);
-		do ScreenExt.setPenColor(ScreenExt.TEAL());
-		do Screen.drawRectangle(125,85,155,115);
-		
-		do ScreenExt.setPenColor(ScreenExt.BLACK());
-		
-		let x=0;
-		while (x<240) {
-			do Screen.drawPixel(x,150);
-			let x=x+2;
-		}
-		do Screen.drawLine(120,200,170,200);
-		do Screen.drawLine(120,200,170,250);
-		do Screen.drawLine(120,200,120,250);
-		do Screen.drawLine(120,200,70,250);
-		do Screen.drawLine(120,200,70,200);
-		do Screen.drawLine(120,200,70,150);
-		do Screen.drawLine(120,200,120,150);
-		do Screen.drawLine(120,200,170,150);
+        do ScreenExt.setPenColor(ScreenExt.BLACK());
+        do Screen.drawRectangle(5,5,35,35);
+        do ScreenExt.setPenColor(ScreenExt.NAVY());
+        do Screen.drawRectangle(45,5,75,35);
+        do ScreenExt.setPenColor(ScreenExt.BLUE());
+        do Screen.drawRectangle(85,5,115,35);
+        do ScreenExt.setPenColor(ScreenExt.GREEN());
+        do Screen.drawRectangle(125,5,155,35);
+        do ScreenExt.setPenColor(ScreenExt.CYAN());
+        do Screen.drawRectangle(165,5,195,35);
+        do ScreenExt.setPenColor(ScreenExt.MAROON());
+        do Screen.drawRectangle(205,5,235,35);
+        do ScreenExt.setPenColor(ScreenExt.PURPLE());
+        do Screen.drawRectangle(5,45,35,75);
+        do ScreenExt.setPenColor(ScreenExt.OLIVE());
+        do Screen.drawRectangle(45,45,75,75);
+        do ScreenExt.setPenColor(ScreenExt.MAGENTA());
+        do Screen.drawRectangle(85,45,115,75);
+        do ScreenExt.setPenColor(ScreenExt.DARKGREY());
+        do Screen.drawRectangle(125,45,155,75);
+        do ScreenExt.setPenColor(ScreenExt.LIGHTGREY());
+        do Screen.drawRectangle(165,45,195,75);
+        do ScreenExt.setPenColor(ScreenExt.RED());
+        do Screen.drawRectangle(205,45,235,75);
+        do ScreenExt.setPenColor(ScreenExt.YELLOW());
+        do Screen.drawRectangle(5,85,35,115);
+        do ScreenExt.setPenColor(ScreenExt.ORANGE());
+        do Screen.drawRectangle(45,85,75,115);
+        do ScreenExt.setPenColor(ScreenExt.LIME());
+        do Screen.drawRectangle(85,85,115,115);
+        do ScreenExt.setPenColor(ScreenExt.TEAL());
+        do Screen.drawRectangle(125,85,155,115);
+        
+        do ScreenExt.setPenColor(ScreenExt.BLACK());
+        
+        let x=0;
+        while (x<240) {
+            do Screen.drawPixel(x,150);
+            let x=x+2;
+        }
+        do Screen.drawLine(120,200,170,200);
+        do Screen.drawLine(120,200,170,250);
+        do Screen.drawLine(120,200,120,250);
+        do Screen.drawLine(120,200,70,250);
+        do Screen.drawLine(120,200,70,200);
+        do Screen.drawLine(120,200,70,150);
+        do Screen.drawLine(120,200,120,150);
+        do Screen.drawLine(120,200,170,150);
    
-		let map = Array.new(16);
-		let map[0]=768;
-		let map[1]=768;
-		let map[2]=896;
-		let map[3]=896;
-		let map[4]=960;
-		let map[5]=960;
-		let map[6]=16352;
-		let map[7]=16352;
-		let map[8]=8176;
-		let map[9]=8176;
-		let map[10]=3840;
-		let map[11]=3840;
-		let map[12]=1792;
-		let map[13]=1792;
-		let map[14]=768;
-		let map[15]=768;
+        let map = Array.new(16);
+        let map[0]=768;
+        let map[1]=768;
+        let map[2]=896;
+        let map[3]=896;
+        let map[4]=960;
+        let map[5]=960;
+        let map[6]=16352;
+        let map[7]=16352;
+        let map[8]=8176;
+        let map[9]=8176;
+        let map[10]=3840;
+        let map[11]=3840;
+        let map[12]=1792;
+        let map[13]=1792;
+        let map[14]=768;
+        let map[15]=768;
 
-		do ScreenExt.setPenColor(ScreenExt.RED());
-		do ScreenExt.drawBitMap(112, 260, 127, 275, map);
-		let x=120;
-		let vx=10;
-		while (true) {
-			do Sys.wait(100);
-			do ScreenExt.setPenColor(ScreenExt.WHITE());
-			do Screen.drawCircle(x,300,5);
-			let x=x+vx;
-			do ScreenExt.setPenColor(ScreenExt.RED());
-			do Screen.drawCircle(x,300,5);
-			if (x>220) {
-				let vx=-10;
-			}
-			if (x<20) {
-				let vx=10;
-			}
-		}
-		return;
-	}
+        do ScreenExt.setPenColor(ScreenExt.RED());
+        do ScreenExt.drawBitMap(112, 260, 127, 275, map);
+        let x=120;
+        let vx=10;
+        while (true) {
+            do Sys.wait(100);
+            do ScreenExt.setPenColor(ScreenExt.WHITE());
+            do Screen.drawCircle(x,300,5);
+            let x=x+vx;
+            do ScreenExt.setPenColor(ScreenExt.RED());
+            do Screen.drawCircle(x,300,5);
+            if (x>220) {
+                let vx=-10;
+            }
+            if (x<20) {
+                let vx=10;
+            }
+        }
+        return;
+    }
 }

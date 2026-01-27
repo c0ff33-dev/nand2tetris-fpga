@@ -1,18 +1,18 @@
 `default_nettype none
 module Clock25_Reset20( 
-    input CLK,			// external clock 100 MHz	
-	output clk,			// internal clock 25 Mhz
-	output reset 		// reset signal
+    input CLK,   // external clock 100 MHz    
+    output clk,  // internal clock 25 Mhz
+    output reset // reset signal
 );
 
-	// No need to implement this chip
-	reg [15:0] n=0;
-	always @(posedge CLK)
-		n <= n + 1;
-	assign clk = n[1];
-	reg resetx=0;
-	always @(posedge clk)
-		resetx <= n[11]?1:resetx;	
-	assign reset = ~resetx;	
+    // No need to implement this chip
+    reg [15:0] n=0;
+    always @(posedge CLK)
+        n <= n + 1;
+    assign clk = n[1];
+    reg resetx=0;
+    always @(posedge clk)
+        resetx <= n[11]?1:resetx;
+    assign reset = ~resetx;
 
-endmodule	
+endmodule

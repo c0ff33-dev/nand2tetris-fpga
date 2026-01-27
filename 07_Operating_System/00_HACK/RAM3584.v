@@ -7,19 +7,19 @@
 
 `default_nettype none
 module RAM3584(
-	input clk,
-	input [11:0] address,
-	input [15:0] in,
-	input load,
-	output [15:0] out
+    input clk,
+    input [11:0] address,
+    input [15:0] in,
+    input load,
+    output [15:0] out
 );
-	
-	// No need to implement this chip
-	// RAM is implemented using BRAM of iCE40
-	reg [15:0] regRAM [0:3583]; 
-	always @(posedge clk)
-		if (load) regRAM[address[11:0]] <= in;
+    
+    // No need to implement this chip
+    // RAM is implemented using BRAM of iCE40
+    reg [15:0] regRAM [0:3583]; 
+    always @(posedge clk)
+        if (load) regRAM[address[11:0]] <= in;
 
-	assign out = regRAM[address[11:0]];
+    assign out = regRAM[address[11:0]];
 
 endmodule

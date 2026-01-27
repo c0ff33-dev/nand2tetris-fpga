@@ -5,11 +5,11 @@
 
 `default_nettype none
 module Or8Way(
-	input [7:0] in,
-	output out
+    input [7:0] in,
+    output out
 );
 
-	// No need to implement this chip
-	assign out = |in;
+    // No need to implement this chip
+    assign out = |in;
 
 endmodule

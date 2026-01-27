@@ -6,12 +6,12 @@
 
 `default_nettype none
 module Or(
-	input a,
-	input b,
-	output out
+    input a,
+    input b,
+    output out
 );
 
-	// No need to implement this chip
-	or(out,a,b);
+    // No need to implement this chip
+    or(out,a,b);
 
 endmodule

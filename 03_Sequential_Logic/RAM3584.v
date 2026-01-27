@@ -7,14 +7,14 @@
 
 `default_nettype none
 module RAM3584(
-	input clk,
-	input [11:0] address,
-	input [15:0] in,
-	input load,
-	output [15:0] out
+    input clk,
+    input [11:0] address,
+    input [15:0] in,
+    input load,
+    output [15:0] out
 );
-	
-	// Put your code here:
+    
+    // Put your code here:
     // Address decoding mux
     wire [2:0] bank_select = address[11:9];
     wire [8:0] local_address = address[8:0];

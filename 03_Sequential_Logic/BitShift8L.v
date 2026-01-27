@@ -7,21 +7,21 @@
 
 `default_nettype none
 module BitShift8L(
-	input clk,
-	input [7:0] in,
-	input inLSB,
-	input load,
-	input shift,
-	output reg [7:0] out
+    input clk,
+    input [7:0] in,
+    input inLSB,
+    input load,
+    input shift,
+    output reg [7:0] out
 );
 
-	// Put your code here:
-	// See SPI for timing explanation
-	always @(negedge clk) begin
-		if (load)
-			out <= in;
-		else if (shift)
-			out <= (out << 1) | {7'b0, inLSB};
-	end
+    // Put your code here:
+    // See SPI for timing explanation
+    always @(negedge clk) begin
+        if (load)
+            out <= in;
+        else if (shift)
+            out <= (out << 1) | {7'b0, inLSB};
+    end
 
 endmodule

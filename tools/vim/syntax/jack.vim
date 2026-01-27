@@ -4,7 +4,7 @@
 " Latest Revision: 01 January 2015
 
 if version < 600
-	syntax clear
+    syntax clear
 endif
 
 syn keyword jackDeclaration var static field class

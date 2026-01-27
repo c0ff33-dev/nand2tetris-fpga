@@ -121,13 +121,13 @@ Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
 
 ```
 # AR1021 pins
-# set_io RTP_SDI 19		# PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (`SDO`) on MOD-LCD2.8RTP
-# set_io RTP_SDO 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (`SDI`) on MOD-LCD2.8RTP
-# set_io RTP_SCK 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (`SCK`) on MOD-LCD2.8RTP
+# set_io RTP_SDI 19      # PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (`SDO`) on MOD-LCD2.8RTP
+# set_io RTP_SDO 20      # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (`SDI`) on MOD-LCD2.8RTP
+# set_io RTP_SCK 21      # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (`SCK`) on MOD-LCD2.8RTP
 
 # NS2009 pins
-set_io RTP_SDA 20		# PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
-set_io RTP_SCL 21		# PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
+set_io RTP_SDA 20        # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
+set_io RTP_SCL 21        # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
 ```
 
 Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
@@ -149,7 +149,7 @@ Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
   // reg [40:0] spi={1'b0,8'd128,8'd10,8'd25,8'd8,8'd22};
   // assign RTP_SDI = spi[40];
   // always @(posedge (RTP_SCK))
-  // 	spi <= {spi[39:0],1'b0};
+  //     spi <= {spi[39:0],1'b0};
   ```
 
 Update `07_Operating_System/11_Touch_Test/Main.jack` refs:

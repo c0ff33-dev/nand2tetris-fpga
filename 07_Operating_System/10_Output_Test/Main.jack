@@ -23,8 +23,8 @@ class Main {
             let rowMax = 28;
         }
     
-    	let s = String.new(1);
-    	do s.appendChar(String.doubleQuote());
+        let s = String.new(1);
+        do s.appendChar(String.doubleQuote());
     
         do Output.moveCursor(0, colMax);
         do Output.printChar(66);
@@ -49,8 +49,8 @@ class Main {
         do Output.backSpace();
         do Output.printInt(6789);
 
-		do ScreenExt.setPenColor(ScreenExt.WHITE());
-		do ScreenExt.setBackColor(ScreenExt.RED());
+        do ScreenExt.setPenColor(ScreenExt.WHITE());
+        do ScreenExt.setBackColor(ScreenExt.RED());
 
         do Output.moveCursor(10, 0);
         do Output.printString("Back Color Red");

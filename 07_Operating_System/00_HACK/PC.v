@@ -8,16 +8,16 @@
 
 `default_nettype none
 module PC(
-	input clk,
-	input [15:0] in,
-	input load,
-	input inc,
-	input reset,
-	output reg [15:0] out = 0
-);	
+    input clk,
+    input [15:0] in,
+    input load,
+    input inc,
+    input reset,
+    output reg [15:0] out = 0
+);
 
-	// No need to implement this chip
-	always @(posedge clk)
-		out <= reset?0:(load?in:(inc?out+1:out));
+    // No need to implement this chip
+    always @(posedge clk)
+        out <= reset?0:(load?in:(inc?out+1:out));
 
 endmodule

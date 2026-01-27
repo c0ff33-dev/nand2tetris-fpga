@@ -48,8 +48,6 @@ class Touch{
 
         // filter for valid touch events
         if ((z_coord > touch_threshold) & (z_coord < adc_max)) {
-            let pen = 1;
-            
             // set x coord        
             do Touch.writeRTP(set_x_reg);
             let x_coord = Touch.writeRTP(read_cmd);
@@ -59,14 +57,12 @@ class Touch{
             let y_coord = adc_max - Touch.writeRTP(read_cmd);
 
             // ignore malformed data
-            if (x_coord > adc_max | y_coord > adc_max) { 
-                return false; 
-            } else {
+            if ((x_coord < adc_max) & (y_coord < adc_max)) {
+                let pen = 1;
                 return true;
             }
-        } else {
-            let pen = 0;
         }
+        let pen = 0;
         return false;
     }
 

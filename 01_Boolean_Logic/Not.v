@@ -5,11 +5,11 @@
 
 `default_nettype none
 module Not(
-	input in,
-	output out
+    input in,
+    output out
 );
 
-	// Put your code here:
-	not(out,in); // bitwise NOT (verilog primitive)
+    // Put your code here:
+    not(out,in); // bitwise NOT (verilog primitive)
 
 endmodule

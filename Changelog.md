@@ -16,7 +16,6 @@
 - TODO: update top level readme
 - TODO: jig files
 - TODO: diff Jack files (nand2tetris)
-- TODO: replace tab with spaces (repo wide)
 ```
 
 ***

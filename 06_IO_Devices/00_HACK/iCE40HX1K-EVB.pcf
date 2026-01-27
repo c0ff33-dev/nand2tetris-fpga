@@ -3,78 +3,77 @@
 # compare to the schematic of the board and the datasheet of FPGA
 
 set_frequency CLK 25 # Clock frequency constraint (25 MHz)
-set_io CLK 15		 # SYSCLOCK 100 MHz
+set_io CLK 15       # SYSCLOCK 100 MHz
 
-set_io BUT[0] 41	# BUT1
-set_io BUT[1] 42	# BUT2
+set_io BUT[0] 41    # BUT1
+set_io BUT[1] 42    # BUT2
 
-set_io LED[0] 40	# LED1
-set_io LED[1] 51	# LED2
+set_io LED[0] 40    # LED1
+set_io LED[1] 51    # LED2
 
-set_io UART_RX 36	# PIO2_8/RxD connected to pin 3 of UEXT (PGM)
-set_io UART_TX 37	# PIO2_9/TxD connected to pin 4 of UEXT (PGM)
+set_io UART_RX 36   # PIO2_8/RxD connected to pin 3 of UEXT (PGM)
+set_io UART_TX 37   # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
+set_io SPI_SDO 45   # iCE40-SDO
+set_io SPI_SDI 46   # iCE40-SDI
+set_io SPI_SCK 48   # iCE40-SCK
+set_io SPI_CSX 49   # iCE40-SS_B
 
-set_io SPI_SDO 45	# iCE40-SDO
-set_io SPI_SDI 46	# iCE40-SDI
-set_io SPI_SCK 48	# iCE40-SCK
-set_io SPI_CSX 49	# iCE40-SS_B
-
-set_io SRAM_ADDR[0] 79	 # SA0
-set_io SRAM_ADDR[1] 80	 # SA1
-set_io SRAM_ADDR[2] 81	 # SA2
-set_io SRAM_ADDR[3] 82	 # SA3
+set_io SRAM_ADDR[0] 79   # SA0
+set_io SRAM_ADDR[1] 80   # SA1
+set_io SRAM_ADDR[2] 81   # SA2
+set_io SRAM_ADDR[3] 82   # SA3
 set_io SRAM_ADDR[4] 83   # SA4
 set_io SRAM_ADDR[5] 85   # SA5
 set_io SRAM_ADDR[6] 86   # SA6
 set_io SRAM_ADDR[7] 87   # SA7
 set_io SRAM_ADDR[8] 89   # SA8
 set_io SRAM_ADDR[9] 90   # SA9
-set_io SRAM_ADDR[10] 91	 # SA10
-set_io SRAM_ADDR[11] 93	 # SA11
-set_io SRAM_ADDR[12] 94	 # SA12
-set_io SRAM_ADDR[13] 95	 # SA13
-set_io SRAM_ADDR[14] 96	 # SA14
-set_io SRAM_ADDR[15] 97	 # SA15
-set_io SRAM_ADDR[16] 99	 # SA16
+set_io SRAM_ADDR[10] 91  # SA10
+set_io SRAM_ADDR[11] 93  # SA11
+set_io SRAM_ADDR[12] 94  # SA12
+set_io SRAM_ADDR[13] 95  # SA13
+set_io SRAM_ADDR[14] 96  # SA14
+set_io SRAM_ADDR[15] 97  # SA15
+set_io SRAM_ADDR[16] 99  # SA16
 set_io SRAM_ADDR[17] 100 # SA17
 
-set_io SRAM_CSX 78		 # SRAM_#CS
-set_io SRAM_OEX 74		 # SRAM_#OE
-set_io SRAM_WEX 73		 # SRAM_#WE
+set_io SRAM_CSX 78       # SRAM_#CS
+set_io SRAM_OEX 74       # SRAM_#OE
+set_io SRAM_WEX 73       # SRAM_#WE
 
-set_io SRAM_DATA[0] 62	 # SD0
-set_io SRAM_DATA[1] 63	 # SD1
-set_io SRAM_DATA[2] 64	 # SD2
-set_io SRAM_DATA[3] 65	 # SD3
-set_io SRAM_DATA[4] 66	 # SD4
-set_io SRAM_DATA[5] 68	 # SD5
-set_io SRAM_DATA[6] 69	 # SD6
-set_io SRAM_DATA[7] 71	 # SD7
-set_io SRAM_DATA[8] 72	 # SD8
-set_io SRAM_DATA[9] 60	 # SD9
-set_io SRAM_DATA[10] 59	 # SD10
-set_io SRAM_DATA[11] 57	 # SD11
-set_io SRAM_DATA[12] 56	 # SD12
-set_io SRAM_DATA[13] 54	 # SD13
-set_io SRAM_DATA[14] 53	 # SD14
-set_io SRAM_DATA[15] 52	 # SD15
+set_io SRAM_DATA[0] 62   # SD0
+set_io SRAM_DATA[1] 63   # SD1
+set_io SRAM_DATA[2] 64   # SD2
+set_io SRAM_DATA[3] 65   # SD3
+set_io SRAM_DATA[4] 66   # SD4
+set_io SRAM_DATA[5] 68   # SD5
+set_io SRAM_DATA[6] 69   # SD6
+set_io SRAM_DATA[7] 71   # SD7
+set_io SRAM_DATA[8] 72   # SD8
+set_io SRAM_DATA[9] 60   # SD9
+set_io SRAM_DATA[10] 59  # SD10
+set_io SRAM_DATA[11] 57  # SD11
+set_io SRAM_DATA[12] 56  # SD12
+set_io SRAM_DATA[13] 54  # SD13
+set_io SRAM_DATA[14] 53  # SD14
+set_io SRAM_DATA[15] 52  # SD15
 
 # GPIO: top right=1, bottom right=2
 # RXD on MOD-LCD2.8RTP UEXT is reserved for backlight control but isn't used here
-set_io LCD_DCX 1	 # PIO3_1A connected to pin 5 of GPIO1, pin 7 (D/C) on MOD-LCD2.8RTP
-set_io LCD_SDO 2	 # PIO3_1B connected to pin 7 of GPIO1, pin 8 (MOSI) on MOD-LCD2.8RTP
-set_io LCD_SCK 3	 # PIO3_2A connected to pin 9 of GPIO1, pin 9 (SCK) on MOD-LCD2.8RTP
-set_io LCD_CSX 4	 # PIO3_2B connected to pin 11 of GPIO1, pin 10 (CS) on MOD-LCD2.8RTP
+set_io LCD_DCX 1   # PIO3_1A connected to pin 5 of GPIO1, pin 7 (D/C) on MOD-LCD2.8RTP
+set_io LCD_SDO 2   # PIO3_1B connected to pin 7 of GPIO1, pin 8 (MOSI) on MOD-LCD2.8RTP
+set_io LCD_SCK 3   # PIO3_2A connected to pin 9 of GPIO1, pin 9 (SCK) on MOD-LCD2.8RTP
+set_io LCD_CSX 4   # PIO3_2B connected to pin 11 of GPIO1, pin 10 (CS) on MOD-LCD2.8RTP
 
 # GPIO: top left=33, bottom left=34
 # default annotation on MOD-LCD2.8RTP assumes I2C (SDA/SCL) is used for RTP
 # but if using the hardware mod for SPI then some pins are repurposed
 
 # AR1021 pins
-# set_io RTP_SDI 19	 # PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
-# set_io RTP_SDO 20	 # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
-# set_io RTP_SCK 21	 # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP
+# set_io RTP_SDI 19  # PIO3_8B connected to pin 29 of GPIO1, pin 4 TXD (SDO) on MOD-LCD2.8RTP
+# set_io RTP_SDO 20  # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA (SDI) on MOD-LCD2.8RTP
+# set_io RTP_SCK 21  # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL (SCK) on MOD-LCD2.8RTP
  
 # NS2009 pins 
-set_io RTP_SDA 20	 # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
-set_io RTP_SCL 21	 # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
+set_io RTP_SDA 20    # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on MOD-LCD2.8RTP
+set_io RTP_SCL 21    # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP

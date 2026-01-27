@@ -6,14 +6,14 @@
 
 `default_nettype none
 module Bit(
-	input clk,
-	input in,
-	input load,
-	output reg out = 0
+    input clk,
+    input in,
+    input load,
+    output reg out = 0
 );
 
-	// No need to implement this chip
-	always @(posedge clk)
-		out <= load?in:out;
+    // No need to implement this chip
+    always @(posedge clk)
+        out <= load?in:out;
 
 endmodule

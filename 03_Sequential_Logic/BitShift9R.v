@@ -7,20 +7,20 @@
 
 `default_nettype none
 module BitShift9R(
-	input clk,
-	input [8:0] in,
-	input inMSB,
-	input load,
-	input shift,
-	output reg [8:0] out
+    input clk,
+    input [8:0] in,
+    input inMSB,
+    input load,
+    input shift,
+    output reg [8:0] out
 );
 
-	// Put your code here:
-	always @(posedge clk) begin
-		if (load)
-			out <= in;
-		else if (shift)
-			out <= (out >> 1) | (inMSB << 8);
-	end
+    // Put your code here:
+    always @(posedge clk) begin
+        if (load)
+            out <= in;
+        else if (shift)
+            out <= (out >> 1) | (inMSB << 8);
+    end
 
 endmodule

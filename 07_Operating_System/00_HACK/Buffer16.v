@@ -5,11 +5,11 @@
 
 `default_nettype none
 module Buffer16(
-	input [15:0] in,
-	output [15:0] out
+    input [15:0] in,
+    output [15:0] out
 );
 
-	// No need to implement this chip
-	assign out = in;
+    // No need to implement this chip
+    assign out = in;
 
 endmodule

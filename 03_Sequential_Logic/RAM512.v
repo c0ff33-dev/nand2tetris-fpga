@@ -6,13 +6,13 @@
 
 `default_nettype none
 module RAM512(
-	input clk,
-	input [8:0] address,
-	input [15:0] in,
-	input load,
-	output [15:0] out
+    input clk,
+    input [8:0] address,
+    input [15:0] in,
+    input load,
+    output [15:0] out
 );
-	
+    
     // Put your code here:
     // Mux using address[8] to select between two RAM256 blocks
     // Split address into high and low parts

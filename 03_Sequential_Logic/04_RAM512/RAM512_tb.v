@@ -1,41 +1,41 @@
 `default_nettype none
 module RAM512_tb();
 
-	// IN,OUT
-	reg clk=1;
-	reg [15:0] in;
-	reg [8:0] address;
-	reg load;
-	wire [15:0] out;
+    // IN,OUT
+    reg clk=1;
+    reg [15:0] in;
+    reg [8:0] address;
+    reg load;
+    wire [15:0] out;
 
-	// Part
-	RAM512 RAM512(
-		.clk(clk),
-		.address(address),
-		.in(in),
-		.load(load),
-		.out(out)
-	);
+    // Part
+    RAM512 RAM512(
+        .clk(clk),
+        .address(address),
+        .in(in),
+        .load(load),
+        .out(out)
+    );
 
-	// Simulate
-	always #1 clk=~clk; // no time scale
-	always @(posedge clk) begin
-		in <= $random;	
-		address <= n;
-		load <= (n<512);
-	end
+    // Simulate
+    always #1 clk=~clk; // no time scale
+    always @(posedge clk) begin
+        in <= $random;
+        address <= n;
+        load <= (n<512);
+    end
 
-	// Compare
-	reg [15:0] regRAM [0:511];
-	reg [15:0] out_cmp;
-	always @(posedge clk)
-		if (load) regRAM[address[8:0]] <= in;
-	always @(negedge clk)
-		out_cmp <= regRAM[address[8:0]];
-	
-	reg fail = 0;
-	reg [15:0] n = 0;
-	task check;
+    // Compare
+    reg [15:0] regRAM [0:511];
+    reg [15:0] out_cmp;
+    always @(posedge clk)
+        if (load) regRAM[address[8:0]] <= in;
+    always @(negedge clk)
+        out_cmp <= regRAM[address[8:0]];
+    
+    reg fail = 0;
+    reg [15:0] n = 0;
+    task check;
     begin
         @(negedge clk);
         #1;
@@ -45,20 +45,20 @@ module RAM512_tb();
         end
     end
     endtask
-	  
-  	initial begin
-  		$dumpfile("RAM512_tb.vcd");
-  		$dumpvars(0, RAM512_tb);
-		
-		$display("------------------------");
-		$display("Test bench: RAM512");
+      
+    initial begin
+        $dumpfile("RAM512_tb.vcd");
+        $dumpvars(0, RAM512_tb);
+        
+        $display("------------------------");
+        $display("Test bench: RAM512");
 
-		for (n=0; n<1000;n=n+1) 
-			check();
-		
-		if (fail==0) $display("passed");
-		$display("------------------------");
-		$finish;
-	end
+        for (n=0; n<1000;n=n+1) 
+            check();
+        
+        if (fail==0) $display("passed");
+        $display("------------------------");
+        $finish;
+    end
 
 endmodule

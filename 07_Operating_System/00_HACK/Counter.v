@@ -7,14 +7,14 @@
 
 `default_nettype none
 module Counter(
-	input clk,
-	input inc,
-	input reset,
-	output reg [15:0] out = 0
+    input clk,
+    input inc,
+    input reset,
+    output reg [15:0] out = 0
 );
-	
-	// No need to implement this chip
-	always @(posedge clk)
-		out <= reset?0:(inc?out+1:out);
+    
+    // No need to implement this chip
+    always @(posedge clk)
+        out <= reset?0:(inc?out+1:out);
 
 endmodule

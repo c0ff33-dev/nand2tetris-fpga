@@ -6,12 +6,12 @@
 
 `default_nettype none
 module Add16(
-	input [15:0] a,
-	input [15:0] b,
-	output [15:0] out
+    input [15:0] a,
+    input [15:0] b,
+    output [15:0] out
 );
 
-	// Put your code here:
-	assign out = a + b;
+    // Put your code here:
+    assign out = a + b;
 
 endmodule

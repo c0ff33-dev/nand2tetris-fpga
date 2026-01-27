@@ -6,12 +6,12 @@
 
 `default_nettype none
 module And(
-	input a,
-	input b,
-	output out
+    input a,
+    input b,
+    output out
 );
 
-	// No need to implement this chip
-	and(out,a,b);
+    // No need to implement this chip
+    and(out,a,b);
 
 endmodule
