@@ -64,9 +64,7 @@ Send a write operation to select the register for the x, y and z (touch pressure
 * Connect the touch panel controller of `MOD-LCD2.8RTP` to `iCE40HX1K-EVB` as described in `06_IO_Devices/07_RTP`.
 
 * Run `Touch_Test` on real hardware on `iCE40HX1K-EVB`. Create some touch events on the resistive touch panel `RTP` and check the messages printed to the screen.
-
-  **Attention:** If the compiler does not `dispose()` the string literals being passed to `printString()` then runtime errors are likely to occur if continuously printing to the screen. The `StdIO` library can be substituted for `Output` to send messages over `UART` instead if this proves to be a problem.
-  
+ 
   ```
   $ cd 11_Touch_Test
   $ make
