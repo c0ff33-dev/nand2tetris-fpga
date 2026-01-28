@@ -14,8 +14,6 @@
 ```
 - TODO: complete changelog (cleanup tools, formatting etc)
 - TODO: update top level readme
-- TODO: jig files
-- TODO: diff Jack files (nand2tetris)
 ```
 
 ***
