@@ -34,7 +34,7 @@ We will use iCE40 FPGA from Lattice Semiconductors, because they have the nice p
 
 ![](toolchain.png)
 
-To run `HACK` we also need some software written for `HACK`. The simpler projects like a blinking LED can be programmed direcly in Assembler. Harder tasks like the driver for the LCD screen are programmed in Jack, translated for the virtual machine and finally compiled to `HACK` code.
+To run `HACK` we also need some software written for `HACK`. The simpler projects like a blinking LED can be programmed direcly in Assembler. Harder tasks like the driver for the `LCD` screen are programmed in Jack, translated for the virtual machine and finally compiled to `HACK` code.
 
 ***
 

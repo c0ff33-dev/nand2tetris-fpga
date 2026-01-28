@@ -3,7 +3,7 @@
 ### Base content changes
 
 * Added many Verilog & `apio.ini` fixes for modern yosys.
-* Added many test enhancements & documentation updates.
+* Added several test fixes/enhancements & many documentation updates.
 * Added syncronized read/write for BRAM/ROM/SRAM & tighter timing for `SPI` (2x faster).
   * Currently run mode for SRAM is still unsyncronized.
 * Split `RTP` into `AR1021` + `NS2009` implementations.
@@ -18,6 +18,7 @@
 
 ### Implementation changes
 
+* Added initial implementation for all parts/classes.
 * Added `Util` module for homing miscellaneous helper functions.
 * Added support for landscape orientation in `Output`.
 

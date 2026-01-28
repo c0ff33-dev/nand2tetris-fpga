@@ -309,7 +309,7 @@ module RTP_tb();
             check();
         end
 
-        if (fail == 0) $display("PASSED");
+        if (fail == 0) $display("passed");
         $display("------------------------");
         $finish;
     end

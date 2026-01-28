@@ -30,7 +30,7 @@ Our final implementation of `HACK` will have the following specs:
 
 * Bootloader boots `HACK` code from flash ROM into SRAM.
 
-* 2.8 inch color LCD with 320x240 pixel.
+* 2.8 inch color `LCD` with 320x240 pixel.
 
 * Resistive Touch Panel (`RTP`) support.
 

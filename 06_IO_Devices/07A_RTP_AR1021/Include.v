@@ -37,4 +37,4 @@
 `include "../../06_IO_Devices/SRAM_D.v"
 `include "../../06_IO_Devices/GO.v"
 `include "../../06_IO_Devices/LCD.v"
-`include "../../06_IO_Devices/RTP.v"
+`include "../../06_IO_Devices/RTP_AR1021.v"
