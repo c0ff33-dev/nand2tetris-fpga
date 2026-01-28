@@ -1,26 +1,27 @@
-# Revision v3.0
+# Revision v3.0 (Fork)
 
-* Appendix / end to end install
-* wire/yosys updates (smaller bram, bram/rom/sram timings/sync)
-* testbench/jack fixes/enhancements + documentation updates
-* Split RTP into AR1021 + NS2009 support (+docs, tests, etc)
-* UART filter for iceprogduino sketch
-* restored original Jack api/copyright (+changelog)
-* migrated new graphics funcs to ScreenExt (writeData16 > writeRgbData)
-* optional util module
-* landscape support (output)
-* new/updated datasheets
+### Base content changes
 
-```
-- TODO: complete changelog (cleanup tools, formatting etc)
-- TODO: update top level readme
-```
+* Added many Verilog & `apio.ini` fixes for modern yosys.
+* Added many test enhancements & documentation updates.
+* Added syncronized read/write for BRAM/ROM/SRAM & tighter timing for `SPI` (2x faster).
+  * Currently run mode for SRAM is still unsyncronized.
+* Split `RTP` into `AR1021` + `NS2009` implementations.
+  * Added documentation & test bench for the latter.
+* Added logic to the `iceprogduino` sketch to filter UART traffic before `CDONE` signal is received.
+* Restored functions that modified nand2tetris API signatures and nand2tetris copyright to Jack files.
+* Split graphics API where original nand2tetris API is preserved in `Screen` while new functions were added to `ScreenExt`.
+  * Renamed `writeData16()` to `writeRgbData()` in ScreenExt.
+* Added new/updated datasheets.
+* Added 3D printer files for development jig.
+* Added `Appendix.md` with cliff notes for development environment setup.
 
-***
+### Implementation changes
 
-Pre-fork changelog.
+* Added `Util` module for homing miscellaneous helper functions.
+* Added support for landscape orientation in `Output`.
 
-# Revision v2.0
+# Revision v2.0 (Pre-Fork)
 
 ## Update 04.08.2023
 
