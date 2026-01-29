@@ -1,4 +1,4 @@
-# Revision v3.0 (Fork)
+# Version v3.0 (Fork)
 
 ### Base content changes
 
@@ -22,7 +22,7 @@
 * Added `Util` module for homing miscellaneous helper functions.
 * Added support for landscape orientation in `Output`.
 
-# Revision v2.0 (Pre-Fork)
+# Version v2.0 (Pre-Fork)
 
 ## Update 04.08.2023
 
