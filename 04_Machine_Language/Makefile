@@ -6,6 +6,9 @@ leds:
 mult:
 	$(PYTHON) ../tools/Assembler/assembler.pyc mult.asm
 	cp mult.hack ../05_Computer_Architecture/04_HACK/ROM.hack
+memory:
+	$(PYTHON) ../tools/Assembler/assembler.pyc memory.asm
+	cp memory.hack ../05_Computer_Architecture/04_HACK/ROM.hack
 upload:
 	$(PYTHON) ../tools/Assembler/assembler.pyc leds.asm
 	$(PYTHON) ../tools/AsciiToBin.py leds.hack

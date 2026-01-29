@@ -2,6 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/OutputTest/Main.jack
+// Changes: coords, added test for colors.
 
 /** Test program for the OS Output class. */
 class Main {
@@ -10,15 +11,26 @@ class Main {
      *  methods of the Output class. */
     function void main() {
         var String s;
+        var int colMax, rowMax;
+        var boolean landscape;
+        let landscape = false;
+        
+        if (landscape) {
+            let colMax = 39;
+            let rowMax = 20;
+        } else {
+            let colMax = 29;
+            let rowMax = 28;
+        }
     
-    	let s = String.new(1);
-    	do s.appendChar(String.doubleQuote());
+        let s = String.new(1);
+        do s.appendChar(String.doubleQuote());
     
-        do Output.moveCursor(0, 29);
+        do Output.moveCursor(0, colMax);
         do Output.printChar(66);
-        do Output.moveCursor(28, 0);
+        do Output.moveCursor(rowMax, 0);
         do Output.printChar(67);
-        do Output.moveCursor(28, 29);
+        do Output.moveCursor(rowMax, colMax);
         do Output.printChar(68);
         do Output.printChar(65);
         
@@ -37,8 +49,8 @@ class Main {
         do Output.backSpace();
         do Output.printInt(6789);
 
-		do Screen.setPenColor(Screen.WHITE());
-		do Screen.setBackColor(Screen.RED());
+        do ScreenExt.setPenColor(ScreenExt.WHITE());
+        do ScreenExt.setBackColor(ScreenExt.RED());
 
         do Output.moveCursor(10, 0);
         do Output.printString("Back Color Red");

@@ -1,17 +1,16 @@
 # 01 Boolean Logic
 
-The hardware part of the project nand2tetris-fpga is implemented in verilog, a hardware description language similar to HDL used in the original nand2tetris course. There is no need to learn much verilog, as you can easily translate all your HDL-files into verilog following the given example for `Xor`.
+The hardware part of the project `nand2tetris-fpga` is implemented in Verilog, a Hardware Description Language similar to the HDL used in the original nand2tetris course. There is no need to learn much Verilog, as you can easily translate all your HDL files into Verilog following the given example for `Xor`.
 
-**Note:**
-The following modules are considered primitive and thus there is no need to implement them.
+**Note:** The following modules are considered primitive and thus there is no need to implement them.
 
-| module     | description                                                           |
+| Module     | Description                                                           |
 | ---------- | --------------------------------------------------------------------- |
 | `Nand.v`   | Nand-gate. Basic building block for combinatorial logic               |
 | `DFF.v`    | Data Flip Flop. Basic building block for sequential logic             |
-| `RAM256.v` | uses Block Ram (BRAM) of iCE40                                        |
-| `ROM.v`    | uses Block Ram (BRAM) of iCE40 preloaded with HACK-code at startup    |
-| `InOut.v`  | Tristate buffer, used to connect to the bidirectional databus of SRAM |
+| `RAM256.v` | Uses BRAM of iCE40                                                    |
+| `ROM.v`    | Uses BRAM of iCE40 preloaded with `HACK` code at startup              |
+| `InOut.v`  | Tristate buffer, used to connect to the bidirectional bus of SRAM     |
 
 ***
 
@@ -19,7 +18,7 @@ The following modules are considered primitive and thus there is no need to impl
 
 ### Xor.hdl
 
-Yout implementation of Xor in HDL (nand2tetris) should look something like:
+Yout implementation of `Xor` in HDL (nand2tetris) should look something like:
 
 ```
 // This file is part of www.nand2tetris.org
@@ -47,7 +46,7 @@ CHIP Xor {
 
 ### Xor.v
 
-`Xor.hdl` can easily be translated into `Xor.v` (verilog):
+`Xor.hdl` can easily be translated into `Xor.v` (Verilog):
 
 ```
 /** 
@@ -71,12 +70,11 @@ module Xor(
     And AND2(.a(nota),.b(b),.out(w2));
 
     Or OR(.a(w1),.b(w2),.out(out));
-}
 ```
 
 ### Simulation
 
-For every chip wie provide a test folder e.g. `05_Xor`, in which you find a so called testbench (`Xor_tb.v`). To run the test bench cd into the test directory and run apio:
+For every chip wie provide a test folder e.g. `05_Xor`, in which you find a so called test bench (`Xor_tb.v`). To run the test bench cd into the test directory and run apio:
 
 ```
 $ cd 05_Xor
@@ -84,7 +82,7 @@ $ apio clean        (used to remove older implementation from cache)
 $ apio sim
 ```
 
-**Attention:** All used chips used in the verilog code must be already implemented and included in the `Include.v` file.
+**Attention:** All used chips used in the Verilog code must be already implemented and included in the `Include.v` file.
 
 The test bench will produce a graphical represantation `Xor.gtkw` of all signal lines, which can be viewed with gtkwave.
 
@@ -101,12 +99,12 @@ Your chip passes the test, when `out=out_cmp` and `fail=0` over the whole test t
 
 ### iCE40HX1K.pcf
 
-To upload the chip `Xor` onto your fpga board iCE40HX1K-EVB you need two additional files: `top.v` and  `iCE40HX1K.pcf` (physical constraints file). The pyhiscal constraints file assigns every io-signal wire of the top level module `top.v` to physical pins of the fpga chip iCE40HX1K. Pin numbering can be checked by consulting the schematic [iCE40HX1K-EVB](../doc/iCE40HX1K-EVB_Rev_B.pdf) in `doc/iCE40HX1K-EVB_Rev_B.pdf`.
+To upload the chip `Xor` onto your FPGA board `iCE40HX1K-EVB` you need two additional files: `top.v` and  `iCE40HX1K.pcf` (physical constraints file). The pyhiscal constraints file assigns every io-signal wire of the top level module `top.v` to physical pins of the FPGA chip `iCE40HX1K`. Pin numbering can be checked by consulting the schematic [iCE40HX1K-EVB](../docs/iCE40HX1K-EVB_Rev_B.pdf) in `docs/iCE40HX1K-EVB_Rev_B.pdf`.
 
 ```
-#  physical constrain file
-# assign io-pins to pin numbering of iCE40-HX1K on olimex board iCE40-HX1K-EVB
-# compare to the schematic of the board and the datasheet of fpga
+# physical constraints file
+# assign io-pins to pin numbering of iCE40HX1K on Olimex board iCE40HX1K-EVB
+# compare to the schematic of the board and the datasheet of FPGA
 
 set_io BUT1 41    # BUT1
 set_io BUT2 42    # BUT2
@@ -115,21 +113,21 @@ set_io LED1 40    # LED1
 set_io LED2 51    # LED2
 ```
 
-* Now you can build and upload  the chip `Xor` to iCE40-HX1K-EVB with:
+* Now you can build and upload  the chip `Xor` to `iCE40HX1K-EVB` with:
   
-  ```
-  $ apio clean
-  $ apio build
-  $ apio upload
-  ```
+```
+$ apio clean
+$ apio build
+$ apio upload
+```
 
-* Press buttons BUT1 and BUT2 and see the result of your `Xor` chip on LED1.
+* Press buttons `BUT1/2` and see the result of your `Xor` chip on `LED1`.
 
 **Attention:** Due to pull up resistors at the buttons, the signals appear inverted:
 
-| pin    | function                                          |
-| ------ | ------------------------------------------------- |
-| LED1/2 | 0 led is off, 1 led is on                         |
-| BUT1/2 | 0 button is pressed down, 1 button is released up |
+| Pin      | Function                                            |
+| -------- | --------------------------------------------------- |
+| `LED1/2` | =0 `LED` is off, =1 `LED` is on                     |
+| `BUT1/2` | =0 button is pressed down, =1 button is released up |
 
-Chips with note more than two in- and output signals can be uploaded and tested in real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.
+Chips with no more than two input/output signals can be uploaded and tested on real hardware: `Nand`, `Not`, `Buffer`, `And`, `Or`, `Xor` and `DMux`.

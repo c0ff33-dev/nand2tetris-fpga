@@ -1,18 +1,35 @@
 /**
- * GO switches from boot to run mode.
- */
+ * When load=1 `GO` switches HACK operation from boot mode to run mode.
+ * In boot mode instruction is loaded from rom_data (BRAM).
+ * In run mode instruction is loaded from sram_data (SRAM).
+*/
+
 `default_nettype none
 module GO(
-	input clk,
-	input load,
-	input [15:0] pc,
-	input [15:0] sram_addr,
-	output [15:0] SRAM_ADDR,
-	input [15:0] sram_data,
-	input [15:0] ROM_data,
-	output [15:0] instruction
+    input clk,
+    input load,
+    input [15:0] pc,
+    input [15:0] rom_data,
+    input [15:0] sram_addr_in,
+    input [15:0] sram_data,
+    output [15:0] sram_addr_out,
+    output [15:0] instruction,
+    output [15:0] out
 );
-	
-	// Put your code here:
+    
+    // Put your code here:
+    // 0 = boot mode (flash), 1 = run mode (sram)
+    reg [15:0] run_mode = 0;
+    always @(posedge clk)
+        if (load)
+            run_mode <= 16'd1;
+    assign out = run_mode;
+
+    assign instruction = run_mode ? sram_data : rom_data;
+
+    // in run mode CPU takes over driving SRAM_ADDR via pc
+    // but in boot mode SRAM_ADDR is driven by the bootloader (boot.asm)
+    // in both cases the update is made syncronously via posedge clk
+    assign sram_addr_out = run_mode ? pc : sram_addr_in;
 
 endmodule

@@ -5,11 +5,11 @@
 
 `default_nettype none
 module Not(
-	input in,
-	output out
+    input in,
+    output out
 );
 
-	// Put your code here:
-	not(out,in);
+    // No need to implement this chip
+    not(out,in);
 
 endmodule

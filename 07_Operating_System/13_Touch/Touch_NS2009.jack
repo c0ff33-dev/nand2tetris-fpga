@@ -1,0 +1,117 @@
+/** A library to read touch events from the resistive touch panel controller
+ * NS2009. */
+
+class Touch{
+    static int RTP, x_coord, y_coord, z_coord, pen, x_max, y_max, adc_max, touch_threshold;
+    static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
+
+    /** Initializes the library. */
+    function void init() {
+        var boolean landscape;
+        let RTP = 4106;
+        let set_x_reg = 192; // 0xC0 (11000000), in[8]=0 for write
+        let set_y_reg = 208; // 0xD0 (11010000), in[8]=0 for write
+        let set_z_reg = 224; // 0xE0 (11100000), in[8]=0 for write
+        let read_cmd = 256;  // in[8]=1 for read
+        let adc_max = 4094;  // 4095 (0xFFF) is invalid event
+        let touch_threshold = 100;   // not sure about sensitivity / arbitrary threshold
+
+        // only relevant if using converted coords
+        // let landscape = false;
+        // if (landscape) {
+        //     let x_max = 320;
+        //     let y_max = 240;
+        // } else {
+        //     let x_max = 240;
+        //     let y_max = 320;
+        // }
+
+        return;
+    }
+
+    /** Writes 8 bits of c to RTP and returns the response of RTP
+     *  (no inter-byte delay needed for NS2009). */
+    function int writeRTP(int c) {
+        // busy=0x8000(+), else 12 bit ADC data 0x0-0xFFF (0-4095)
+        // response is zero for write commands
+        let RTP[0] = c; // start RTP_SCL
+        while (RTP[0] < 0) {} // wait, don't save yet or it'll read the busy bit
+        return RTP[0];
+    }
+
+    /** Tries to read a valid touch event report: returns true on success,
+     *  returns false if no valid touch event is available. */
+    function boolean getEvent() {
+        // set pen state
+        do Touch.writeRTP(set_z_reg);
+        let z_coord = Touch.writeRTP(read_cmd);
+
+        // filter for valid touch events
+        if ((z_coord > touch_threshold) & (z_coord < adc_max)) {
+            // set x coord        
+            do Touch.writeRTP(set_x_reg);
+            let x_coord = Touch.writeRTP(read_cmd);
+
+            // set y coord: NS2009 inverts the Y axis
+            do Touch.writeRTP(set_y_reg);
+            let y_coord = adc_max - Touch.writeRTP(read_cmd);
+
+            // ignore malformed data
+            if ((x_coord < adc_max) & (y_coord < adc_max)) {
+                let pen = 1;
+                return true;
+            }
+        }
+        let pen = 0;
+        return false;
+    }
+
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
+    function int getX() {
+        return x_coord;
+    }
+
+    /** Returns the x coordinate in the range [0..4095] of the last touch event report. */
+    function int getY() {
+        return y_coord;
+    }
+
+    /** Returns the z coordinate (touch pressure) in the range [0..4095] of the last touch event report. */
+    function int getZ() {
+        return z_coord;
+    }
+
+    /** Returns the pen value (1 = down, 0 = up) of the last touch event report. */
+    function boolean getPen() {
+        return pen;
+    }
+
+    /** Map 12 bit ADC coords to screen resolution. */
+    function int _map(int data, int in_min, int in_max, int out_min, int out_max) {
+        // FUTURE: Tetris expects the raw/unscaled values so not currently used
+        // this is basically just integer division
+        var int i, pos, out_range, in_range, scaled, accum;
+
+        if (data < in_min) { let data = in_min; }
+        if (data > in_max) { let data = in_max; }
+
+        let pos = data - in_min;
+        let out_range = out_max - out_min;
+        let in_range = in_max - in_min;
+
+        let scaled = 0;
+        let accum = 0;
+        let i = 0;
+        
+        while (i < pos) {
+            let i = i + 1;
+            let accum = accum + out_range;
+            if ((accum > in_range)|(accum = in_range)) {
+                let accum = accum - in_range;
+                let scaled = scaled + 1;
+            }
+        }
+
+        return out_min + scaled;
+    }
+}

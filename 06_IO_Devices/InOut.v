@@ -7,14 +7,15 @@
 `default_nettype none
 
 module InOut(
-	inout [15:0] PIN,
-	input [15:0] dataW,
-	output [15:0] dataR,
-	input dir
+    inout [15:0] PIN,
+    input [15:0] dataW,
+    output [15:0] dataR,
+    input dir
 );
-	// No need to implement this chip.
-	// This chip is implemented using tristate value z
-	assign PIN = dir? dataW: 16'bzzzzzzzzzzzzzzzz;
-	assign dataR = PIN;
-	
+    // No need to implement this chip
+    // This chip is implemented using tristate value z
+    // Never attempt to drive this inout PIN in any other modules!
+    assign PIN = dir ? dataW : 16'bzzzzzzzzzzzzzzzz;
+    assign dataR = PIN;
+    
 endmodule

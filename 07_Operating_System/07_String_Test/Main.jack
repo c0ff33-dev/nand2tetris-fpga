@@ -2,6 +2,7 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/StringTest/Main.jack
+// Changes: Use StdIO class instead of Output (same API as Output for print*()).
 
 /** Test program for the OS String class. */
 class Main {
@@ -22,62 +23,74 @@ class Main {
         let s = s.appendChar(101);
         do StdIO.printString("new,appendChar: ");
         do StdIO.printString(s);                // new, appendChar: abcde
+        do StdIO.printString(" -- expected: abcde");
         do StdIO.println();
     
         let i = String.new(6);
         do i.setInt(12345);
         do StdIO.printString("setInt: ");
         do StdIO.printString(i);                // setInt: 12345
+        do StdIO.printString(" -- expected: 12345");
         do StdIO.println();
 
-        let i = String.new(6);
         do i.setInt(-32767);
         do StdIO.printString("setInt: ");
         do StdIO.printString(i);                // setInt: -32767
+        do StdIO.printString(" -- expected: -32767");
         do StdIO.println();
-       
-		let s="abcde";
+
         do StdIO.printString("length: ");
         do StdIO.printInt(s.length());          // length: 5
+        do StdIO.printString(" -- expected: 5");
         do StdIO.println();
         
         do StdIO.printString("charAt[2]: ");
         do StdIO.printInt(s.charAt(2));         // charAt[2]: 99
+        do StdIO.printString(" -- expected: 99");
         do StdIO.println();
         
         do s.setCharAt(2, 45);
         do StdIO.printString("setCharAt(2,'-'): ");     
         do StdIO.printString(s);                // setCharAt(2,'-'): ab-de
+        do StdIO.printString(" -- expected: ab-de");
         do StdIO.println();
-        
-		let s="abcde";
+
         do s.eraseLastChar();        
         do StdIO.printString("eraseLastChar: ");     
         do StdIO.printString(s);                // eraseLastChar: ab-d
+        do StdIO.printString(" -- expected: ab-d");
         do StdIO.println();
         
         let s = "456";
         do StdIO.printString("intValue: ");
         do StdIO.printInt(s.intValue());        // intValue: 456
+        do StdIO.printString(" -- expected: 456");
         do StdIO.println();
         
         let s = "-32123";
         do StdIO.printString("intValue: ");
         do StdIO.printInt(s.intValue());        // intValue: -32123
+        do StdIO.printString(" -- expected: -32123");
         do StdIO.println();
         
         do StdIO.printString("backSpace: ");
         do StdIO.printInt(String.backSpace());  // backSpace: 129
+        do StdIO.printString(" -- expected: 129");
         do StdIO.println();
         
         do StdIO.printString("doubleQuote: ");
-        do StdIO.printInt(String.doubleQuote());// doubleQuote: 34
+        do StdIO.printInt(String.doubleQuote()); // doubleQuote: 34
+        do StdIO.printString(" -- expected: 34");
         do StdIO.println();
         
         do StdIO.printString("newLine: ");
         do StdIO.printInt(String.newLine());    // newLine: 128
+        do StdIO.printString(" -- expected: 128");
         do StdIO.println();
-        
+
+        do i.dispose();
+        do s.dispose();
+
         return;
     }
 }

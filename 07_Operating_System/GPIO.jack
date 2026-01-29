@@ -2,21 +2,52 @@
  * This library provides access to BUT and LED.
  */
 class GPIO {
+    static int LED, BUT, DEBUG0;
  
-    /** Initialize LED and BUT. LED is memory mapped to addr.
-     *  BUT is memory mapepd to addr +1  */
-    function void init(int addr){
+    /** Initialize LED and BUT. LED is memory mapped to addr
+     *  and BUT is memory mapped to addr+1. */
+    function void init() {
+        let LED = 4096;
+        let BUT = 4097;
+        let DEBUG0 = 4107; // DEBUG0-4 (4107-4111)
+        return;
     }
 
     /** Returns the value of LED. */
-    function int readLed(){
+    function int readLed() {
+        return LED[0];
     }
 
-    /** Write c to LED */
-    function void writeLed(int value){
+    /** Write c to LED. */
+    function void writeLed(int value) {
+        let LED[0] = value;
+        return;
     }
 
-    /** Returns the value of BUT */
+    /** Returns the value of BUT. */
     function int readBut() {
+        return BUT[0];
     }
+
+    // Helper functions
+
+    /** Read from DEBUG0-4. */
+    function int _readDebug(int port) {
+        return DEBUG0[port];
+    }
+
+    /** Write to DEBUG0-4. */
+    function void _writeDebug(int port, int value) {
+        let DEBUG0[port] = value;
+        return;
+    }
+
+    /** Cycle LEDs once per <interval> milliseconds. */
+    function void _blink(int interval) {
+        do GPIO.writeLed(1); 
+        do Sys.wait(interval);
+        do GPIO.writeLed(0);
+        do Sys.wait(interval);
+        return;
+    } 
 }

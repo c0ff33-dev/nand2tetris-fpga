@@ -6,13 +6,14 @@
 
 `default_nettype none
 module DMux(
-	input in,
-	input sel,
+    input in,
+    input sel,
     output a,
-	output b
+    output b
 );
 
-	assign a = ~sel&in;
-	assign b = sel&in;
+    // No need to implement this chip
+    assign a = ~sel&in;
+    assign b = sel&in;
 
 endmodule
