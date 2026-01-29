@@ -5,10 +5,11 @@
 
 `default_nettype none
 module Buffer(
-	input in,
-	output out
+    input in,
+    output out
 );
 
-	assign out = in;
+    // No need to implement this chip
+    assign out = in;
 
 endmodule

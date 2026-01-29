@@ -1,1 +1,75 @@
-../Sys.jack
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Sys.jack
+
+/**
+ * A library that supports various program execution services.
+ */
+class Sys {
+    /** Performs all the initializations required by the OS */
+    function void init() {
+        do GPIO.init();
+        do UART.init();
+        do Memory.init();
+        do Main.main();
+        do Sys.halt();
+        return;
+    }
+
+    /** Halts the program execution. */
+    function void halt() {
+        while (true) {} // pass
+        return;
+    }
+
+    /** Attempts to sleep for duration milliseconds and returns */
+    function void wait(int duration) {
+        // ~255 total instructions
+        // ~86 instructions before/after loops
+        // outer = ~97 * duration (excl inner) // ~4ms @ 1000
+        // inner = ~72 * count = 28800 // 1.152s @ 1000
+        // total = (outer * inner) + 86
+        var int count;
+
+        if (duration < 0) {
+            do Sys.error(1);
+        }
+
+        // repeat outer loop duration times
+        while (duration > 0) {
+            // ~56 cycles from outer to inner loop
+            let count = 400;
+
+            // repeat inner loop 50 times per outer loop
+            while (count > 0) {
+                // push count/zero = 17 cycles
+                // loop logic = 19 cycles
+                // count-- = 36 cycles
+                let count = count - 1;
+            }
+
+            // duration-- 36 cycles
+            let duration = duration - 1; 
+        }
+
+        return; // 9 cycles
+    }
+
+    /** Displays the given error code in the form "ERR<errorCode>",
+     *  and halts the program's execution. */
+    function void error(int errorCode) {
+        do UART.writeChar(69); // E
+        do UART.writeChar(82); // R
+        do UART.writeChar(82); // R
+        do UART.writeChar(errorCode);
+
+        while (true) {
+            do GPIO.writeLed(1);
+            do Sys.wait(125);
+            do GPIO.writeLed(2);
+            do Sys.wait(125);
+        }
+        return;
+    }
+}

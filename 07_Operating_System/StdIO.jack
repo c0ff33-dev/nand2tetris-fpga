@@ -1,18 +1,36 @@
 /**
 * A library of functions for text based input and output over UART
+* Same API as Output/Keyboard from nand2tetris for print[*]/read[*] respectively
 */
 class StdIO {
 
-    /** Prints the String s to UART_TX and disposes the String s */
-    function void printString(String s){
+    /** Prints the String s to UART_TX and disposes the String s. */
+    function void printString(String s) {
+        var int i, len;
+        let i = 0;
+        let len = s.length();
+        while (i < len) {
+            do UART.writeChar(s.charAt(i));
+            let i = i + 1;
+        }
+        return;
     }
 
-    /** Prints the decimal representation of i to UART_TX */
+    /** Prints the decimal representation of i to UART_TX. */
     function void printInt(int i) {
+        var String s;
+        let s = String.new(6); // max strInt = -16384
+        do s.setInt(i);
+        do StdIO.printString(s);
+        do s.dispose();
+        return;
     }
 
-    /** Prints the new line character to UART_TX */
-    function void println(){
+    /** Prints the new line character to UART_TX. */
+    function void println() {
+        do UART.writeChar(13); // ascii CR (carriage return)
+        do UART.writeChar(10); // ascii LF (line feed)
+        return;
     }
 
     /**
@@ -22,6 +40,12 @@ class StdIO {
      * value (until the first non-digit character in the entered text is
      * detected). Also handles user backspaces. */
     function int readInt(String message) {
+        var String s;
+        var int i;
+        let s = StdIO.readLine(message);
+        let i = s.intValue();
+        do s.dispose();
+        return i;
     }
 
     /**
@@ -29,5 +53,31 @@ class StdIO {
      * text until a newline character is detected, echoes the text
      * to the UART_TX, and returns its value. Also handles user backspaces. */
     function String readLine(String message) {
+        var String s;
+        var char c;
+        var int i;
+
+        // send input message and dispose
+        let s = String.new(50);
+        do StdIO.printString(message);
+        do message.dispose();
+
+        // read the input
+        // check for either line ending and backspace style
+        let c = UART.readChar();
+        while (~((c = 10) | (c = 13))) {
+             // ascii BS/DEL (backspace/delete)
+            if ((c = 8) | (c = 127)) {
+                do s.eraseLastChar();
+            } else {
+                do s.appendChar(c);
+            }
+            let c = UART.readChar();
+        }
+
+        do StdIO.println();
+        do StdIO.printString(s);
+        do StdIO.println();
+        return s;
     }
 }

@@ -8,17 +8,19 @@ A library of commonly used mathematical functions.
 
 ### Project
 
-* Implement `Math.jack`
+* Implement `Math.jack`.
+
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
 
 * Test in simulation:
   
   ```
-  $ cd 00_Math_Test
+  $ cd 06_Math_Test
   $ make
   $ cd ../00_HACK
   $ apio clean
   $ apio sim
   ```
 
-* Compare the content of special function register DEBUG0--DEBUG4.
+* Compare the content of special function register `DEBUG0-4`.
   ![](math.png)

@@ -6,11 +6,12 @@
 
 `default_nettype none
 module And(
-	input a,
-	input b,
-	output out
+    input a,
+    input b,
+    output out
 );
 
-	// Put your code here:
+    // Put your code here:
+    and(out,a,b); // bitwise AND (verilog primitive)
 
 endmodule

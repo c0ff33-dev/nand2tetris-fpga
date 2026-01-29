@@ -6,13 +6,13 @@
 
 `default_nettype none
 module Nand(
-	input a,
-	input b,
-	output out
+    input a,
+    input b,
+    output out
 );
 
-	// No need to implement this chip
-	// This chip is implemented using verilog primitives
-	nand(out,a,b);
+    // No need to implement this chip
+    // This chip is implemented using verilog primitives
+    nand(out,a,b);
 
 endmodule

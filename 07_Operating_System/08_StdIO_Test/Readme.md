@@ -1,6 +1,6 @@
 ## StdIO.jack
 
-A library of functions for text based input and output over UART.
+A library of functions for text based input and output over `UART`.
 
 ***
 
@@ -8,7 +8,16 @@ A library of functions for text based input and output over UART.
 
 * Implement `StdIO.jack`.
 
-* Run `StdIO_Test` in real hardware on iCE40HX1K-EVB using a terminal program connected to UART.
+  **Attention:** Don't init the other Jack libraries in `Sys.init()` beyond what is included in this folder (`GPIO`, `UART`, `Memory`, `Math`).
+
+* Run `StdIO_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to `UART`.
+
+  ```
+  $ cd 08_StdIO_Test
+  $ make
+  $ make upload
+  $ tio /dev/ttyACM0
+  ```
 
 * Compare your terminal output with:
   
@@ -21,7 +30,6 @@ A library of functions for text based input and output over UART.
   Please type 'JACK' and press enter: JACK
   ok
   readInt test:
-  (Verify echo and usage of 'backspace')
   Please type '-32123' and press enter: -32123
   ok
   

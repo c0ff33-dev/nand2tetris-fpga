@@ -1,15 +1,36 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Math.jack
+
 /**
  * A library of commonly used mathematical functions.
  * Note: Jack compilers implement multiplication and division using OS method calls.
  */
 class Math {
+    static Array powArr, magArr;
 
     /** Initializes the library. */
     function void init() {
+        var int i;
+        let magArr = Array.new(16); // magnitudes of divisors
+        let powArr = Array.new(16); // precomputed powers of 2
+
+        // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768]
+        let powArr[0] = 1;
+        while(i < 15) {
+            let i = i + 1;
+            let powArr[i] = powArr[i - 1] + powArr[i - 1];
+        }
+        return;
     }
 
     /** Returns the absolute value of x. */
     function int abs(int x) {
+        if (x < 0) {
+            let x = -x;
+        }
+        return x;
     }
 
     /** Returns the product of x and y. 
@@ -18,6 +39,40 @@ class Math {
      *  the Jack expressions x*y and multiply(x,y) return the same value.
      */
     function int multiply(int x, int y) {
+        // Russian Peasant Multiplication
+        var int sum, tmp, power, i, neg;
+
+        // test if one product is negative
+        let neg = (((x < 0) & (y > 0)) | ((x > 0) & (y < 0)));
+        
+        // ensure larger absolute product is in x
+        let x = Math.abs(x);
+        let y = Math.abs(y);
+        if (x < y) {
+            let tmp = x;
+            let x = y;
+            let y = tmp;
+        }
+
+        // add x to sum for each power of 2 in y
+        // double x each iteration
+        while ((power-1)<(y-1)) {
+            // if current power of 2 is in y, add x to sum
+            // i.e. if any bits match in the bitwise comparison
+            // ~(...)=0 ensures the resulting expression is boolean
+            if (~((powArr[i] & y) = 0)) {
+                let sum = sum + x;
+                let power = power + powArr[i];
+            }
+            let x = x + x;
+            let i = i + 1;
+        }
+
+        if (neg) {
+            let sum = -sum;
+        }
+
+        return sum;
     }
 
     /** Returns the integer part of x/y.
@@ -26,17 +81,81 @@ class Math {
      *  the Jack expressions x/y and divide(x,y) return the same value.
      */
     function int divide(int x, int y) {
+        // Binary Long Division
+        var int i, result, neg, overflow;
+        if (y = 0) {
+            do Sys.error(3); // check for division by zero
+        }
+
+        // test if one dividend/divisor is negative
+        let neg = (((x < 0) & (y > 0)) | ((x > 0) & (y < 0)));
+        
+        // prepare magnitude array: holds scaled divisor values
+        let magArr[0] = Math.abs(y);
+        let x = Math.abs(x);
+        
+        // double while space in magArr and result won't overflow ALU
+        while ((i < 15) & (~overflow)) {
+            let overflow = (32767 - (magArr[i] - 1)) < (magArr[i] - 1);
+            if (~overflow) {
+                let magArr[i + 1] = magArr[i] + magArr[i];
+                let overflow = (magArr[i + 1] - 1) > (x - 1);
+                if (~overflow) {
+                    let i = i + 1;
+                }
+            }
+        }
+        
+        // compute quotient using binary substraction
+        while (i > -1) {
+            // if divisor * 2^shiftIndex fits into remaining dividend
+            if (~((magArr[i] - 1) > (x - 1))) {
+                let result = result + powArr[i];
+                let x = x - magArr[i];
+            }
+            // move down to next power of two
+            let i = i - 1;
+        }
+
+        // restore sign
+        if (neg) {
+            let result = -result;
+        }
+        
+        return result;
     }
 
     /** Returns the integer part of the square root of x. */
     function int sqrt(int x) {
+        var int i, sum, sqr, result;
+        if (x < 0) {
+            do Sys.error(4); // x can't be negative
+        }
+        let i = 7;
+        while (i > -1) {
+            let sum = result + powArr[i];
+            let sqr = sum * sum;
+            if (~(sqr > x) & ~(sqr < 0)) {
+                let result = sum;
+            }
+            let i = i - 1;
+        }
+        return result;
     }
 
     /** Returns the greater number. */
     function int max(int a, int b) {
+        if (a > b) {
+            let b = a;
+        }
+        return b;
     }
 
     /** Returns the smaller number. */
     function int min(int a, int b) {
+        if (a < b) {
+            let b = a;
+        }
+        return b;
     }
 }

@@ -1,0 +1,247 @@
+/**
+* A library of functions for displaying graphics on the screen.
+* The connected LCD physical screen consists of 320 rows (indexed 0..319, top to bottom)
+* of 240 pixels each (indexed 0..239, left to right). The top left pixel on 
+* the screen is indexed (0,0). Every pixel can be set to a 16 bit color code composed of
+* RGB parts of 5 bit red, 6 bit green and 5 bit blue: rrrrrggggggbbbbb.
+*
+* CSX is implicitly driven low on all SPI transactions by the FPGA controller and only needs
+* to be driven high when the current batch of transactions is finished.
+*/
+class ScreenExt {
+    static int LCD, LCD_WAIT, fgcolor, bgcolor;
+    static Array powArr; // power of 2 array
+
+    /** Initializes the Screen. */
+    function void init() {
+        var int i;
+        var boolean landscape;
+        let LCD = 4104; // LCD[0]=LCD8, LCD[1]=LCD16
+        let LCD_WAIT = 120; // transition in milliseconds constant
+        let landscape = false;
+
+        // ILI9341V initialization: config
+        do ScreenExt.writeCommand(54); // MADCTL 0x36 (8 bit param)
+
+        if (landscape) {
+            // landscape orientation
+            do ScreenExt._write8BitData(8+32); // BGR=1, MV=1 (row/col flip)
+        } else {
+            // original "portrait" orientation
+            // MX=1 (flip x axis), BGR=1 (BGR bit order)
+            do ScreenExt._write8BitData(64+8); 
+        }
+        
+        // set RGB format
+        do ScreenExt.writeCommand(58); // COLMOD 0x3A (8 bit param)
+        do ScreenExt._write8BitData(85); // 16 bit RGB format
+       
+        // ILI9341V initialization: awaken
+        do Sys.wait(LCD_WAIT); // wait in case coming out of reset
+        do ScreenExt.writeCommand(17); // SLPOUT 0x11 (wake)
+        do Sys.wait(LCD_WAIT); // wait for SLPOUT
+        do ScreenExt.writeCommand(41); // DISPON 0x29 (enable display)
+        do Sys.wait(LCD_WAIT); // wait for DISPON
+        do ScreenExt._completeTransaction();
+
+        do ScreenExt.setPenColor(ScreenExt.BLACK());
+        do ScreenExt.setBackColor(ScreenExt.WHITE());
+        do Screen.clearScreen();
+
+        // [1,2,4,8,16,32,64,128,256,512,1024,2048,4096,8192,16384,32768,xxx]
+        let powArr = Array.new(17);
+        let powArr[0] = 1;
+        while (i < 16) {
+            let i = i + 1;
+            let powArr[i] = powArr[i-1] + powArr[i-1];
+        }
+        return;
+    }
+
+    /** Writes the 8 bit command with DCX wire set to low. */
+    function void writeCommand(int cmd) {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[0] = cmd; // send command byte
+        let busy = -1;
+        while (~(busy = 0)) {
+            let busy = LCD[0]; // read response
+        }
+        return;
+    }
+
+    /** Add 512 (0x2FF) to cmd to set DCX=1/CSX=0 for 8 bit params (MADCTL/COLMOD). */
+    function void _write8BitData(int data) {
+        do ScreenExt.writeCommand(512+data);
+        return;
+    }
+
+    /** Write 16 bits of data to LCD with DCX wire set to high. */
+    function void writeData(int data) {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[1] = data; // send data byte(s)
+        let busy = -1;
+        while (~(busy = 0)) {
+            let busy = LCD[1]; // read response
+        }
+        return;
+    }
+
+    /** Sets the current pen color, to be used for all subsequent drawXXX
+     *  commands. colors are represented by 16 bit RGB values with
+     *  binary representation: rrrrrggggggbbbbb. */
+    function void setPenColor(int color) {
+        let fgcolor = color;
+        return;
+    }
+
+    /** Return current foreground colour of pen. */
+    function int getPenColor() {
+        return fgcolor;
+    }
+
+    /** Sets the current background color, to be used for clearScreen()
+     *  and drawBitMap() commands. Colors are represented by 16 bit RGB 
+     *  values: rrrrrggggggbbbbb. */
+    function void setBackColor(int color) {
+        let bgcolor = color;
+        return;
+    }
+
+    /** Return current background colour of pen. */
+    function int getBackColor() {
+        return bgcolor;
+    }
+   
+    /** Sets the Window to a rectangle with upper left corner (x1,y1)
+     * and lower right corner (x2,y2). The next w*h calls to
+     * writeRgbData(int color) will paint the w*h pixels in the rectangle
+     * in the corresponding color. */ 
+    function void setWindow(int x1, int y1, int x2, int y2) {
+        // valid ranges: x2 >= x1, 0-239, y2 >= y1, 0-319
+        // otherwise ignored by ILI9341V
+        var int i, j;
+               
+        // CASET 0x2A (column adrr set): max 239
+        do ScreenExt.writeCommand(42);
+        do ScreenExt.writeData(x1); // SC[15:0]
+        do ScreenExt.writeData(x2); // EC[15:0]
+
+        // PASET 0x2B (page [row] adrr set): max 319
+        do ScreenExt.writeCommand(43); 
+        do ScreenExt.writeData(y1); // SP[15:0]
+        do ScreenExt.writeData(y2); // EP[15:0]
+        do ScreenExt._completeTransaction();
+        return;
+    }
+
+    /** Sets the 16 bit RGB color for the next pixel in the rectangle 
+     * set by setWindow(). */
+    function void writeRgbData(int color) {
+        // Unused but provided for completeness
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        do ScreenExt.writeData(color);
+        do ScreenExt._completeTransaction();
+        return;
+    }
+
+    /** Drive CSX high/DCX low without sending a byte -
+     * it is fine to leave CSX low for multiple SPI transactions. */
+    function void _completeTransaction() {
+        var int busy; // 0x0=ready, 0x8000=busy
+        let LCD[0] = 256; // send command byte
+        let busy = -1;
+        while (~(busy = 0)) {
+            let busy = LCD[0]; // read response
+        }
+        return;
+    }
+
+    /** Draws the BitMap into the rectangle with upper left corner (x1,y1)
+     *  and lower right corner (x2,y2) using the pen color for all 1s and the
+     *  back color for all 0s in the BitMap. BitMap is an Array of h integers
+     *  representing up to 16 pixels in the row. The rectangle is limited
+     *  to maximal 16 pixels in width. */ 
+    function void drawBitMap(int x1, int y1, int x2, int y2, Array map) {
+        var int i, j, fg, bg, width, height;
+        do ScreenExt.setWindow(x1,y1,x2,y2);
+        let fg = ScreenExt.getPenColor();
+        let bg = ScreenExt.getBackColor();
+
+        // inline the remaining logic for perf
+        // call writeData() w*h times
+        do ScreenExt.writeCommand(44); // RAMWR 0x2C (write to VRAM)
+        
+        // unlike the rest of the drawing code pixel order actually matters here
+        let height = y2-y1+1; // num of map entries to enum
+        let width = x2-x1+1; // num of bits to enum in the row/mask
+        while (j < height) {
+            let i = 0;
+            while (i < width) {
+                // use pow2 array to mask to a single bit
+                if (~((map[j] & powArr[i]) = 0)) {
+                    do ScreenExt.writeData(fg);
+                } else {
+                    do ScreenExt.writeData(bg);
+                }
+                let i = i + 1;
+            }
+            let j = j + 1;
+        }
+
+        do ScreenExt._completeTransaction();
+        return;
+    }
+
+    /** RGB values for various colors. */
+    function int BLACK() {
+        return 0; // 00000 000000 00000
+    }
+    function int NAVY() {
+        return 30; // 00000 000000 11110
+    }
+    function int BLUE() {
+        return 31; // 00000 000000 11111
+    }
+    function int LIME() {
+        return 2016; // 00000 111111 00000
+    }
+    function int GREEN() {
+        return 1920; // 00000 111100 00000
+    }
+    function int CYAN() {
+        return 2047; // 00000 111111 11111
+    }
+    function int MAROON() {
+        return -4096; // 11110 000000 00000
+    }
+    function int PURPLE() {
+        return -4066; // 11110 000000 11110
+    }
+    function int OLIVE() {
+        return -2176; // 11110 111100 00000
+    }
+    function int DARKGREY() {
+        return -14824; // 11000 110000 11000
+    }
+    function int TEAL() {
+        return 1950; // 00000 111000 11100
+    }
+    function int LIGHTGREY() {
+        return -6372; // 11100 111000 11100
+    }
+    function int RED() {
+        return -2048; // 11111 000000 00000
+    }
+    function int MAGENTA() {
+        return -2017; // 11111 000000 11111
+    }
+    function int YELLOW() {
+        return -32; // 11111 111111 00000
+    }
+    function int ORANGE() {
+        return -128; // 11111 111000 00000
+    }
+    function int WHITE() {
+        return -1; // 11111 111111 11111
+    }
+}

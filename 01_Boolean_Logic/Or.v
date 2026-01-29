@@ -6,11 +6,12 @@
 
 `default_nettype none
 module Or(
-	input a,
-	input b,
-	output out
+    input a,
+    input b,
+    output out
 );
 
-	// Put your code here:
+    // Put your code here:
+    or(out,a,b); // bitwise OR (verilog primitive)
 
 endmodule

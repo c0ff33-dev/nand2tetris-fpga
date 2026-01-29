@@ -1,0 +1,46 @@
+/**
+ * A library for miscellaneous system functions that don't quite fit elsewhere.
+ */
+class Util {
+
+    /** Initializes the library. */
+    function void init() {
+        return;
+    }
+
+    /** Take a 16 bit word and shift the upper byte right by 8. */
+    function int _logShiftByteRight(int word) {
+        var int result;
+        // psuedo division by 256
+        while (word > 255) {
+            let word = word - 256;
+            let result = result + 1;
+        }
+        return result;
+    }
+
+    // take two bytes and return a 16 bit word
+    function int _shiftByteLeft(int hiByte, int loByte) {
+        var int sum;
+        // shift the left hiByte by 8 (2^8=256)
+        let sum = hiByte + hiByte; // 2
+        let sum = sum + sum; // 4
+        let sum = sum + sum; // 8
+        let sum = sum + sum; // 16
+        let sum = sum + sum; // 32
+        let sum = sum + sum; // 64
+        let sum = sum + sum; // 128
+        let sum = sum + sum; // 256
+        let sum = sum + loByte; // remaining byte
+        return sum;
+    }
+
+    // take a word and emit two bytes over UART
+    function void _debugWord(int word) {
+        var int hiByte;
+        let hiByte = Util._logShiftByteRight(word);
+        do UART.writeChar(hiByte);
+        do UART.writeChar(word);
+        return;
+    }
+}

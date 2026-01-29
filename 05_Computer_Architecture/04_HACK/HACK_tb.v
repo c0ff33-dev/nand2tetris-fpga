@@ -2,29 +2,29 @@
 `default_nettype none
 module HACK_tb();
 
-	// IN,OUT
-	reg CLK = 1;
-	reg [1:0] BUT = 0;
-	wire [1:0] LED;
+    // IN,OUT
+    reg CLK = 1;
+    reg [1:0] BUT = 0;
+    wire [1:0] LED;
 
-	// Part
-	HACK HACK(
-    	.CLK(CLK),
-    	.BUT(BUT),
-    	.LED(LED)
-	);
+    // Part
+    HACK HACK(
+        .CLK(CLK),
+        .BUT(BUT),
+        .LED(LED)
+    );
 
-	// Simulate
-	always #500 BUT <= BUT+1;
+    // Simulate
+    always #500 BUT <= BUT+1; // inc button every 5μs
 
-	// Test
-	always #0.5 CLK = ~CLK;
-	initial begin
-  		$dumpfile("HACK_tb.vcd");
-  		$dumpvars(0, HACK_tb);
+    // Test
+    always #0.5 CLK = ~CLK; // 100 MHz
+    initial begin
+        $dumpfile("HACK_tb.vcd");
+        $dumpvars(0, HACK_tb);
 
-		#4000
-		$finish;
-	end
+        #24000
+        $finish;
+    end
 
 endmodule

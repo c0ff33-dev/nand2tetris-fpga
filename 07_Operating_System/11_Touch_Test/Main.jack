@@ -1,17 +1,31 @@
 class Main{
-	
-	function void main(){
-		while (true){
-			if (Touch.getEvent()) {
-				do StdIO.printInt(Touch.getX());
-				do StdIO.printString(" ");
-				do StdIO.printInt(Touch.getY());
-				do StdIO.printString(" ");
-				do StdIO.printInt(Touch.getPen());
-				do StdIO.println();
-			}	
-		}	
-		return;
-	}
-	
+    
+    function void main() {
+        var String strTouch, strSpace;
+        
+        // reuse strings to avoid heap exhaustion during the loop
+        let strTouch = String.new(7);
+        let strTouch = "Touch: ";
+        let strSpace = String.new(1);
+        let strSpace = " ";
+
+        do Output.printString("Touch the screen!");
+        do Output.println();
+        while (true) {
+            if (Touch.getEvent()) {
+                do Output.printString(strTouch);
+                do Output.printInt(Touch.getX());
+                do Output.printString(strSpace);
+                do Output.printInt(Touch.getY());
+
+                // NS2009 only
+                do Output.printString(strSpace);
+                do Output.printInt(Touch.getZ());
+                
+                do Output.println();
+            }
+        }    
+        return;
+    }
+    
 }
