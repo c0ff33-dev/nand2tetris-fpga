@@ -80,7 +80,7 @@ sudo ln -sf ../07_Operating_System/13_Touch/Touch_AR1021.jack ../07_Operating_Sy
 sudo ln -sf ../07_Operating_System/13_Touch/Touch_NS2009.jack ../07_Operating_System/Touch.jack
 ```
 
-Update `06_IO_Devices/00_HACK/HACK.v` refs:
+Update [06_IO_Devices/HACK.v](./HACK.v) refs:
 
 ```
 // AR1021 wires
@@ -93,7 +93,7 @@ inout RTP_SDA,              // RTP data line
 inout RTP_SCL               // RTP serial clock
 ```
 
-Update `06_IO_Devices/00_HACK/HACK_tb.v` refs:
+Update [06_IO_Devices/00_HACK/HACK_tb.v](./00_HACK/HACK_tb.v) refs:
 
 ```
 // AR1021 wires
@@ -117,7 +117,7 @@ output RTP_SDO,          // RTP serial Data Out
 output RTP_SCK           // RTP serial clock
 ```
 
-Update `06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf` refs:
+Update [06_IO_Devices/00_HACK/iCE40HX1K-EVB.pcf](./00_HACK/iCE40HX1K-EVB.pcf) refs:
 
 ```
 # AR1021 pins
@@ -130,7 +130,7 @@ set_io RTP_SDA 20        # PIO3_10A connected to pin 31 of GPIO1, pin 6 SDA on M
 set_io RTP_SCL 21        # PIO3_10B connected to pin 33 of GPIO1, pin 5 SCL on MOD-LCD2.8RTP
 ```
 
-Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
+Update [07_Operating_System/00_HACK/HACK_tb.v](../07_Operating_System/00_HACK/HACK_tb.v) refs:
 
 * `NS2009` is not currently implemented in this test bench so comment out the following blocks if `AR2021` is not present/implemented:
 
@@ -152,7 +152,7 @@ Update `07_Operating_System/00_HACK/HACK_tb.v` refs:
   //     spi <= {spi[39:0],1'b0};
   ```
 
-Update `07_Operating_System/11_Touch_Test/Main.jack` refs:
+Update [07_Operating_System/11_Touch_Test/Main.jack](../07_Operating_System/11_Touch_Test/Main.jack) refs:
 
 * For `AR1021` comment out the block below / there is no equivalent:
 
@@ -160,6 +160,17 @@ Update `07_Operating_System/11_Touch_Test/Main.jack` refs:
   // NS2009 only
   do Output.printString(" ");
   do Output.printInt(Touch.getZ());
+  ```
+
+Update `getButton()` in [07_Operating_System/12_Tetris/Menu.jack](../07_Operating_System/12_Tetris/Menu.jack):
+
+* For `AR1021` leave this block enabled, else for `NS2009` disable:
+
+  ```
+  // disable this block with NS2009 RTP
+  if (~t) {
+      return -1;
+  }
   ```
 
 Towards the end of the project the logic cell budget may become tight especially if implementing `I2C` for the `RTP` chip on `iCE40HX8K-EVB`. In that instance you can disable `UartTX/RX` by commenting out the relevant parts in `HACK.v` and swap debug implementation to printing to `Screen` (when complete) to reclaim some LCs if needed. An `iCE40HX8K-EVB` should have more than enough LC budget but hasn't been tested / may need other minor changes.
