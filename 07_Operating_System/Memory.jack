@@ -119,8 +119,14 @@ class Memory {
 
             // *allocNextPtr = *freeBlock
             let blockPtr[1] = blockPtr + size + 2;
+        } else {
+            // consume the whole block (size/flink unchanged)
+        }     
+
+        // perform sanity checks that the assigned block does meet requirements
+        if ((blockPtr[0] < size)) {
+            do Sys.error(6); // Heap overflow
         }
-        // else: consume the whole block (size/flink unchanged)
 
         let blockPtr[0] = 0; // allocBlockSize = 0, flag it as allocated
         return blockPtr + 2; // return &allocBlockData
