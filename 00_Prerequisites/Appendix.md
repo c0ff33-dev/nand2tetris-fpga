@@ -24,10 +24,7 @@ $ sudo apt install python3.11 python3.11-venv
 ```
 $ sudo apt install git
 $ mkdir src && cd src
-$ git clone git@gitlab.com:gcpd88/nand2tetris-fpga.git # requires ssh config
-$ git clone git@github.com:c0ff33-dev/nand2tetris.git
-$ git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
-$ git clone https://github.com/OLIMEX/MOD-LCD2.8RTP.git
+$ git clone git@github.com:c0ff33-dev/nand2tetris-fpga.git
 ```
 
 ### Install apio + dependencies
