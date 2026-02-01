@@ -5,33 +5,35 @@
 
 `default_nettype none
 module ps2(
-	input			i_clk,
-	input			i_rst,
-	output			isR,
-	input			i_ps2_data,
-	input			i_ps2_clk,
-	output reg [23:0]	o_data
+    input             i_clk,
+    input             i_rst,
+    output            isR,
+    input             i_ps2_data,
+    input             i_ps2_clk,
+    output reg [23:0] o_data
 );
-	
-reg[1:0] ps2_clock;					//buffer the last two bits
+
+// buffer the last two bits
+reg[1:0] ps2_clock; 
 always @(posedge i_clk)
-	ps2_clock <= {ps2_clock[0],i_ps2_clk};
+    ps2_clock <= {ps2_clock[0],i_ps2_clk};
 
-wire flanke = (ps2_clock == 2'b01);	//detect posedge from low to high
+wire _edge = (ps2_clock == 2'b01); // detect posedge from low to high
 
-reg [10:0] bits;					//buffer the last 11 bits
+// buffer the last 11 bits
+reg [10:0] bits; 
 always @(posedge i_clk)
-	if (i_rst | stop)
-		bits <= 11'b11111111111;
-	else if (flanke)
-		bits <= {i_ps2_data,bits[10:1]};
+    if (i_rst | stop)
+        bits <= 11'b11111111111;
+    else if (_edge)
+        bits <= {i_ps2_data,bits[10:1]};
 
-wire	stop = (bits[0]==1'b0);		//stop after last bit (number 10)
+wire stop = (bits[0]==1'b0); // stop after last bit (number 10)
 
 always @(posedge i_clk)
-	if (i_rst)
-		o_data <= 0;
-	else if (stop)
-		o_data <= {o_data[15:0],bits[8:1]};	
+    if (i_rst)
+        o_data <= 0;
+    else if (stop)
+        o_data <= {o_data[15:0],bits[8:1]};
 
 endmodule

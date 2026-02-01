@@ -24,7 +24,6 @@ module HACK(
     output SRAM_CSX,         // SRAM Chip Select NOT
 );
     
-    // Put your code here:
     wire clk,writeM,loadRAM,clkRST,RST,resLoad;
     wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
@@ -55,6 +54,7 @@ module HACK(
         .pc(pc) // clocked
     );
 
+    // TODO: update memory map
     // Memory (map + combinational routing only)
     Memory mem(
         .address(addressM),

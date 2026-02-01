@@ -48,7 +48,7 @@ class Menu{
         // disable this block with NS2009 RTP
         // if (~t) {
         //     return -1;
-		// }
+        // }
 
         if (pressed) {
             if (Touch.getPen()=0) {
