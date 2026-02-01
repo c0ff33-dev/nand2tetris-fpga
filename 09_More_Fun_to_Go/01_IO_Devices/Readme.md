@@ -9,4 +9,4 @@ Additional reading:
 
 ## Credit / License
 
-Out of respect for the source material I have included the MIT license for Michael Schröder's [hack-fpga](https://gitlab.com/x653/hack-fpga) project for the `PS/2` & `VGA` derived Verilog code.
+Out of respect for the source material I have included the MIT license for Michael Schröder's [hack-fpga](https://gitlab.com/x653/hack-fpga) project for the `Keyboard`/`PS/2`/`VGA` derived Verilog code (i.e. light refactoring only).
