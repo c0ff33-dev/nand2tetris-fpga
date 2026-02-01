@@ -14,7 +14,7 @@
  * The behavior of IO addresses is described in 06_IO_Devices
  */
 
- // TODO: update memory map (original)
+// TODO: update memory map (new)
 
 `default_nettype none
 module Memory(
