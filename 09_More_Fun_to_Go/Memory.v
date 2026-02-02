@@ -20,7 +20,7 @@
 // "STACK": 256-2047 incl
 // "HEAP": 2048-16383 incl
 // "SCREEN": 16384-24575 incl
-// "KBD": 24576
+// "KBD": 24576 // 48KB RAM required total
 
 // TODO: update memory map (new)
 
@@ -28,8 +28,8 @@
 // "STATIC": 16-255 incl (same)
 // "STACK": 256-1023 incl (smaller)
 // "HEAP": 1024-3583 incl (smaller)
-// "SCREEN: nil (removed)
-// "KBD": nil (removed)
+// "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
+// "KBD": nil (removed) -- this can just be a memory mapped register?
 // "IO": 4096-4111 (new)
 
 `default_nettype none
