@@ -3,7 +3,7 @@
  */
 
 `default_nettype none
-module kbd(
+module Keyboard(
     input             i_clk,
     input             i_rst,
     input  [23:0]     i_ps2_data,

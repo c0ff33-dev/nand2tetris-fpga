@@ -18,7 +18,7 @@ module HACK(
     input  UART_RX,          // UART recieve
     output UART_TX,          // UART transmit
     output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
-    inout [15:0] SRAM_DATA,  // SRAM data 16 Bit
+    inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
     output SRAM_OEX,         // SRAM Output Enable NOT
     output SRAM_CSX,         // SRAM Chip Select NOT
@@ -68,32 +68,32 @@ module HACK(
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D (4102)
         .inIO7(inIO7),  // GO (4103)
-        .inIO8(inIO8),  // LCD8 (4104)
-        .inIO9(inIO9),  // LCD16 (4105)
-        .inIOA(inIOA),  // RTP (4106)
+        .inIO8(inIO8),  // unassigned
+        .inIO9(inIO9),  // unassigned
+        .inIOA(inIOA),  // unassigned
         .inIOB(inIOB),  // DEBUG0 (4107)
         .inIOC(inIOC),  // DEBUG1 (4108)
         .inIOD(inIOD),  // DEBUG2 (4109)
         .inIOE(inIOE),  // DEBUG3 (4110)
         .inIOF(inIOF),  // DEBUG4 (4111)
         .out(inM),
-        .loadRAM(loadRAM), // RAM (0-3583)
-        .loadIO0(loadIO0), // LED (4096)
-        .loadIO1(loadIO1), // BUT (4097)
-        .loadIO2(loadIO2), // UART_TX (4098)
-        .loadIO3(loadIO3), // UART_RX (4099)
-        .loadIO4(loadIO4), // SPI (4100)
-        .loadIO5(loadIO5), // SRAM_A (4101)
-        .loadIO6(loadIO6), // SRAM_D (4102)
-        .loadIO7(loadIO7), // GO (4103)
-        .loadIO8(loadIO8), // LCD8 (4104)
-        .loadIO9(loadIO9), // LCD16 (4105)
-        .loadIOA(loadIOA), // RTP (4106)
-        .loadIOB(loadIOB), // DEBUG0 (4107)
-        .loadIOC(loadIOC), // DEBUG1 (4108)
-        .loadIOD(loadIOD), // DEBUG2 (4109)
-        .loadIOE(loadIOE), // DEBUG3 (4110)
-        .loadIOF(loadIOF)  // DEBUG4 (4111)
+        .loadRAM(loadRAM),
+        .loadIO0(loadIO0),
+        .loadIO1(loadIO1),
+        .loadIO2(loadIO2),
+        .loadIO3(loadIO3),
+        .loadIO4(loadIO4),
+        .loadIO5(loadIO5),
+        .loadIO6(loadIO6),
+        .loadIO7(loadIO7),
+        .loadIO8(loadIO8),
+        .loadIO9(loadIO9),
+        .loadIOA(loadIOA),
+        .loadIOB(loadIOB),
+        .loadIOC(loadIOC),
+        .loadIOD(loadIOD),
+        .loadIOE(loadIOE),
+        .loadIOF(loadIOF) 
     );
 
     // ROM (BRAM buffer), 256 x 16 bit words (512 bytes)
@@ -186,7 +186,7 @@ module HACK(
     // wire [12:0] vga_addr;
     // wire vga_ready;
     // wire [15:0] vga_data;
-    // vga VGA(
+    // VGA vga(
     //     .i_clk(clk25),
     //     .i_rst(rst),
     //     .o_addr(vga_addr),
@@ -198,20 +198,19 @@ module HACK(
     //     .o_vga_vs(VGA_VS)
     // );
 
-    // TOOD: PS/2 Keyboard controller
+    // TODO: PS/2 Keyboard controller
     // //PS2 - Keyboard controller
     // wire [23:0] ps2_data;
-    // ps2 PS2(
+    // PS2 ps2(
     //     .i_clk(clk),
     //     .i_rst(rst),
     //     .i_ps2_data(PS2_DATA),
     //     .i_ps2_clk(PS2_CLK),
     //     .o_data(ps2_data)
     // );
-
     // //KBD - PS2 to ASCII converter
     // wire [15:0] kbd;
-    // kbd KBD(
+    // KBD kbd(
     //     .i_clk(clk),
     //     .i_rst(rst),
     //     .i_ps2_data(ps2_data),

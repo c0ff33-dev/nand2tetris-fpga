@@ -75,7 +75,7 @@ module SRAM_D(
 
     // bidirectional data bus (combinational)
     // disconnected (high impedence) when dir=0
-    // SRAM_DATA PIN should never be driven from any other module
+    // SRAM_DATA PIN should never be driven from any other module!
     InOut io (
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
         .dataW(data), // outgoing data

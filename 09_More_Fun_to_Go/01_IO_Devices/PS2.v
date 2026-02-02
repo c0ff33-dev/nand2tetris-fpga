@@ -4,7 +4,7 @@
  */
 
 `default_nettype none
-module ps2(
+module PS2(
     input             i_clk,
     input             i_rst,
     output            isR,
