@@ -17,15 +17,12 @@
  // TODO: in theory if BRAM and SRAM are fast enough can squeeze 2 R/W cycles per clk phase
  
 `default_nettype none
-module SRAM_D(
-    input CLK,   // external clock 100 MHz
-    input clk,   // internal clock 25 MHz    
+module SRAM(
+    input clk,   // internal clock 25 MHz
+    input clk50, // internal clock 50 MHz  
     input load,  // SRAM_DATA load
-    input load2, // SCREEN load
     input [15:0] in, // SRAM_DATA (write)
-    input [15:0] in2, // SCREEN (write)
-    output reg [15:0] out, // SRAM_DATA (read)
-    output reg [15:0] out2, // SCREEN (read)
+    output reg [15:0] out, // SRAM_DATA
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
@@ -33,13 +30,12 @@ module SRAM_D(
     output WEX   // Write Enable NOT
 );
     
-    wire _load, _load2, dffLoad, clk2;
-    wire [15:0] _dataOut, data, data2, dataOut;
-    wire [15:0] psout;
+    wire _load, dffLoad;
+    wire [15:0] data, dataOut;
     reg phase;
 
     // in/load > out cycle remains in clk domain (25 MHz)
-    // InOut interactions on the SRAM bus are on clk2 domain (50 MHz)
+    // InOut interactions on the SRAM bus are on clk50 domain (50 MHz)
     
     // register outgoing data to clk domain
     // latch the write data on first cycle load is high
@@ -50,40 +46,21 @@ module SRAM_D(
         .out(data)
     );
 
-    Register reg_data2 (
-        .clk(clk),
-        .in(in2),
-        .load(_load2),
-        .out(data2)
-    );
-
     // emit the latched write data on 2nd cycle
     // repeat load in [t+1] for InOut (shared)
     DFF dff_load (
         .clk(clk),
-        .in(load | load2),
+        .in(load),
         .out(dffLoad)
     );
-
-    // assign CLK to a counter
-    PC prescaler(
-        .clk(CLK),
-        .load(1'b0),
-        .in(16'b0),
-        .reset(1'b0),
-        .inc(1'b1),
-        .out(psout)
-    );
-    
-    // scale down 100 MHz to 50 MHz (1/2)
-    assign clk2 = psout[0]; // demux LSB
 
     // register control wires to clk domain (shared)
     reg csx=1; // chip select not (remains low after init)
     reg oex=0; // output enable not
     reg wex=1; // write enable not
-    always @(posedge clk2) begin
-        if (_load | _load2) begin
+    always @(posedge clk50) begin
+        // TODO: you are here - need 2nd load cycle abritrated by memory/mode?
+        if (_load) begin
             // enable write
             oex <= 1'b1;
             wex <= 1'b0;
@@ -104,13 +81,9 @@ module SRAM_D(
         end
     end
 
-    // TODO: model isn't yet clear
-    //   - needs dual input for SCREEN and SRAM_DATA?
-    //   - needs dual output for SCREEN and SRAM_DATA?
-    //   - how to alternate the data bus usage?
-    //   - how to alternate the SRAM_A address?
-    //   - can leave stack on BRAM and move heap over to SRAM as well?
-
+    // TODO: SRAM_ADDR is free during run mode but needs to be driven by CPU(A)?
+    // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
+    
     // bidirectional data bus (combinational)
     // disconnected (high impedence) when dir=0
     // SRAM_DATA PIN should never be driven from any other module!
@@ -125,24 +98,17 @@ module SRAM_D(
     assign CSX = csx;
 
     assign _load = init ? load : 1'b0;
-    assign _load2 = init ? load2 : 1'b0;
 
     // latch output to negedge (syncronous read, same as BRAM)
     // in run_mode dataOut is emitted every cycle
-    always @(negedge clk2) begin
+    always @(negedge clk50) begin
         phase <= init ? ~phase : 1'b0;
         case (phase)
+            // read-before-write: latch the PC driven read during 1st phase only
+            // subsequent combinational write during 2nd phase is implicit
             0: begin
                 if (dffLoad | mode)
                     out <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-                else
-                    out2 <= init ? out : 16'bzzzzzzzzzzzzzz
-            end
-            1: begin
-                if (dffLoad | mode)
-                    out2 <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-                else
-                    out2 <= init ? out2 : 16'bzzzzzzzzzzzzzz
             end
         endcase
     end

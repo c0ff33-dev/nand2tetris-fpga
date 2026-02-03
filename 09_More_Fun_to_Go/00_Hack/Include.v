@@ -34,17 +34,17 @@
 `include "../../03_Sequential_Logic/BitShift8L.v"
 
 `include "../../05_Computer_Architecture/CPU.v"
-`include "../../05_Computer_Architecture/Memory.v"
 `include "../../05_Computer_Architecture/ROM.v"
-`include "../../05_Computer_Architecture/Clock25_Reset20.v"
 
 `include "../../06_IO_Devices/UartTX.v"
 `include "../../06_IO_Devices/UartRX.v"
 `include "../../06_IO_Devices/InOut.v"
-`include "../../06_IO_Devices/SRAM_D.v"
 `include "../../06_IO_Devices/GO.v"
 
+`include "../../09_More_Fun_to_Go/Clock25_Reset20.v"
 `include "../../09_More_Fun_to_Go/HACK.v"
+`include "../../09_More_Fun_to_Go/Memory.v"
+`include "../../09_More_Fun_to_Go/SRAM_D.v"
 `include "../../09_More_Fun_to_Go/01_IO_Devices/Keyboard.v"
 `include "../../09_More_Fun_to_Go/01_IO_Devices/PS2.v"
 `include "../../09_More_Fun_to_Go/01_IO_Devices/VGA.v"

@@ -24,7 +24,7 @@ module HACK(
     output SRAM_CSX,         // SRAM Chip Select NOT
 );
     
-    wire clk,writeM,loadRAM,clkRST,RST,resLoad;
+    wire clk,clk50,writeM,loadRAM,clkRST,RST,resLoad;
     wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
@@ -34,6 +34,7 @@ module HACK(
     Clock25_Reset20 clock(
         .CLK(CLK), // external 100 MHz clock (pin)
         .clk(clk), // internal 25 MHz clock
+        .clk50(clk50), // internal 50 MHz clock
         .reset(clkRST)
     );
 
@@ -148,6 +149,7 @@ module HACK(
 
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
+    // SRAM_ADDR is driven by GO (boot.asm) during boot mode only
     Register sram_addr (
         .clk(clk),
         .load(loadIO5),
@@ -156,6 +158,7 @@ module HACK(
     );
     SRAM_D sram_data (
         .clk(clk),
+        .clk50(clk50), // SRAM bus 50 MHz clock domain
         .load(loadIO6), // 1=write enabled, else read enabled
         .in(outM), // input data (ignored on read)
         .out(inIO6), // output data (ignored on write)
