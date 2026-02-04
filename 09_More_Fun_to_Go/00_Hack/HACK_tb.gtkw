@@ -1,22 +1,22 @@
 [*]
-[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Thu Oct 23 10:11:01 2025
+[*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
+[*] Wed Feb  4 11:20:59 2026
 [*]
-[dumpfile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.vcd"
-[dumpfile_mtime] "Thu Oct 23 10:09:53 2025"
-[dumpfile_size] 17073435
-[savefile] "/home/the_admin/src/nand2tetris-fpga/06_IO_Devices/00_HACK/HACK_tb.gtkw"
-[timestart] 58624000
-[size] 2560 1369
-[pos] 2772 138
-*-16.389910 58755800 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.vcd"
+[dumpfile_mtime] "Wed Feb  4 11:19:30 2026"
+[dumpfile_size] 28454908
+[savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.gtkw"
+[timestart] 0
+[size] 2560 1345
+[pos] 2746 115
+*-16.384283 20000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [treeopen] HACK_tb.HACK.cpu.
-[sst_width] 281
+[sst_width] 297
 [signals_width] 180
 [sst_expanded] 1
-[sst_vpaned_height] 392
+[sst_vpaned_height] 384
 @200
 -GPIO
 @28
@@ -29,12 +29,6 @@ HACK_tb.UART_TX
 HACK_tb.UART_RX
 @200
 -SPI
-@28
-HACK_tb.SPI_CSX
-HACK_tb.SPI_SDI
-HACK_tb.SPI_SDO
-HACK_tb.SPI_SCK
-@200
 -SRAM
 @22
 HACK_tb.HACK.SRAM_ADDR[17:0]
@@ -46,9 +40,19 @@ HACK_tb.SRAM_OEX
 HACK_tb.SRAM_WEX
 @200
 -GO
+@29
+HACK_tb.HACK.loadIO5
+@22
+HACK_tb.HACK.inIO5[15:0]
+@28
+HACK_tb.HACK.loadIO6
+@22
+HACK_tb.HACK.inIO6[15:0]
+HACK_tb.HACK.inIO6D[15:0]
 @28
 HACK_tb.HACK.loadIO7
 @22
+HACK_tb.HACK.inIO7[15:0]
 HACK_tb.HACK.pc[15:0]
 @200
 -DEBUG

@@ -32,7 +32,6 @@ module SRAM_D(
     
     wire _load, dffLoad;
     wire [15:0] data, dataOut;
-    reg phase;
 
     // in/load > out cycle remains in clk domain (25 MHz)
     // InOut interactions on the SRAM bus are on clk50 domain (50 MHz)

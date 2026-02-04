@@ -21,13 +21,13 @@ module HACK(
     inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
     output SRAM_OEX,         // SRAM Output Enable NOT
-    output SRAM_CSX,         // SRAM Chip Select NOT
+    output SRAM_CSX          // SRAM Chip Select NOT
 );
     
     wire clk,clk50,writeM,loadRAM,clkRST,RST,resLoad;
     wire sda_oe,scl_oe,sda_in,scl_in,phase;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-    wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+    wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO6D,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
     wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
     // 25 MHz internal clock w/ 20μs initial reset period
@@ -68,7 +68,8 @@ module HACK(
         .inIO3(inIO3),  // UART_RX (4099)
         .inIO4(inIO4),  // SPI (4100)
         .inIO5(inIO5),  // SRAM_A (4101)
-        .inIO6(inIO6),  // SRAM_D (4102)
+        .inIO6(inIO6),  // SRAM_D instruction (4102)
+        .inIO6D(inIO6D),// SRAM_D data (4102)
         .inIO7(inIO7),  // GO (4103)
         .inIO8(inIO8),  // unassigned
         .inIO9(inIO9),  // unassigned
@@ -157,24 +158,29 @@ module HACK(
         .clk(clk50),
         .load(loadIO5),
         .in(
-            // [run mode only] 1st phase: fetch instruction (CPU PC) 
-            // [run/boot mode] 2nd phase: read/write data from/to addressM (CPU A register) 
-            phase==0 ? outM : addressM
+            // [boot mode] 1st phase: do nothing / loop input
+            // [boot mode] 2nd phase: load data from CPU as normal
+            //  [run mode] 1st phase: fetch instruction (CPU PC) 
+            //  [run mode] 2nd phase: read/write data from/to addressM (CPU A register)
+            // FIXME: SRAM_A incrementing in boot mode appears to be working -- YOU ARE HERE
+            // FIXME: SRAM_D is written at correct timing but isn't holding the value
+            inIO7 ? (phase==0 ? outM : addressM) : (phase==0 ? inIO5 : outM)
         ),
         .out(inIO5)
     );
     SRAM_D sram_data (
         .clk(clk),
-        .clk50(clk50),   // SRAM bus 50 MHz clock domain
-        .load(loadIO6),  // 1=write enabled, else read enabled
-        .in(outM),       // input data (ignored on read)
-        .out(inIO6),     // output data (ignored on write)
-        .mode(inIO7),    // run_mode
-        .DATA(SRAM_DATA),// data line (inout)
-        .CSX(SRAM_CSX),  // Chip Select NOT
-        .OEX(SRAM_OEX),  // Output Enable NOT
-        .WEX(SRAM_WEX),  // Write Enable NOT
-        .phase(phase)    // phase signal for clk50 domain
+        .clk50(clk50),    // SRAM bus 50 MHz clock domain
+        .load(loadIO6),   // 1=write enabled, else read enabled
+        .in(outM),        // input data (ignored on read)
+        .out_pc(inIO6),   // output data (instruction)
+        .out_data(inIO6D),// output data (data)
+        .mode(inIO7),     // run_mode
+        .DATA(SRAM_DATA), // data line (inout)
+        .CSX(SRAM_CSX),   // Chip Select NOT
+        .OEX(SRAM_OEX),   // Output Enable NOT
+        .WEX(SRAM_WEX),   // Write Enable NOT
+        .phase(phase)     // phase signal for clk50 domain
     );
 
     // GO (4103): emit instruction from BRAM/SRAM

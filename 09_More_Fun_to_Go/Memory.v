@@ -43,7 +43,8 @@ module Memory(
     input [15:0] inIO3, // UART_RX (4099)
     input [15:0] inIO4, // SPI (4100)
     input [15:0] inIO5, // SRAM_A (4101)
-    input [15:0] inIO6, // SRAM_D (4102)
+    input [15:0] inIO6, // SRAM_D instruction (4102)
+    input [15:0] inIO6D,// SRAM_D data (4102)
     input [15:0] inIO7, // GO (4103)
     input [15:0] inIO8, // unassigned
     input [15:0] inIO9, // unassigned
@@ -97,7 +98,7 @@ module Memory(
         // FUTURE: move I/O addresses into higher range
         // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
         // route HEAP to SRAM_D as well
-        (address>= 4112 && address <= 16383) ? inIO6 :
+        (address>= 4112 && address <= 16383) ? inIO6D :
 
         inRAM);
 

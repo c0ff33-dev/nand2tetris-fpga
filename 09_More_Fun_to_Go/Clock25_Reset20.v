@@ -9,7 +9,8 @@ module Clock25_Reset20(
     input CLK,    // external clock 100 MHz    
     output clk,   // internal clock 25 MHz
     output clk50, // internal clock 50 MHz
-    output reset  // reset signal ~20μs
+    output reset, // reset signal ~20μs
+    output phase  // phase signal for clk50 domain
 );
 
     // assign CLK to a counter
@@ -27,7 +28,7 @@ module Clock25_Reset20(
     );
 
     // 50 Mhz clock generation
-    PC prescaler(
+    PC prescaler2(
         .clk(CLK),
         .load(1'b0),
         .in(16'b0),
@@ -38,10 +39,11 @@ module Clock25_Reset20(
     assign clk50 = psout50[0]; // demux LSB
 
     // phase generator for clk50 domain
-    reg phase = 0;
+    reg _phase = 0;
     always @(negedge clk50) begin
-        phase <= start ? ~phase : 1'b0;
+        _phase <= start ? ~_phase : 1'b0;
     end
+    assign phase = _phase;
 
     // scale down 100 MHz to 25 MHz (1/4)
     // PC itself is clocked so only one update per cycle

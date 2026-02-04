@@ -34,7 +34,7 @@ module HACK_tb();
         .SRAM_DATA(SRAM_DATA), // SRAM data 16 Bit
         .SRAM_WEX(SRAM_WEX),   // SRAM Write Enable NOT
         .SRAM_OEX(SRAM_OEX),   // SRAM Output Enable NOT
-        .SRAM_CSX(SRAM_CSX),   // SRAM Chip Select NOT
+        .SRAM_CSX(SRAM_CSX)    // SRAM Chip Select NOT
         
         // TODO: new ports
         // .VGA_HS(VGA_HS),

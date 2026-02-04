@@ -15,11 +15,11 @@
 
 // Put your code here:
 (LOOP)
-@BUT // store button state
-D=M // can also NOT here for push to illuminate
+@SRAM_A
+M=M+1
 
-@LED // update LED state
-M=D 
+@SRAM_D
+M=M+1
 
 @LOOP
 0;JMP
