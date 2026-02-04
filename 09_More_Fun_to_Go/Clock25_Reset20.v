@@ -36,7 +36,13 @@ module Clock25_Reset20(
         .out(psout50)
     );
     assign clk50 = psout50[0]; // demux LSB
-    
+
+    // phase generator for clk50 domain
+    reg phase = 0;
+    always @(negedge clk50) begin
+        phase <= start ? ~phase : 1'b0;
+    end
+
     // scale down 100 MHz to 25 MHz (1/4)
     // PC itself is clocked so only one update per cycle
     // 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)

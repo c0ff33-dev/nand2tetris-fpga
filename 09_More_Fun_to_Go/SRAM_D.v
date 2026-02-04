@@ -14,20 +14,20 @@
  * from initial load=1 signal).
  */
 
- // TODO: in theory if BRAM and SRAM are fast enough can squeeze 2 R/W cycles per clk phase
- 
 `default_nettype none
-module SRAM(
+module SRAM_D(
     input clk,   // internal clock 25 MHz
     input clk50, // internal clock 50 MHz  
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
-    output reg [15:0] out, // SRAM_DATA
+    output reg [15:0] out_pc, // instruction data
+    output reg [15:0] out_data, // read data
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
-    output WEX   // Write Enable NOT
+    output WEX,   // Write Enable NOT,
+    input phase  // phase signal for clk50 domain
 );
     
     wire _load, dffLoad;
@@ -37,6 +37,7 @@ module SRAM(
     // in/load > out cycle remains in clk domain (25 MHz)
     // InOut interactions on the SRAM bus are on clk50 domain (50 MHz)
     
+    // boot/run mode: there is still max 1 write per cycle
     // register outgoing data to clk domain
     // latch the write data on first cycle load is high
     Register reg_data (
@@ -46,6 +47,7 @@ module SRAM(
         .out(data)
     );
 
+    // boot/run mode: there is still max 1 write per cycle
     // emit the latched write data on 2nd cycle
     // repeat load in [t+1] for InOut (shared)
     DFF dff_load (
@@ -59,17 +61,27 @@ module SRAM(
     reg oex=0; // output enable not
     reg wex=1; // write enable not
     always @(posedge clk50) begin
-        // TODO: you are here - need 2nd load cycle abritrated by memory/mode?
-        if (_load) begin
-            // enable write
-            oex <= 1'b1;
-            wex <= 1'b0;
-        end
-        else begin
-            // enable read
-            oex <= 1'b0;
-            wex <= 1'b1;
-        end
+        case (phase)
+            // boot mode: no fetch / only writes, let 2nd phase override
+            // run mode: fetch instruction 1st phase, data read/write 2nd phase
+            0: begin
+                // enable read
+                oex <= 1'b0;
+                wex <= 1'b1;
+            end
+            1: begin
+                if (_load) begin
+                    // enable write
+                    oex <= 1'b1;
+                    wex <= 1'b0;
+                end
+                else begin
+                    // enable read
+                    oex <= 1'b0;
+                    wex <= 1'b1;
+                end
+            end
+        endcase
     end
 
     // set and forget, doesn't need to be fast
@@ -81,9 +93,6 @@ module SRAM(
         end
     end
 
-    // TODO: SRAM_ADDR is free during run mode but needs to be driven by CPU(A)?
-    // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
-    
     // bidirectional data bus (combinational)
     // disconnected (high impedence) when dir=0
     // SRAM_DATA PIN should never be driven from any other module!
@@ -102,17 +111,23 @@ module SRAM(
     // latch output to negedge (syncronous read, same as BRAM)
     // in run_mode dataOut is emitted every cycle
     always @(negedge clk50) begin
-        phase <= init ? ~phase : 1'b0;
         case (phase)
-            // read-before-write: latch the PC driven read during 1st phase only
-            // subsequent combinational write during 2nd phase is implicit
+            // boot mode:
+            // do nothing during 1st phase
+            // allow data writes during 2nd phase
+
+            // run mode:
+            // latch the pc fetch during 1st phase
+            // latch the data read during 2nd phase if there was a write
             0: begin
-                if (dffLoad | mode)
-                    out <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+                if (mode)
+                    out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            end
+            1: begin
+                if (dffLoad)
+                    out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             end
         endcase
     end
 
-
-    
 endmodule

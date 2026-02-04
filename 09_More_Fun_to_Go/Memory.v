@@ -27,7 +27,7 @@
 // registers: 0-15 (same)
 // "STATIC": 16-255 incl (same)
 // "STACK": 256-1023 incl (smaller)
-// "HEAP": 1024-3583 incl (smaller)
+// "HEAP": 1024-3583 incl (smaller) // 4112-16383 incl (smaller)
 // "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
 // "KBD": nil (removed) -- this can just be a memory mapped register?
 // "IO": 4096-4111 (new)
@@ -36,7 +36,7 @@
 module Memory(
     input [15:0] address,
     input load,
-    input [15:0] inRAM, // RAM (0-3583)
+    input [15:0] inRAM, // BRAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
     input [15:0] inIO2, // UART_TX (4098)
@@ -93,6 +93,12 @@ module Memory(
         (address==4109) ? inIOD :
         (address==4110) ? inIOE :
         (address==4111) ? inIOF :
+        
+        // FUTURE: move I/O addresses into higher range
+        // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
+        // route HEAP to SRAM_D as well
+        (address>= 4112 && address <= 16383) ? inIO6 :
+
         inRAM);
 
     // mux load via address (memory mapped IO or RAM)
@@ -104,7 +110,7 @@ module Memory(
     assign loadIO3 = (address==4099) ? load : 0;
     assign loadIO4 = (address==4100) ? load : 0;
     assign loadIO5 = (address==4101) ? load : 0;
-    assign loadIO6 = (address==4102) ? load : 0;
+    assign loadIO6 = ((address==4102) || (address>= 4112 && address <= 16383)) ? load : 0;
     assign loadIO7 = (address==4103) ? load : 0;
     assign loadIO8 = (address==4104) ? load : 0;
     assign loadIO9 = (address==4105) ? load : 0;
