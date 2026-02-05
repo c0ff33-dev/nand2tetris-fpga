@@ -149,8 +149,9 @@ module HACK(
         .out(inIO3) // memory map 
     );
 
-    // TODO: data access in run mode should be offset to 2nd SRAM page (0x10000+)
-    // TODO: SRAM_ADDR is free during run mode but needs to be driven by CPU(A)?
+    // TODO: SRAM_A/D concurrent read/write works in boot mode, repeat test for run mode -- YOU ARE HERE
+    // TODO: also need to arbitrate VGA address selection & data read?
+    // TODO: confirm read/write latency and hold times etc, any chance of dual port access?
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // SRAM_ADDR is driven by GO (boot.asm) during boot mode only
@@ -162,8 +163,6 @@ module HACK(
             // [boot mode] 2nd phase: load data from CPU as normal
             //  [run mode] 1st phase: fetch instruction (CPU PC) 
             //  [run mode] 2nd phase: read/write data from/to addressM (CPU A register)
-            // FIXME: SRAM_A incrementing in boot mode appears to be working -- YOU ARE HERE
-            // FIXME: SRAM_D is written at correct timing but isn't holding the value
             inIO7 ? (phase==0 ? outM : addressM) : (phase==0 ? inIO5 : outM)
         ),
         .out(inIO5)

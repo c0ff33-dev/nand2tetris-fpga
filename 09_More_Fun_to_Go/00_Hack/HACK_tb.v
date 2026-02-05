@@ -14,6 +14,16 @@ module HACK_tb();
     wire SRAM_OEX;
     wire SRAM_CSX;
 
+    // Simulate SRAM // TODO: MS code
+    reg [15:0] sram[0:7];
+
+    always @(posedge CLK)
+        if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
+    assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bzzzzzzzzzzzzzzzz;
+    
+    wire [15:0] debug_sram;
+    assign debug_sram = sram[0];
+
     // TODO: new wires
     // wire VGA_HS;
     // wire VGA_VS;
@@ -56,7 +66,7 @@ module HACK_tb();
         $display("------------------------");
         $display("Test bench: Hack");
 
-        #45000
+        #2500
         $finish;
     end
 

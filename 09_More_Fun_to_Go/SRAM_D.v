@@ -99,7 +99,7 @@ module SRAM_D(
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
         .dataW(data), // outgoing data
         .dataR(dataOut), // incoming data
-        .dir(dffLoad) // 1=write data to SRAM, else read
+        .dir(dffLoad & ~wex) // 1=write data to SRAM, else read
     );
     assign OEX = oex;
     assign WEX = wex;
@@ -123,8 +123,10 @@ module SRAM_D(
                     out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             end
             1: begin
-                if (dffLoad)
+                if (dffLoad & mode)
                     out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+                if (dffLoad & ~mode)
+                    out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             end
         endcase
     end

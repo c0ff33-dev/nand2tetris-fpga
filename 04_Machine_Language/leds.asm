@@ -15,11 +15,13 @@
 
 // Put your code here:
 (LOOP)
+@SRAM_D
+MD=M+1
+MD=M+1
+MD=M+1
+MD=M+1
+MD=M+1
 @SRAM_A
 M=M+1
-
-@SRAM_D
-M=M+1
-
 @LOOP
 0;JMP
