@@ -148,7 +148,8 @@ module HACK(
         .out(inIO3) // memory map 
     );
 
-    // TODO: SRAM_A/D writes appear to be working in sim for boot mode, hw test time?
+    // FIXME: SRAM_D doesn't reliably retain its value
+    // FIXME: yosys unhappy with multi-edge blocks - rewrite as combinational
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     reg [15:0] sram_addr = 0;

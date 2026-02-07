@@ -14,10 +14,20 @@
 // 11 (3) = LED1/2 on, BUT1/2 released
 
 // Put your code here:
-(LOOP)
+@SRAM_A
+M=0
+@SRAM_D
+M=0
+
 @SRAM_D
 MD=D+1
 MD=D+1
 MD=D+1
+@SRAM_D
+D=M
+@LED
+M=D
+
+(LOOP)
 @LOOP
 0;JMP
