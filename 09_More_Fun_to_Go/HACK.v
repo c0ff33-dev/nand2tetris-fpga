@@ -148,7 +148,7 @@ module HACK(
         .out(inIO3) // memory map 
     );
 
-    // FIXME: why does 1st write per leds.asm loop in boot mode get clipped?
+    // TODO: SRAM_A/D writes appear to be working in sim for boot mode, hw test time?
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     reg [15:0] sram_addr = 0;
@@ -159,7 +159,7 @@ module HACK(
         case (phase)
             // [boot mode] CPU driven (boot.asm), new addr on load only
             // [run mode] PC driven, updates every cycle
-            0: sram_addr <= ~inIO7 ? (loadIO5 ? outM : sram_addr) : inIO5;
+            0: sram_addr <= ~inIO7 ? (loadIO5 ? outM : sram_addr) : pc;
             
             // VGA is passive read / no memory map required    
             2: sram_addr <= {3'b0, vga_addr}; 
@@ -168,6 +168,11 @@ module HACK(
             4: sram_addr <= loadIO5 ? outM : addressM;
         endcase
     end
+    assign inIO5 = sram_addr;
+    
+    // K6R4016V1D uses 18 bits but we address 16 LSB
+    // [run mode only] go_sram_addr is offset by 0x10000 (data page)
+    assign SRAM_ADDR = inIO7 ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
@@ -186,6 +191,7 @@ module HACK(
     );
 
     // GO (4103): emit instruction from BRAM/SRAM
+    // TODO: now relegated to run mode switch + routing instruction only?
     GO go(
         .clk(clk),
         .load(loadIO7),
@@ -197,9 +203,6 @@ module HACK(
         .instruction(instruction),
         .out(inIO7)
     );
-    // K6R4016V1D uses 18 bits but we address 16 LSB
-    // [run mode only] go_sram_addr is offset by 0x10000 (data page)
-    assign SRAM_ADDR = inIO7 ? {2'b01, go_sram_addr} : {2'b00, go_sram_addr};
 
     // TODO: VGA controller
     // //VGA - Video graphics adapter 640x480 @ 50Hz

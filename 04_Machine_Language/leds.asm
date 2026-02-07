@@ -19,9 +19,5 @@
 MD=D+1
 MD=D+1
 MD=D+1
-MD=D+1
-MD=D+1
-@SRAM_A
-M=M+1
 @LOOP
 0;JMP

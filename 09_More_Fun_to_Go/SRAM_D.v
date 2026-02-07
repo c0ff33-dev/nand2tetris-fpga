@@ -31,7 +31,7 @@ module SRAM_D(
     input [2:0] phase  // phase signal for CLK domain
 );
     
-    wire _load, dffLoad;
+    wire _load;
     wire [15:0] data, dataOut;
 
     // in/load > out cycle remains in clk domain (25 MHz)
@@ -47,15 +47,6 @@ module SRAM_D(
         .out(data)
     );
 
-    // boot/run mode: there is still max 1 write per cycle
-    // emit the latched write data on 2nd cycle
-    // repeat load in [t+1] for InOut
-    DFF dff_load (
-        .clk(clk),
-        .in(load),
-        .out(dffLoad)
-    );
-
     // register control wires to CLK domain
     reg csx=1; // chip select not (remains low after init)
     reg oex=0; // output enable not
@@ -67,10 +58,9 @@ module SRAM_D(
             0: begin
                 // [phase 0:1] run mode: enable read (instruction fetch)
                 // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
-                if (mode) begin
-                    oex <= 1'b0;
-                    wex <= 1'b1;
-                end
+                // enable read
+                oex <= 1'b0;
+                wex <= 1'b1;
             end
             2: begin
                 // [phase 2:3] vga: enable read (VRAM)
@@ -89,11 +79,6 @@ module SRAM_D(
                     oex <= 1'b0;
                     wex <= 1'b1;
                 end
-            end
-            6: begin
-                // disable read/write (idle)
-                oex <= 1'b1;
-                wex <= 1'b1;
             end
         endcase
     end
@@ -114,7 +99,7 @@ module SRAM_D(
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
         .dataW(data), // outgoing data
         .dataR(dataOut), // incoming data
-        .dir(dffLoad & ~wex) // 1=write data to SRAM, else read
+        .dir(_load & ~wex) // 1=write data to SRAM, else read
     );
     assign OEX = oex;
     assign WEX = wex;
@@ -139,10 +124,10 @@ module SRAM_D(
             
             // [boot mode]: latch new instruction if there was a write
             // [run mode]: latch new data if there was a write
-            5: begin
-                if (dffLoad & ~mode)
+            6: begin
+                if (_load & ~mode)
                     out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-                if (dffLoad & mode)
+                if (_load & mode)
                     out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             end
         endcase
