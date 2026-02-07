@@ -24,19 +24,19 @@ module HACK(
     output SRAM_CSX          // SRAM Chip Select NOT
 );
     
-    wire clk,clk50,writeM,loadRAM,clkRST,RST,resLoad;
-    wire sda_oe,scl_oe,sda_in,scl_in,phase;
+    wire clk,writeM,loadRAM,clkRST,RST,resLoad;
+    wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
+    wire [3:0] phase;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO6D,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
     wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
     // 25 MHz internal clock w/ 20μs initial reset period
     Clock25_Reset20 clock(
-        .CLK(CLK), // external 100 MHz clock (pin)
+        .CLK(CLK), // external 100 MHz clock
         .clk(clk), // internal 25 MHz clock
-        .clk50(clk50), // internal 50 MHz clock
         .reset(clkRST), // reset signal ~20μs
-        .phase(phase) // phase signal for clk50 domain
+        .phase(phase) // phase signal for CLK domain
     );
 
     // reset PC during init & in [t+1] when GO load=1, both the load
@@ -150,26 +150,29 @@ module HACK(
     );
 
     // TODO: SRAM_A/D concurrent read/write works in boot mode, repeat test for run mode -- YOU ARE HERE
-    // TODO: also need to arbitrate VGA address selection & data read?
-    // TODO: confirm read/write latency and hold times etc, any chance of dual port access?
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
-    // SRAM_ADDR is driven by GO (boot.asm) during boot mode only
-    Register sram_addr (
-        .clk(clk50),
-        .load(loadIO5),
-        .in(
-            // [boot mode] 1st phase: do nothing / loop input
-            // [boot mode] 2nd phase: load data from CPU as normal
-            //  [run mode] 1st phase: fetch instruction (CPU PC) 
-            //  [run mode] 2nd phase: read/write data from/to addressM (CPU A register)
-            inIO7 ? (phase==0 ? outM : addressM) : (phase==0 ? inIO5 : outM)
-        ),
-        .out(inIO5)
-    );
+    reg [15:0] sram_addr = 0;
+    always @(posedge CLK or negedge CLK) begin
+        // for SRAM_A arbitration just cycle through the phases
+        // flags for read/write/output managed in SRAM_D
+        // order: instruction, VGA, RAM
+        // FIXME: new phase generation
+        case (phase)
+            // [boot mode] CPU driven (boot.asm), new addr on load only
+            // [run mode] PC driven, updates every cycle
+            0: sram_addr <= ~inIO7 ? (loadIO5 ? outM : sram_addr) : inIO5;
+            
+            // VGA is passive read / no memory map required    
+            1: sram_addr <= {3'b0, vga_addr}; 
+            
+            // data read/write: new addr on A, last addr on C
+            2: sram_addr <= loadIO5 ? outM : addressM;
+        endcase
+    end
     SRAM_D sram_data (
-        .clk(clk),
-        .clk50(clk50),    // SRAM bus 50 MHz clock domain
+        .CLK(CLK),        // external 100 MHz clock
+        .clk(clk),        // internal 25 MHz clock
         .load(loadIO6),   // 1=write enabled, else read enabled
         .in(outM),        // input data (ignored on read)
         .out_pc(inIO6),   // output data (instruction)
@@ -179,7 +182,7 @@ module HACK(
         .CSX(SRAM_CSX),   // Chip Select NOT
         .OEX(SRAM_OEX),   // Output Enable NOT
         .WEX(SRAM_WEX),   // Write Enable NOT
-        .phase(phase)     // phase signal for clk50 domain
+        .phase(phase)     // phase signal for CLK domain
     );
 
     // GO (4103): emit instruction from BRAM/SRAM
@@ -200,7 +203,7 @@ module HACK(
 
     // TODO: VGA controller
     // //VGA - Video graphics adapter 640x480 @ 50Hz
-    // wire [12:0] vga_addr;
+    wire [12:0] vga_addr;
     // wire vga_ready;
     // wire [15:0] vga_data;
     // VGA vga(

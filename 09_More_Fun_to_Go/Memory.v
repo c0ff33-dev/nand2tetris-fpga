@@ -110,7 +110,7 @@ module Memory(
     assign loadIO2 = (address==4098) ? load : 0;
     assign loadIO3 = (address==4099) ? load : 0;
     assign loadIO4 = (address==4100) ? load : 0;
-    assign loadIO5 = (address==4101) ? load : 0;
+    assign loadIO5 = ((address==4101) || (address>= 4112 && address <= 16383)) ? load : 0;
     assign loadIO6 = ((address==4102) || (address>= 4112 && address <= 16383)) ? load : 0;
     assign loadIO7 = (address==4103) ? load : 0;
     assign loadIO8 = (address==4104) ? load : 0;

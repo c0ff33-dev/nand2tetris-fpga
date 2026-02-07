@@ -16,8 +16,8 @@
 
 `default_nettype none
 module SRAM_D(
-    input clk,   // internal clock 25 MHz
-    input clk50, // internal clock 50 MHz  
+    input CLK(CLK), // external 100 MHz clock
+    input clk(clk), // internal 25 MHz clock
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
     output reg [15:0] out_pc, // instruction data
@@ -27,14 +27,14 @@ module SRAM_D(
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
     output WEX,   // Write Enable NOT,
-    input phase  // phase signal for clk50 domain
+    input [3:0] phase  // phase signal for CLK domain
 );
     
     wire _load, dffLoad;
     wire [15:0] data, dataOut;
 
     // in/load > out cycle remains in clk domain (25 MHz)
-    // InOut interactions on the SRAM bus are on clk50 domain (50 MHz)
+    // InOut interactions on the SRAM bus are on CLK domain (100 MHz)
     
     // boot/run mode: there is still max 1 write per cycle
     // register outgoing data to clk domain
@@ -48,27 +48,33 @@ module SRAM_D(
 
     // boot/run mode: there is still max 1 write per cycle
     // emit the latched write data on 2nd cycle
-    // repeat load in [t+1] for InOut (shared)
+    // repeat load in [t+1] for InOut
     DFF dff_load (
         .clk(clk),
         .in(load),
         .out(dffLoad)
     );
 
-    // register control wires to clk domain (shared)
+    // register control wires to CLK domain
+    // update flags/trigger reads before writes
     reg csx=1; // chip select not (remains low after init)
     reg oex=0; // output enable not
     reg wex=1; // write enable not
-    always @(posedge clk50) begin
+    always @(posedge CLK or negedge CLK) begin
+        // FIXME: new phase generation
         case (phase)
-            // boot mode: no fetch / only writes, let 2nd phase override
-            // run mode: fetch instruction 1st phase, data read/write 2nd phase
-            0: begin
-                // enable read
-                oex <= 1'b0;
-                wex <= 1'b1;
+            // order: instruction, VGA, RAM, <nothing>
+            0, 1: begin
+                // [phase 0] run mode: enable read (instruction fetch)
+                // [phase 0] boot mode: do nothing, data read/write in phase 2
+                // [phase 1] vga: enable read (VRAM)
+                if (mode) begin
+                    oex <= 1'b0;
+                    wex <= 1'b1;
+                end
             end
-            1: begin
+            2: begin
+                // [phase 2] enable data read/write to SRAM
                 if (_load) begin
                     // enable write
                     oex <= 1'b1;
@@ -80,10 +86,12 @@ module SRAM_D(
                     wex <= 1'b1;
                 end
             end
+
+            // 3: pass
         endcase
     end
 
-    // set and forget, doesn't need to be fast
+    // set and forget, doesn't need to be fast/syncronized
     reg init = 0;
     always @(posedge clk) begin
         if (~init) begin
@@ -109,7 +117,8 @@ module SRAM_D(
 
     // latch output to negedge (syncronous read, same as BRAM)
     // in run_mode dataOut is emitted every cycle
-    always @(negedge clk50) begin
+    always @(posedge CLK or negedge CLK) begin
+        // FIXME: new phase generation
         case (phase)
             // boot mode:
             // do nothing during 1st phase
