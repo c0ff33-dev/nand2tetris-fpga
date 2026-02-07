@@ -20,9 +20,9 @@ module SRAM_D(
     input clk, // internal 25 MHz clock
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
-    output reg [15:0] out_pc, // instruction data
-    output reg [15:0] out_data, // general purpose data
-    output reg [15:0] out_vga, // VRAM/VGA data
+    output [15:0] out_pc, // instruction data
+    output [15:0] out_data, // general purpose data
+    output [15:0] out_vga, // VRAM/VGA data
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
@@ -30,28 +30,12 @@ module SRAM_D(
     output WEX,   // Write Enable NOT,
     input [2:0] phase  // phase signal for CLK domain
 );
-    
+    // removed input/output registers/syncronization to be fully combinational
     wire _load;
-    wire [15:0] data, dataOut;
-
-    // in/load > out cycle remains in clk domain (25 MHz)
-    // InOut interactions on the SRAM bus are on CLK domain (100 MHz)
+    wire [15:0] dataOut;
     
-    // boot/run mode: there is still max 1 write per cycle
-    // register outgoing data to clk domain
-    // latch the write data on first cycle load is high
-    Register reg_data (
-        .clk(clk),
-        .in(in),
-        .load(_load),
-        .out(data)
-    );
-
     // register control wires to CLK domain
-    reg csx=1; // chip select not (remains low after init)
-    reg oex=0; // output enable not
-    reg wex=1; // write enable not
-    always @(posedge CLK or negedge CLK) begin
+    always @(*) begin
         // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
         // set address/flags/updates in 1st phase, collect results in 2nd phase 
         case (phase)
@@ -59,57 +43,61 @@ module SRAM_D(
                 // [phase 0:1] run mode: enable read (instruction fetch)
                 // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
                 // enable read
-                oex <= 1'b0;
-                wex <= 1'b1;
+                OEX = 1'b0;
+                WEX = 1'b1;
             end
             2: begin
                 // [phase 2:3] vga: enable read (VRAM)
-                oex <= 1'b0;
-                wex <= 1'b1;
+                OEX = 1'b0;
+                WEX = 1'b1;
             end
             4: begin
                 // [phase 4:5] enable data read/write to SRAM
                 if (_load) begin
                     // enable write
-                    oex <= 1'b1;
-                    wex <= 1'b0;
+                    OEX = 1'b1;
+                    WEX = 1'b0;
                 end
                 else begin
                     // enable read
-                    oex <= 1'b0;
-                    wex <= 1'b1;
+                    OEX = 1'b0;
+                    WEX = 1'b1;
                 end
+            end
+            // no update/explicit latch state in passive phases
+            default: begin
+                OEX = OEX;
+                WEX = WEX;
             end
         endcase
     end
 
     // set and forget, doesn't need to be fast/syncronized
     reg init = 0;
+    reg csx=1; // chip select not (remains low after init)
     always @(posedge clk) begin
         if (~init) begin
             init <= 1;
             csx <= 0;
         end
     end
+    assign CSX = csx;
 
     // bidirectional data bus (combinational)
     // disconnected (high impedence) when dir=0
     // SRAM_DATA PIN should never be driven from any other module!
     InOut io (
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
-        .dataW(data), // outgoing data
+        .dataW(in), // outgoing data
         .dataR(dataOut), // incoming data
-        .dir(_load & ~wex) // 1=write data to SRAM, else read
+        .dir(_load & ~WEX) // 1=write data to SRAM, else read
     );
-    assign OEX = oex;
-    assign WEX = wex;
-    assign CSX = csx;
 
     assign _load = init ? load : 1'b0;
 
     // latch output to negedge (syncronous read, same as BRAM)
     // in run_mode dataOut is emitted every cycle
-    always @(posedge CLK or negedge CLK) begin
+    always @(*) begin
         // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
         // set address/flags/updates in 1st phase, collect results in 2nd phase
         case (phase)
@@ -117,18 +105,24 @@ module SRAM_D(
             // latch the data read during 2nd phase if there was a write
             
             // [boot mode]: do nothing, [run mode]: latch fetched instruction 
-            1: if (mode) out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            1: if (mode) out_pc = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             
             // emit VRAM data (passive/every cycle)
-            3: out_vga <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            3: out_vga = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             
             // [boot mode]: latch new instruction if there was a write
             // [run mode]: latch new data if there was a write
             6: begin
                 if (_load & ~mode)
-                    out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+                    out_pc = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
                 if (_load & mode)
-                    out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+                    out_data = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            end
+            // no update/explicit latch state in passive phases
+            default: begin
+                out_pc = out_pc;
+                out_vga = out_vga;
+                out_data = out_data;
             end
         endcase
     end
