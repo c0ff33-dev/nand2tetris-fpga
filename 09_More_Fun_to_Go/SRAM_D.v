@@ -16,18 +16,19 @@
 
 `default_nettype none
 module SRAM_D(
-    input CLK(CLK), // external 100 MHz clock
-    input clk(clk), // internal 25 MHz clock
+    input CLK, // external 100 MHz clock
+    input clk, // internal 25 MHz clock
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
     output reg [15:0] out_pc, // instruction data
-    output reg [15:0] out_data, // read data
+    output reg [15:0] out_data, // general purpose data
+    output reg [15:0] out_vga, // VRAM/VGA data
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
     output WEX,   // Write Enable NOT,
-    input [3:0] phase  // phase signal for CLK domain
+    input [2:0] phase  // phase signal for CLK domain
 );
     
     wire _load, dffLoad;
@@ -56,25 +57,28 @@ module SRAM_D(
     );
 
     // register control wires to CLK domain
-    // update flags/trigger reads before writes
     reg csx=1; // chip select not (remains low after init)
     reg oex=0; // output enable not
     reg wex=1; // write enable not
     always @(posedge CLK or negedge CLK) begin
-        // FIXME: new phase generation
+        // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
+        // set address/flags/updates in 1st phase, collect results in 2nd phase 
         case (phase)
-            // order: instruction, VGA, RAM, <nothing>
-            0, 1: begin
-                // [phase 0] run mode: enable read (instruction fetch)
-                // [phase 0] boot mode: do nothing, data read/write in phase 2
-                // [phase 1] vga: enable read (VRAM)
+            0: begin
+                // [phase 0:1] run mode: enable read (instruction fetch)
+                // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
                 if (mode) begin
                     oex <= 1'b0;
                     wex <= 1'b1;
                 end
             end
             2: begin
-                // [phase 2] enable data read/write to SRAM
+                // [phase 2:3] vga: enable read (VRAM)
+                oex <= 1'b0;
+                wex <= 1'b1;
+            end
+            4: begin
+                // [phase 4:5] enable data read/write to SRAM
                 if (_load) begin
                     // enable write
                     oex <= 1'b1;
@@ -86,8 +90,11 @@ module SRAM_D(
                     wex <= 1'b1;
                 end
             end
-
-            // 3: pass
+            6: begin
+                // disable read/write (idle)
+                oex <= 1'b1;
+                wex <= 1'b1;
+            end
         endcase
     end
 
@@ -118,24 +125,25 @@ module SRAM_D(
     // latch output to negedge (syncronous read, same as BRAM)
     // in run_mode dataOut is emitted every cycle
     always @(posedge CLK or negedge CLK) begin
-        // FIXME: new phase generation
+        // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
+        // set address/flags/updates in 1st phase, collect results in 2nd phase
         case (phase)
-            // boot mode:
-            // do nothing during 1st phase
-            // allow data writes during 2nd phase
-
             // run mode:
-            // latch the pc fetch during 1st phase
             // latch the data read during 2nd phase if there was a write
-            0: begin
-                if (mode)
-                    out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-            end
-            1: begin
-                if (dffLoad & mode)
-                    out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            
+            // [boot mode]: do nothing, [run mode]: latch fetched instruction 
+            1: if (mode) out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            
+            // emit VRAM data (passive/every cycle)
+            3: out_vga <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+            
+            // [boot mode]: latch new instruction if there was a write
+            // [run mode]: latch new data if there was a write
+            5: begin
                 if (dffLoad & ~mode)
                     out_pc <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
+                if (dffLoad & mode)
+                    out_data <= init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
             end
         endcase
     end

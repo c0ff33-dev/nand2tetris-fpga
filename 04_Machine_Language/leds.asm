@@ -16,11 +16,11 @@
 // Put your code here:
 (LOOP)
 @SRAM_D
-MD=M+1
-MD=M+1
-MD=M+1
-MD=M+1
-MD=M+1
+MD=D+1
+MD=D+1
+MD=D+1
+MD=D+1
+MD=D+1
 @SRAM_A
 M=M+1
 @LOOP

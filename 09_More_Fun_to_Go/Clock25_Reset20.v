@@ -9,7 +9,7 @@ module Clock25_Reset20(
     input CLK,    // external clock 100 MHz    
     output clk,   // internal clock 25 MHz
     output reset, // reset signal ~20μs
-    output reg [3:0] phase  // phase signal for CLK domain
+    output reg [2:0] phase  // phase signal for CLK domain
 );
 
     // assign CLK to a counter

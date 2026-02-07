@@ -38,6 +38,7 @@
 
 `include "../../06_IO_Devices/UartTX.v"
 `include "../../06_IO_Devices/UartRX.v"
+`include "../../06_IO_Devices/SPI.v"
 `include "../../06_IO_Devices/InOut.v"
 `include "../../06_IO_Devices/GO.v"
 
