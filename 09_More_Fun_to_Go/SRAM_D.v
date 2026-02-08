@@ -28,7 +28,9 @@ module SRAM_D(
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
     output WEX,  // Write Enable NOT,
-    input [2:0] phase  // phase signal for CLK domain
+    input [1:0] phase_p, // phase signal for CLK domain
+    input [2:0] phase_n, // phase signal for CLK domain
+    input reset
 );
     // removed input/output registers/syncronization to be fully combinational
     wire _load;
@@ -41,10 +43,9 @@ module SRAM_D(
     // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
     // [phase 2:3] vga: enable read (VRAM)
     // [phase 4:5] enable data write to SRAM on load, else read
-    // enable relevant read/write flags, else loop the current signal
-    // TODO: could break this down to if <write> else <read>
-    assign OEX = (phase==0 | phase==2 | (phase==4 & ~_load)) ? 1'b0 : ((phase==4 & _load) ? 1'b1 : OEX);
-    assign WEX = (phase==0 | phase==2 | (phase==4 & ~_load)) ? 1'b1 : ((phase==4 & _load) ? 1'b0 : WEX);
+    // enable write flag in relevant phase else default to read
+    assign OEX = reset ? 1'b1 : ((~CLK & phase_n==4 & _load) ? 1'b1 : 1'b0);
+    assign WEX = reset ? 1'b1 : ((~CLK & phase_n==4 & _load) ? 1'b0 : 1'b1);
 
     // set and forget, doesn't need to be fast/syncronized
     reg init = 0;
@@ -76,12 +77,13 @@ module SRAM_D(
     // [phase 0:1 run mode]: latch the data read during 2nd phase if there was a write
     // [phase 0:1 boot mode]: do nothing, [run mode]: latch fetched instruction
     // [phase 4:5 boot mode]: latch new instruction if there was a write
-    assign out_pc = ((phase==1 & mode) | (phase==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
+    // FIXME: dataOut is undefined except during write phase so out_pc is also undefined
+    assign out_pc = ((CLK & phase_p==1 & mode) | (~CLK & phase_n==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
 
     // [phase 2:3] emit VRAM data (passive/every cycle)
-    assign out_vga = (phase==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
+    assign out_vga = (CLK & phase_p==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
     
     // [phase 4:5 run mode]: latch new data if there was a write
-    assign out_data = (phase==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
+    assign out_data = (~CLK & phase_n==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
 
 endmodule

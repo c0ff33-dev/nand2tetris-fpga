@@ -27,7 +27,8 @@ module HACK(
     wire clk,writeM,loadRAM,clkRST,RST,resLoad;
     wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-    wire [2:0] phase;
+    wire [1:0] phase_p;
+    wire [2:0] phase_n;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO6D,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
     wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
@@ -36,7 +37,8 @@ module HACK(
         .CLK(CLK), // external 100 MHz clock
         .clk(clk), // internal 25 MHz clock
         .reset(clkRST), // reset signal ~20μs
-        .phase(phase) // phase signal for CLK domain
+        .phase_p(phase_p), // phase signal for CLK domain
+        .phase_n(phase_n) // phase signal for CLK domain
     );
 
     // reset PC during init & in [t+1] when GO load=1, both the load
@@ -161,10 +163,11 @@ module HACK(
     // [phase 0:1 run mode] PC driven, updates every cycle
     // [phase 2:3] VGA is passive read / no memory map required
     // [phase 4:5] data read/write: new addr on A, last addr on C
-    assign inIO5 = (phase==0) ? (~inIO7 ? (loadIO5 ? outM : inIO5) : pc) :
-                   (phase==2) ? {3'b0, vga_addr} :
-                   (phase==4) ? (loadIO5 ? outM : addressM) : 
-                   inIO5;
+    assign inIO5 =  RST ? 16'b0 :
+                    (CLK & phase_p==0) ? (~inIO7 ? (loadIO5 ? outM : inIO5) : pc) :
+                    (CLK & phase_p==2) ? {3'b0, vga_addr} :
+                    (~CLK & phase_n==4) ? (loadIO5 ? outM : addressM) : 
+                    inIO5;
     
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
@@ -183,7 +186,9 @@ module HACK(
         .CSX(SRAM_CSX),    // Chip Select NOT
         .OEX(SRAM_OEX),    // Output Enable NOT
         .WEX(SRAM_WEX),    // Write Enable NOT
-        .phase(phase)      // phase signal for CLK domain
+        .phase_p(phase_p), // phase signal for CLK domain
+        .phase_n(phase_n), // phase signal for CLK domain
+        .reset(RST)
     );
 
     // GO (4103): emit instruction from BRAM/SRAM

@@ -15,14 +15,14 @@ module HACK_tb();
     wire SRAM_CSX;
 
     // Simulate SRAM // TODO: MS code
-    reg [15:0] sram[0:7];
+    reg [15:0] sram[0:4999];
 
     always @(posedge CLK or negedge CLK)
         if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bzzzzzzzzzzzzzzzz;
     
     wire [15:0] debug_sram;
-    assign debug_sram = sram[0];
+    assign debug_sram = sram[4102];
 
     // TODO: new wires
     // wire VGA_HS;

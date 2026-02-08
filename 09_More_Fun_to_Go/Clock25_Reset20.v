@@ -9,7 +9,8 @@ module Clock25_Reset20(
     input CLK,    // external clock 100 MHz    
     output clk,   // internal clock 25 MHz
     output reset, // reset signal ~20μs
-    output reg [2:0] phase  // phase signal for CLK domain
+    output [1:0] phase_p,  // phase signal for CLK domain
+    output [2:0] phase_n  // phase signal for CLK domain
 );
 
     // assign CLK to a counter
@@ -50,16 +51,22 @@ module Clock25_Reset20(
     // 8 phase generator for CLK domain (0-7)
     // CLK @ 100 MHz = each high/low is 5ns
     // 8 phases per 25 MHz clk cycle
-    always @(posedge CLK) begin
+    // yosys can't have any signal driven by multiple clock edges
+    reg [1:0] _phase_p = 0;
+    reg [1:0] _phase_n = 0; // inner loop 2 bit, output 3 bit
+
+    always @(posedge CLK)
         if (!start)
-            phase <= 3'd0;
+            _phase_p <= 2'd0;
         else
-            phase <= phase + 3'd1;
-    end
+            _phase_p <= _phase_p + 2'd1; // phase 0-3
+
     always @(negedge CLK) begin
         if (!start)
-            phase <= 3'd0;
+            _phase_n <= 3'd0;
         else
-            phase <= phase + 3'd1;
+            _phase_n <= _phase_n + 3'd1;
     end
+    assign phase_p = _phase_p;  // phase 0–3
+    assign phase_n = _phase_n + 3'd4;  // phase 4–7
 endmodule
