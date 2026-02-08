@@ -50,7 +50,13 @@ module Clock25_Reset20(
     // 8 phase generator for CLK domain (0-7)
     // CLK @ 100 MHz = each high/low is 5ns
     // 8 phases per 25 MHz clk cycle
-    always @(posedge CLK or negedge CLK) begin
+    always @(posedge CLK) begin
+        if (!start)
+            phase <= 3'd0;
+        else
+            phase <= phase + 3'd1;
+    end
+    always @(negedge CLK) begin
         if (!start)
             phase <= 3'd0;
         else

@@ -27,50 +27,24 @@ module SRAM_D(
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
-    output WEX,   // Write Enable NOT,
+    output WEX,  // Write Enable NOT,
     input [2:0] phase  // phase signal for CLK domain
 );
     // removed input/output registers/syncronization to be fully combinational
     wire _load;
     wire [15:0] dataOut;
     
-    // register control wires to CLK domain
-    always @(*) begin
-        // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-        // set address/flags/updates in 1st phase, collect results in 2nd phase 
-        case (phase)
-            0: begin
-                // [phase 0:1] run mode: enable read (instruction fetch)
-                // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
-                // enable read
-                OEX = 1'b0;
-                WEX = 1'b1;
-            end
-            2: begin
-                // [phase 2:3] vga: enable read (VRAM)
-                OEX = 1'b0;
-                WEX = 1'b1;
-            end
-            4: begin
-                // [phase 4:5] enable data read/write to SRAM
-                if (_load) begin
-                    // enable write
-                    OEX = 1'b1;
-                    WEX = 1'b0;
-                end
-                else begin
-                    // enable read
-                    OEX = 1'b0;
-                    WEX = 1'b1;
-                end
-            end
-            // no update/explicit latch state in passive phases
-            default: begin
-                OEX = OEX;
-                WEX = WEX;
-            end
-        endcase
-    end
+    // control wires 
+    // phases: [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
+
+    // [phase 0:1] run mode: enable read (instruction fetch)
+    // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
+    // [phase 2:3] vga: enable read (VRAM)
+    // [phase 4:5] enable data write to SRAM on load, else read
+    // enable relevant read/write flags, else loop the current signal
+    // TODO: could break this down to if <write> else <read>
+    assign OEX = (phase==0 | phase==2 | (phase==4 & ~_load)) ? 1'b0 : ((phase==4 & _load) ? 1'b1 : OEX);
+    assign WEX = (phase==0 | phase==2 | (phase==4 & ~_load)) ? 1'b1 : ((phase==4 & _load) ? 1'b0 : WEX);
 
     // set and forget, doesn't need to be fast/syncronized
     reg init = 0;
@@ -95,36 +69,19 @@ module SRAM_D(
 
     assign _load = init ? load : 1'b0;
 
-    // latch output to negedge (syncronous read, same as BRAM)
-    // in run_mode dataOut is emitted every cycle
-    always @(*) begin
-        // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-        // set address/flags/updates in 1st phase, collect results in 2nd phase
-        case (phase)
-            // run mode:
-            // latch the data read during 2nd phase if there was a write
-            
-            // [boot mode]: do nothing, [run mode]: latch fetched instruction 
-            1: if (mode) out_pc = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-            
-            // emit VRAM data (passive/every cycle)
-            3: out_vga = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-            
-            // [boot mode]: latch new instruction if there was a write
-            // [run mode]: latch new data if there was a write
-            6: begin
-                if (_load & ~mode)
-                    out_pc = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-                if (_load & mode)
-                    out_data = init ? dataOut : 16'bzzzzzzzzzzzzzzzz;
-            end
-            // no update/explicit latch state in passive phases
-            default: begin
-                out_pc = out_pc;
-                out_vga = out_vga;
-                out_data = out_data;
-            end
-        endcase
-    end
+    // output wires
+    // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
+    // update relevant output, else loop the current signal
+
+    // [phase 0:1 run mode]: latch the data read during 2nd phase if there was a write
+    // [phase 0:1 boot mode]: do nothing, [run mode]: latch fetched instruction
+    // [phase 4:5 boot mode]: latch new instruction if there was a write
+    assign out_pc = ((phase==1 & mode) | (phase==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
+
+    // [phase 2:3] emit VRAM data (passive/every cycle)
+    assign out_vga = (phase==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
+    
+    // [phase 4:5 run mode]: latch new data if there was a write
+    assign out_data = (phase==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
 
 endmodule

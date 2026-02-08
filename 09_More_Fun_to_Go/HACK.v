@@ -148,30 +148,23 @@ module HACK(
         .out(inIO3) // memory map 
     );
 
-    // FIXME: SRAM_D doesn't reliably retain its value
-    // FIXME: yosys unhappy with multi-edge blocks - rewrite as combinational
+    // FIXME: works in sim but yosys still complaining about multi-edge drivers
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // switched back to combinational logic to support multi-channel updates
-    always @(*) begin
-        // for SRAM_A arbitration just cycle through the phases
-        // flags for read/write/output managed in SRAM_D
-        // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-        case (phase)
-            // [boot mode] CPU driven (boot.asm), new addr on load only
-            // [run mode] PC driven, updates every cycle
-            0: inIO5 = ~inIO7 ? (loadIO5 ? outM : inIO5) : pc;
-            
-            // VGA is passive read / no memory map required    
-            2: inIO5 = {3'b0, vga_addr}; 
-            
-            // data read/write: new addr on A, last addr on C
-            4: inIO5 = loadIO5 ? outM : addressM;
 
-            // no update/explicit latch state in passive phases
-            default: inIO5 = inIO5;
-        endcase
-    end
+    // for SRAM_A arbitration just cycle through the phases
+    // flags for read/write/output managed in SRAM_D
+    // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
+    
+    // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on load only
+    // [phase 0:1 run mode] PC driven, updates every cycle
+    // [phase 2:3] VGA is passive read / no memory map required
+    // [phase 4:5] data read/write: new addr on A, last addr on C
+    assign inIO5 = (phase==0) ? (~inIO7 ? (loadIO5 ? outM : inIO5) : pc) :
+                   (phase==2) ? {3'b0, vga_addr} :
+                   (phase==4) ? (loadIO5 ? outM : addressM) : 
+                   inIO5;
     
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
