@@ -47,6 +47,8 @@ module HACK(
     assign RST = clkRST | loadIO7;
 
     // CPU (ALU, A, D, PC)
+    // ALU is combinational but A/D/PC are clocked
+    // i.e. inputs are finalized at end of current cycle
     CPU cpu(
         .clk(clk),
         .inM(inM),
@@ -97,7 +99,7 @@ module HACK(
         .loadIOC(loadIOC),
         .loadIOD(loadIOD),
         .loadIOE(loadIOE),
-        .loadIOF(loadIOF) 
+        .loadIOF(loadIOF)
     );
 
     // ROM (BRAM buffer), 256 x 16 bit words (512 bytes)
@@ -133,24 +135,30 @@ module HACK(
         .out(inIO1) // memory map
     );
 
-    // UART_TX (4098) @ 115200 baud (~14KB/sec)
-    UartTX uartTX(
-        .clk(clk),
-        .load(loadIO2),
-        .in(outM), // transmit outM[7:0]
-        .TX(UART_TX), // serial tx bit (pin)
-        .out(inIO2) // memory map
-    );
+    // // UART_TX (4098) @ 115200 baud (~14KB/sec)
+    // UartTX uartTX(
+    //     .clk(clk),
+    //     .load(loadIO2),
+    //     .in(outM), // transmit outM[7:0]
+    //     .TX(UART_TX), // serial tx bit (pin)
+    //     .out(inIO2) // memory map
+    // );
     
-    // UART_RX (4099) @ 115200 baud (~14KB/sec)
-    UartRX uartRX(
-        .clk(clk),
-        .clear(loadIO3),
-        .RX(UART_RX), // serial rx bit (pin)
-        .out(inIO3) // memory map 
-    );
+    // // UART_RX (4099) @ 115200 baud (~14KB/sec)
+    // UartRX uartRX(
+    //     .clk(clk),
+    //     .clear(loadIO3),
+    //     .RX(UART_RX), // serial rx bit (pin)
+    //     .out(inIO3) // memory map 
+    // );
 
-    // FIXME: works in sim but yosys still complaining about multi-edge drivers
+    // FIXME: builds & sims (incorrectly) but the latch delay creates issues
+    // FIXME: pure combinational logic is not feasible with 2 clock edges however
+    // FIXME: VGA requires 25 MHz clock but MS downclocks the rest for Pong to 1MHz?
+    // FIXME: Clock25_Reset20 & UartTX/RX would need real-time logic updates, PS2_CLK is external
+    // FIXME: i.e. slower clock = longer edge, one of the previous iterations is very likely feasible!
+    // FIXME: 3 x ~10ns transactions in a 40ns window was probably not realistic when including propogation delay etc
+
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // switched back to combinational logic to support multi-channel updates
@@ -163,14 +171,23 @@ module HACK(
     // [phase 0:1 run mode] PC driven, updates every cycle
     // [phase 2:3] VGA is passive read / no memory map required
     // [phase 4:5] data read/write: new addr on A, last addr on C
-    assign inIO5 =  RST ? 16'b0 :
-                    (CLK & phase_p==0) ? (~inIO7 ? (loadIO5 ? outM : inIO5) : pc) :
-                    (CLK & phase_p==2) ? {3'b0, vga_addr} :
-                    (~CLK & phase_n==4) ? (loadIO5 ? outM : addressM) : 
-                    inIO5;
-    
+    reg [15:0] inIO5_pos, inIO5_neg;
+
+    always @(posedge CLK) begin
+        if (phase_p == 0)
+            inIO5_pos <= ~inIO7 ? (loadIO5 ? outM : inIO5_pos) : pc;
+        else if (phase_p == 2)
+            inIO5_pos <= {3'b0, vga_addr};
+    end
+
+    always @(negedge CLK) begin
+        if (phase_n == 4)
+            inIO5_neg <= loadIO5 ? outM : addressM;
+    end
+
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
+    assign inIO5 = RST ? 16'b0 : (CLK ? inIO5_pos : inIO5_neg);
     assign SRAM_ADDR = inIO7 ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
@@ -195,51 +212,53 @@ module HACK(
     // TODO: now relegated to run mode switch + routing instruction only?
     GO go(
         .clk(clk),
-        .load(loadIO7),
-        .pc(pc),
-        .rom_data(outROM),
-        .sram_addr_in(inIO5),
-        .sram_data(inIO6),
-        .sram_addr_out(go_sram_addr),
-        .instruction(instruction),
-        .out(inIO7)
+        .load(loadIO7), // trigger run mode
+        .pc(pc), // no longer used
+        .rom_data(outROM), // used
+        .sram_addr_in(inIO5), // no longer used
+        .sram_data(inIO6), // used 
+        .sram_addr_out(go_sram_addr), // no longer used
+        .instruction(instruction), // used
+        .out(inIO7) // run mode
     );
 
     // TODO: VGA controller
-    // //VGA - Video graphics adapter 640x480 @ 50Hz
+    // VGA - Video graphics adapter 640x480 @ 50Hz
     wire [12:0] vga_addr;
-    // wire vga_ready;
     wire [15:0] vga_data;
-    // VGA vga(
-    //     .i_clk(clk25),
-    //     .i_rst(rst),
-    //     .o_addr(vga_addr),
-    //     .i_data(vga_data),
-    //     .o_vga_r(VGA_R),
-    //     .o_vga_g(VGA_G),
-    //     .o_vga_b(VGA_B),
-    //     .o_vga_hs(VGA_HS),
-    //     .o_vga_vs(VGA_VS)
-    // );
+    wire [3:0] VGA_R, VGA_G, VGA_B;
+    wire VGA_HS, VGA_VS;
+    VGA vga(
+        .i_clk(clk),
+        .i_rst(RST),
+        .o_addr(vga_addr),
+        .i_data(vga_data),
+        .o_vga_r(VGA_R),
+        .o_vga_g(VGA_G),
+        .o_vga_b(VGA_B),
+        .o_vga_hs(VGA_HS),
+        .o_vga_vs(VGA_VS)
+    );
 
     // TODO: PS/2 Keyboard controller
-    // //PS2 - Keyboard controller
-    // wire [23:0] ps2_data;
-    // PS2 ps2(
-    //     .i_clk(clk),
-    //     .i_rst(rst),
-    //     .i_ps2_data(PS2_DATA),
-    //     .i_ps2_clk(PS2_CLK),
-    //     .o_data(ps2_data)
-    // );
-    // //KBD - PS2 to ASCII converter
-    // wire [15:0] kbd;
-    // KBD kbd(
-    //     .i_clk(clk),
-    //     .i_rst(rst),
-    //     .i_ps2_data(ps2_data),
-    //     .o_data(kbd)
-    // );
+    // PS2 - Keyboard controller
+    wire [23:0] ps2_data;
+    wire PS2_DATA, PS2_CLK; // TODO: placeholder
+    PS2 ps2(
+        .i_clk(clk),
+        .i_rst(RST),
+        .i_ps2_data(PS2_DATA),
+        .i_ps2_clk(PS2_CLK),
+        .o_data(ps2_data)
+    );
+    // Keyboard - PS2 to ASCII converter
+    wire [15:0] _kbd;
+    Keyboard kbd(
+        .i_clk(clk),
+        .i_rst(RST),
+        .i_ps2_data(ps2_data),
+        .o_data(_kbd)
+    );
 
     // DEBUG0 (4107)
     Register debug0(

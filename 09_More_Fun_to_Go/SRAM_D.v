@@ -21,8 +21,8 @@ module SRAM_D(
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
     output [15:0] out_pc, // instruction data
-    output [15:0] out_data, // general purpose data
-    output [15:0] out_vga, // VRAM/VGA data
+    output reg [15:0] out_data, // general purpose data
+    output reg [15:0] out_vga, // VRAM/VGA data
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
@@ -77,13 +77,35 @@ module SRAM_D(
     // [phase 0:1 run mode]: latch the data read during 2nd phase if there was a write
     // [phase 0:1 boot mode]: do nothing, [run mode]: latch fetched instruction
     // [phase 4:5 boot mode]: latch new instruction if there was a write
-    // FIXME: dataOut is undefined except during write phase so out_pc is also undefined
-    assign out_pc = ((CLK & phase_p==1 & mode) | (~CLK & phase_n==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
+    // assign out_pc = ((CLK & phase_p==1 & mode) | (~CLK & phase_n==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
 
-    // [phase 2:3] emit VRAM data (passive/every cycle)
-    assign out_vga = (CLK & phase_p==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
+    // // [phase 2:3] emit VRAM data (passive/every cycle)
+    // assign out_vga = (CLK & phase_p==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
     
-    // [phase 4:5 run mode]: latch new data if there was a write
-    assign out_data = (~CLK & phase_n==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
+    // // [phase 4:5 run mode]: latch new data if there was a write
+    // assign out_data = (~CLK & phase_n==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
+    // out_pc latch - updates on either edge condition
+    // out_pc updates on both edges - broadcast to output immediately
+    reg [15:0] out_pc_pos;
+    reg [15:0] out_pc_neg;
+
+    // FIXME: SRAM_ADDR is delayed by one phase by inIO5 latch
+    // FIXME: out_pc/vga/data will similarly be delayed by one additional phase which is getting late
+    // FIXME: if there is a choice VGA is least latency sensitive (refresh rate >> VRAM access time)
+    always @(posedge CLK) begin
+        if (phase_p == 1 && mode)
+            out_pc_pos <= init ? dataOut : 16'bz;
+        if (phase_p == 3)
+            out_vga <= init ? dataOut : 16'bz;
+    end
+
+    always @(negedge CLK) begin
+        if (phase_n == 5 && _load && ~mode)
+            out_pc_neg <= init ? dataOut : 16'bz;
+        if (phase_n == 5 && _load && mode)
+            out_data <= init ? dataOut : 16'bz;
+    end
+
+    assign out_pc = mode ? out_pc_pos : out_pc_neg;
 
 endmodule
