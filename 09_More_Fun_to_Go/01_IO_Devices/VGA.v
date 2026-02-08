@@ -5,7 +5,7 @@
 `default_nettype none
 
 module VGA(
-    input i_clk,          // clock 25MHz
+    input i_clk,          // clock 25 MHz
     input i_rst,          // reset
     output [12:0] o_addr, // address bus
     input [15:0] i_data,  // data in

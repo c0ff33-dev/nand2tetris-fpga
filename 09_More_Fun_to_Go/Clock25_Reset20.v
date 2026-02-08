@@ -7,10 +7,10 @@
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,    // external clock 100 MHz    
-    output clk,   // internal clock 25 MHz
+    output clkVGA,  // internal clock 25 MHz (VGA only)
+    output clk,   // internal clock 6.25 MHz (everything else)
     output reset, // reset signal ~20μs
-    output [1:0] phase_p,  // phase signal for CLK domain
-    output [2:0] phase_n  // phase signal for CLK domain
+    output reg [2:0] phase
 );
 
     // assign CLK to a counter
@@ -29,8 +29,8 @@ module Clock25_Reset20(
 
     // scale down 100 MHz to 25 MHz (1/4)
     // PC itself is clocked so only one update per cycle
-    // 2 bits = 2^2 = 4 cycles = 1/4 clock speed (25 MHz)
-    assign clk = psout[1]; // demux the 2nd bit
+    assign clkVGA = psout[1]; // demux 2nd LSB (1/4) = 25 MHz (40ns)
+    assign clk = psout[3]; // demux 4th LSB (1/16) = 6.25 MHz (160ns)
 
     // Reset high for first 20μs @ 100 MHz
     // 1 cycle = 100 million / second or 10ns (ns = 1 billion / second)
@@ -48,25 +48,12 @@ module Clock25_Reset20(
     // ...but still assign immediately
     assign reset = ~start;
 
-    // 8 phase generator for CLK domain (0-7)
-    // CLK @ 100 MHz = each high/low is 5ns
-    // 8 phases per 25 MHz clk cycle
-    // yosys can't have any signal driven by multiple clock edges
-    reg [1:0] _phase_p = 0;
-    reg [1:0] _phase_n = 0; // inner loop 2 bit, output 3 bit
-
+    // 8 phase generator
+    // CLK @ 100 MHz = 10ns per tick
+    // 8 phases per 6.25 MHz clk edge
     always @(posedge CLK)
         if (!start)
-            _phase_p <= 2'd0;
+            phase <= 2'd0;
         else
-            _phase_p <= _phase_p + 2'd1; // phase 0-3
-
-    always @(negedge CLK) begin
-        if (!start)
-            _phase_n <= 3'd0;
-        else
-            _phase_n <= _phase_n + 3'd1;
-    end
-    assign phase_p = _phase_p;  // phase 0–3
-    assign phase_n = _phase_n + 3'd4;  // phase 4–7
+            phase <= phase + 2'd1; // phase 0-7
 endmodule

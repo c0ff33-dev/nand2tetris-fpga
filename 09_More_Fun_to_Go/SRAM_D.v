@@ -17,19 +17,17 @@
 `default_nettype none
 module SRAM_D(
     input CLK, // external 100 MHz clock
-    input clk, // internal 25 MHz clock
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
     output [15:0] out_pc, // instruction data
-    output reg [15:0] out_data, // general purpose data
-    output reg [15:0] out_vga, // VRAM/VGA data
+    output [15:0] out_data, // general purpose data
+    output [15:0] out_vga, // VRAM/VGA data
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
     output OEX,  // Output Enable NOT
     output WEX,  // Write Enable NOT,
-    input [1:0] phase_p, // phase signal for CLK domain
-    input [2:0] phase_n, // phase signal for CLK domain
+    input [2:0] phase,
     input reset
 );
     // removed input/output registers/syncronization to be fully combinational
@@ -37,20 +35,19 @@ module SRAM_D(
     wire [15:0] dataOut;
     
     // control wires 
-    // phases: [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-
     // [phase 0:1] run mode: enable read (instruction fetch)
     // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
     // [phase 2:3] vga: enable read (VRAM)
     // [phase 4:5] enable data write to SRAM on load, else read
+    // [phase 6:7] <unused>
     // enable write flag in relevant phase else default to read
-    assign OEX = reset ? 1'b1 : ((~CLK & phase_n==4 & _load) ? 1'b1 : 1'b0);
-    assign WEX = reset ? 1'b1 : ((~CLK & phase_n==4 & _load) ? 1'b0 : 1'b1);
+    assign OEX = reset ? 1'b1 : ((phase==4 & _load) ? 1'b1 : 1'b0);
+    assign WEX = reset ? 1'b1 : ((phase==4 & _load) ? 1'b0 : 1'b1);
 
-    // set and forget, doesn't need to be fast/syncronized
+    // set and forget
     reg init = 0;
     reg csx=1; // chip select not (remains low after init)
-    always @(posedge clk) begin
+    always @(posedge CLK) begin
         if (~init) begin
             init <= 1;
             csx <= 0;
@@ -71,41 +68,25 @@ module SRAM_D(
     assign _load = init ? load : 1'b0;
 
     // output wires
-    // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-    // update relevant output, else loop the current signal
-
     // [phase 0:1 run mode]: latch the data read during 2nd phase if there was a write
     // [phase 0:1 boot mode]: do nothing, [run mode]: latch fetched instruction
-    // [phase 4:5 boot mode]: latch new instruction if there was a write
-    // assign out_pc = ((CLK & phase_p==1 & mode) | (~CLK & phase_n==5 & _load & ~mode)) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_pc;
+    // [phase 2:3] emit VRAM data (passive/every cycle)
+    // [phase 4:5 boot mode]: latch new instruction if there was a write   
+    // [phase 4:5 run mode]: latch new data if there was a write
+    // [phase 6:7] <unused>
+    reg [15:0] last_pc, last_vga, last_data;
 
-    // // [phase 2:3] emit VRAM data (passive/every cycle)
-    // assign out_vga = (CLK & phase_p==3) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_vga;
-    
-    // // [phase 4:5 run mode]: latch new data if there was a write
-    // assign out_data = (~CLK & phase_n==5 & _load & mode) ? (init ? dataOut : 16'bzzzzzzzzzzzzzzzz) : out_data;
-    // out_pc latch - updates on either edge condition
-    // out_pc updates on both edges - broadcast to output immediately
-    reg [15:0] out_pc_pos;
-    reg [15:0] out_pc_neg;
-
-    // FIXME: SRAM_ADDR is delayed by one phase by inIO5 latch
-    // FIXME: out_pc/vga/data will similarly be delayed by one additional phase which is getting late
-    // FIXME: if there is a choice VGA is least latency sensitive (refresh rate >> VRAM access time)
     always @(posedge CLK) begin
-        if (phase_p == 1 && mode)
-            out_pc_pos <= init ? dataOut : 16'bz;
-        if (phase_p == 3)
-            out_vga <= init ? dataOut : 16'bz;
+        if ((phase==1 & mode) | (phase==5 & _load & ~mode))
+            last_pc <= init ? dataOut : 16'bz;
+        if (phase == 3)
+            last_vga <= init ? dataOut : 16'bz;
+        if (phase==5 & _load & mode)
+            last_data <= init ? dataOut : 16'bz;
     end
 
-    always @(negedge CLK) begin
-        if (phase_n == 5 && _load && ~mode)
-            out_pc_neg <= init ? dataOut : 16'bz;
-        if (phase_n == 5 && _load && mode)
-            out_data <= init ? dataOut : 16'bz;
-    end
-
-    assign out_pc = mode ? out_pc_pos : out_pc_neg;
+    assign out_pc = last_pc;
+    assign out_vga = last_vga;
+    assign out_data = last_data;
 
 endmodule

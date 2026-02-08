@@ -24,21 +24,20 @@ module HACK(
     output SRAM_CSX          // SRAM Chip Select NOT
 );
     
-    wire clk,writeM,loadRAM,clkRST,RST,resLoad;
+    wire clk,clkVGA,writeM,loadRAM,clkRST,RST,resLoad;
     wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
-    wire [1:0] phase_p;
-    wire [2:0] phase_n;
+    wire [2:0] phase;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO6D,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
     wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
     // 25 MHz internal clock w/ 20μs initial reset period
     Clock25_Reset20 clock(
-        .CLK(CLK), // external 100 MHz clock
-        .clk(clk), // internal 25 MHz clock
+        .CLK(CLK),      // external 100 MHz clock
+        .clkVGA(clkVGA),// internal clock 25 MHz (VGA only)
+        .clk(clk),      // internal clock 6.25 MHz (everything else)
         .reset(clkRST), // reset signal ~20μs
-        .phase_p(phase_p), // phase signal for CLK domain
-        .phase_n(phase_n) // phase signal for CLK domain
+        .phase(phase)
     );
 
     // reset PC during init & in [t+1] when GO load=1, both the load
@@ -152,47 +151,40 @@ module HACK(
     //     .out(inIO3) // memory map 
     // );
 
-    // FIXME: builds & sims (incorrectly) but the latch delay creates issues
-    // FIXME: pure combinational logic is not feasible with 2 clock edges however
-    // FIXME: VGA requires 25 MHz clock but MS downclocks the rest for Pong to 1MHz?
-    // FIXME: Clock25_Reset20 & UartTX/RX would need real-time logic updates, PS2_CLK is external
-    // FIXME: i.e. slower clock = longer edge, one of the previous iterations is very likely feasible!
-    // FIXME: 3 x ~10ns transactions in a 40ns window was probably not realistic when including propogation delay etc
-
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // switched back to combinational logic to support multi-channel updates
 
     // for SRAM_A arbitration just cycle through the phases
     // flags for read/write/output managed in SRAM_D
-    // [0:1] instruction, [2:3] VGA, [4:5] SRAM, [6:7] idle/unused
-    
     // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on load only
     // [phase 0:1 run mode] PC driven, updates every cycle
     // [phase 2:3] VGA is passive read / no memory map required
     // [phase 4:5] data read/write: new addr on A, last addr on C
-    reg [15:0] inIO5_pos, inIO5_neg;
+    // [phase 6:7] <unused>
 
+    // have to pipeline some values to break combinational loops
+    // first CLK tick (10ns) of each phase ()
+    reg [15:0] last_inIO5, last_outM;
     always @(posedge CLK) begin
-        if (phase_p == 0)
-            inIO5_pos <= ~inIO7 ? (loadIO5 ? outM : inIO5_pos) : pc;
-        else if (phase_p == 2)
-            inIO5_pos <= {3'b0, vga_addr};
+        if (phase==0) 
+            last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
+        else if (phase==4)
+            last_outM <= outM;
     end
 
-    always @(negedge CLK) begin
-        if (phase_n == 4)
-            inIO5_neg <= loadIO5 ? outM : addressM;
-    end
+    assign inIO5 = RST ? 16'b0 :
+                phase==0 ? last_inIO5 :
+                phase==2 ? {3'b0, vga_addr} :
+                phase==4 ? (loadIO5 ? last_outM : addressM) : 
+                16'bz;
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
-    assign inIO5 = RST ? 16'b0 : (CLK ? inIO5_pos : inIO5_neg);
     assign SRAM_ADDR = inIO7 ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
-        .clk(clk),         // internal 25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .in(outM),         // input data (ignored on read)
         .out_pc(inIO6),    // output data (instruction)
@@ -203,13 +195,12 @@ module HACK(
         .CSX(SRAM_CSX),    // Chip Select NOT
         .OEX(SRAM_OEX),    // Output Enable NOT
         .WEX(SRAM_WEX),    // Write Enable NOT
-        .phase_p(phase_p), // phase signal for CLK domain
-        .phase_n(phase_n), // phase signal for CLK domain
+        .phase(phase),
         .reset(RST)
     );
 
     // GO (4103): emit instruction from BRAM/SRAM
-    // TODO: now relegated to run mode switch + routing instruction only?
+    // FUTURE: now relegated to run mode switch + routing instruction only?
     GO go(
         .clk(clk),
         .load(loadIO7), // trigger run mode
@@ -229,7 +220,7 @@ module HACK(
     wire [3:0] VGA_R, VGA_G, VGA_B;
     wire VGA_HS, VGA_VS;
     VGA vga(
-        .i_clk(clk),
+        .i_clk(clkVGA),
         .i_rst(RST),
         .o_addr(vga_addr),
         .i_data(vga_data),
