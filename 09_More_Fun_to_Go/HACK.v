@@ -165,18 +165,20 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates remain synced to posedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5, last_outM;
+    reg [15:0] last_inIO5, last_outM, last_addr;
     always @(posedge CLK) begin
-        if (phase==0 & clk) 
+        if (clk & (phase==0 | phase==1))
             last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
-        else if (phase==4 & clk)
+        if (clk & (phase==4 | phase==5) & loadIO5) 
+            last_addr <= outM;
+        if (clk & (phase==4 | phase==5))
             last_outM <= outM;
     end
 
     assign inIO5 = RST ? 16'b0 :
-                phase==0 ? last_inIO5 :
-                phase==2 ? {3'b0, vga_addr} :
-                phase==4 ? (loadIO5 ? last_outM : addressM) : 
+                (phase==0 | phase==1) ? last_inIO5 :
+                (phase==2 | phase==3) ? {3'b0, vga_addr} :
+                (phase==4 | phase==5) ? last_addr : 
                 16'bz;
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
