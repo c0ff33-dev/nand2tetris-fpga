@@ -3,30 +3,32 @@
 // check debug_sram[0:2] in test bench
 // check LED output on real hardware
 
-@10
-D=A
 @SRAM_A
-M=D // A=10
-
+M=0 // A=0
 @SRAM_D
-MD=D+1 // D=11
+MD=1 // D=1
 
 @SRAM_A
-M=D // A=11
+M=D // A=1
 @SRAM_D
-MD=D+1 // D=12
+MD=D+1 // D=2
 
 @SRAM_A
-M=D // A=12
+M=D // A=2
 @SRAM_D
-MD=D+1 // D=13
+MD=D+1 // D=3
 MD=D+1
-MD=D+1 // D=15
+MD=D+1
+MD=D+1
+MD=D+1 // D=7
+
+@100
+D=0
 
 @SRAM_D
 D=M
 @LED
-M=D // LED=15 (111 = all LEDs on, SRAM read/write works)
+M=D // LED=7 (111 = all LEDs on, SRAM read/write works)
 
 (LOOP)
 @LOOP

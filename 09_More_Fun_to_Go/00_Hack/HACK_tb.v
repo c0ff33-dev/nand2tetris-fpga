@@ -22,9 +22,9 @@ module HACK_tb();
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;
     
     wire [15:0] debug_sram0, debug_sram1, debug_sram2;
-    assign debug_sram0 = sram[10];
-    assign debug_sram1 = sram[11];
-    assign debug_sram2 = sram[12];
+    assign debug_sram0 = sram[0];
+    assign debug_sram1 = sram[1];
+    assign debug_sram2 = sram[2];
 
     // TODO: new wires
     // wire VGA_HS;
@@ -68,7 +68,7 @@ module HACK_tb();
         $display("------------------------");
         $display("Test bench: Hack");
 
-        #2500
+        #5000
         $finish;
     end
 

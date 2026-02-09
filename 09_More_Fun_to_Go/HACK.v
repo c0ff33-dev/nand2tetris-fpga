@@ -151,6 +151,8 @@ module HACK(
     //     .out(inIO3) // memory map 
     // );
 
+    // FIXME: SRAM_A does not return its own value on read i.e. @SRAM_A; M=M+1 doesn't work in asm
+
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // switched back to combinational logic to support multi-channel updates
