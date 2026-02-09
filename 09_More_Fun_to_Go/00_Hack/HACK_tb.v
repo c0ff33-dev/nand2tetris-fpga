@@ -17,6 +17,14 @@ module HACK_tb();
     // Simulate SRAM // TODO: MS code
     reg [15:0] sram[0:4999];
 
+    // init the array
+    integer i;
+    initial begin
+        for (i = 0; i < 5000; i = i + 1) begin
+            sram[i] = 16'd0;
+        end
+    end
+
     always @(posedge CLK)
         if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;

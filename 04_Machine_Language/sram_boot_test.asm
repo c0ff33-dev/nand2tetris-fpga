@@ -3,15 +3,13 @@
 // check debug_sram[0:2] in test bench
 // check LED output on real hardware
 
-@SRAM_A
-M=0 // A=0
 @SRAM_D
-MD=1 // D=1
+M=1 // A=0, M=1
 
 @SRAM_A
-M=D // A=1
+MD=1 // A/D=1
 @SRAM_D
-MD=D+1 // D=2
+MD=D+1 // M/D=2
 
 @SRAM_A
 M=D // A=2

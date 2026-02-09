@@ -76,7 +76,7 @@ module SRAM_D(
     // [phase 4:5 boot mode]: latch new instruction if there was a write   
     // [phase 4:5 run mode]: latch new data if there was a write
     // [phase 6:7] <unused>
-    reg [15:0] last_pc, last_vga, last_data;
+    reg [15:0] last_pc=0, last_vga=0, last_data=0;
 
     // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)
     always @(posedge CLK) begin

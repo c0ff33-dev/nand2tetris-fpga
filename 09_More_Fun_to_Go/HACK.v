@@ -151,8 +151,6 @@ module HACK(
     //     .out(inIO3) // memory map 
     // );
 
-    // FIXME: SRAM_A does not return its own value on read i.e. @SRAM_A; M=M+1 doesn't work in asm
-
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
     // switched back to combinational logic to support multi-channel updates
@@ -166,15 +164,16 @@ module HACK(
     // [phase 6:7] <unused>
 
     // have to pipeline some values to break combinational loops
-    // SRAM_ADDR updates remain synced to posedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5, last_outM, last_addr;
+    // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
+    reg [15:0] last_inIO5=0, last_outM=0, last_addr=0;
     always @(posedge CLK) begin
-        if (clk & (phase==0 | phase==1))
+        // grab first read only don't want to pickup random ALU outputs
+        if (clk & phase==0)
             last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
-        if (clk & (phase==4 | phase==5) & loadIO5) 
-            last_addr <= outM;
-        if (clk & (phase==4 | phase==5))
+        if (clk & phase==4) begin
+            last_addr <= loadIO5 ? outM : last_inIO5;
             last_outM <= outM;
+        end            
     end
 
     assign inIO5 = RST ? 16'b0 :

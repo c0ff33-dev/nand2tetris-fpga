@@ -3,102 +3,31 @@
 // check debug_sram[0:2] in test bench
 // check LED output on real hardware
 
-// 0000000000000100 // 4	 // @4
-// 1110110000010000 // 60342 // D=A
-// 0001000000000110 // 4102	 // @SRAM_D
-// 1110011111011000 // 59352 // MD=D+1
-// 1110011111011000 // 59352 // MD=D+1
-// 1110011111011000 // 59352 // MD=D+1
-// 0001000000000110 // 4102	 // @SRAM_D
-// 1111110000010000 // 64528 // D=M
-// 0001000000000000 // 4096  // @LED
-// 1110001100001000 // 58120 // M=D
-// 0000000000001010 // 10	 // (LOOP), @LOOP
-// 1110101010000111 // 60039 // 0;JMP
-
-@4
-D=A
-@SRAM_A
-M=0
 @SRAM_D
-M=D
+M=1 // A=0, M=1
 
-@60342
-D=A
 @SRAM_A
-M=M+1
+MD=1 // A/D=1
 @SRAM_D
-M=D
+MD=D+1 // M/D=2
 
-@4102
-D=A
 @SRAM_A
-M=M+1
+M=D // A=2
 @SRAM_D
-M=D
+MD=D+1 // D=3
+MD=D+1
+MD=D+1
+MD=D+1
+MD=D+1 // D=7
 
-@59352
-D=A
-@SRAM_A
-M=M+1
+@100
+D=0
+
 @SRAM_D
-M=D
+D=M
+@LED
+M=D // LED=7 (111 = all LEDs on, SRAM read/write works)
 
-@59352
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@59352
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@4102
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@64528
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@4096
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@58120
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@10
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@60039
-D=A
-@SRAM_A
-M=M+1
-@SRAM_D
-M=D
-
-@GO
-M=1
+(LOOP)
+@LOOP
+0;JMP
