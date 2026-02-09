@@ -14,7 +14,7 @@
  * The behavior of IO addresses is described in 06_IO_Devices
  */
 
-// Original memory map
+// nand2tetris spec memory layout
 // registers: 0-15
 // "STATIC": 16-255 incl
 // "STACK": 256-2047 incl
@@ -22,12 +22,11 @@
 // "SCREEN": 16384-24575 incl
 // "KBD": 24576 // 48KB RAM required total
 
-// TODO: update memory map (new)
-
+// current memory layout
 // registers: 0-15 (same)
 // "STATIC": 16-255 incl (same)
 // "STACK": 256-1023 incl (smaller)
-// "HEAP": 1024-3583 incl (smaller) // 4112-16383 incl (smaller)
+// "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl
 // "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
 // "KBD": nil (removed) -- this can just be a memory mapped register?
 // "IO": 4096-4111 (new)

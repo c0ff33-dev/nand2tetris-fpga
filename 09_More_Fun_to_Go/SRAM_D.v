@@ -17,6 +17,7 @@
 `default_nettype none
 module SRAM_D(
     input CLK, // external 100 MHz clock
+    input clk, // internal 6.25 MHz clock
     input load,  // SRAM_DATA load
     input [15:0] in, // SRAM_DATA (write)
     output [15:0] out_pc, // instruction data
@@ -41,8 +42,9 @@ module SRAM_D(
     // [phase 4:5] enable data write to SRAM on load, else read
     // [phase 6:7] <unused>
     // enable write flag in relevant phase else default to read
-    assign OEX = reset ? 1'b1 : (((phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
-    assign WEX = reset ? 1'b1 : (((phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
+    // only update values in clk negedge to syncronize with BRAM/ROM updates
+    assign OEX = reset ? 1'b1 : ((~clk & (phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
+    assign WEX = reset ? 1'b1 : ((~clk & (phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
 
     // set and forget
     reg init = 0;
@@ -76,12 +78,13 @@ module SRAM_D(
     // [phase 6:7] <unused>
     reg [15:0] last_pc, last_vga, last_data;
 
+    // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)
     always @(posedge CLK) begin
-        if ((phase==1 & mode) | (phase==5 & _load & ~mode))
+        if (~clk & ((phase==1 & mode) | (phase==5 & _load & ~mode)))
             last_pc <= init ? dataOut : 16'bz;
-        if (phase == 3)
+        if (~clk & phase==3)
             last_vga <= init ? dataOut : 16'bz;
-        if (phase==5 & _load & mode)
+        if (~clk & phase==5 & _load & mode)
             last_data <= init ? dataOut : 16'bz;
     end
 

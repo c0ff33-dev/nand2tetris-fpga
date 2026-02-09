@@ -163,13 +163,13 @@ module HACK(
     // [phase 4:5] data read/write: new addr on A, last addr on C
     // [phase 6:7] <unused>
 
-    // FIXME: CPU is being fed new value during negedge that then incs again on posedge?
     // have to pipeline some values to break combinational loops
+    // SRAM_ADDR updates remain synced to posedge clk (CLK for multiple updates)
     reg [15:0] last_inIO5, last_outM;
     always @(posedge CLK) begin
         if (phase==0 & clk) 
             last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
-        else if (phase==4)
+        else if (phase==4 & clk)
             last_outM <= outM;
     end
 
@@ -185,6 +185,7 @@ module HACK(
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
+        .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .in(outM),         // input data (ignored on read)
         .out_pc(inIO6),    // output data (instruction)
