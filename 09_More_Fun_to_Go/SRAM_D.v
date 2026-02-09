@@ -75,7 +75,7 @@ module SRAM_D(
     // [phase 2:3] emit VRAM data (passive/every cycle)
     // [phase 4:5 boot mode]: latch new instruction if there was a write   
     // [phase 4:5 run mode]: latch new data if there was a write
-    // [phase 6:7] <unused>
+    // [phase 6:7] restore original CPU state
     reg [15:0] last_pc=0, last_vga=0, last_data=0;
 
     // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)

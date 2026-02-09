@@ -39,6 +39,7 @@ module CPU(
     wire ctype;
     wire zr,ng;
     wire jmp;
+    wire load_a, load_d;
 
     // [15] = MSB, [15:13] = opcode
     // 0xxx xxxx xxxx xxxx = A instruction (original, 32k words)
@@ -57,17 +58,21 @@ module CPU(
     // Decode writeM (C instruction & dest includes M)
     assign writeM = ctype ? instruction[3] : 1'b0;
 
+    // Decode load parameter for A/C instructions
+    assign load_a = !ctype | instruction[5];
+    assign load_d = ctype ? instruction[4] : 1'b0;
+
     Register regA (
         .clk(clk),
         .in(!ctype ? instruction : outM), // mux: address or ALU output via ctype
-        .load(!ctype | instruction[5]), // load if A or dest includes A
+        .load(load_a), // load if A or dest includes A
         .out(addressM)
     );
 
     Register regD (
         .clk(clk),
         .in(outM),
-        .load(ctype ? instruction[4] : 1'b0), // load if C & dest includes D
+        .load(load_d), // load if C & dest includes D
         .out(dout)
     );
 
