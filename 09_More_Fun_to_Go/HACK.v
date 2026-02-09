@@ -180,6 +180,10 @@ module HACK(
         end
     end
 
+    // FIXME: in run mode during a d_load window the instruction address from the fetch is what is being written
+    // FIXME: normally in run mode SRAM_ADDR[pc]=4102 would just decode the data into inIO6
+    // FIXME: in current model the data flows back via inIO6D which won't emit unless in data (VRAM/HEAP) range
+    // FIXME: probably just needs some condition so it routes via inIO6 instead during run mode for virtual accesses
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :
                 (phase==2 | phase==3) ? {3'b0, vga_addr} :
@@ -216,12 +220,12 @@ module HACK(
         .clk(clk),
         .load(loadIO7), // trigger run mode
         .pc(pc), // no longer used
-        .rom_data(outROM), // used
+        .rom_data(outROM), // instruction fetch (boot mode)
         .sram_addr_in(inIO5), // no longer used
-        .sram_data(inIO6), // used 
+        .sram_data(inIO6), // instruction fetch (run mode) 
         .sram_addr_out(go_sram_addr), // no longer used
-        .instruction(instruction), // used
-        .out(inIO7) // run mode
+        .instruction(instruction), // output instruction to CPU
+        .out(inIO7) // output run mode
     );
 
     // TODO: VGA controller

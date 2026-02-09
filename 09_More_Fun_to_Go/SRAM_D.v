@@ -70,7 +70,7 @@ module SRAM_D(
     assign _load = init ? load : 1'b0;
 
     // output wires
-    // [phase 0:1 run mode]: latch the data read during 2nd phase if there was a write
+    // [phase 0:1 run mode]: latch the data read during data phase if there was a write
     // [phase 0:1 boot mode]: do nothing, [run mode]: latch fetched instruction
     // [phase 2:3] emit VRAM data (passive/every cycle)
     // [phase 4:5 boot mode]: latch new instruction if there was a write   
