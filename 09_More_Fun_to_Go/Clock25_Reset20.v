@@ -22,7 +22,7 @@ module Clock25_Reset20(
         .clk(CLK),
         .load(1'b0),
         .in(16'b0),
-        .reset(1'b0),
+        .reset(_reset),
         .inc(1'b1),
         .out(psout)
     );
@@ -40,9 +40,13 @@ module Clock25_Reset20(
 
     // latch start so it doesn't continue resetting when PC overflows
     reg start = 0;
+    reg _reset = 0;
     always @(posedge CLK) begin
-        if (!low && !start)
+        if (!low && !start) begin
             start <= 1'b1;
+            _reset <= 1'b1; // sync prescaler as well
+        end else
+            _reset <= 1'b0;
     end
 
     // ...but still assign immediately
@@ -52,8 +56,8 @@ module Clock25_Reset20(
     // CLK @ 100 MHz = 10ns per tick
     // 8 phases per 6.25 MHz clk edge
     always @(posedge CLK)
-        if (!start)
-            phase <= 2'd0;
+        if (!low | !start)
+            phase <= 3'd0;
         else
-            phase <= phase + 2'd1; // phase 0-7
+            phase <= phase + 3'd1; // phase 0-7
 endmodule
