@@ -14,6 +14,9 @@
 // 11 (3) = LED1/2 on, BUT1/2 released
 
 // Put your code here:
+@4
+D=A
+
 @SRAM_D
 MD=D+1
 MD=D+1

@@ -41,8 +41,8 @@ module SRAM_D(
     // [phase 4:5] enable data write to SRAM on load, else read
     // [phase 6:7] <unused>
     // enable write flag in relevant phase else default to read
-    assign OEX = reset ? 1'b1 : ((phase==4 & _load) ? 1'b1 : 1'b0);
-    assign WEX = reset ? 1'b1 : ((phase==4 & _load) ? 1'b0 : 1'b1);
+    assign OEX = reset ? 1'b1 : (((phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
+    assign WEX = reset ? 1'b1 : (((phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
 
     // set and forget
     reg init = 0;

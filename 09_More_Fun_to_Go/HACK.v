@@ -163,11 +163,11 @@ module HACK(
     // [phase 4:5] data read/write: new addr on A, last addr on C
     // [phase 6:7] <unused>
 
+    // FIXME: CPU is being fed new value during negedge that then incs again on posedge?
     // have to pipeline some values to break combinational loops
-    // first CLK tick (10ns) of each phase ()
     reg [15:0] last_inIO5, last_outM;
     always @(posedge CLK) begin
-        if (phase==0) 
+        if (phase==0 & clk) 
             last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
         else if (phase==4)
             last_outM <= outM;

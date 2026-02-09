@@ -58,6 +58,6 @@ module Clock25_Reset20(
     always @(posedge CLK)
         if (!low | !start)
             phase <= 3'd0;
-        else
+        else if (clk)
             phase <= phase + 3'd1; // phase 0-7
 endmodule
