@@ -166,25 +166,33 @@ module HACK(
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
     reg [15:0] last_inIO5=0, last_outM=0, last_addr=0;
-    always @(posedge CLK) begin
+    always @(posedge CLK) begin // negedge = fails timing?
         // grab first read only don't want to pickup random ALU outputs
         if (clk & phase==0)
-            last_inIO5 <= ~inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
-        if (clk & phase==4) begin
+            last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
+        else if (clk & phase==4) begin
             last_addr <= loadIO5 ? outM : last_inIO5;
             last_outM <= outM;
-        end            
+        end
+        // reset before posedge when run mode initiated
+        if (loadIO7 & phase==7) begin
+            last_inIO5 <= 0;
+            last_addr <= 0;
+        end
     end
 
     assign inIO5 = RST ? 16'b0 :
-                (phase==0 | phase==1) ? last_inIO5 :
+                (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :
                 (phase==2 | phase==3) ? {3'b0, vga_addr} :
                 (phase==4 | phase==5) ? last_addr : 
                 16'bz;
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
-    assign SRAM_ADDR = inIO7 ? {2'b01, inIO5} : {2'b00, inIO5};
+    // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
+    // code copied by boot.asm will continue to be stored on the first page
+    assign SRAM_ADDR = 
+        (inIO7 & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
