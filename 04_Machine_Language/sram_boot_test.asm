@@ -1,7 +1,7 @@
 // sram_boot_test.asm
 // test SRAM_A/D read/write in boot mode
-// check debug_sram[0:2] in test bench
-// check LED output on real hardware
+// use debug_sram values for debugging (may need adjustment in HACK_tb.v)
+// check LED output on sim/real hardware
 
 @SRAM_D
 M=1 // A=0, M=1

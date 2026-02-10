@@ -1,18 +1,22 @@
 // sram_boot_test.asm
-// test SRAM_A/D read/write in boot mode
-// check debug_sram[0] in test bench
-// check LED output on real hardware
+// source for the "embedded" test program in sram_run_test.asm
 
-@4      // 0000000000000100 // 4	 // 0x0004
-D=A     // 1110110000010000 // 60432 // 0xEC10
-@SRAM_D // 0001000000000110 // 4102	 // 0x1006 
-MD=D+1  // 1110011111011000 // 59352 // 0xE7D8 
-MD=D+1  // 1110011111011000 // 59352 // 0xE7D8
-MD=D+1  // 1110011111011000 // 59352 // 0xE7D8
-@SRAM_D // 0001000000000110 // 4102	 // 0x1006 
-D=M     // 1111110000010000 // 64528 // 0xFC10 
-@LED    // 0001000000000000 // 4096  // 0x1000 
-M=D     // 1110001100001000 // 58120 // 0xE308 
+@4112 // arbitrary SRAM address
+M=1
+A=A+1 // A=2
+
+M=M+1
+M=M+1
+M=M+1 // M=3
+
+@5000 // CPU/SRAM noise
+M=0
+
+@4112
+D=M
+@LED
+M=D // LED=3 (111 = all LEDs on, SRAM read/write works)
+
 (LOOP)
-@LOOP   // 0000000000001010 // 10	 // 0x000A 
-0;JMP   // 1110101010000111 // 60039 // 0xEA87 
+@LOOP
+0;JMP 

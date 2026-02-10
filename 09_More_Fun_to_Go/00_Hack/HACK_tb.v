@@ -14,8 +14,9 @@ module HACK_tb();
     wire SRAM_OEX;
     wire SRAM_CSX;
 
-    // Simulate SRAM // TODO: MS code
-    reg [15:0] sram[0:4999];
+    // Simulate SRAM 
+    // page offset + current memory map max
+    reg [15:0] sram[0:65536+16383];
 
     // init the array
     integer i;
@@ -25,11 +26,13 @@ module HACK_tb();
         end
     end
 
+    // TODO: MS code
     always @(posedge CLK)
         if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;
     
-    wire [15:0] debug_sram0, debug_sram1, debug_sram2;
+    wire [15:0] debug_sram, debug_sram0, debug_sram1, debug_sram2;
+    assign debug_sram = sram[65536+4112]; // page offset
     assign debug_sram0 = sram[0];
     assign debug_sram1 = sram[1];
     assign debug_sram2 = sram[2];

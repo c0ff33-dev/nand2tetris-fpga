@@ -184,6 +184,11 @@ module HACK(
     // FIXME: normally in run mode SRAM_ADDR[pc]=4102 would just decode the data into inIO6
     // FIXME: in current model the data flows back via inIO6D which won't emit unless in data (VRAM/HEAP) range
     // FIXME: probably just needs some condition so it routes via inIO6 instead during run mode for virtual accesses
+
+    // FIXME: after run mode switch there is one cycle/addr offset causing off-by-one errors in jumps?
+    
+    // FIXME: why wasn't LED written to in latest test?
+    // FIXME: out_data appears to have update with writes but also isn't resetting on new addr i.e. A=A+1
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :
                 (phase==2 | phase==3) ? {3'b0, vga_addr} :
