@@ -21,9 +21,23 @@ module HACK_tb();
     // init the array
     integer i;
     initial begin
-        for (i = 0; i < 5000; i = i + 1) begin
+        for (i = 0; i < 65536+16383+1; i = i + 1) begin
             sram[i] = 16'd0;
         end
+        // DEBUG
+        // @GO // 0x1007
+        // M=1 // 0xEFC8
+        // <dead instruction during transition == pc>
+        // @4112
+        // D=M
+        // @2 // line
+        // 0;JMP
+        sram[0] = 16'h1010; 
+        sram[1] = 16'hFC10;
+        sram[2] = 16'h0002;
+        sram[3] = 16'hEA87;
+
+        sram[65536+4112] = 16'd999;
     end
 
     // TODO: MS code
@@ -31,11 +45,12 @@ module HACK_tb();
         if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;
     
-    wire [15:0] debug_sram, debug_sram0, debug_sram1, debug_sram2;
-    assign debug_sram = sram[65536+4112]; // page offset
+    wire [15:0] debug_sram, debug_sram0, debug_sram1, debug_sram2, debug_sram3;
+    assign debug_sram = sram[65536+4112];
     assign debug_sram0 = sram[0];
     assign debug_sram1 = sram[1];
     assign debug_sram2 = sram[2];
+    assign debug_sram3 = sram[3];
 
     // TODO: new wires
     // wire VGA_HS;

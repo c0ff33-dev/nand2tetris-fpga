@@ -19,10 +19,9 @@ module SRAM_D(
     input CLK, // external 100 MHz clock
     input clk, // internal 6.25 MHz clock
     input load,  // SRAM_DATA load
+    input loadIO7, // run mode starting
     input [15:0] in, // SRAM_DATA (write)
-    output [15:0] out_pc, // instruction data
-    output [15:0] out_data, // general purpose data
-    output [15:0] out_vga, // VRAM/VGA data
+    output [15:0] out, // data out (instruction/VGA/RAM) 
     inout [15:0] DATA, // SRAM_DATA data line
     input [15:0] mode, // run_mode
     output CSX,  // Chip Select NOT
@@ -43,8 +42,8 @@ module SRAM_D(
     // [phase 6:7] <unused>
     // enable write flag in relevant phase else default to read
     // only update values in clk negedge to syncronize with BRAM/ROM updates
-    assign OEX = reset ? 1'b1 : ((~clk & (phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
-    assign WEX = reset ? 1'b1 : ((~clk & (phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
+    assign OEX = ((~clk & (phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
+    assign WEX = ((~clk & (phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
 
     // set and forget
     reg init = 0;
@@ -75,21 +74,24 @@ module SRAM_D(
     // [phase 2:3] emit VRAM data (passive/every cycle)
     // [phase 4:5 boot mode]: latch new instruction if there was a write   
     // [phase 4:5 run mode]: latch new data if there was a write
-    // [phase 6:7] restore original CPU state
-    reg [15:0] last_pc=0, last_vga=0, last_data=0;
+    // [phase 6:7] <do nothing>
+    reg [15:0] _out;
 
     // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)
     always @(posedge CLK) begin
-        if (~clk & ((phase==1 & mode) | (phase==5 & _load & ~mode)))
-            last_pc <= init ? dataOut : 16'bz;
+        if (~clk & ((phase==1 & mode) | (phase==1 & loadIO7) | (phase==5 & _load & ~mode)))
+            // emit instruction every cycle in run mode
+            // emit data on load in boot mode
+            _out <= init ? dataOut : 16'bz;
         if (~clk & phase==3)
-            last_vga <= init ? dataOut : 16'bz;
-        if (~clk & phase==5 & _load & mode)
-            last_data <= init ? dataOut : 16'bz;
+            // emit VGA every cycle
+            _out <= init ? dataOut : 16'bz;
+        if (~clk & phase==5 & mode)
+            // emit data every cycle in run mode
+            _out <= init ? dataOut : 16'bz;
     end
 
-    assign out_pc = last_pc;
-    assign out_vga = last_vga;
-    assign out_data = last_data;
+    // inIO6 consumers responsible for checking phase
+    assign out = _out;
 
 endmodule

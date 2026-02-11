@@ -11,6 +11,10 @@ These other/similar projects may be of interest for research purposes or board a
 * https://github.com/giuseros/nand2tetris
 * https://github.com/gunnerson/hack-fpga
 
+## Major Changes
+
+- `SRAM_A/D` now supports multiple updates per cycle: all updates are performed during `clk negedge` and expressed to CPU when it updates in `clk posedge` as normal.
+
 ## Upload Bitstream & Software
 
 ```

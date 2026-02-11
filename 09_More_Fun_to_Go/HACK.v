@@ -28,7 +28,7 @@ module HACK(
     wire sda_oe,scl_oe,sda_in,scl_in;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
     wire [2:0] phase;
-    wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO6D,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
+    wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
     wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
 
     // 25 MHz internal clock w/ 20μs initial reset period
@@ -51,7 +51,7 @@ module HACK(
     CPU cpu(
         .clk(clk),
         .inM(inM),
-        .instruction(instruction),
+        .instruction(last_int), // snapshot
         .reset(RST),
         .outM(outM), // combinational
         .writeM(writeM), // combinational
@@ -63,6 +63,7 @@ module HACK(
     Memory mem(
         .address(addressM),
         .load(writeM),
+        .last_writeM(last_writeM),
         .inRAM(outRAM), // RAM (0-3583)
         .inIO0(outLED), // LED (4096)
         .inIO1(inIO1),  // BUT (4097)
@@ -71,7 +72,6 @@ module HACK(
         .inIO4(inIO4),  // SPI (4100)
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D instruction (4102)
-        .inIO6D(inIO6D),// SRAM_D data (4102)
         .inIO7(inIO7),  // GO (4103)
         .inIO8(inIO8),  // unassigned
         .inIO9(inIO9),  // unassigned
@@ -157,59 +157,61 @@ module HACK(
 
     // for SRAM_A arbitration just cycle through the phases
     // flags for read/write/output managed in SRAM_D
-    // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on load only
+    // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on SRAM_A load only
     // [phase 0:1 run mode] PC driven, updates every cycle
-    // [phase 2:3] VGA is passive read / no memory map required
-    // [phase 4:5] data read/write: new addr on A, last addr on C
-    // [phase 6:7] restore CPU state
+    // [phase 2:3] VGA controller drives address to inIO5 directly during mux
+    // [phase 4:5] data read/write: update addr on load (SRAM_A or memory access)
+    // [phase 6:7] <do nothing>
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5=0, last_addr=0;
-    always @(posedge CLK) begin // negedge = fails timing?
-        // grab first read only don't want to pickup random ALU outputs
-        if (clk & phase==0)
-            last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : pc;
-        else if (clk & phase==4)
-            last_addr <= loadIO5 ? outM : last_inIO5;
-
-        // reset before posedge when run mode initiated
-        if (loadIO7 & phase==7) begin
+    reg [15:0] last_inIO5=0, last_addr=0, last_int=0;
+    reg last_writeM=0;
+    
+    always @(posedge CLK) begin
+        if (~clk & phase==2) begin
+            // snapshot combinational CPU values after fetch
+            last_writeM <= writeM; 
+            last_int <= instruction;
+        end
+        else if (~clk & loadIO7 & phase==7) begin
+            // reset before posedge when run mode initiated
             last_inIO5 <= 0;
             last_addr <= 0;
-        end
+        end            
+        // grab first read only don't want to pickup random ALU outputs
+        else if (clk & phase==0)
+            last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
+                          loadIO7 ? 0 : pc;
+        else if (clk & phase==4)
+            last_addr <= loadIO5 ? outM : addressM;
+        // remaining phases passively resolved during mux
     end
 
-    // FIXME: in run mode during a d_load window the instruction address from the fetch is what is being written
-    // FIXME: normally in run mode SRAM_ADDR[pc]=4102 would just decode the data into inIO6
-    // FIXME: in current model the data flows back via inIO6D which won't emit unless in data (VRAM/HEAP) range
-    // FIXME: probably just needs some condition so it routes via inIO6 instead during run mode for virtual accesses
-
     // FIXME: after run mode switch there is one cycle/addr offset causing off-by-one errors in jumps?
+    // FIXME: works in test - did I just mess up the asm target here?
     
-    // FIXME: why wasn't LED written to in latest test?
-    // FIXME: out_data appears to have update with writes but also isn't resetting on new addr i.e. A=A+1
+    // FIXME: check A=A+1 writes as well when done
+
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :
                 (phase==2 | phase==3) ? {3'b0, vga_addr} :
                 (phase==4 | phase==5) ? last_addr : 
-                last_inIO5;
+                last_addr;
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
     // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
     // code copied by boot.asm will continue to be stored on the first page
-    assign SRAM_ADDR = 
-        (inIO7 & phase>=2 & phase<=5) ? {2'b01, inIO5} : {2'b00, inIO5};
+    assign SRAM_ADDR = (inIO7 & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
         .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
+        .loadIO7(loadIO7), // 1=run mode starting
         .in(outM),         // input data (ignored on read)
-        .out_pc(inIO6),    // output data (instruction)
-        .out_data(inIO6D), // output data (data)
-        .out_vga(vga_data),// output data (VRAM/VGA)
+        .out(inIO6),       // data out (instruction/VGA/RAM)
         .mode(inIO7),      // run_mode
         .DATA(SRAM_DATA),  // data line (inout)
         .CSX(SRAM_CSX),    // Chip Select NOT

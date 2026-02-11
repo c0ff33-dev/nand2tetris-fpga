@@ -35,6 +35,7 @@
 module Memory(
     input [15:0] address,
     input load,
+    input last_writeM,
     input [15:0] inRAM, // BRAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
@@ -43,7 +44,6 @@ module Memory(
     input [15:0] inIO4, // SPI (4100)
     input [15:0] inIO5, // SRAM_A (4101)
     input [15:0] inIO6, // SRAM_D instruction (4102)
-    input [15:0] inIO6D,// SRAM_D data (4102)
     input [15:0] inIO7, // GO (4103)
     input [15:0] inIO8, // unassigned
     input [15:0] inIO9, // unassigned
@@ -97,28 +97,31 @@ module Memory(
         // FUTURE: move I/O addresses into higher range
         // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
         // route HEAP to SRAM_D as well
-        (address>= 4112 && address <= 16383) ? inIO6D :
+        (address>= 4112 && address <= 16383) ? inIO6 :
 
         inRAM);
 
     // mux load via address (memory mapped IO or RAM)
     // BRAM limits may vary depending on implementation
-    assign loadRAM = (address<=4095) ? load : 0;
-    assign loadIO0 = (address==4096) ? load : 0;
-    assign loadIO1 = (address==4097) ? load : 0;
-    assign loadIO2 = (address==4098) ? load : 0;
-    assign loadIO3 = (address==4099) ? load : 0;
-    assign loadIO4 = (address==4100) ? load : 0;
-    assign loadIO5 = ((address==4101) || (address>= 4112 && address <= 16383)) ? load : 0;
-    assign loadIO6 = ((address==4102) || (address>= 4112 && address <= 16383)) ? load : 0;
-    assign loadIO7 = (address==4103) ? load : 0;
-    assign loadIO8 = (address==4104) ? load : 0;
-    assign loadIO9 = (address==4105) ? load : 0;
-    assign loadIOA = (address==4106) ? load : 0;
-    assign loadIOB = (address==4107) ? load : 0;
-    assign loadIOC = (address==4108) ? load : 0;
-    assign loadIOD = (address==4109) ? load : 0;
-    assign loadIOE = (address==4110) ? load : 0;
-    assign loadIOF = (address==4111) ? load : 0;
+    // ports that only require writes once per clk cycle can use last_writeM
+    // in effect it is only SRAM_ADDR which needs to be written multiple times
+    // loadIO6 is cross-checked by phase in SRAM_D.v so no harm in leaving it enabled
+    assign loadRAM = (address<=4095) ? last_writeM : 0;
+    assign loadIO0 = (address==4096) ? last_writeM : 0;
+    assign loadIO1 = (address==4097) ? last_writeM : 0;
+    assign loadIO2 = (address==4098) ? last_writeM : 0;
+    assign loadIO3 = (address==4099) ? last_writeM : 0;
+    assign loadIO4 = (address==4100) ? last_writeM : 0;
+    assign loadIO5 = (address==4101 || (address>= 4112 && address <= 16383)) ? load : 0;
+    assign loadIO6 = (address==4102 || (address>= 4112 && address <= 16383)) ? last_writeM : 0;
+    assign loadIO7 = (address==4103) ? last_writeM : 0;
+    assign loadIO8 = (address==4104) ? last_writeM : 0;
+    assign loadIO9 = (address==4105) ? last_writeM : 0;
+    assign loadIOA = (address==4106) ? last_writeM : 0;
+    assign loadIOB = (address==4107) ? last_writeM : 0;
+    assign loadIOC = (address==4108) ? last_writeM : 0;
+    assign loadIOD = (address==4109) ? last_writeM : 0;
+    assign loadIOE = (address==4110) ? last_writeM : 0;
+    assign loadIOF = (address==4111) ? last_writeM : 0;
 
 endmodule
