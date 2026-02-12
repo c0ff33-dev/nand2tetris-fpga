@@ -28,14 +28,15 @@ module HACK_tb();
         // @GO // 0x1007
         // M=1 // 0xEFC8
         // <dead instruction during transition == pc>
+        
         // @4112
         // D=M
         // @2 // line
         // 0;JMP
-        sram[0] = 16'h1010; 
-        sram[1] = 16'hFC10;
-        sram[2] = 16'h0002;
-        sram[3] = 16'hEA87;
+        sram[0] = 16'h1010; // 4112
+        sram[1] = 16'hFC10; // 64528
+        sram[2] = 16'h0002; // 2
+        sram[3] = 16'hEA87; // 60039
 
         sram[65536+4112] = 16'd999;
     end

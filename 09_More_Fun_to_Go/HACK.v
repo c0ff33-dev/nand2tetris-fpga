@@ -178,6 +178,7 @@ module HACK(
             last_int <= instruction;
         end
         else if (~clk & phase==3 & writeM) begin
+            // wait until instruction updates
             last_outM <= outM;
         end
         else if (~clk & loadIO7 & phase==7) begin
@@ -187,9 +188,12 @@ module HACK(
         end            
         // grab first read only don't want to pickup random ALU outputs
         else if (clk & phase==0)
+            // boot mode: save SRAM_A input
+            // run mode: let pc drive SRAM_A
             last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
                           loadIO7 ? 0 : pc;
         else if (clk & phase==4)
+            // addr can only update once per cycle so fetch when stable
             last_addr <= loadIO5 ? outM : addressM;
         // remaining phases passively resolved during mux
     end
@@ -200,10 +204,9 @@ module HACK(
     // FIXME: check A=A+1 writes as well when done
 
     assign inIO5 = RST ? 16'b0 :
-                (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :
-                (phase==2 | phase==3) ? {3'b0, vga_addr} :
-                (phase==4 | phase==5) ? last_addr : 
-                last_addr;
+                (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :  // boot: SRAM_A input, run: pc
+                (phase==2 | phase==3) ? {3'b0, vga_addr} :            // always driven by VGA
+                (!inIO7 ? last_inIO5 : last_addr);                    // [phase 4+] boot: SRAM_A input, run: get addr from CPU
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
@@ -216,7 +219,7 @@ module HACK(
         .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .loadIO7(loadIO7), // 1=run mode starting
-        .in(last_outM),         // input data (ignored on read)
+        .in(last_outM),    // input data (ignored on read)
         .out(inIO6),       // data out (instruction/VGA/RAM)
         .mode(inIO7),      // run_mode
         .DATA(SRAM_DATA),  // data line (inout)

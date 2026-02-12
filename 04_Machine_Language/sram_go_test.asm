@@ -1,3 +1,4 @@
+// sram_go_test.asm
 // launch straight into run mode
 // test bench will prepare the SRAM
 
