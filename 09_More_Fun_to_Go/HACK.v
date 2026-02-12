@@ -98,7 +98,10 @@ module HACK(
         .loadIOC(loadIOC),
         .loadIOD(loadIOD),
         .loadIOE(loadIOE),
-        .loadIOF(loadIOF)
+        .loadIOF(loadIOF),
+        .clk(clk),
+        .phase(phase),
+        .sram_data(SRAM_DATA)
     );
 
     // ROM (BRAM buffer), 256 x 16 bit words (512 bytes)
@@ -165,14 +168,17 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5=0, last_addr=0, last_int=0;
+    reg [15:0] last_inIO5=0, last_addr=0, last_int=0, last_outM=0;
     reg last_writeM=0;
     
     always @(posedge CLK) begin
         if (~clk & phase==2) begin
             // snapshot combinational CPU values after fetch
-            last_writeM <= writeM; 
+            last_writeM <= writeM;
             last_int <= instruction;
+        end
+        else if (~clk & phase==3 & writeM) begin
+            last_outM <= outM;
         end
         else if (~clk & loadIO7 & phase==7) begin
             // reset before posedge when run mode initiated
@@ -210,7 +216,7 @@ module HACK(
         .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .loadIO7(loadIO7), // 1=run mode starting
-        .in(outM),         // input data (ignored on read)
+        .in(last_outM),         // input data (ignored on read)
         .out(inIO6),       // data out (instruction/VGA/RAM)
         .mode(inIO7),      // run_mode
         .DATA(SRAM_DATA),  // data line (inout)

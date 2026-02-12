@@ -1,7 +1,23 @@
-// launch straight into run mode
-// test bench will prepare the SRAM
-@GO // 0x1007
-M=1 // 0xEFC8
+@SRAM_D
+M=1 // A=0, M=1
+@SRAM_A
+MD=1 // A/D=1
+@SRAM_D
+MD=D+1 // M/D=2
+@SRAM_A
+M=D // A=2
+@SRAM_D
+MD=D+1 // D=3
+MD=D+1
+MD=D+1
+MD=D+1
+MD=D+1
+@100
+D=0
+@SRAM_D
+D=M
+@LED
+M=D
 (LOOP)
-@LOOP // 0x0002
-0;JMP // 0xEA87
+@LOOP
+0;JMP

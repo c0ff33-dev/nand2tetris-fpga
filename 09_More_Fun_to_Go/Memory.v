@@ -70,13 +70,18 @@ module Memory(
     output loadIOC,
     output loadIOD,
     output loadIOE,
-    output loadIOF
+    output loadIOF,
+    input clk,
+    input [2:0] phase,
+    input [15:0] sram_data
 );
 
     // Put your code here:
     // map adressses to wires for RAM3584 and the IO registers
     // mux input via address (memory mapped IO or RAM)
+    // read SRAM_DATA directly during data phases
     assign out = (
+        (~clk & phase>=4) ? sram_data :  
         (address==4096) ? inIO0 :
         (address==4097) ? inIO1 :
         (address==4098) ? inIO2 :
@@ -106,22 +111,22 @@ module Memory(
     // ports that only require writes once per clk cycle can use last_writeM
     // in effect it is only SRAM_ADDR which needs to be written multiple times
     // loadIO6 is cross-checked by phase in SRAM_D.v so no harm in leaving it enabled
-    assign loadRAM = (address<=4095) ? last_writeM : 0;
-    assign loadIO0 = (address==4096) ? last_writeM : 0;
-    assign loadIO1 = (address==4097) ? last_writeM : 0;
-    assign loadIO2 = (address==4098) ? last_writeM : 0;
-    assign loadIO3 = (address==4099) ? last_writeM : 0;
-    assign loadIO4 = (address==4100) ? last_writeM : 0;
+    assign loadRAM = (address<=4095) ? load : 0;
+    assign loadIO0 = (address==4096) ? load : 0;
+    assign loadIO1 = (address==4097) ? load : 0;
+    assign loadIO2 = (address==4098) ? load : 0;
+    assign loadIO3 = (address==4099) ? load : 0;
+    assign loadIO4 = (address==4100) ? load : 0;
     assign loadIO5 = (address==4101 || (address>= 4112 && address <= 16383)) ? load : 0;
     assign loadIO6 = (address==4102 || (address>= 4112 && address <= 16383)) ? last_writeM : 0;
-    assign loadIO7 = (address==4103) ? last_writeM : 0;
-    assign loadIO8 = (address==4104) ? last_writeM : 0;
-    assign loadIO9 = (address==4105) ? last_writeM : 0;
-    assign loadIOA = (address==4106) ? last_writeM : 0;
-    assign loadIOB = (address==4107) ? last_writeM : 0;
-    assign loadIOC = (address==4108) ? last_writeM : 0;
-    assign loadIOD = (address==4109) ? last_writeM : 0;
-    assign loadIOE = (address==4110) ? last_writeM : 0;
-    assign loadIOF = (address==4111) ? last_writeM : 0;
+    assign loadIO7 = (address==4103) ? load : 0;
+    assign loadIO8 = (address==4104) ? load : 0;
+    assign loadIO9 = (address==4105) ? load : 0;
+    assign loadIOA = (address==4106) ? load : 0;
+    assign loadIOB = (address==4107) ? load : 0;
+    assign loadIOC = (address==4108) ? load : 0;
+    assign loadIOD = (address==4109) ? load : 0;
+    assign loadIOE = (address==4110) ? load : 0;
+    assign loadIOF = (address==4111) ? load : 0;
 
 endmodule
