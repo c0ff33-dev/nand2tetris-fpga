@@ -198,10 +198,11 @@ module HACK(
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: after run mode switch there is one cycle/addr offset causing off-by-one errors in jumps?
-    // FIXME: works in test - did I just mess up the asm target here?
-    
-    // FIXME: check A=A+1 writes as well when done
+    // FIXME: sram_go_test.asm works on sim (only)
+    // FIXME: sram_boot_test.asm works on sim/hw
+    // FIXME: sram_run_test.asm passes sim (fails hw)
+    // FIXME: memory.asm fails in sim
+    // FIXME: mult.asm fails in sim
 
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :  // boot: SRAM_A input, run: pc
