@@ -1,46 +1,33 @@
-// memory.asm
-// test consecutive memory read/writes
-// no need to implement this program / for debugging purposes only
+// sram_boot_test.asm
+// test SRAM_A/D read/write in boot mode
+// use debug_sram values for debugging (may need adjustment in HACK_tb.v)
+// check LED output on sim/real hardware
 
-@1
-D=A
+@SRAM_D
+M=1 // A=0, M=1
+
+@SRAM_A
+MD=1 // A/D=1
+@SRAM_D
+MD=D+1 // M/D=2
+
+@SRAM_A
+M=D // A=2
+@SRAM_D
+MD=D+1 // D=3
+MD=D+1
+MD=D+1
+MD=D+1
+MD=D+1 // D=7
+
+@100
+D=0
+
+@SRAM_D
+D=M // FIXME: outM is correct in phase 4 but doesn't persist
 @LED
-M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
+M=D // LED=7 (111 = all LEDs on, SRAM read/write works)
 
-@0
-M=A // RAM[0] = 0 (init)
-M=M+1 // RAM[0]++
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1
-M=M+1 // RAM[0] = 10
-
-// Check result and HALT
-D=M // D = RAM[0] (result)
-@10 // (expected)
-D=D-A // D = result - expected
-@OK
-D;JEQ // OK if result == expected
-
-// ERROR
-@3
-D=A // D=3
-@LED
-M=D // LED=3 (11 = LED1/2 on, error)
-@HALT
-0;JMP // end
-
-(OK)
-@2
-D=A // D = 2
-@LED
-M=D // LED=2 (10 = LED1 off/LED2 on, success)
-
-(HALT)
-@HALT
-0;JMP // end
+(LOOP)
+@LOOP
+0;JMP

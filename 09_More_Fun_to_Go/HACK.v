@@ -198,11 +198,11 @@ module HACK(
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_go_test.asm works on sim (only)
-    // FIXME: sram_boot_test.asm works on sim/hw
-    // FIXME: sram_run_test.asm passes sim (fails hw)
-    // FIXME: memory.asm fails in sim
-    // FIXME: mult.asm fails in sim
+    // FIXME: sram_go_test.asm ___ on sim (only)
+    // FIXME: sram_boot_test.asm BROKEN on sim
+    // FIXME: sram_run_test.asm ___ sim
+    // FIXME: memory.asm ___ in sim
+    // FIXME: mult.asm ___ in sim
 
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :  // boot: SRAM_A input, run: pc
