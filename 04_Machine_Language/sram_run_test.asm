@@ -3,6 +3,7 @@
 // use debug_sram values for debugging (may need adjustment in HACK_tb.v)
 // check LED output on sim/real hardware
 // see sram_boot_test.asm for full source/comments
+// check LED=1 and 69649(65536+4113)==3
 
 // 0001000000010000 // 4112	 // 0x1010 // @4112
 // 1110111111001000 // 61384 // 0xEFC8 // M=1

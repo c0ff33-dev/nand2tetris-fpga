@@ -178,6 +178,7 @@ module HACK(
             last_int <= instruction;
         end
         else if (~clk & phase==3 & writeM) begin
+            // FIXME: when A updates M should refresh even if not writeM
             // wait until instruction updates
             last_outM <= outM;
         end
@@ -191,7 +192,7 @@ module HACK(
             // boot mode: save SRAM_A input
             // run mode: let pc drive SRAM_A
             last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
-                          loadIO7 ? 0 : pc;
+                          loadIO7 ? pc : 0;
         else if (clk & phase==4)
             // addr can only update once per cycle so fetch when stable
             last_addr <= loadIO5 ? outM : addressM;
@@ -199,15 +200,15 @@ module HACK(
     end
 
     // FIXME: sram_go_test.asm ___ on sim (only)
-    // FIXME: sram_boot_test.asm BROKEN on sim
-    // FIXME: sram_run_test.asm ___ sim
+    // FIXME: sram_boot_test.asm ___ on sim
+    // FIXME: sram_run_test.asm BROKEN sim
     // FIXME: memory.asm ___ in sim
     // FIXME: mult.asm ___ in sim
 
     assign inIO5 = RST ? 16'b0 :
                 (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :  // boot: SRAM_A input, run: pc
                 (phase==2 | phase==3) ? {3'b0, vga_addr} :            // always driven by VGA
-                (!inIO7 ? last_inIO5 : last_addr);                    // [phase 4+] boot: SRAM_A input, run: get addr from CPU
+                (!inIO7 ? last_inIO5 : addressM);                    // [phase 4+] boot: SRAM_A input, run: get addr from CPU
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)

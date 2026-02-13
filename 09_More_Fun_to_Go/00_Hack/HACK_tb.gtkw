@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Fri Feb 13 09:13:24 2026
+[*] Fri Feb 13 10:40:01 2026
 [*]
 [dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.vcd"
-[dumpfile_mtime] "Fri Feb 13 09:11:43 2026"
-[dumpfile_size] 883144
+[dumpfile_mtime] "Fri Feb 13 10:17:46 2026"
+[dumpfile_size] 1124478
 [savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.gtkw"
-[timestart] 18914000
+[timestart] 36479100
 [size] 2560 1345
-[pos] 1394 -23
-*-19.601910 22602000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 1342 -23
+*-16.301908 36880200 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [sst_width] 297
@@ -36,17 +36,17 @@ HACK_tb.UART_RX
 -SRAM
 @28
 HACK_tb.HACK.clk
-HACK_tb.HACK.loadIO5
 @24
 HACK_tb.HACK.phase[2:0]
 @28
 HACK_tb.HACK.CLK
+HACK_tb.HACK.loadIO5
 @24
 HACK_tb.HACK.inIO5[15:0]
 HACK_tb.HACK.last_inIO5[15:0]
-@22
 HACK_tb.HACK.sram_data.in[15:0]
 HACK_tb.HACK.sram_data.dataOut[15:0]
+@25
 HACK_tb.HACK.sram_data._out[15:0]
 @24
 HACK_tb.HACK.SRAM_ADDR[17:0]
@@ -57,9 +57,8 @@ HACK_tb.HACK.outM[15:0]
 @28
 HACK_tb.HACK.writeM
 HACK_tb.HACK.last_writeM
-@25
-HACK_tb.HACK.last_outM[15:0]
 @24
+HACK_tb.HACK.last_outM[15:0]
 HACK_tb.HACK.cpu.addressM[15:0]
 @28
 HACK_tb.HACK.cpu.load_d
@@ -76,9 +75,8 @@ HACK_tb.HACK.vga_data[15:0]
 -GO
 @28
 HACK_tb.HACK.loadRAM
-@22
-HACK_tb.HACK.mem.address[15:0]
 @24
+HACK_tb.HACK.mem.address[15:0]
 HACK_tb.HACK.outRAM[15:0]
 @28
 HACK_tb.HACK.loadIO6
