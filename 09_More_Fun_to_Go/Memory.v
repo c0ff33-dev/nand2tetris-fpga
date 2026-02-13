@@ -70,10 +70,7 @@ module Memory(
     output loadIOC,
     output loadIOD,
     output loadIOE,
-    output loadIOF,
-    input clk,
-    input [2:0] phase,
-    input [15:0] sram_data
+    output loadIOF
 );
 
     // Put your code here:
@@ -81,8 +78,6 @@ module Memory(
     // mux input via address (memory mapped IO or RAM)
     // read SRAM_DATA directly during data phases
     assign out = (
-        // switch for data phase but reset in time for CPU posedge
-        (~clk & phase>=4 & phase<7) ? sram_data :  
         (address==4096) ? inIO0 :
         (address==4097) ? inIO1 :
         (address==4098) ? inIO2 :

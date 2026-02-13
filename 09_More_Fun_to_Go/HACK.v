@@ -98,10 +98,7 @@ module HACK(
         .loadIOC(loadIOC),
         .loadIOD(loadIOD),
         .loadIOE(loadIOE),
-        .loadIOF(loadIOF),
-        .clk(clk),
-        .phase(phase),
-        .sram_data(SRAM_DATA)
+        .loadIOF(loadIOF)
     );
 
     // ROM (BRAM buffer), 256 x 16 bit words (512 bytes)
@@ -170,6 +167,11 @@ module HACK(
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
     reg [15:0] last_inIO5=0, last_addr=0, last_int=0, last_outM=0;
     reg last_writeM=0;
+
+    // mimic load_a from cpu
+    wire _ctype, _load_a;
+    assign _ctype = last_int[15] && last_int[14] && last_int[13];
+    assign _load_a = !_ctype | last_int[5];
     
     always @(posedge CLK) begin
         if (~clk & phase==2) begin
@@ -177,9 +179,14 @@ module HACK(
             last_writeM <= writeM;
             last_int <= instruction;
         end
-        else if (~clk & phase==3 & writeM) begin
-            // FIXME: when A updates M should refresh even if not writeM
-            // wait until instruction updates
+        // wait until instruction updates // TODO: why phase 3?
+        else if (~clk & phase==3 & ~inIO7 & writeM) begin
+            // last_outM behaviour definitely needs to be preserved for boot mode
+            last_outM <= outM;
+        end
+        else if (~clk & phase==4 & inIO7) begin
+            // FIXME: this too has issues on consecutive writes
+            // FIXME: maybe snapshot data and override inM only when OEX=1?
             last_outM <= outM;
         end
         else if (~clk & loadIO7 & phase==7) begin
@@ -192,7 +199,7 @@ module HACK(
             // boot mode: save SRAM_A input
             // run mode: let pc drive SRAM_A
             last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
-                          loadIO7 ? pc : 0;
+                          loadIO7 ? 0 : pc; // reset to zero on run init
         else if (clk & phase==4)
             // addr can only update once per cycle so fetch when stable
             last_addr <= loadIO5 ? outM : addressM;
