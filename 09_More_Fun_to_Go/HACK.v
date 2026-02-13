@@ -115,7 +115,7 @@ module HACK(
     RAM3584 ram(
         .clk(clk),
         .address(addressM[11:0]),
-        .in(outM),
+        .in(last_outM),
         .load(loadRAM),
         .out(outRAM)
     );
