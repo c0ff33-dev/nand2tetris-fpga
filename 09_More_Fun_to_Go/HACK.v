@@ -51,7 +51,7 @@ module HACK(
     // i.e. inputs are finalized at end of current cycle
     CPU cpu(
         .clk(clk),
-        .inM(SRAM_OEX ? snap_data : inM), // OEX blocks SRAM_DATA so send cached data for M
+        .inM(SRAM_OEX ? snap_data_run : inM), // OEX blocks SRAM_DATA so send cached data for M
         .instruction(inIO7 ? snap_instr : instruction), // prefer live instruction in boot mode
         .reset(RST),
         .outM(outM), // combinational
@@ -111,8 +111,6 @@ module HACK(
     );
 
     // BRAM (0-3583), 3584 x 16 bit words (7KB)
-    // anything still routing through BRAM shouldn't rely on SRAM updates
-    // so snapshot the output from CPU after instruction fetch
     RAM3584 ram(
         .clk(clk),
         .address(addressM[11:0]),
@@ -157,7 +155,6 @@ module HACK(
 
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
-    // switched back to combinational logic to support multi-channel updates
 
     // for SRAM_A arbitration just cycle through the phases
     // flags for read/write/output managed in SRAM_D
@@ -170,13 +167,13 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] snap_outM=0, snap_data=0, snap_instr=0, sram_a=0;
+    reg [15:0] snap_outM=0, snap_data_run=0, snap_data_boot=0, snap_instr=0, sram_a=0;
 
     always @(posedge CLK) begin
         if (~clk & phase==1) begin
             // snapshot volatile CPU values after instruction fetch
             // i.e. values that are both combinational & influenced by I/O switches
-            snap_outM <= outM;
+            snap_outM <= outM; // TODO: unused again?
         end
         else if (~clk & phase==2) begin
             // snapshot instruction once fetched
@@ -187,8 +184,16 @@ module HACK(
             // SRAM_D emits in phase 5, reflected on inIO6 in phase 6
             // then routes back to CPU/ALU for combinational update (if relevant/mux'd)
             // needs to be done within the OEX period so ALU doesn't double dip
-            snap_data <= outM;
-            if (loadIO5 & ~inIO7[0]) sram_a <= outM; // register SRAM_A updates
+            
+            // FIXME: this can carry over to unrelated instructions
+            // IDEA: cache data during posedge (requires additional read) & invalidate cache if address changes?
+            snap_data_run <= outM;
+
+            // boot mode updates
+            if (loadIO5 & ~inIO7[0]) begin
+                sram_a <= outM; // register SRAM_A updates
+                snap_data_boot <= outM; // not updated every cycle in boot mode
+            end
         end
         // remaining phases passively resolved during mux
     end
@@ -197,25 +202,26 @@ module HACK(
     // FIXME: memory.asm PASSES in sim
     // FIXME: mult.asm PASSES in sim
     // FIXME: sram_go_test.asm PASSES in sim
-    // FIXME: sram_run_test.asm BROKEN in sim // SRAM_ADDR undefined in 2nd write
+    // FIXME: sram_run_test.asm BROKEN in sim
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
     // [phase 2:3] driven by VGA controller
-    // [phase 4:6] driven either by explicit SRAM_A writes or memory accesses
+    // [phase 4:6] driven either by explicit SRAM_A writes (boot mode) or memory accesses (run mode)
     // [phase 7] reset during boot/run transition
+    // because inIO5 routes to outM can't directly use outM for any inputs here
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? snap_data : // register new SRAM_A input
+                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? snap_data_boot : // register new SRAM_A input
                 (~clk & (phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode
                 (~clk & (phase>=4 & phase<=6)) ? addressM : // last CPU address in run mode
                 // default to instruction fetch (phase 0/1 + posedge)
-                (~inIO7[0] ? snap_outM : pc);
+                (~inIO7[0] ? sram_a : pc);
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
     // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
-    // code copied by boot.asm during boot mode will be read/written from/to first page
+    // data copied by boot.asm during boot mode will be read/written from/to first page
     assign SRAM_ADDR = (inIO7[0] & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
@@ -239,11 +245,11 @@ module HACK(
     GO go(
         .clk(clk),
         .load(loadIO7), // trigger run mode
-        .pc(pc), // no longer used
+        .pc(pc), // no longer used (input)
         .rom_data(outROM), // instruction fetch (boot mode)
-        .sram_addr_in(inIO5), // no longer used
+        .sram_addr_in(inIO5), // no longer used (input)
         .sram_data(inIO6), // instruction fetch (run mode) 
-        .sram_addr_out(go_sram_addr), // no longer used
+        .sram_addr_out(go_sram_addr), // no longer used (output)
         .instruction(instruction), // output instruction to CPU
         .out(inIO7) // output run mode
     );

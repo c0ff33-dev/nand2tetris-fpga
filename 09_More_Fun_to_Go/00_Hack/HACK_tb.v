@@ -39,6 +39,7 @@ module HACK_tb();
         sram[3] = 16'hEA87; // 60039
 
         sram[65536+4112] = 16'd999;
+        sram[65536+5000] = 16'd123;
     end
 
     // TODO: MS code
@@ -47,11 +48,14 @@ module HACK_tb();
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;
     
     wire [15:0] debug_sram, debug_sram0, debug_sram1, debug_sram2, debug_sram3;
-    assign debug_sram = sram[65536+4113];
+    wire [15:0] debug_sram_p1_0, debug_sram_p1_1, debug_sram_p1_2;
     assign debug_sram0 = sram[0];
     assign debug_sram1 = sram[1];
     assign debug_sram2 = sram[2];
     assign debug_sram3 = sram[3];
+    assign debug_sram_p1_0 = sram[65536+4112];
+    assign debug_sram_p1_1 = sram[65536+4113];
+    assign debug_sram_p1_2 = sram[65536+5000];
 
     // TODO: new wires
     // wire VGA_HS;
