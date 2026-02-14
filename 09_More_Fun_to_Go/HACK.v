@@ -8,6 +8,8 @@
  * with the computer via the BUT.
  */
 
+// FUTURE: if == logical operators, combinational == bitwise operators
+
 `default_nettype none
 module HACK(
     // inputs/outputs at this layer = wires to interfaces external to lattice
@@ -24,12 +26,11 @@ module HACK(
     output SRAM_CSX          // SRAM Chip Select NOT
 );
     
-    wire clk,clkVGA,writeM,loadRAM,clkRST,RST,resLoad;
-    wire sda_oe,scl_oe,sda_in,scl_in;
+    wire clk,clkVGA,writeM,loadRAM,clkRST,RST;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
     wire [2:0] phase;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
-    wire [15:0] addressM,pc,outM,inM,instruction,resIn,outLED,outROM,go_sram_addr,lcdBusy;
+    wire [15:0] addressM,pc,outM,inM,instruction,outLED,outROM,go_sram_addr;
 
     // 25 MHz internal clock w/ 20μs initial reset period
     Clock25_Reset20 clock(
@@ -51,7 +52,7 @@ module HACK(
     CPU cpu(
         .clk(clk),
         .inM(inM),
-        .instruction(last_int), // snapshot instruction fetch once per cycle
+        .instruction(instruction), // snapshot instruction fetch once per cycle
         .reset(RST),
         .outM(outM), // combinational
         .writeM(writeM), // combinational
@@ -65,7 +66,6 @@ module HACK(
     Memory mem(
         .address(addressM),
         .load(writeM),
-        .last_writeM(last_writeM), // TODO: this could just be a 4102 switch
         .inRAM(outRAM), // RAM (0-3583)
         .inIO0(outLED), // LED (4096)
         .inIO1(inIO1),  // BUT (4097)
@@ -73,7 +73,7 @@ module HACK(
         .inIO3(inIO3),  // [disabled] UART_RX (4099)
         .inIO4(inIO4),  // unassigned
         .inIO5(inIO5),  // SRAM_A (4101)
-        .inIO6(inIO6),  // SRAM_D instruction (4102)
+        .inIO6(inIO6),  // SRAM_D (4102)
         .inIO7(inIO7),  // GO (4103)
         .inIO8(inIO8),  // unassigned
         .inIO9(inIO9),  // unassigned
@@ -116,7 +116,7 @@ module HACK(
     RAM3584 ram(
         .clk(clk),
         .address(addressM[11:0]),
-        .in(first_outM),
+        .in(snap_outM),
         .load(loadRAM),
         .out(outRAM)
     );
@@ -161,62 +161,33 @@ module HACK(
 
     // for SRAM_A arbitration just cycle through the phases
     // flags for read/write/output managed in SRAM_D
-    // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on SRAM_A load only
+    // [phase 0:1 boot mode] CPU driven (boot.asm), new addr on load only
     // [phase 0:1 run mode] PC driven, updates every cycle
     // [phase 2:3] VGA controller drives address to inIO5 directly during mux
     // [phase 4:5] data read/write: update addr on load (SRAM_A or memory access)
-    // [phase 6:7] <do nothing>
+    // [phase 6] feed data updates
+    // [phase 7] reset for phase transition (if needed)
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5=0, last_addr=0, last_int=0, first_outM=0;
-    reg last_writeM=0;
+    reg [15:0] snap_outM=0, snap_data=0;
 
-    // mimic load_a from cpu // TODO: unused
-    wire _ctype, _load_a;
-    assign _ctype = last_int[15] && last_int[14] && last_int[13];
-    assign _load_a = !_ctype | last_int[5];
-    
     always @(posedge CLK) begin
-        if (~clk & phase==2) begin // TODO: can this be 1?
-            // snapshot combinational CPU values after fetch
-            last_writeM <= writeM;
-            last_int <= instruction;
+        if (~clk & phase==1) begin
+            // snapshot volatile CPU values after instruction fetch
+            // i.e. values that are both combinational & influenced by I/O switches
+            snap_outM <= outM;
         end
         
-        // FIXME: I think there was a false assumption here around boot/run memory access being different here
-        // FIXME: i.e. M=M+1 on SRAM_A/D or 4112+ should work the same in either mode
-        // FIXME: BRAM inputs should probably still snapshot though (in either case)
-        // FIXME: consecutive M=M+1 = maybe snapshot data (new reg) and override inM only when OEX=1?
-        // TODO: move data snapshotting to different block, conflating A/D abritration is confusing
-        // wait until instruction updates // TODO: why phase 3?
-        else if (~clk & phase==3 & ~inIO7 & writeM) begin
-            // in boot mode it is a typical instruction driven push/pull but the
-            // read/write
-            first_outM <= outM;
-        end
-        else if (~clk & phase==4 & inIO7) begin
-            // FIXME: this too has issues on consecutive writes
-            // FIXME: additionally this is overloaded and shouldn't overwrite BRAM input which needs to be stable 'til posedge
-            first_outM <= outM;
-        end
-        
-        else if (~clk & loadIO7 & phase==7) begin
-            // reset before posedge when run mode initiated
-            last_inIO5 <= 0;
-            last_addr <= 0;
-        end            
-        // grab first read only don't want to pickup random ALU outputs
-        else if (clk & phase==0)
-            // boot mode: save SRAM_A input
-            // run mode: let pc drive SRAM_A
-            // TODO: rather than this being a special case can we not just use original outM snapshot?
-            // TODO: probably still need to carry forward the pc reset/switch somewhere
-            last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
-                          loadIO7 ? 0 : pc; // reset to zero on run init
-        else if (clk & phase==4)
-            // addr can only update once per cycle so fetch when stable
-            last_addr <= loadIO5 ? outM : addressM; // TODO: unused
+        // FIXME: consecutive M=M+1 = override CPU:inM when OEX=1?
+        // FIXME: output is blocked when output is registered so still needs intervention
+        else if (~clk & phase==6) begin
+            // snapshot data read/write value after SRAM_DATA updates
+            // SRAM_D emits in phase 5, reflected on inIO6 in phase 6
+            // then routes back to CPU/ALU for combinational update (if relevant/mux'd)
+            // TODO: not yet used but probably relevant to the consecutive M=M+1 case
+            snap_data <= outM;
+        end          
         // remaining phases passively resolved during mux
     end
 
@@ -226,15 +197,24 @@ module HACK(
     // FIXME: memory.asm ___ in sim
     // FIXME: mult.asm ___ in sim
 
+    // resolve SRAM_ADDR for current phase
+    // [phase 0:1] fetch instruction according to boot/run mode driver(s)
+    // [phase 2:3] driven by VGA controller
+    // [phase 4:6 boot mode] driven by SRAM_A writes (live outM for M derived inputs)
+    // [phase 4:6 run mode] ...else track all A updates (addressM)
+    // [phase 7] reset during boot/run transition
     assign inIO5 = RST ? 16'b0 :
-                (phase==0 | phase==1) ? (!inIO7 ? last_inIO5 : pc) :  // boot: SRAM_A input, run: pc
-                (phase==2 | phase==3) ? {3'b0, vga_addr} :            // always driven by VGA
-                (!inIO7 ? last_inIO5 : addressM);                    // [phase 4+] boot: SRAM_A input, run: get addr from CPU
+                (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
+                (~clk & (phase>=4 | phase<=6) ~inIO7 & inIO5) ? outM :
+                (~clk & (phase>=4 | phase<=6)) ? addressM :
+                (~clk & loadIO7 & phase==7) ? 0 :
+                // default to instruction fetch (phase 0/1 + posedge)
+                (~inIO7 ? snap_outM : pc); 
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
     // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
-    // code copied by boot.asm during boot mode will be written to the first page
+    // code copied by boot.asm during boot mode will be read/written from/to first page
     assign SRAM_ADDR = (inIO7 & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
@@ -242,7 +222,7 @@ module HACK(
         .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .loadIO7(loadIO7), // 1=run mode starting
-        .in(first_outM),   // input data (ignored on read) // FIXME: don't conflate with BRAM snapshot
+        .in(outM),         // input data (ignored on read)
         .out(inIO6),       // data out (instruction/VGA/RAM)
         .mode(inIO7),      // run_mode
         .DATA(SRAM_DATA),  // data line (inout)

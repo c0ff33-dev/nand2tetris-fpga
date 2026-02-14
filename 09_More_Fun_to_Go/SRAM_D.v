@@ -79,9 +79,9 @@ module SRAM_D(
 
     // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)
     always @(posedge CLK) begin
-        if (~clk & ((phase==1 & mode) | (phase==1 & loadIO7)))
+        if (~clk & (phase==1 & (mode | loadIO7)))
             // emit instruction every cycle in run mode
-            // emit data on load in boot mode
+            // and the preceding cycle when transitioning to run mode
             _out <= init ? dataOut : 16'bz;
         if (~clk & phase==3)
             // emit VGA every cycle

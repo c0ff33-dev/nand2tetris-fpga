@@ -53,18 +53,18 @@ module CPU(
     // [2:0] = jump bits
 
     // Decode instruction type (0=A, 1=C)
-    assign ctype = instruction[15] && instruction[14] && instruction[13];
+    assign ctype = instruction[15] & instruction[14] & instruction[13];
 
     // Decode writeM (C instruction & dest includes M)
     assign writeM = ctype ? instruction[3] : 1'b0;
 
     // Decode load parameter for A/C instructions
-    assign load_a = !ctype | instruction[5];
+    assign load_a = ~ctype | instruction[5];
     assign load_d = ctype ? instruction[4] : 1'b0;
 
     Register regA (
         .clk(clk),
-        .in(!ctype ? instruction : outM), // mux: address or ALU output via ctype
+        .in(~ctype ? instruction : outM), // mux: address or ALU output via ctype
         .load(load_a), // load if A or dest includes A
         .out(addressM)
     );
@@ -93,14 +93,14 @@ module CPU(
     // Decode jump condition (C instruction & jump condition is true)
     // [2]: JLT/JNE/JLE/JMP (ng==1)
     // [1]: JEQ/JGE/JLE/JMP (zr==1)
-    // [0]: JGT/JGE/JNE/JMP (ng==0 && zr==0)
-    assign jmp = ctype && ((ng && instruction[2]) || (zr && instruction[1]) || (~(ng|zr) && instruction[0]));
+    // [0]: JGT/JGE/JNE/JMP (ng==0 & zr==0)
+    assign jmp = ctype & ((ng & instruction[2]) | (zr & instruction[1]) | (~(ng|zr) & instruction[0]));
 
     PC pc_reg (
         .clk(clk),
         .in(addressM),
         .load(jmp),
-        .inc(!jmp),
+        .inc(~jmp),
         .reset(reset),
         .out(pc)
     );

@@ -64,7 +64,7 @@ always @(posedge i_clk)
     else if (h_last && (r_v==v_fp+v_sync-1)) r_vga_vs <= ~v_pol;
 
 // next cycle is inside the VGA frame of 640x480 pixel
-wire vga_frame_in1 = (r_v >= v_tb) && (r_v< v_bb) && (r_h >= h_lb-1) && (r_h < h_rb -1);
+wire vga_frame_in1 = (r_v >= v_tb) & (r_v< v_bb) & (r_h >= h_lb-1) & (r_h < h_rb -1);
 
 // 224 736 800
 // Hack video frame is inside the VGA frame with 112 pixel border on top/bottom and 64 pixel border on the left/right side
@@ -74,8 +74,8 @@ wire vga_frame_in1 = (r_v >= v_tb) && (r_v< v_bb) && (r_h >= h_lb-1) && (r_h < h
 //   - shift data to vga signal
 wire [10:0] f_row = (r_v-v_tb-112);
 wire [10:0] f_col_in3 = (r_h-h_lb-64+3);
-wire hack_frame_in3  = (f_row<256) && (f_col_in3<512);
-wire strobe = hack_frame_in3 && (f_col_in3[3:0]==4'h0);
+wire hack_frame_in3 = (f_row<256) & (f_col_in3<512);
+wire strobe = hack_frame_in3 & (f_col_in3[3:0]==4'h0);
 
 reg data_read;
 always @(posedge i_clk)

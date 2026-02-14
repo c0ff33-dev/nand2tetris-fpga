@@ -98,7 +98,7 @@ module Memory(
         // FUTURE: move I/O addresses into higher range
         // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
         // route HEAP to SRAM_D as well
-        (address>= 4112 && address <= 16383) ? inIO6 :
+        (address>= 4112 & address <= 16383) ? inIO6 :
 
         inRAM);
 
@@ -113,8 +113,8 @@ module Memory(
     assign loadIO2 = (address==4098) ? load : 0;
     assign loadIO3 = (address==4099) ? load : 0;
     assign loadIO4 = (address==4100) ? load : 0;
-    assign loadIO5 = (address==4101 || (address>= 4112 && address <= 16383)) ? load : 0;
-    assign loadIO6 = (address==4102 || (address>= 4112 && address <= 16383)) ? last_writeM : 0;
+    assign loadIO5 = (address==4101) ? load : 0;
+    assign loadIO6 = (address==4102 | (address>= 4112 & address <= 16383)) ? load : 0;
     assign loadIO7 = (address==4103) ? load : 0;
     assign loadIO8 = (address==4104) ? load : 0;
     assign loadIO9 = (address==4105) ? load : 0;
