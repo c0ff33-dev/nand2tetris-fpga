@@ -1,8 +1,149 @@
-// sram_go_test.asm
-// launch straight into run mode
-// test bench will prepare the SRAM
-// check dout==999 & the 2 go instructions are emitted
-// followed by the run program was stored in HACK_tb.v
+// sram_run_test.asm
+// test SRAM_A/D read/write in boot mode
+// use debug_sram values for debugging (may need adjustment in HACK_tb.v)
+// check LED output on sim/real hardware
+// see sram_mini_test.asm for full source/comments
+// check LED=1 and 69649(65536+4113)==3
 
-@GO // 0x1007
-M=1 // 0xEFC8
+// 0001000000010000 // 4112	 // 0x1010 // @4112
+// 1110111111001000 // 61384 // 0xEFC8 // M=1
+// 1110110111100000 // 60896 // 0xEDE0 // A=A+1
+// 1111110111001000 // 64968 // 0xFDC8 // M=M+1
+// 1111110111001000 // 64968 // 0xFDC8 // M=M+1
+// 1111110111001000 // 64968 // 0xFDC8 // M=M+1
+// 0001001110001000 // 5000  // 0x1388 // @5000
+// 1110101010001000 // 60040 // 0xEA88 // M=0
+// 0001000000010000 // 4112  // 0x1010 // @4112
+// 1111110000010000 // 64528 // 0xFC10 // D=M
+// 0001000000000000 // 4096  // 0x1000 // @LED
+// 1110001100001000 // 58120 // 0xE308 // M=D
+// 0000000000001100 //    12 // 0x000C // (LOOP), @LOOP 
+// 1110101010000111 // 60039 // 0xEA87 // 0;JMP
+
+@4112
+D=A
+@SRAM_D
+M=D
+
+// split >15 bit numbers first :/
+// @61384
+@32767
+D=A
+@28617
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @60896
+@32767
+D=A
+@28129
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @64968
+@32767
+D=A
+@32201
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @64968
+@32767
+D=A
+@32201
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @64968
+@32767
+D=A
+@32201
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+@5000
+D=A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @60040
+@32767
+D=A
+@27273
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @4112
+@4112
+D=A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @64528
+@32767
+D=A
+@31761
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+@4096
+D=A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @58120
+@32767
+D=A
+@25353
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+@12
+D=A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+// @60039
+@32767
+D=A
+@27272
+D=D+A
+@SRAM_A
+M=M+1
+@SRAM_D
+M=D
+
+@GO
+M=1

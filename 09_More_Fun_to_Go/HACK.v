@@ -52,7 +52,7 @@ module HACK(
     CPU cpu(
         .clk(clk),
         .inM(SRAM_OEX ? snap_data : inM), // OEX blocks SRAM_DATA so send cached data for M
-        .instruction(instruction), // snapshot instruction fetch once per cycle
+        .instruction(inIO7 ? snap_instr : instruction), // prefer live instruction in boot mode
         .reset(RST),
         .outM(outM), // combinational
         .writeM(writeM), // combinational
@@ -170,13 +170,17 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] snap_outM=0, snap_data=0, sram_a=0;
+    reg [15:0] snap_outM=0, snap_data=0, snap_instr=0, sram_a=0;
 
     always @(posedge CLK) begin
         if (~clk & phase==1) begin
             // snapshot volatile CPU values after instruction fetch
             // i.e. values that are both combinational & influenced by I/O switches
             snap_outM <= outM;
+        end
+        else if (~clk & phase==2) begin
+            // snapshot instruction once fetched
+            snap_instr <= instruction;
         end
         else if (~clk & phase==5) begin
             // snapshot data read/write value after SRAM_DATA updates
@@ -192,8 +196,8 @@ module HACK(
     // FIXME: sram_boot_test.asm PASSES in sim
     // FIXME: memory.asm PASSES in sim
     // FIXME: mult.asm PASSES in sim
-    // FIXME: sram_go_test.asm BROKEN in sim // run transition failure
-    // FIXME: sram_run_test.asm ___ in sim
+    // FIXME: sram_go_test.asm PASSES in sim
+    // FIXME: sram_run_test.asm ___ in sim // hangs?
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
@@ -202,18 +206,17 @@ module HACK(
     // [phase 7] reset during boot/run transition
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 | phase<=6) & ~inIO7 & loadIO5) ? outM : // register new SRAM_A input
-                (~clk & (phase>=4 | phase<=6) & ~inIO7) ? sram_a : // use last SRAM_A in boot mode
-                (~clk & (phase>=4 | phase<=6)) ? addressM : // last CPU address in run mode
-                (~clk & loadIO7 & phase==7) ? 0 :
+                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? outM : // register new SRAM_A input
+                (~clk & (phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode
+                (~clk & (phase>=4 & phase<=6)) ? addressM : // last CPU address in run mode
                 // default to instruction fetch (phase 0/1 + posedge)
-                (~inIO7 ? snap_outM : pc); 
+                (~inIO7[0] ? snap_outM : pc);
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
     // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
     // code copied by boot.asm during boot mode will be read/written from/to first page
-    assign SRAM_ADDR = (inIO7 & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
+    assign SRAM_ADDR = (inIO7[0] & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock

@@ -1,8 +1,8 @@
-// sram_boot_test.asm
+// sram_run_test.asm
 // test SRAM_A/D read/write in boot mode
 // use debug_sram values for debugging (may need adjustment in HACK_tb.v)
 // check LED output on sim/real hardware
-// see sram_boot_test.asm for full source/comments
+// see sram_mini_test.asm for full source/comments
 // check LED=1 and 69649(65536+4113)==3
 
 // 0001000000010000 // 4112	 // 0x1010 // @4112
