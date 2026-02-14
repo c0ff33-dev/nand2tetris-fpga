@@ -23,13 +23,13 @@
 // "KBD": 24576 // 48KB RAM required total
 
 // current memory layout
-// registers: 0-15 (same)
-// "STATIC": 16-255 incl (same)
-// "STACK": 256-1023 incl (smaller)
-// "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl
-// "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
-// "KBD": nil (removed) -- this can just be a memory mapped register?
-// "IO": 4096-4111 (new)
+// [BRAM] registers: 0-15 (same)
+// [BRAM] "STATIC": 16-255 incl (same)
+// [BRAM] "STACK": 256-1023 incl (smaller)
+// [SRAM] "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl
+// [SRAM] "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
+// [VIRT] "KBD": nil (removed) -- this can just be a memory mapped register?
+// [VIRT] "IO": 4096-4111 (new)
 
 `default_nettype none
 module Memory(

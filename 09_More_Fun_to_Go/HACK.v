@@ -51,25 +51,27 @@ module HACK(
     CPU cpu(
         .clk(clk),
         .inM(inM),
-        .instruction(last_int), // snapshot
+        .instruction(last_int), // snapshot instruction fetch once per cycle
         .reset(RST),
         .outM(outM), // combinational
         .writeM(writeM), // combinational
-        .addressM(addressM), // clocked
-        .pc(pc) // clocked
+        .addressM(addressM), // clocked (posedge)
+        .pc(pc) // clocked (posedge)
     );
 
     // Memory (map + combinational routing only)
+    // mux M input to CPU/ALU from I/O devices
+    // mux load for I/O devices
     Memory mem(
         .address(addressM),
         .load(writeM),
-        .last_writeM(last_writeM),
+        .last_writeM(last_writeM), // TODO: this could just be a 4102 switch
         .inRAM(outRAM), // RAM (0-3583)
         .inIO0(outLED), // LED (4096)
         .inIO1(inIO1),  // BUT (4097)
-        .inIO2(inIO2),  // UART_TX (4098)
-        .inIO3(inIO3),  // UART_RX (4099)
-        .inIO4(inIO4),  // SPI (4100)
+        .inIO2(inIO2),  // [disabled] UART_TX (4098)
+        .inIO3(inIO3),  // [disabled] UART_RX (4099)
+        .inIO4(inIO4),  // unassigned
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D instruction (4102)
         .inIO7(inIO7),  // GO (4103)
@@ -84,15 +86,15 @@ module HACK(
         .out(inM),
         .loadRAM(loadRAM),
         .loadIO0(loadIO0),
-        .loadIO1(loadIO1),
-        .loadIO2(loadIO2),
-        .loadIO3(loadIO3),
-        .loadIO4(loadIO4),
+        .loadIO1(loadIO1), // unused
+        .loadIO2(loadIO2), // disabled
+        .loadIO3(loadIO3), // disabled
+        .loadIO4(loadIO4), // unused
         .loadIO5(loadIO5),
         .loadIO6(loadIO6),
         .loadIO7(loadIO7),
-        .loadIO8(loadIO8),
-        .loadIO9(loadIO9),
+        .loadIO8(loadIO8), 
+        .loadIO9(loadIO9), 
         .loadIOA(loadIOA),
         .loadIOB(loadIOB),
         .loadIOC(loadIOC),
@@ -108,11 +110,13 @@ module HACK(
         .instruction(outROM)
     );
 
-    // BRAM (0-3583), 3584 x 16 bit words (7KB) 
+    // BRAM (0-3583), 3584 x 16 bit words (7KB)
+    // anything still routing through BRAM shouldn't rely on SRAM updates
+    // so snapshot the output from CPU after instruction fetch
     RAM3584 ram(
         .clk(clk),
         .address(addressM[11:0]),
-        .in(last_outM),
+        .in(first_outM),
         .load(loadRAM),
         .out(outRAM)
     );
@@ -165,30 +169,38 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] last_inIO5=0, last_addr=0, last_int=0, last_outM=0;
+    reg [15:0] last_inIO5=0, last_addr=0, last_int=0, first_outM=0;
     reg last_writeM=0;
 
-    // mimic load_a from cpu
+    // mimic load_a from cpu // TODO: unused
     wire _ctype, _load_a;
     assign _ctype = last_int[15] && last_int[14] && last_int[13];
     assign _load_a = !_ctype | last_int[5];
     
     always @(posedge CLK) begin
-        if (~clk & phase==2) begin
+        if (~clk & phase==2) begin // TODO: can this be 1?
             // snapshot combinational CPU values after fetch
             last_writeM <= writeM;
             last_int <= instruction;
         end
+        
+        // FIXME: I think there was a false assumption here around boot/run memory access being different here
+        // FIXME: i.e. M=M+1 on SRAM_A/D or 4112+ should work the same in either mode
+        // FIXME: BRAM inputs should probably still snapshot though (in either case)
+        // FIXME: consecutive M=M+1 = maybe snapshot data (new reg) and override inM only when OEX=1?
+        // TODO: move data snapshotting to different block, conflating A/D abritration is confusing
         // wait until instruction updates // TODO: why phase 3?
         else if (~clk & phase==3 & ~inIO7 & writeM) begin
-            // last_outM behaviour definitely needs to be preserved for boot mode
-            last_outM <= outM;
+            // in boot mode it is a typical instruction driven push/pull but the
+            // read/write
+            first_outM <= outM;
         end
         else if (~clk & phase==4 & inIO7) begin
             // FIXME: this too has issues on consecutive writes
-            // FIXME: maybe snapshot data and override inM only when OEX=1?
-            last_outM <= outM;
+            // FIXME: additionally this is overloaded and shouldn't overwrite BRAM input which needs to be stable 'til posedge
+            first_outM <= outM;
         end
+        
         else if (~clk & loadIO7 & phase==7) begin
             // reset before posedge when run mode initiated
             last_inIO5 <= 0;
@@ -198,17 +210,19 @@ module HACK(
         else if (clk & phase==0)
             // boot mode: save SRAM_A input
             // run mode: let pc drive SRAM_A
+            // TODO: rather than this being a special case can we not just use original outM snapshot?
+            // TODO: probably still need to carry forward the pc reset/switch somewhere
             last_inIO5 <= !inIO7 ? (loadIO5 ? outM : last_inIO5) : 
                           loadIO7 ? 0 : pc; // reset to zero on run init
         else if (clk & phase==4)
             // addr can only update once per cycle so fetch when stable
-            last_addr <= loadIO5 ? outM : addressM;
+            last_addr <= loadIO5 ? outM : addressM; // TODO: unused
         // remaining phases passively resolved during mux
     end
 
     // FIXME: sram_go_test.asm ___ on sim (only)
     // FIXME: sram_boot_test.asm ___ on sim
-    // FIXME: sram_run_test.asm BROKEN sim
+    // FIXME: sram_run_test.asm ___ sim
     // FIXME: memory.asm ___ in sim
     // FIXME: mult.asm ___ in sim
 
@@ -220,7 +234,7 @@ module HACK(
     // K6R4016V1D uses 18 bits but we address 16 LSB
     // [run mode only] go_sram_addr is offset by 0x10000 (data page)
     // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
-    // code copied by boot.asm will continue to be stored on the first page
+    // code copied by boot.asm during boot mode will be written to the first page
     assign SRAM_ADDR = (inIO7 & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
     SRAM_D sram_data (
@@ -228,7 +242,7 @@ module HACK(
         .clk(clk),         // internal 6.25 MHz clock
         .load(loadIO6),    // 1=write enabled, else read enabled
         .loadIO7(loadIO7), // 1=run mode starting
-        .in(last_outM),    // input data (ignored on read)
+        .in(first_outM),   // input data (ignored on read) // FIXME: don't conflate with BRAM snapshot
         .out(inIO6),       // data out (instruction/VGA/RAM)
         .mode(inIO7),      // run_mode
         .DATA(SRAM_DATA),  // data line (inout)

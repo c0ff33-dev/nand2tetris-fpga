@@ -14,11 +14,11 @@ MD=D+1 // M/D=2
 @SRAM_A
 M=D // A=2
 @SRAM_D
-MD=D+1 // D=3
-MD=D+1
-MD=D+1
-MD=D+1
-MD=D+1 // D=7
+MD=M+1 // D=3
+MD=M+1
+MD=M+1
+MD=M+1
+MD=M+1 // D=7
 
 @100
 D=0

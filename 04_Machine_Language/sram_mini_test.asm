@@ -5,6 +5,7 @@
 M=1
 A=A+1 // A=2
 
+// TODO: MD=M+1 for easier tracking?
 M=M+1
 M=M+1
 M=M+1 // M=3

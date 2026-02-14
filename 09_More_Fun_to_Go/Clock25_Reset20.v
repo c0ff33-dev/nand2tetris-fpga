@@ -7,7 +7,7 @@
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,    // external clock 100 MHz    
-    output clkVGA,  // internal clock 25 MHz (VGA only)
+    output clkVGA,// internal clock 25 MHz (VGA only)
     output clk,   // internal clock 6.25 MHz (everything else)
     output reset, // reset signal ~20μs
     output reg [2:0] phase
