@@ -116,7 +116,7 @@ module HACK(
     RAM3584 ram(
         .clk(clk),
         .address(addressM[11:0]),
-        .in(snap_outM),
+        .in(outM),
         .load(loadRAM),
         .out(outRAM)
     );
@@ -189,11 +189,11 @@ module HACK(
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_boot_test.asm PASSES on sim
-    // FIXME: memory.asm ___ in sim
-    // FIXME: mult.asm ___ in sim
-    // FIXME: sram_go_test.asm ___ on sim (only)
-    // FIXME: sram_run_test.asm ___ sim
+    // FIXME: sram_boot_test.asm PASSES in sim
+    // FIXME: memory.asm PASSES in sim
+    // FIXME: mult.asm PASSES in sim
+    // FIXME: sram_go_test.asm BROKEN in sim // run transition failure
+    // FIXME: sram_run_test.asm ___ in sim
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)

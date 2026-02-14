@@ -1,17 +1,19 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Feb 14 06:52:58 2026
+[*] Sat Feb 14 08:06:23 2026
 [*]
 [dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.vcd"
-[dumpfile_mtime] "Sat Feb 14 06:50:26 2026"
-[dumpfile_size] 935464
+[dumpfile_mtime] "Sat Feb 14 08:05:14 2026"
+[dumpfile_size] 4140375
 [savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.gtkw"
-[timestart] 21041400
+[timestart] 17950000
 [size] 2560 1345
-[pos] 1186 -23
-*-17.201908 21540000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 1160 0
+*-20.101910 19643000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
+[treeopen] HACK_tb.HACK.ram.
+[treeopen] HACK_tb.HACK.ram.ram0.
 [sst_width] 297
 [signals_width] 301
 [sst_expanded] 1
@@ -91,14 +93,19 @@ HACK_tb.HACK.cpu.jmp
 HACK_tb.HACK.cpu.instruction[15:0]
 @200
 -DEBUG
+@25
+HACK_tb.HACK.ram.address[11:0]
 @24
+HACK_tb.HACK.ram.ram0.ram_low.in[15:0]
+@28
+HACK_tb.HACK.ram.ram0.ram_low.load
+@24
+HACK_tb.HACK.ram.ram0.ram_low.out[15:0]
 HACK_tb.debug_sram[15:0]
 HACK_tb.debug_sram0[15:0]
 HACK_tb.debug_sram1[15:0]
 HACK_tb.debug_sram2[15:0]
-@25
 HACK_tb.debug_sram3[15:0]
-@24
 HACK_tb.HACK.debug0.out[15:0]
 HACK_tb.HACK.debug1.out[15:0]
 HACK_tb.HACK.debug2.out[15:0]

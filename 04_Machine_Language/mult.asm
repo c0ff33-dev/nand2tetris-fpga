@@ -74,7 +74,7 @@ M=D // LED=3 (11 = LED1/2 on, error)
 
 (OK)
 @2
-D=A // D = 2
+D=A // D=2
 @LED
 M=D // LED=2 (10 = LED1 off/LED2 on, success)
 
