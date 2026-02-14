@@ -197,7 +197,7 @@ module HACK(
     // FIXME: memory.asm PASSES in sim
     // FIXME: mult.asm PASSES in sim
     // FIXME: sram_go_test.asm PASSES in sim
-    // FIXME: sram_run_test.asm ___ in sim // hangs?
+    // FIXME: sram_run_test.asm BROKEN in sim // SRAM_ADDR undefined in 2nd write
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
@@ -206,7 +206,7 @@ module HACK(
     // [phase 7] reset during boot/run transition
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? outM : // register new SRAM_A input
+                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? snap_data : // register new SRAM_A input
                 (~clk & (phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode
                 (~clk & (phase>=4 & phase<=6)) ? addressM : // last CPU address in run mode
                 // default to instruction fetch (phase 0/1 + posedge)
