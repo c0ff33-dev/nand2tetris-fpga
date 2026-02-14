@@ -20,8 +20,12 @@
 // 0000000000001100 //    12 // 0x000C // (LOOP), @LOOP 
 // 1110101010000111 // 60039 // 0xEA87 // 0;JMP
 
+// in the only case where this matters (boot.asm)
+// SRAM_A is explicitly initialized so we do the same here
 @4112
 D=A
+@SRAM_A 
+M=0
 @SRAM_D
 M=D
 

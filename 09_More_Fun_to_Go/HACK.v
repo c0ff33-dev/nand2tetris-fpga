@@ -188,7 +188,7 @@ module HACK(
             // then routes back to CPU/ALU for combinational update (if relevant/mux'd)
             // needs to be done within the OEX period so ALU doesn't double dip
             snap_data <= outM;
-            if (loadIO5) sram_a <= inIO5; // register SRAM_A updates
+            if (loadIO5 & ~inIO7[0]) sram_a <= outM; // register SRAM_A updates
         end
         // remaining phases passively resolved during mux
     end
