@@ -7,9 +7,9 @@
 M=1 // A=0, M=1
 
 @SRAM_A
-MD=1 // A/D=1
+MD=1 // AD=1
 @SRAM_D
-MD=D+1 // M/D=2
+MD=D+1 // MD=2
 
 @SRAM_A
 M=D // A=2

@@ -51,7 +51,7 @@ module HACK(
     // i.e. inputs are finalized at end of current cycle
     CPU cpu(
         .clk(clk),
-        .inM(inM),
+        .inM(SRAM_OEX ? snap_data : inM), // OEX blocks SRAM_DATA so send cached data for M
         .instruction(instruction), // snapshot instruction fetch once per cycle
         .reset(RST),
         .outM(outM), // combinational
@@ -170,7 +170,7 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] snap_outM=0, snap_data=0;
+    reg [15:0] snap_outM=0, snap_data=0, sram_a=0;
 
     always @(posedge CLK) begin
         if (~clk & phase==1) begin
@@ -178,35 +178,33 @@ module HACK(
             // i.e. values that are both combinational & influenced by I/O switches
             snap_outM <= outM;
         end
-        
-        // FIXME: consecutive M=M+1 = override CPU:inM when OEX=1?
-        // FIXME: output is blocked when output is registered so still needs intervention
-        else if (~clk & phase==6) begin
+        else if (~clk & phase==5) begin
             // snapshot data read/write value after SRAM_DATA updates
             // SRAM_D emits in phase 5, reflected on inIO6 in phase 6
             // then routes back to CPU/ALU for combinational update (if relevant/mux'd)
-            // TODO: not yet used but probably relevant to the consecutive M=M+1 case
+            // needs to be done within the OEX period so ALU doesn't double dip
             snap_data <= outM;
-        end          
+            if (loadIO5) sram_a <= inIO5; // register SRAM_A updates
+        end
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_go_test.asm ___ on sim (only)
-    // FIXME: sram_boot_test.asm ___ on sim
-    // FIXME: sram_run_test.asm ___ sim
+    // FIXME: sram_boot_test.asm PASSES on sim
     // FIXME: memory.asm ___ in sim
     // FIXME: mult.asm ___ in sim
-
+    // FIXME: sram_go_test.asm ___ on sim (only)
+    // FIXME: sram_run_test.asm ___ sim
+    
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
     // [phase 2:3] driven by VGA controller
-    // [phase 4:6 boot mode] driven by SRAM_A writes (live outM for M derived inputs)
-    // [phase 4:6 run mode] ...else track all A updates (addressM)
+    // [phase 4:6] driven either by explicit SRAM_A writes or memory accesses
     // [phase 7] reset during boot/run transition
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 | phase<=6) ~inIO7 & inIO5) ? outM :
-                (~clk & (phase>=4 | phase<=6)) ? addressM :
+                (~clk & (phase>=4 | phase<=6) & ~inIO7 & loadIO5) ? outM : // register new SRAM_A input
+                (~clk & (phase>=4 | phase<=6) & ~inIO7) ? sram_a : // use last SRAM_A in boot mode
+                (~clk & (phase>=4 | phase<=6)) ? addressM : // last CPU address in run mode
                 (~clk & loadIO7 & phase==7) ? 0 :
                 // default to instruction fetch (phase 0/1 + posedge)
                 (~inIO7 ? snap_outM : pc); 
