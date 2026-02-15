@@ -198,11 +198,11 @@ module HACK(
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_boot_test.asm BROKEN in sim
-    // FIXME: memory.asm PASSES in sim & hw
-    // FIXME: mult.asm PASSES in sim & hw
-    // FIXME: sram_go_test.asm PASSES in sim [sim only]
-    // FIXME: sram_run_test.asm PASSES in sim & hw
+    // FIXME: sram_boot_test.asm ___ in sim & hw
+    // FIXME: memory.asm ___ in sim & hw
+    // FIXME: mult.asm ___ in sim & hw
+    // FIXME: sram_go_test.asm ___ in sim [sim only]
+    // FIXME: sram_run_test.asm ___ in sim & hw
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)

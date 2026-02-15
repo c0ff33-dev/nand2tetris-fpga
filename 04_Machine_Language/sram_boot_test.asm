@@ -14,6 +14,7 @@ MD=D+1 // MD=2
 @SRAM_A
 M=D // A=2
 @SRAM_D
+MD=0 // init: test bench may have pre-filled SRAM
 MD=M+1 // MD=1
 MD=M+1
 MD=M+1
