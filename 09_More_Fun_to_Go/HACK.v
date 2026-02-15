@@ -198,7 +198,7 @@ module HACK(
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_boot_test.asm ___ in sim & hw
+    // FIXME: sram_boot_test.asm PASSES in sim & hw
     // FIXME: memory.asm ___ in sim & hw
     // FIXME: mult.asm ___ in sim & hw
     // FIXME: sram_go_test.asm ___ in sim [sim only]
@@ -212,9 +212,8 @@ module HACK(
     // because inIO5 routes to outM can't directly use outM for any inputs here
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? sram_a : // register new SRAM_A input
-                (~clk & (phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode
-                ((phase>=4 & phase<=6)) ? addressM : // last CPU address (both modes)
+                ((phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
+                ((phase>=4 & phase<=6)) ? addressM : // last CPU address (run mode)
                 // default to instruction fetch (phase 0/1 + posedge)
                 (~inIO7[0] ? sram_a : pc);
 
