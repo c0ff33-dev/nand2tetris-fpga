@@ -49,9 +49,11 @@ module HACK(
     // CPU (ALU, A, D, PC)
     // ALU is combinational but A/D/PC are clocked
     // i.e. inputs are finalized at end of current cycle
+    wire sram_access;
+    assign sram_access = (addressM==4102 | addressM>=4112);
     CPU cpu(
         .clk(clk),
-        .inM(snap_inM_pos), // multiple cases where M needs to be cached
+        .inM(sram_access ? snap_inM_pos : inM), // only use cached data for SRAM accesses
         .instruction(inIO7 ? snap_instr : instruction), // prefer live instruction in boot mode
         .reset(RST),
         .outM(outM), // combinational
@@ -153,6 +155,11 @@ module HACK(
     //     .out(inIO3) // memory map 
     // );
 
+    // STATUS: sram_boot_test.asm PASSES in sim & hw
+    // STATUS: memory.asm (BRAM) PASSES in sim & hw 
+    // STATUS: mult.asm (BRAM) PASSES in sim & hw
+    // STATUS: sram_run_test.asm PASSES in sim & hw
+
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
 
@@ -198,13 +205,7 @@ module HACK(
         end
         // remaining phases passively resolved during mux
     end
-
-    // FIXME: sram_boot_test.asm ___ in sim & hw
-    // FIXME: memory.asm ___ in sim & hw
-    // FIXME: mult.asm ___ in sim & hw
-    // FIXME: sram_go_test.asm ___ in sim [sim only]
-    // FIXME: sram_run_test.asm PASSES in sim & hw
-    
+   
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
     // [phase 2:3] driven by VGA controller
