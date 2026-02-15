@@ -51,7 +51,7 @@ module HACK(
     // i.e. inputs are finalized at end of current cycle
     CPU cpu(
         .clk(clk),
-        .inM(SRAM_OEX ? snap_data_run : inM), // OEX blocks SRAM_DATA so send cached data for M
+        .inM(SRAM_OEX ? snap_inM_pos : inM), // OEX blocks SRAM_DATA so send cached data for M
         .instruction(inIO7 ? snap_instr : instruction), // prefer live instruction in boot mode
         .reset(RST),
         .outM(outM), // combinational
@@ -167,7 +167,7 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] snap_outM=0, snap_data_run=0, snap_data_boot=0, snap_instr=0, sram_a=0;
+    reg [15:0] snap_outM=0, snap_inM_pos=0, snap_instr=0, sram_a=0;
 
     always @(posedge CLK) begin
         if (~clk & phase==1) begin
@@ -184,25 +184,25 @@ module HACK(
             // SRAM_D emits in phase 5, reflected on inIO6 in phase 6
             // then routes back to CPU/ALU for combinational update (if relevant/mux'd)
             // needs to be done within the OEX period so ALU doesn't double dip
-            
-            // FIXME: this can carry over to unrelated instructions
-            // IDEA: cache data during posedge (requires additional read) & invalidate cache if address changes?
-            snap_data_run <= outM;
 
             // boot mode updates
             if (loadIO5 & ~inIO7[0]) begin
                 sram_a <= outM; // register SRAM_A updates
-                snap_data_boot <= outM; // not updated every cycle in boot mode
             end
+        end
+        else if (clk & phase==6) begin
+            // additional out of band read to cache the new inM during posedge
+            // this is to preserve the data input which is otherwise lost when OEX is high
+            snap_inM_pos <= inM;
         end
         // remaining phases passively resolved during mux
     end
 
-    // FIXME: sram_boot_test.asm PASSES in sim
-    // FIXME: memory.asm PASSES in sim
-    // FIXME: mult.asm PASSES in sim
-    // FIXME: sram_go_test.asm PASSES in sim
-    // FIXME: sram_run_test.asm BROKEN in sim
+    // FIXME: sram_boot_test.asm BROKEN in sim
+    // FIXME: memory.asm PASSES in sim & hw
+    // FIXME: mult.asm PASSES in sim & hw
+    // FIXME: sram_go_test.asm PASSES in sim [sim only]
+    // FIXME: sram_run_test.asm PASSES in sim & hw
     
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
@@ -212,9 +212,9 @@ module HACK(
     // because inIO5 routes to outM can't directly use outM for any inputs here
     assign inIO5 = RST ? 16'b0 :
                 (~clk & (phase==2 | phase==3)) ? {3'b0, vga_addr} :
-                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? snap_data_boot : // register new SRAM_A input
+                (~clk & (phase>=4 & phase<=6) & ~inIO7[0] & loadIO5) ? sram_a : // register new SRAM_A input
                 (~clk & (phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode
-                (~clk & (phase>=4 & phase<=6)) ? addressM : // last CPU address in run mode
+                ((phase>=4 & phase<=6)) ? addressM : // last CPU address (both modes)
                 // default to instruction fetch (phase 0/1 + posedge)
                 (~inIO7[0] ? sram_a : pc);
 
