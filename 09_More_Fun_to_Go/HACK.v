@@ -275,21 +275,17 @@ module HACK(
         .o_vga_vs(VGA_VS)
     );
 
-    // TODO: PS/2 Keyboard controller
+    // TODO: preserve leds.asm as basic hardware/sim test
+    // TODO: import Keyboard[Test] from nand2tetris project
+    // Warning: PS/2 signal is not reliable when olimexino-32u4 is connected over UEXT!
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
-    wire [10:0] debug_bits; // debug
-    wire debug_edge; // debug
-    wire debug_stop; // debug
     PS2 ps2(
         .i_clk(clk),
         .i_rst(RST),
         .i_ps2_data(PS2_DATA),
         .i_ps2_clk(PS2_CLK),
-        .o_data(ps2_data),
-        .bits(debug_bits), // debug
-        ._edge(debug_edge), // debug
-        .stop(debug_stop) // debug
+        .o_data(ps2_data)
     );
     // Keyboard - PS2 to ASCII converter
     wire [15:0] _kbd;
@@ -300,15 +296,11 @@ module HACK(
         .o_data(_kbd)
     );
 
-    // FIXME: confirmed PS2_CLK now starts (idles high/drops low to tx)
-    // FIXME: PS2_DATA appears to be stuck high
-    // FIXME: edge does trip on press (as expected) but stop is never reached
-
     // KBD (4100)
     Register kbd_r(
         .clk(clk),
-        .in({15'd0,debug_stop}),
-        .load(1'b1), // loadIO4
+        .in(_kbd),
+        .load(1'b1), // TODO: loadIO4
         .out(inIO4)
     );
 

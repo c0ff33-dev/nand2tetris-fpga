@@ -18,10 +18,10 @@
 @4100
 D=M // store input
 
-// @32
-// D=D-A // check == 0x20 (space)
+@97
+D=D-A // check == 0x61 ("a")
 @BREAK
-D;JNE
+D;JEQ
 
 @LOOP
 0;JMP

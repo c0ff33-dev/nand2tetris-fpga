@@ -64,10 +64,8 @@ module HACK_tb();
     // wire [3:0] VGA_G;
     // wire [3:0] VGA_B;
     wire PS2_DATA;
-    reg PS2_CLK_OUT;  // separate PS/2 clock (5 MHz)
-    
-    // Pull-up for PS2_DATA (open-drain simulation)
-    pullup(PS2_DATA);
+    reg PS2_CLK_OUT;
+    pullup(PS2_DATA); // open-drain emulation
 
     // Part
     HACK HACK(
@@ -142,9 +140,9 @@ module HACK_tb();
                 
                 // Simulate PS/2 clock pulse (pull low then release)
                 PS2_CLK_OUT = 1'b0;  // clock pulls low during bit
-                #250;                // hold low for 2.5 µs
+                #250;              // hold low for 2.5 µs
                 PS2_CLK_OUT = 1'b1;  // release clock high
-                #250;                // clock high for 2.5 µs
+                #250;              // clock high for 2.5 µs
             end
 
             // Release PS2_DATA after frame
