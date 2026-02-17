@@ -156,7 +156,7 @@ always @(posedge i_clk)
 // F0xx is release of key xx
 // F0E0xx is release of key E0xx
 always @(posedge i_clk)
-    if (i_rst || (i_ps2_data[15:8]==8'hF0) || (i_ps2_data[24:8] == 16'hF0E0)) o_data <= 24'h000000;
+    if (i_rst || (i_ps2_data[15:8]==8'hF0) || (i_ps2_data[23:8] == 16'hF0E0)) o_data <= 24'h000000;
     else o_data <= {8'h00, scancode[{shift,i_ps2_data[7:0]}]};
 
 endmodule

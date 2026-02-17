@@ -6,8 +6,8 @@ module HACK_tb();
     reg CLK = 1;
     reg [1:0] BUT = 3;
     wire [1:0] LED;
-    wire UART_TX;
-    wire UART_RX;
+    // wire UART_TX;
+    // wire UART_RX;
     wire [17:0] SRAM_ADDR;
     wire [15:0] SRAM_DATA;
     wire SRAM_WEX;
@@ -63,21 +63,20 @@ module HACK_tb();
     // wire [3:0] VGA_R;
     // wire [3:0] VGA_G;
     // wire [3:0] VGA_B;
-    // wire PS2_DATA;
-    // wire PS2_CLK;
+    wire PS2_DATA;
 
     // Part
     HACK HACK(
         .CLK(CLK),             // external clock 100 MHz
         .BUT(BUT),             // user button  ("pushed down" == 0) ("up" == 1)
         .LED(LED),             // leds (0 off, 1 on)
-        .UART_RX(UART_RX),     // UART receive
-        .UART_TX(UART_TX),     // UART transmit
+        // .UART_RX(UART_RX),     // UART receive
+        // .UART_TX(UART_TX),     // UART transmit
         .SRAM_ADDR(SRAM_ADDR), // SRAM address 18 Bit = 256K
         .SRAM_DATA(SRAM_DATA), // SRAM data 16 Bit
         .SRAM_WEX(SRAM_WEX),   // SRAM Write Enable NOT
         .SRAM_OEX(SRAM_OEX),   // SRAM Output Enable NOT
-        .SRAM_CSX(SRAM_CSX)    // SRAM Chip Select NOT
+        .SRAM_CSX(SRAM_CSX),    // SRAM Chip Select NOT
         
         // TODO: new ports
         // .VGA_HS(VGA_HS),
@@ -85,8 +84,8 @@ module HACK_tb();
         // .VGA_R(VGA_R),
         // .VGA_G(VGA_G),
         // .VGA_B(VGA_B),
-        // .PS2_DATA(PS2_DATA),
-        // .PS2_CLK(PS2_CLK)
+        .PS2_DATA(PS2_DATA),
+        .PS2_CLK(CLK)
     );
 
     // Simulate

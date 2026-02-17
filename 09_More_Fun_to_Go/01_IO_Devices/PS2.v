@@ -7,28 +7,30 @@
 module PS2(
     input             i_clk,
     input             i_rst,
-    output            isR,
     input             i_ps2_data,
     input             i_ps2_clk,
-    output reg [23:0] o_data
+    output reg [23:0] o_data,
+    output reg [10:0] bits, // debug
+    output _edge, // debug
+    output stop // debug
 );
 
 // buffer the last two bits
-reg[1:0] ps2_clock; 
+reg[1:0] ps2_clock = 0; 
 always @(posedge i_clk)
     ps2_clock <= {ps2_clock[0],i_ps2_clk};
 
-wire _edge = (ps2_clock == 2'b01); // detect posedge from low to high
+assign _edge = (ps2_clock == 2'b01); // detect posedge from low to high
 
 // buffer the last 11 bits
-reg [10:0] bits; 
+// reg [10:0] bits; 
 always @(posedge i_clk)
     if (i_rst | stop)
         bits <= 11'b11111111111;
     else if (_edge)
         bits <= {i_ps2_data,bits[10:1]};
 
-wire stop = (bits[0]==1'b0); // stop after last bit (number 10)
+assign stop = (bits[0]==1'b0); // stop after last bit (number 10)
 
 always @(posedge i_clk)
     if (i_rst)

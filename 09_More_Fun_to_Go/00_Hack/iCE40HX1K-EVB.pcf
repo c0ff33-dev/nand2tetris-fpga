@@ -11,8 +11,8 @@ set_io BUT[1] 42    # BUT2
 set_io LED[0] 40    # LED1
 set_io LED[1] 51    # LED2
 
-set_io UART_RX 36   # PIO2_8/RxD connected to pin 3 of UEXT (PGM)
-set_io UART_TX 37   # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
+# set_io UART_RX 36   # PIO2_8/RxD connected to pin 3 of UEXT (PGM)
+# set_io UART_TX 37   # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 set_io SRAM_ADDR[0] 79   # SA0
 set_io SRAM_ADDR[1] 80   # SA1
@@ -53,3 +53,6 @@ set_io SRAM_DATA[12] 56  # SD12
 set_io SRAM_DATA[13] 54  # SD13
 set_io SRAM_DATA[14] 53  # SD14
 set_io SRAM_DATA[15] 52  # SD15
+
+set_io PS2_CLK 37  # PI02_9 TxD
+set_io PS2_DATA 36 # PI02_8 RxD

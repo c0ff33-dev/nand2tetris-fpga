@@ -17,13 +17,15 @@ module HACK(
     input  CLK,              // external clock 100 MHz    
     input  [1:0] BUT,        // user button (pushed "down"=0, "up"=1)
     output [1:0] LED,        // leds (0 off, 1 on)
-    input  UART_RX,          // UART recieve
-    output UART_TX,          // UART transmit
+    // input  UART_RX,          // UART recieve
+    // output UART_TX,          // UART transmit
     output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
     inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
     output SRAM_OEX,         // SRAM Output Enable NOT
-    output SRAM_CSX          // SRAM Chip Select NOT
+    output SRAM_CSX,         // SRAM Chip Select NOT
+    input PS2_CLK,           // external clock from PS/2
+    input PS2_DATA           // external data from PS/2
 );
     
     wire clk,clkVGA,writeM,loadRAM,clkRST,RST;
@@ -73,7 +75,7 @@ module HACK(
         .inIO1(inIO1),  // BUT (4097)
         .inIO2(inIO2),  // [disabled] UART_TX (4098)
         .inIO3(inIO3),  // [disabled] UART_RX (4099)
-        .inIO4(inIO4),  // unassigned
+        .inIO4(inIO4),  // KBD (4100) // originally SPI
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D (4102)
         .inIO7(inIO7),  // GO (4103)
@@ -276,13 +278,18 @@ module HACK(
     // TODO: PS/2 Keyboard controller
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
-    wire PS2_DATA, PS2_CLK; // TODO: placeholder
+    wire [10:0] debug_bits; // debug
+    wire debug_edge; // debug
+    wire debug_stop; // debug
     PS2 ps2(
         .i_clk(clk),
         .i_rst(RST),
         .i_ps2_data(PS2_DATA),
         .i_ps2_clk(PS2_CLK),
-        .o_data(ps2_data)
+        .o_data(ps2_data),
+        .bits(debug_bits), // debug
+        ._edge(debug_edge), // debug
+        .stop(debug_stop) // debug
     );
     // Keyboard - PS2 to ASCII converter
     wire [15:0] _kbd;
@@ -291,6 +298,18 @@ module HACK(
         .i_rst(RST),
         .i_ps2_data(ps2_data),
         .o_data(_kbd)
+    );
+
+    // FIXME: confirmed PS2_CLK now starts (idles high/drops low to tx)
+    // FIXME: PS2_DATA appears to be stuck high
+    // FIXME: edge does trip on press (as expected) but stop is never reached
+
+    // KBD (4100)
+    Register kbd_r(
+        .clk(clk),
+        .in({15'd0,debug_stop}),
+        .load(1'b1), // loadIO4
+        .out(inIO4)
     );
 
     // DEBUG0 (4107)
