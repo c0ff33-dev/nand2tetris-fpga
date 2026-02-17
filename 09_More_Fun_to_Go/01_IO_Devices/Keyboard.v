@@ -147,13 +147,13 @@ initial begin
     scancode[9'h100] = 8'd0; // no key pressed
 end
 
-// shift key has keycode 12 or 59, release key F012 or F059
+// shift key has keycode 12 or 59, pressed key event F012 or F059
 reg shift = 1'b0;
 always @(posedge i_clk)
     if (i_rst || (i_ps2_data[15:0]==16'hF012) || (i_ps2_data[15:0]==16'hF059)) shift <= 0;
     else if ((i_ps2_data[7:0]==8'h12)||(i_ps2_data[7:0]==8'h59)) shift <= 1;
 
-// F0xx is release of key xx
+// F0xx is press of key xx
 // F0E0xx is release of key E0xx
 always @(posedge i_clk)
     if (i_rst || (i_ps2_data[15:8]==8'hF0) || (i_ps2_data[23:8] == 16'hF0E0)) o_data <= 24'h000000;

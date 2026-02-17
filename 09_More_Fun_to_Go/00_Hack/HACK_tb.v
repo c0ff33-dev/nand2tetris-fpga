@@ -64,6 +64,10 @@ module HACK_tb();
     // wire [3:0] VGA_G;
     // wire [3:0] VGA_B;
     wire PS2_DATA;
+    reg PS2_CLK_OUT;  // separate PS/2 clock (5 MHz)
+    
+    // Pull-up for PS2_DATA (open-drain simulation)
+    pullup(PS2_DATA);
 
     // Part
     HACK HACK(
@@ -85,20 +89,104 @@ module HACK_tb();
         // .VGA_G(VGA_G),
         // .VGA_B(VGA_B),
         .PS2_DATA(PS2_DATA),
-        .PS2_CLK(CLK)
+        .PS2_CLK(PS2_CLK_OUT)
     );
 
     // Simulate
     always #0.5 CLK = ~CLK; // 100 MHz
 
+    // ============================================================
+    // PS/2 Keyboard Emulator: ASCII-to-Scancode Mapping
+    // ============================================================
+    function [7:0] ascii_to_scancode(input [7:0] ascii_char);
+        case (ascii_char)
+            8'h61:   ascii_to_scancode = 8'h1C;  // 'a'
+            8'h62:   ascii_to_scancode = 8'h32;  // 'b'
+            8'h31:   ascii_to_scancode = 8'h16;  // '1'
+            default: ascii_to_scancode = 8'h00;  // unsupported char
+        endcase
+    endfunction
+
+    // Compute odd parity for 8-bit value
+    function parity_8(input [7:0] data);
+        parity_8 = ~(^data);  // odd parity: flip XOR result
+    endfunction
+
+    // ============================================================
+    // PS/2 Frame Transmitter Task - Fast Event-Driven Simulation
+    // Transmits a single 11-bit PS/2 frame: START + 8 DATA (LSB first) + PARITY + STOP
+    // Uses direct bit-time delays with slow clock (~200 kHz) vs FPGA 6.25 MHz (31x ratio)
+    // ============================================================
+    task transmit_ps2_frame(input [7:0] scancode);
+        reg [10:0] frame;  // 11-bit frame: bit 0=START, bits 1-8=DATA, bit 9=PARITY, bit 10=STOP
+        integer i;
+        begin
+            // Assemble frame: START=0, DATA[7:0], PARITY, STOP=1
+            frame[0] = 1'b0;                           // START bit
+            frame[8:1] = scancode;                     // DATA bits (LSB first)
+            frame[9] = parity_8(scancode);             // PARITY bit
+            frame[10] = 1'b1;                          // STOP bit
+
+            $display("[PS/2] Transmitting scancode 0x%02H, frame=0b%011b", scancode, frame);
+
+            // Simulate PS/2 clock and data line transitions
+            // Each bit transmission: drive data, clock pulse, release data
+            // Using 500 time units per bit (~200 kHz at 10ns timescale, 31x slower than 6.25 MHz FPGA clock)
+            for (i = 0; i < 11; i = i + 1) begin
+                // Drive PS2_DATA to frame bit value (0=drive low, 1=release to high-Z)
+                if (frame[i] == 1'b0) begin
+                    force PS2_DATA = 1'b0;  // actively driving
+                end else begin
+                    release PS2_DATA;  // release to high-Z (external pull-up will pull high)
+                end
+                
+                // Simulate PS/2 clock pulse (pull low then release)
+                PS2_CLK_OUT = 1'b0;  // clock pulls low during bit
+                #250;                // hold low for 2.5 µs
+                PS2_CLK_OUT = 1'b1;  // release clock high
+                #250;                // clock high for 2.5 µs
+            end
+
+            // Release PS2_DATA after frame
+            release PS2_DATA;
+            PS2_CLK_OUT = 1'b1;  // idle state
+            $display("[PS/2] Frame transmission complete\n");
+        end
+    endtask
+
     initial begin
         $dumpfile("HACK_tb.vcd");
         $dumpvars(0, HACK_tb);
         
+        // Initialize PS2_DATA to high-Z (will be pulled high by external resistor)
+        release PS2_DATA;
+        
         $display("------------------------");
-        $display("Test bench: Hack");
+        $display("Test bench: Hack");        
+        $display("PS/2 Keyboard Emulator - Injecting test characters");
+        $display("------------------------");
 
-        #20000
+        // Initialize PS2_CLK to idle (high)
+        PS2_CLK_OUT = 1'b1;
+        
+        // Wait for system reset and stabilization (20 µs at 10ns timescale = 2000 units)
+        #2100;
+        
+        // Inject test characters: 'a', 'b', '1'
+        $display("\n[STIM] Injecting character 'a'...");
+        transmit_ps2_frame(ascii_to_scancode(8'h61));  // 'a' = 0x1C
+        #100;   // Short delay between characters for processing
+        
+        $display("\n[STIM] Injecting character 'b'...");
+        transmit_ps2_frame(ascii_to_scancode(8'h62));  // 'b' = 0x32
+        #100;
+        
+        $display("\n[STIM] Injecting character '1'...");
+        transmit_ps2_frame(ascii_to_scancode(8'h31));  // '1' = 0x16
+        #100;
+        
+        $display("\n[STIM] Character injection complete. Waiting for processing...");
+        #2000;  // Short final settling time
         $finish;
     end
 
