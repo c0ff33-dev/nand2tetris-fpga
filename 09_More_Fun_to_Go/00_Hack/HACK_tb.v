@@ -37,12 +37,22 @@ module HACK_tb();
         sram[1] = 16'hFC10; // 64528
         sram[2] = 16'h0002; // 2
         sram[3] = 16'hEA87; // 60039
+ 
+        // VGA pattern words at framebuffer base (row 0, cols 128..255) in run-mode SRAM page
+        // bit=0 -> white pixel, bit=1 -> black pixel
+        sram[65536+8]  = 16'hAAAA;
+        sram[65536+9]  = 16'hBBBB;
+        sram[65536+10] = 16'hCCCC;
+        sram[65536+11] = 16'hDDDD;
+        sram[65536+12] = 16'hEEEE;
+        sram[65536+13] = 16'hFFFF;
+        sram[65536+14] = 16'h1111;
+        sram[65536+15] = 16'h2222;
 
         sram[65536+4112] = 16'd999;
         sram[65536+5000] = 16'd123;
     end
 
-    // TODO: MS code
     always @(posedge CLK)
         if (~SRAM_WEX&&SRAM_OEX&&~SRAM_CSX) sram[SRAM_ADDR] <= SRAM_DATA;
     assign SRAM_DATA = (~SRAM_CSX&&~SRAM_OEX)?sram[SRAM_ADDR]:16'bz;
@@ -57,12 +67,11 @@ module HACK_tb();
     assign debug_sram_p1_1 = sram[65536+4113];
     assign debug_sram_p1_2 = sram[65536+5000];
 
-    // TODO: new wires
-    // wire VGA_HS;
-    // wire VGA_VS;
-    // wire [3:0] VGA_R;
-    // wire [3:0] VGA_G;
-    // wire [3:0] VGA_B;
+    wire VGA_HS;
+    wire VGA_VS;
+    wire [3:0] VGA_R;
+    wire [3:0] VGA_G;
+    wire [3:0] VGA_B;
     wire PS2_DATA;
     reg PS2_CLK_OUT;
     pullup(PS2_DATA); // open-drain emulation
@@ -72,26 +81,59 @@ module HACK_tb();
         .CLK(CLK),             // external clock 100 MHz
         .BUT(BUT),             // user button  ("pushed down" == 0) ("up" == 1)
         .LED(LED),             // leds (0 off, 1 on)
-        // .UART_RX(UART_RX),     // UART receive
-        // .UART_TX(UART_TX),     // UART transmit
         .SRAM_ADDR(SRAM_ADDR), // SRAM address 18 Bit = 256K
         .SRAM_DATA(SRAM_DATA), // SRAM data 16 Bit
         .SRAM_WEX(SRAM_WEX),   // SRAM Write Enable NOT
         .SRAM_OEX(SRAM_OEX),   // SRAM Output Enable NOT
-        .SRAM_CSX(SRAM_CSX),    // SRAM Chip Select NOT
+        .SRAM_CSX(SRAM_CSX),   // SRAM Chip Select NOT
+        .PS2_CLK(PS2_CLK_OUT), // PS/2 clock (external)
+        .PS2_DATA(PS2_DATA)    // PS/2 data 
         
-        // TODO: new ports
-        // .VGA_HS(VGA_HS),
-        // .VGA_VS(VGA_VS),
-        // .VGA_R(VGA_R),
-        // .VGA_G(VGA_G),
-        // .VGA_B(VGA_B),
-        .PS2_DATA(PS2_DATA),
-        .PS2_CLK(PS2_CLK_OUT)
     );
+
+    assign VGA_HS = HACK.VGA_HS;
+    assign VGA_VS = HACK.VGA_VS;
+    assign VGA_R = HACK.VGA_R;
+    assign VGA_G = HACK.VGA_G;
+    assign VGA_B = HACK.VGA_B;
 
     // Simulate
     always #0.5 CLK = ~CLK; // 100 MHz
+
+    integer vga_samples = 0;
+    integer vga_rgb_edges = 0;
+    integer vga_tb_mismatches = 0;
+    reg [15:0] e_vga_data = 16'h0000;
+    reg [11:0] last_vga_rgb = 12'h000;
+    always @(posedge HACK.clkVGA) begin
+        if (!HACK.RST && HACK.vga.data_read &&
+            (HACK.vga.o_addr >= 8) &&
+            (HACK.vga.o_addr <= 15) &&
+            vga_samples < 8) begin
+            case (HACK.vga.o_addr)
+                13'd8: e_vga_data =   16'hAAAA;
+                13'd9: e_vga_data =   16'hBBBB;
+                13'd10: e_vga_data =  16'hCCCC;
+                13'd11: e_vga_data =  16'hDDDD;
+                13'd12: e_vga_data =  16'hEEEE;
+                13'd13: e_vga_data =  16'hFFFF;
+                13'd14: e_vga_data =  16'h1111;
+                13'd15: e_vga_data =  16'h2222;
+                default: e_vga_data = 16'h0000;
+            endcase
+            if (sram[65536 + HACK.vga.o_addr] !== e_vga_data && sram[65536 + HACK.vga.o_addr] !== last_vga_rgb) begin
+                $display("[ERROR] VGA testbench data mismatch addr=%0d expected=0x%04h got=0x%04h",
+                         HACK.vga.o_addr, e_vga_data, sram[65536 + HACK.vga.o_addr]);
+                vga_tb_mismatches = vga_tb_mismatches + 1;
+            end
+            vga_samples = vga_samples + 1;
+        end
+
+        if (!HACK.RST && ({VGA_R, VGA_G, VGA_B} != last_vga_rgb)) begin
+            last_vga_rgb <= {VGA_R, VGA_G, VGA_B};
+            vga_rgb_edges = vga_rgb_edges + 1;
+        end
+    end
 
     // ============================================================
     // PS/2 Keyboard Emulator: ASCII-to-Scancode Mapping
@@ -171,20 +213,25 @@ module HACK_tb();
         #2100;
         
         // Inject test characters: 'a', 'b', '1'
-        $display("\n[STIM] Injecting character 'a'...");
         transmit_ps2_frame(ascii_to_scancode(8'h61));  // 'a' = 0x1C
         #100;   // Short delay between characters for processing
         
-        $display("\n[STIM] Injecting character 'b'...");
         transmit_ps2_frame(ascii_to_scancode(8'h62));  // 'b' = 0x32
         #100;
         
-        $display("\n[STIM] Injecting character '1'...");
         transmit_ps2_frame(ascii_to_scancode(8'h31));  // '1' = 0x16
         #100;
         
-        $display("\n[STIM] Character injection complete. Waiting for processing...");
-        #2000;  // Short final settling time
+        #700000;  // allow enough time to reach visible VGA area and capture samples
+        $display("[RESULT] VGA sampled words=%0d rgb transitions=%0d tb_mismatches=%0d",
+                 vga_samples, vga_rgb_edges, vga_tb_mismatches);
+        if (vga_samples != 8) begin
+            $display("[ERROR] VGA sample count mismatch expected=%0d got=%0d",
+                     8, vga_samples);
+        end
+        if (vga_tb_mismatches != 0) begin
+            $display("[ERROR] VGA testbench data did not match expected pattern");
+        end
         $finish;
     end
 

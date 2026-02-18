@@ -259,10 +259,20 @@ module HACK(
 
     // TODO: VGA controller
     // VGA - Video graphics adapter 640x480 @ 50Hz
+    // vga_addr is stable for 16 clkVGA/4 clk cycles 
     wire [12:0] vga_addr;
-    wire [15:0] vga_data;
+    reg [15:0] vga_data = 16'd0;
     wire [3:0] VGA_R, VGA_G, VGA_B;
     wire VGA_HS, VGA_VS;
+    
+    // latch inIO6 during phase 3 for VGA
+    always @(posedge CLK) begin
+        if (RST)
+            vga_data <= 16'd0;
+        else if (phase==3)
+            vga_data <= inIO6;
+    end
+    
     VGA vga(
         .i_clk(clkVGA),
         .i_rst(RST),
