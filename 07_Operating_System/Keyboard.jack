@@ -35,7 +35,7 @@ class Keyboard {
      */
     function char keyPressed() {
         // inspect hardware memory buffer for keyboard event
-        return Memory.peek(24576); // TODO: 4100
+        return Memory.peek(24576);
     }
 
     /**								

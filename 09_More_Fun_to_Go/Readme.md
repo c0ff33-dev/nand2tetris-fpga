@@ -19,5 +19,4 @@ These other/similar projects may be of interest for research purposes or board a
 
 ```
 cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_Hack && ../../09_More_Fun_to_Go/00_Hack && apio clean && apio upload
-cd ~/src/nand2tetris-fpga/04_Machine_Language && make upload # TODO: update me
 ```

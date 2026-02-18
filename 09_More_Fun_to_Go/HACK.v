@@ -191,8 +191,8 @@ module HACK(
                 (~inIO7[0] ? sram_a : pc);
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
-    // [run mode only] go_sram_addr is offset by 0x10000 (data page)
-    // this effectively adds 65535 (0xFFFF) to ~data~ addresses (VRAM, HEAP, etc)
+    // [run mode only] go_sram_addr is offset by 0x10000 (64KB data page)
+    // this effectively adds 65536 offset to ~data~ addresses (VRAM, HEAP, etc)
     // data copied by boot.asm during boot mode will be read/written from/to first page
     assign SRAM_ADDR = (inIO7[0] & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
 
@@ -252,9 +252,9 @@ module HACK(
         .o_vga_vs(VGA_VS)
     );
 
-    // TODO: disable the UART line on arduino
-    // TODO: preserve leds.asm as basic hardware/sim test
-    // TODO: KeyboardTest (after screen?)
+    // TODO: disable the UART line on arduino (tools/olimexino-32u4 firmware/iceprog2/iceprog2.ino)
+    // TODO: copy current leds.asm into keyboard.asm and update comments
+    // TODO: map kbd output to SRAM address 24576
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
     PS2 ps2(
