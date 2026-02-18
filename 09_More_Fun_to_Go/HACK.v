@@ -276,7 +276,6 @@ module HACK(
     );
 
     // TODO: preserve leds.asm as basic hardware/sim test
-    // TODO: import Keyboard[Test] from nand2tetris project
     // Warning: PS/2 signal is not reliable when olimexino-32u4 is connected over UEXT!
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
