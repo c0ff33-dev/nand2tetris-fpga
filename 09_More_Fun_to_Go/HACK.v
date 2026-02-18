@@ -8,8 +8,6 @@
  * with the computer via the BUT.
  */
 
-// FUTURE: if == logical operators, combinational == bitwise operators
-
 `default_nettype none
 module HACK(
     // inputs/outputs at this layer = wires to interfaces external to lattice
@@ -17,8 +15,6 @@ module HACK(
     input  CLK,              // external clock 100 MHz    
     input  [1:0] BUT,        // user button (pushed "down"=0, "up"=1)
     output [1:0] LED,        // leds (0 off, 1 on)
-    // input  UART_RX,          // UART recieve
-    // output UART_TX,          // UART transmit
     output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
     inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
@@ -73,8 +69,8 @@ module HACK(
         .inRAM(outRAM), // RAM (0-3583)
         .inIO0(outLED), // LED (4096)
         .inIO1(inIO1),  // BUT (4097)
-        .inIO2(inIO2),  // [disabled] UART_TX (4098)
-        .inIO3(inIO3),  // [disabled] UART_RX (4099)
+        .inIO2(inIO2),  // unassigned
+        .inIO3(inIO3),  // unassigned
         .inIO4(inIO4),  // KBD (4100) // originally SPI
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D (4102)
@@ -90,10 +86,10 @@ module HACK(
         .out(inM),
         .loadRAM(loadRAM),
         .loadIO0(loadIO0),
-        .loadIO1(loadIO1), // unused
-        .loadIO2(loadIO2), // disabled
-        .loadIO3(loadIO3), // disabled
-        .loadIO4(loadIO4), // unused
+        .loadIO1(loadIO1),
+        .loadIO2(loadIO2),
+        .loadIO3(loadIO3),
+        .loadIO4(loadIO4),
         .loadIO5(loadIO5),
         .loadIO6(loadIO6),
         .loadIO7(loadIO7),
@@ -140,28 +136,6 @@ module HACK(
         .out(inIO1) // memory map
     );
 
-    // // UART_TX (4098) @ 115200 baud (~14KB/sec)
-    // UartTX uartTX(
-    //     .clk(clk),
-    //     .load(loadIO2),
-    //     .in(outM), // transmit outM[7:0]
-    //     .TX(UART_TX), // serial tx bit (pin)
-    //     .out(inIO2) // memory map
-    // );
-    
-    // // UART_RX (4099) @ 115200 baud (~14KB/sec)
-    // UartRX uartRX(
-    //     .clk(clk),
-    //     .clear(loadIO3),
-    //     .RX(UART_RX), // serial rx bit (pin)
-    //     .out(inIO3) // memory map 
-    // );
-
-    // STATUS: sram_boot_test.asm PASSES in sim & hw
-    // STATUS: memory.asm (BRAM) PASSES in sim & hw 
-    // STATUS: mult.asm (BRAM) PASSES in sim & hw
-    // STATUS: sram_run_test.asm PASSES in sim & hw
-
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
     // K6R4016V1D (512KB SRAM @ 100 MHz read/write)
 
@@ -176,15 +150,10 @@ module HACK(
 
     // have to pipeline some values to break combinational loops
     // SRAM_ADDR updates now synced to negedge clk (CLK for multiple updates)
-    reg [15:0] snap_outM=0, snap_inM_pos=0, snap_inM_neg=0, snap_instr=0, sram_a=0;
+    reg [15:0] snap_inM_pos=0, snap_inM_neg=0, snap_instr=0, sram_a=0;
 
     always @(posedge CLK) begin
-        if (~clk & phase==1) begin
-            // snapshot volatile CPU values after instruction fetch
-            // i.e. values that are both combinational & influenced by I/O switches
-            snap_outM <= outM; // TODO: unused again?
-        end
-        else if (~clk & phase==2) begin
+        if (~clk & phase==2) begin
             // snapshot instruction once fetched
             snap_instr <= instruction;
         end
@@ -244,7 +213,6 @@ module HACK(
     );
 
     // GO (4103): emit instruction from BRAM/SRAM
-    // FUTURE: now relegated to run mode switch + routing instruction only?
     GO go(
         .clk(clk),
         .load(loadIO7), // trigger run mode
@@ -257,7 +225,6 @@ module HACK(
         .out(inIO7) // output run mode
     );
 
-    // TODO: VGA controller
     // VGA - Video graphics adapter 640x480 @ 50Hz
     // vga_addr is stable for 16 clkVGA/4 clk cycles 
     wire [12:0] vga_addr;
@@ -285,8 +252,9 @@ module HACK(
         .o_vga_vs(VGA_VS)
     );
 
+    // TODO: disable the UART line on arduino
     // TODO: preserve leds.asm as basic hardware/sim test
-    // Warning: PS/2 signal is not reliable when olimexino-32u4 is connected over UEXT!
+    // TODO: KeyboardTest (after screen?)
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
     PS2 ps2(
@@ -309,7 +277,7 @@ module HACK(
     Register kbd_r(
         .clk(clk),
         .in(_kbd),
-        .load(1'b1), // TODO: loadIO4
+        .load(1'b1),
         .out(inIO4)
     );
 

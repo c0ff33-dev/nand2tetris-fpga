@@ -28,7 +28,7 @@
 // [BRAM] "STACK": 256-1023 incl (smaller)
 // [SRAM] "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl
 // [SRAM] "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
-// [VIRT] "KBD": nil (removed) -- this can just be a memory mapped register?
+// [VIRT] "KBD": register // label only used in Fill.asm
 // [VIRT] "IO": 4096-4111 (new)
 
 `default_nettype none
@@ -39,8 +39,8 @@ module Memory(
     input [15:0] inRAM, // BRAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
-    input [15:0] inIO2, // UART_TX (4098)
-    input [15:0] inIO3, // UART_RX (4099)
+    input [15:0] inIO2, // unassigned
+    input [15:0] inIO3, // unassigned
     input [15:0] inIO4, // KBD (4100) // originally SPI
     input [15:0] inIO5, // SRAM_A (4101)
     input [15:0] inIO6, // SRAM_D instruction (4102)
@@ -95,8 +95,7 @@ module Memory(
         (address==4110) ? inIOE :
         (address==4111) ? inIOF :
         
-        // FUTURE: move I/O addresses into higher range
-        // FUTURE: can leave stack on BRAM and move heap over to SRAM as well?
+        // TODO: can leave stack on BRAM and move heap over to SRAM as well?
         // route HEAP to SRAM_D as well
         (address>= 4112 & address <= 16383) ? inIO6 :
 

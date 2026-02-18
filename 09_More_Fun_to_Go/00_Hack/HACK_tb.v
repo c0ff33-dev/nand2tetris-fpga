@@ -190,7 +190,6 @@ module HACK_tb();
             // Release PS2_DATA after frame
             release PS2_DATA;
             PS2_CLK_OUT = 1'b1;  // idle state
-            $display("[PS/2] Frame transmission complete\n");
         end
     endtask
 
@@ -202,8 +201,7 @@ module HACK_tb();
         release PS2_DATA;
         
         $display("------------------------");
-        $display("Test bench: Hack");        
-        $display("PS/2 Keyboard Emulator - Injecting test characters");
+        $display("Test bench: Hack");
         $display("------------------------");
 
         // Initialize PS2_CLK to idle (high)
