@@ -252,7 +252,6 @@ module HACK(
         .o_vga_vs(VGA_VS)
     );
 
-    // TODO: disable the UART line on arduino (tools/olimexino-32u4 firmware/iceprog2/iceprog2.ino)
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
     PS2 ps2(

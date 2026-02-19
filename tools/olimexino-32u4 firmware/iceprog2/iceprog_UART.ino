@@ -93,13 +93,7 @@ void loopBridge(void);
 
 void setup() {
   // put your setup code here, to run once:
-   // Power Up UEXT
-
-   // Disable UART pins on UEXT before power-on to prevent idle-high TX
-   // Serial1 TX=PD3 (pin 1), RX=PD2 (pin 0) on Olimexino-32u4
-   pinMode(0, INPUT);
-   pinMode(1, INPUT);
-
+    // Power Up UEXT
    pinMode(CDONE,INPUT);
    pinMode(RESET,OUTPUT);
    pinMode(LED,OUTPUT);
@@ -117,7 +111,7 @@ void setup() {
 
    isProg=true;
    HWB_INPUT;                   // Initialize HWB
-   // Serial1.begin(115200); // UART disabled to avoid driving PS/2 lines on UEXT
+   Serial1.begin(115200); // FPGA init
    pinMode(LED_Y,OUTPUT);   
    digitalWrite(LED_Y,isProg);  //Yellow LED is Prog
    pinMode(LED_G,OUTPUT);
@@ -132,13 +126,13 @@ void setup() {
 
 void loop(){
   if (isProg) loopProg();
-  // else loopBridge(); // UART bridge disabled (PS/2 conflict on UEXT)
-  // if (HWB) {
-  //   isProg = !isProg;
-  //   digitalWrite(LED_Y,isProg);
-  //   digitalWrite(LED_G,!isProg);
-  //   delay(1000);
-  // }
+  else loopBridge();
+  if (HWB) {
+    isProg = !isProg;
+    digitalWrite(LED_Y,isProg);
+    digitalWrite(LED_G,!isProg);
+    delay(1000);
+  }
 }
 
 // Enable recv after 0xDEAD and disable after 0xBEEF
