@@ -73,7 +73,6 @@ module Memory(
     output loadIOF
 );
 
-    // Put your code here:
     // map adressses to wires for RAM3584 and the IO registers
     // mux input via address (memory mapped IO or RAM)
     // read SRAM_DATA directly during data phases

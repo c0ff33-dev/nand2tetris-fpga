@@ -8,7 +8,6 @@
 // This program polls the keyboard for the 'a' key (ASCII 97)
 // and turns on LED1 when detected.
 
-// Put your code here:
 (LOOP)
 @KBD
 D=M // read keyboard

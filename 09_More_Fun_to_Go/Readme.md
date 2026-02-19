@@ -18,5 +18,9 @@ These other/similar projects may be of interest for research purposes or board a
 ## Upload Bitstream & Software
 
 ```
-cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_Hack && ../../09_More_Fun_to_Go/00_Hack && apio clean && apio upload
+# build bootloader and copy into revised HACK directory
+cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
+
+# Jack application code can be flashed straight to offset 0x10000 as before
+cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
 ```
