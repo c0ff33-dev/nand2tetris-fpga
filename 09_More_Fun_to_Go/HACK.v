@@ -48,7 +48,7 @@ module HACK(
     // ALU is combinational but A/D/PC are clocked
     // i.e. inputs are finalized at end of current cycle
     wire sram_access;
-    assign sram_access = (addressM==4102 | addressM>=4112);
+    assign sram_access = (addressM==4102 | (addressM>=4112 & addressM!=24576));
     CPU cpu(
         .clk(clk),
         .inM(sram_access ? snap_inM_pos : inM), // only use cached data for SRAM accesses
@@ -253,8 +253,6 @@ module HACK(
     );
 
     // TODO: disable the UART line on arduino (tools/olimexino-32u4 firmware/iceprog2/iceprog2.ino)
-    // TODO: copy current leds.asm into keyboard.asm and update comments
-    // TODO: map kbd output to SRAM address 24576
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
     PS2 ps2(

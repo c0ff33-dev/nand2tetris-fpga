@@ -99,6 +99,9 @@ module Memory(
         // route HEAP to SRAM_D as well
         (address>= 4112 & address <= 16383) ? inIO6 :
 
+        // KBD at nand2tetris standard address
+        (address==24576) ? inIO4 :
+
         inRAM);
 
     // mux load via address (memory mapped IO or RAM)
