@@ -193,6 +193,8 @@ module HACK_tb();
         end
     endtask
 
+    // COPILOT: please implement SPI emulation same as 06_IO_Devices/00_HACK/HACK_tb.v
+
     initial begin
         $dumpfile("HACK_tb.vcd");
         $dumpvars(0, HACK_tb);

@@ -228,6 +228,12 @@ module HACK(
         .reset(RST)
     );
 
+    // FIXME: boot.asm does not appear to work
+    // FIXME: emulate SPI / check more programs?
+    // - leds/mult/memory still working (sram_* untested)
+    // - hello/echo working
+    // - cat/buffer requires SPI emulation
+
     // GO (4103): emit instruction from BRAM/SRAM
     GO go(
         .clk(clk),

@@ -13,14 +13,25 @@ These other/similar projects may be of interest for research purposes or board a
 
 ## Major Changes
 
-- `SRAM_A/D` now supports multiple updates per cycle: all updates are performed during `clk negedge` and expressed to CPU when it updates in `clk posedge` as normal.
+- `SRAM_A/D` now supports multiple updates per cycle: most updates are performed during `clk negedge` and expressed to CPU when it updates in `clk posedge` as normal.
+
+## Memory Map
+
+// COPILOT: Complete this section with notes from Memory.v
 
 ## Upload Bitstream & Software
+
+Note: Don't conflate the flash memory layout/offsets with the `SRAM` layout/offsets which also happens to use 64KB blocks. For flash the first page (`0x0000-0xFFFF`) is reserved for FPGA configuration data including the first program (`ROM.hack`) in the 512 byte bootloader enclave (`ROM.v`), though in practice this program could also be any small test program. The 2nd page starting at offset `0x10000` contains the application code which the bootloader will copy into the first page (`0x0000-0xFFFF`) of `SRAM`.
 
 ```
 # build bootloader and copy into revised HACK directory
 cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 
 # Jack application code can be flashed straight to offset 0x10000 as before
+$ cd ~/src/nand2tetris-fpga/04_Machine_Language && make upload # leds.asm
 cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
 ```
+
+## Changelog
+
+// COPILOT: Assume all content in 09_More_Fun_to_Go is new or modified, if not mentioned previously in this doc add it to this section. Unlike other COPILOT directives you should leave this one in place until explicitly told otherwise.

@@ -35,7 +35,6 @@
 module Memory(
     input [15:0] address,
     input load,
-    input last_writeM,
     input [15:0] inRAM, // BRAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
@@ -105,9 +104,8 @@ module Memory(
 
     // mux load via address (memory mapped IO or RAM)
     // BRAM limits may vary depending on implementation
-    // ports that only require writes once per clk cycle can use last_writeM
-    // in effect it is only SRAM_ADDR which needs to be written multiple times
-    // loadIO6 is cross-checked by phase in SRAM_D.v so no harm in leaving it enabled
+    // loadIO5 (SRAM_ADDR) needs to be written multiple times per cycle
+    // loadIO6 (SRAM_DATA) is cross-checked by phase in SRAM_D.v so no harm in leaving it enabled
     assign loadRAM = (address<=4095) ? load : 0;
     assign loadIO0 = (address==4096) ? load : 0;
     assign loadIO1 = (address==4097) ? load : 0;
