@@ -84,6 +84,8 @@ $ sudo chmod a+rw /dev/ttyACM0
 
 ### Flash the programmer
 
+If having trouble with disconnects here in WSL may need to use a full VM with USB passthrough:
+
 ```
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/veris/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
