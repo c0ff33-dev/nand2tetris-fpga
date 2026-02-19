@@ -15,6 +15,10 @@ module HACK(
     input  CLK,              // external clock 100 MHz    
     input  [1:0] BUT,        // user button (pushed "down"=0, "up"=1)
     output [1:0] LED,        // leds (0 off, 1 on)
+    output SPI_SDO,          // SPI Serial Data Out
+    input  SPI_SDI,          // SPI Serial Data In
+    output SPI_SCK,          // SPI Serial Clock
+    output SPI_CSX,          // SPI Chip Select NOT
     output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
     inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
@@ -69,15 +73,15 @@ module HACK(
         .inRAM(outRAM), // RAM (0-3583)
         .inIO0(outLED), // LED (4096)
         .inIO1(inIO1),  // BUT (4097)
-        .inIO2(inIO2),  // unassigned
-        .inIO3(inIO3),  // unassigned
-        .inIO4(inIO4),  // KBD (4100) // originally SPI
+        .inIO2(inIO2),  // unassigned // previously UART_TX (4098)
+        .inIO3(inIO3),  // unassigned // previously UART_RX (4099)
+        .inIO4(inIO4),  // SPI (4100)
         .inIO5(inIO5),  // SRAM_A (4101)
         .inIO6(inIO6),  // SRAM_D (4102)
         .inIO7(inIO7),  // GO (4103)
-        .inIO8(inIO8),  // unassigned
-        .inIO9(inIO9),  // unassigned
-        .inIOA(inIOA),  // unassigned
+        .inIO8(inIO8),  // KBD (4104) // previously LCD8 (4104)
+        .inIO9(inIO9),  // unassigned // previously LCD16 (4105)
+        .inIOA(inIOA),  // unassigned // previously RTP (4106)
         .inIOB(inIOB),  // DEBUG0 (4107)
         .inIOC(inIOC),  // DEBUG1 (4108)
         .inIOD(inIOD),  // DEBUG2 (4109)
@@ -134,6 +138,18 @@ module HACK(
         .in({14'd0, BUT}),
         .load(1'b1),
         .out(inIO1) // memory map
+    );
+
+    // SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
+    SPI spi(
+        .clk(clk),
+        .in(outM), // [7:0] byte to send (address/command)
+        .out(inIO4), // memory map
+        .load(loadIO4), // SPI_* outputs wired to pins
+        .SDI(SPI_SDI), // Serial Data In (MISO)
+        .SCK(SPI_SCK), // Serial Clock
+        .CSX(SPI_CSX), // Chip Select NOT (active low)
+        .SDO(SPI_SDO) // Serial Data Out (MOSI)
     );
 
     // SRAM_A/SRAM_D (4101/4102): 16 bit address/data register for 
@@ -270,12 +286,12 @@ module HACK(
         .o_data(_kbd)
     );
 
-    // KBD (4100)
+    // KBD (4104)
     Register kbd_r(
         .clk(clk),
         .in(_kbd),
         .load(1'b1),
-        .out(inIO4)
+        .out(inIO8)
     );
 
     // DEBUG0 (4107)

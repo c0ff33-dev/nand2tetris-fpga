@@ -11,6 +11,11 @@ set_io BUT[1] 42    # BUT2
 set_io LED[0] 40    # LED1
 set_io LED[1] 51    # LED2
 
+set_io SPI_SDO 45   # iCE40-SDO
+set_io SPI_SDI 46   # iCE40-SDI
+set_io SPI_SCK 48   # iCE40-SCK
+set_io SPI_CSX 49   # iCE40-SS_B
+
 set_io SRAM_ADDR[0] 79   # SA0
 set_io SRAM_ADDR[1] 80   # SA1
 set_io SRAM_ADDR[2] 81   # SA2

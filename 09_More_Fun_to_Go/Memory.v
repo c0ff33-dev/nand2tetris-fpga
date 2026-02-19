@@ -39,15 +39,15 @@ module Memory(
     input [15:0] inRAM, // BRAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
-    input [15:0] inIO2, // unassigned
-    input [15:0] inIO3, // unassigned
-    input [15:0] inIO4, // KBD (4100) // originally SPI
+    input [15:0] inIO2, // unassigned // previously UART_TX (4098)
+    input [15:0] inIO3, // unassigned // previously UART_RX (4099)
+    input [15:0] inIO4, // SPI (4100)
     input [15:0] inIO5, // SRAM_A (4101)
-    input [15:0] inIO6, // SRAM_D instruction (4102)
+    input [15:0] inIO6, // SRAM_D (4102)
     input [15:0] inIO7, // GO (4103)
-    input [15:0] inIO8, // unassigned
-    input [15:0] inIO9, // unassigned
-    input [15:0] inIOA, // unassigned
+    input [15:0] inIO8, // unassigned // previously LCD8 (4104)
+    input [15:0] inIO9, // unassigned // previously LCD16 (4105)
+    input [15:0] inIOA, // unassigned // previously RTP (4106)
     input [15:0] inIOB, // DEBUG0 (4107)
     input [15:0] inIOC, // DEBUG1 (4108)
     input [15:0] inIOD, // DEBUG2 (4109)
@@ -99,7 +99,7 @@ module Memory(
         (address>= 4112 & address <= 16383) ? inIO6 :
 
         // KBD at nand2tetris standard address
-        (address==24576) ? inIO4 :
+        (address==24576) ? inIO8 :
 
         inRAM);
 
