@@ -15,21 +15,11 @@
 
 // Put your code here:
 (LOOP)
-@4100
-D=M // store input
+@BUT // store button state
+D=M // can also NOT here for push to illuminate
 
-@97
-D=D-A // check == 0x61 ("a")
-@BREAK
-D;JEQ
+@LED // update LED state
+M=D 
 
 @LOOP
-0;JMP
-
-(BREAK)
-@LED
-M=1
-
-(HALT)
-@HALT
 0;JMP
