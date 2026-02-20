@@ -135,6 +135,8 @@ D=A
 @R0
 M=D // R0=read0
 
+// sim may be unhappy with accesses to uninit'd memory values in some cases
+// not an issue on hardware but make sure it is all init'd nonetheless
 @R1
 M=0 // init spi_byte=0x0
 @R2
@@ -146,6 +148,8 @@ M=0 // init write_idx, start at 0x0
 M=0 // init odd_even
 @R5
 M=0 // init spi_sum
+@R6
+M=0 // init inner_idx
 
 @wait
 0;JMP // wait for SPI
@@ -219,17 +223,17 @@ M=D // DEBUG2=spi_sum
 @R3
 D=M // D=write_idx
 @SRAM_A 
-M=D // SRAM_A=write_idx
+M=D // SRAM_A=write_idx // FIXME: SRAM_A is correctly set to 0 here
 
 @R5
-D=M // D=spi_sum
-@SRAM_D 
-M=D // SRAM[write_idx]=spi_sum
+D=M // D=spi_sum // FIXME: D has correct first SPI byte here
+@SRAM_D
+M=D // SRAM[write_idx]=spi_sum // FIXME: SRAM_D write never happens because phase counter has stopped?!
 
 @R3 // will overflow ALU so don't use in cmp
 M=M+1 // write_idx++ (still works all the way to 0xFFFF)
 @R6 // reset at 0x7FFF (15 bits for ALU cmp)
-M=M+1 // inner_idx++
+M=M+1 // inner_idx++ 
 D=M // copy inner_idx
 
 @R4
@@ -238,7 +242,7 @@ M=M-1 // odd_even-- (reset)
 @R1
 M=0 // spi_byte=0x0 (reset)
 
-@32767 // inner loop word limit (0x7FFF)
+@3 // inner loop word limit (0x7FFF) // DEBUG: limit to 3 x 2 words (6 for leds.asm), originally 32767
 D=D-A // inner_idx
 @break_inner
 D;JEQ

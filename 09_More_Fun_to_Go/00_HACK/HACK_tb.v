@@ -8,6 +8,10 @@ module HACK_tb();
     wire [1:0] LED;
     // wire UART_TX;
     // wire UART_RX;
+    wire SPI_SDO;
+    wire SPI_SDI;
+    wire SPI_SCK;
+    wire SPI_CSX;
     wire [17:0] SRAM_ADDR;
     wire [15:0] SRAM_DATA;
     wire SRAM_WEX;
@@ -81,6 +85,10 @@ module HACK_tb();
         .CLK(CLK),             // external clock 100 MHz
         .BUT(BUT),             // user button  ("pushed down" == 0) ("up" == 1)
         .LED(LED),             // leds (0 off, 1 on)
+        .SPI_SDO(SPI_SDO),     // SPI Serial Data Out
+        .SPI_SDI(SPI_SDI),     // SPI Serial Data In
+        .SPI_SCK(SPI_SCK),     // SPI Serial Clock
+        .SPI_CSX(SPI_CSX),     // SPI Chip Select NOT
         .SRAM_ADDR(SRAM_ADDR), // SRAM address 18 Bit = 256K
         .SRAM_DATA(SRAM_DATA), // SRAM data 16 Bit
         .SRAM_WEX(SRAM_WEX),   // SRAM Write Enable NOT
@@ -193,7 +201,58 @@ module HACK_tb();
         end
     endtask
 
-    // COPILOT: please implement SPI emulation same as 06_IO_Devices/00_HACK/HACK_tb.v
+    // ============================================================
+    // SPI Flash Emulator (W25Q16BV)
+    // ============================================================
+    reg spi_sleep=1; // SDI is floating (z) when sleep enabled
+    reg [31:0] spi_cmd=0;
+    reg [95:0] spi=0; // 96 = size of largest value in tests
+    assign SPI_SDI = (SPI_CSX | spi_sleep) ? 1'bz:spi[95];
+
+    // simulate the SPI busy signal
+    reg [2:0] busyCount=0;
+    reg spi_reset=0;
+    reg spi_init=1;
+    wire spi_busy;
+    assign spi_busy = ~spi_init;
+    always @(posedge CLK) // override init state
+        if (n<10) begin
+            busyCount <= 0;
+            spi_init <= 1;
+        end
+    always @(negedge (SPI_SCK)) begin
+        if (spi_init==1) begin
+            spi_init <= 0; // don't inc
+            busyCount <= busyCount + 3'd1;
+        end
+        else if (busyCount==3'd7) begin
+            spi_init <= 1;
+            busyCount <= 0;
+        end
+        else
+            busyCount <= busyCount + 3'd1;
+    end
+
+    always @(posedge (SPI_SCK)) begin
+        if (spi_busy|busyCount==0) begin
+            spi <= {spi[95:0],1'b0}; // << 1 (BitShift8L(1))
+            spi_cmd <= {spi_cmd[30:0],SPI_SDO}; // inject LSB (BitShift8L(2))
+        end
+    end
+
+    // simulate the slave SPI buffer
+    always @(posedge (SPI_CSX))
+        spi_cmd <= 0;
+    always @(spi_cmd) begin
+        // should match after last SCK update is read in
+        if (spi_cmd==32'h000000AB) spi_sleep <= 0; // wake
+        if (spi_cmd==32'h000000B9) spi_sleep <= 1; // sleep
+        if (spi_cmd==32'h03040000) spi <= {"SPI! 123", 32'd0}; // pad to the right so there aren't leading zeroes
+        if (spi_cmd==32'h03010000) spi <= 96'h1001_FC10_1000_E308_0000_EA87; // leds.asm binary
+    end
+
+    integer n=0;
+    always @(posedge CLK) n=n+1;
 
     initial begin
         $dumpfile("HACK_tb.vcd");

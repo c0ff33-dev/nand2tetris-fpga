@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Wed Feb 18 08:59:08 2026
+[*] Fri Feb 20 13:24:48 2026
 [*]
-[dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.vcd"
-[dumpfile_mtime] "Wed Feb 18 08:58:30 2026"
-[dumpfile_size] 138384418
-[savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_Hack/HACK_tb.gtkw"
-[timestart] 5262966100
+[dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_HACK/HACK_tb.vcd"
+[dumpfile_mtime] "Fri Feb 20 13:14:20 2026"
+[dumpfile_size] 151675456
+[savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_HACK/HACK_tb.gtkw"
+[timestart] 71485000
 [size] 2560 1345
-[pos] 900 0
-*-17.169628 5308000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 744 -23
+*-18.969627 74750000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [treeopen] HACK_tb.HACK.ram.
@@ -29,6 +29,13 @@ HACK_tb.HACK.outLED[15:0]
 @28
 HACK_tb.HACK.cpu.reset
 @200
+-SPI
+@28
+HACK_tb.HACK.SPI_CSX
+HACK_tb.HACK.SPI_SCK
+HACK_tb.HACK.SPI_SDI
+HACK_tb.HACK.SPI_SDO
+@200
 -KBD
 @28
 HACK_tb.HACK.PS2_CLK
@@ -36,40 +43,22 @@ HACK_tb.HACK.PS2_DATA
 @22
 HACK_tb.HACK.ps2.o_data[23:0]
 HACK_tb.HACK.kbd.o_data[15:0]
-HACK_tb.HACK.kbd_r.out[15:0]
 @200
 -SRAM
 @28
 HACK_tb.HACK.clk
-@29
 HACK_tb.HACK.clkVGA
 @24
 HACK_tb.HACK.phase[2:0]
 @28
-HACK_tb.HACK.CLK
 HACK_tb.HACK.loadIO5
 @24
-HACK_tb.HACK.sram_a[15:0]
 HACK_tb.HACK.inIO5[15:0]
 HACK_tb.HACK.SRAM_ADDR[17:0]
 HACK_tb.HACK.SRAM_DATA[15:0]
-@22
-HACK_tb.HACK.sram_data.dataOut[15:0]
-@24
 HACK_tb.HACK.inM[15:0]
-HACK_tb.HACK.snap_inM_pos[15:0]
-HACK_tb.HACK.snap_inM_neg[15:0]
 HACK_tb.HACK.outM[15:0]
-@22
-HACK_tb.HACK.snap_outM[15:0]
-@28
-HACK_tb.HACK.writeM
-@24
 HACK_tb.HACK.cpu.addressM[15:0]
-@28
-HACK_tb.HACK.cpu.load_d
-@24
-HACK_tb.HACK.cpu.dout[15:0]
 @28
 HACK_tb.SRAM_OEX
 HACK_tb.SRAM_WEX
@@ -94,22 +83,26 @@ HACK_tb.HACK.inIO7[15:0]
 @24
 HACK_tb.HACK.pc[15:0]
 @28
-HACK_tb.HACK.cpu.load_d
 HACK_tb.HACK.cpu.load_a
+HACK_tb.HACK.cpu.load_d
+@23
+HACK_tb.HACK.cpu.dout[15:0]
+@28
 HACK_tb.HACK.cpu.jmp
-@22
-HACK_tb.HACK.cpu.instruction[15:0]
 @24
+HACK_tb.HACK.cpu.instruction[15:0]
 HACK_tb.HACK.snap_instr[15:0]
 @200
 -DEBUG
+@22
+HACK_tb.HACK.ram.ram0.ram_low.address[7:0]
 @24
-HACK_tb.debug_sram0[15:0]
-HACK_tb.debug_sram1[15:0]
-HACK_tb.debug_sram2[15:0]
-HACK_tb.debug_sram3[15:0]
-HACK_tb.debug_sram_p1_0[15:0]
-HACK_tb.debug_sram_p1_1[15:0]
-HACK_tb.debug_sram_p1_2[15:0]
+HACK_tb.HACK.ram.ram0.ram_low.out[15:0]
+@22
+HACK_tb.HACK.inIOB[15:0]
+HACK_tb.HACK.inIOC[15:0]
+HACK_tb.HACK.inIOD[15:0]
+HACK_tb.HACK.inIOE[15:0]
+HACK_tb.HACK.inIOF[15:0]
 [pattern_trace] 1
 [pattern_trace] 0

@@ -15,10 +15,6 @@ These other/similar projects may be of interest for research purposes or board a
 
 - `SRAM_A/D` now supports multiple updates per cycle: most updates are performed during `clk negedge` and expressed to CPU when it updates in `clk posedge` as normal.
 
-## Memory Map
-
-// COPILOT: Complete this section with notes from Memory.v
-
 ## Upload Bitstream & Software
 
 Note: Don't conflate the flash memory layout/offsets with the `SRAM` layout/offsets which also happens to use 64KB blocks. For flash the first page (`0x0000-0xFFFF`) is reserved for FPGA configuration data including the first program (`ROM.hack`) in the 512 byte bootloader enclave (`ROM.v`), though in practice this program could also be any small test program. The 2nd page starting at offset `0x10000` contains the application code which the bootloader will copy into the first page (`0x0000-0xFFFF`) of `SRAM`.
@@ -35,3 +31,14 @@ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make uploa
 ## Changelog
 
 // COPILOT: Assume all content in 09_More_Fun_to_Go is new or modified, if not mentioned previously in this doc add it to this section. Unlike other COPILOT directives you should leave this one in place until explicitly told otherwise.
+
+- **HACK.v** – Top-level module rewritten: removed UART/LCD/RTP peripherals, added VGA (640×480), PS/2 keyboard, 8-phase SRAM arbitration with pipelined snapshots, and KBD register at IO8 (address 4104) aliased to nand2tetris standard 0x6000.
+- **Memory.v** – Memory map updated: HEAP range (4112–16383) routed to SRAM\_A/SRAM\_D, KBD at nand2tetris standard address 24576, UART/LCD/RTP IO slots marked unassigned.
+- **SRAM\_D.v** – New SRAM data controller with phase-aware read/write, combinational InOut bus, and multi-phase output latching (instruction fetch / VGA / data).
+- **Clock25\_Reset20.v** – New clock/reset module: generates 25 MHz VGA clock, 6.25 MHz system clock, 8-phase counter, and ~20 µs POR from 100 MHz external clock.
+- **00\_HACK/HACK\_tb.v** – Testbench rewritten: added SRAM simulation (64 K + 16 K words), VGA framebuffer data verification, PS/2 keyboard emulator (scancode frame transmitter), SPI flash emulator, and expanded test scenarios.
+- **00\_HACK/Include.v** – Updated include list: references new 09 modules (Clock25\_Reset20, HACK, Memory, SRAM\_D) and new IO devices (Keyboard, PS2, VGA).
+- **00\_HACK/iCE40HX1K-EVB.pcf** – Pin constraints updated: removed UART/LCD/RTP pins, added PS2\_CLK and PS2\_DATA pins.
+- **01\_IO\_Devices/VGA.v** – New VGA controller: 640×480 @ 60 Hz, 25 MHz pixel clock, 16-bit word-based framebuffer reads, monochrome output.
+- **01\_IO\_Devices/PS2.v** – New PS/2 receiver: clock-domain crossing, 11-bit frame deserializer, scancode output.
+- **01\_IO\_Devices/Keyboard.v** – New PS/2-to-ASCII converter: scancode-to-keycode lookup, make/break handling, nand2tetris-compatible key codes.

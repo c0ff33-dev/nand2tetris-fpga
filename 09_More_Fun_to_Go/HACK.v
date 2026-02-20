@@ -228,11 +228,12 @@ module HACK(
         .reset(RST)
     );
 
-    // FIXME: boot.asm does not appear to work
-    // FIXME: emulate SPI / check more programs?
-    // - leds/mult/memory still working (sram_* untested)
-    // - hello/echo working
-    // - cat/buffer requires SPI emulation
+    // FIXME: limited boot.asm to 6 words so it sims
+    // FIXME: SPI bytes are read in but not written cuz phase counter stopped?
+    // - leds/mult/memory working
+    // - sram boot/go/run/mini_test.asm working
+    // - hello/echo.asm working
+    // - cat/buffer.asm working
 
     // GO (4103): emit instruction from BRAM/SRAM
     GO go(
