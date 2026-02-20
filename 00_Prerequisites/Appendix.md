@@ -125,9 +125,10 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make && make upload
 ```
 
-### Check LC utilization
+### Check LC utilization & timing
 
 ```
-# near top of report
-$ apio build --verbose-pnr
+$ apio clean && apio build --verbose-pnr > log.txt
+$ grep -ie "ICESTORM_LC:  " log.txt
+$ grep -ie "frequency" log.txt
 ```

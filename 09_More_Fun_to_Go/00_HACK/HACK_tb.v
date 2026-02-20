@@ -73,9 +73,9 @@ module HACK_tb();
 
     wire VGA_HS;
     wire VGA_VS;
-    wire [3:0] VGA_R;
-    wire [3:0] VGA_G;
-    wire [3:0] VGA_B;
+    wire [2:0] VGA_R;
+    wire [2:0] VGA_G;
+    wire [2:0] VGA_B;
     wire PS2_DATA;
     reg PS2_CLK_OUT;
     pullup(PS2_DATA); // open-drain emulation
@@ -95,15 +95,13 @@ module HACK_tb();
         .SRAM_OEX(SRAM_OEX),   // SRAM Output Enable NOT
         .SRAM_CSX(SRAM_CSX),   // SRAM Chip Select NOT
         .PS2_CLK(PS2_CLK_OUT), // PS/2 clock (external)
-        .PS2_DATA(PS2_DATA)    // PS/2 data 
-        
+        .PS2_DATA(PS2_DATA),   // PS/2 data
+        .VGA_R(VGA_R),         // VGA RGB
+        .VGA_G(VGA_G),         // VGA RGB
+        .VGA_B(VGA_B),         // VGA RGB   
+        .VGA_HS(VGA_HS),       // VGA horizontal sync   
+        .VGA_VS(VGA_VS)        // VGA vertical sync
     );
-
-    assign VGA_HS = HACK.VGA_HS;
-    assign VGA_VS = HACK.VGA_VS;
-    assign VGA_R = HACK.VGA_R;
-    assign VGA_G = HACK.VGA_G;
-    assign VGA_B = HACK.VGA_B;
 
     // Simulate
     always #0.5 CLK = ~CLK; // 100 MHz

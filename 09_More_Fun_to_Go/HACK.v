@@ -25,7 +25,12 @@ module HACK(
     output SRAM_OEX,         // SRAM Output Enable NOT
     output SRAM_CSX,         // SRAM Chip Select NOT
     input PS2_CLK,           // external clock from PS/2
-    input PS2_DATA           // external data from PS/2
+    input PS2_DATA,          // external data from PS/2
+    output [2:0] VGA_R,      // VGA RGB
+    output [2:0] VGA_G,      // VGA RGB
+    output [2:0] VGA_B,      // VGA RGB   
+    output VGA_HS,           // VGA horizontal sync   
+    output VGA_VS            // VGA vertical sync
 );
     
     wire clk,clkVGA,writeM,loadRAM,clkRST,RST;
@@ -244,9 +249,8 @@ module HACK(
     // VGA - Video graphics adapter 640x480 @ 50Hz
     // vga_addr is stable for 16 clkVGA/4 clk cycles 
     wire [12:0] vga_addr;
+    wire [3:0] vga_r, vga_g, vga_b;
     reg [15:0] vga_data = 16'd0;
-    wire [3:0] VGA_R, VGA_G, VGA_B;
-    wire VGA_HS, VGA_VS;
     
     // latch inIO6 during phase 3 for VGA
     always @(posedge CLK) begin
@@ -256,17 +260,24 @@ module HACK(
             vga_data <= inIO6;
     end
     
+    // outputs vga_addr to drive SRAM_A during phase 2:3
+    // outputs hsync/vsync/rgb signals for VGA pins
     VGA vga(
         .i_clk(clkVGA),
         .i_rst(RST),
         .o_addr(vga_addr),
         .i_data(vga_data),
-        .o_vga_r(VGA_R),
-        .o_vga_g(VGA_G),
-        .o_vga_b(VGA_B),
+        .o_vga_r(vga_r),
+        .o_vga_g(vga_g),
+        .o_vga_b(vga_b),
         .o_vga_hs(VGA_HS),
         .o_vga_vs(VGA_VS)
     );
+
+    // trim LSB for RGB as iCE40HX1K-EVB only uses 3 bit RGB
+    assign VGA_R = vga_r[2:0];
+    assign VGA_G = vga_r[2:0];
+    assign VGA_B = vga_r[2:0];
 
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;
@@ -327,12 +338,13 @@ module HACK(
         .out(inIOE)
     );
 
-    // DEBUG4 (4111)
-    Register debug4(
-        .clk(clk),
-        .in(outM),
-        .load(loadIOF),
-        .out(inIOF)
-    );
+    // ran out of LCs but DEBUG4 not used in any programs
+    // // DEBUG4 (4111)
+    // Register debug4(
+    //     .clk(clk),
+    //     .in(outM),
+    //     .load(loadIOF),
+    //     .out(inIOF)
+    // );
 
 endmodule
