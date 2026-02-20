@@ -25,10 +25,10 @@
 // current memory layout
 // [BRAM] registers: 0-15 (same)
 // [BRAM] "STATIC": 16-255 incl (same)
-// [BRAM] "STACK": 256-1023 incl (smaller)
-// [SRAM] "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl
-// [SRAM] "SCREEN: nil (removed) -- share a bus with SRAM for InOut?
-// [VIRT] "KBD": register // label only used in Fill.asm
+// [BRAM] "STACK": 256-1023 incl (smaller) // TODO: can increase back to 2047?
+// [SRAM] "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl // TODO: inc to original size?
+// [SRAM] "SCREEN: nil (removed) // label only used in Fill/Rect.asm // TODO: add VRAM range/mapping
+// [VIRT] "KBD": register // label only used in Fill/Keyboard.asm
 // [VIRT] "IO": 4096-4111 (new)
 
 `default_nettype none
@@ -93,10 +93,10 @@ module Memory(
         (address==4110) ? inIOE :
         (address==4111) ? inIOF :
         
-        // TODO: can leave stack on BRAM and move heap over to SRAM as well?
         // route HEAP to SRAM_D as well
         (address>= 4112 & address <= 16383) ? inIO6 :
 
+        // TODO: probably need to remap this
         // KBD at nand2tetris standard address
         (address==24576) ? inIO8 :
 

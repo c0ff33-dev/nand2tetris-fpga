@@ -228,13 +228,6 @@ module HACK(
         .reset(RST)
     );
 
-    // FIXME: limited boot.asm to 6 words so it sims
-    // FIXME: SPI bytes are read in but not written cuz phase counter stopped?
-    // - leds/mult/memory working
-    // - sram boot/go/run/mini_test.asm working
-    // - hello/echo.asm working
-    // - cat/buffer.asm working
-
     // GO (4103): emit instruction from BRAM/SRAM
     GO go(
         .clk(clk),
@@ -284,6 +277,7 @@ module HACK(
         .i_ps2_clk(PS2_CLK),
         .o_data(ps2_data)
     );
+
     // Keyboard - PS2 to ASCII converter
     wire [15:0] _kbd;
     Keyboard kbd(

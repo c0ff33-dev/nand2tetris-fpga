@@ -56,7 +56,7 @@ module Clock25_Reset20(
     // CLK @ 100 MHz = 10ns per tick
     // 8 phases per 6.25 MHz clk edge
     always @(posedge CLK)
-        if (!low | !start)
+        if (~low & ~start)
             phase <= 3'd0;
         else
             phase <= phase + 3'd1; // phase 0-7
