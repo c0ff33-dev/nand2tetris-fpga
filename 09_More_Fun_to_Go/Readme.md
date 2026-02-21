@@ -65,7 +65,7 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make 
 ❌11_Touch_Test // removed
 ❌12_Tetris // removed
 ❌13_Touch // removed  
-🚧14_Keyboard_Test // hw only // TODO: NYI
+🚧14_Keyboard_Test // hw only // TODO: NYI, dedicated power supply required for PS/2 (5v)
 ```
 
 ## Changelog

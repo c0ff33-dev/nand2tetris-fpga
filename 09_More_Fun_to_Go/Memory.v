@@ -98,15 +98,15 @@ module Memory(
         (address==4104) ? inIO8 :
         (address==4105) ? inIO9 :
         (address==4106) ? inIOA :
-        (address==4107 | address==24576) ? inIOB : // KBD
+        (address==4107 || address==24576) ? inIOB : // KBD
         (address==4108) ? inIOC :
         (address==4109) ? inIOD :
         (address==4110) ? inIOE :
         (address==4111) ? inIOF :
         
         // map HEAP/VRAM to SRAM respectively
-        (address>= 4112 & address <= 16383) ? inIO6 :
-        (address>= 16384 & address <= 24575) ? inIO6 :
+        (address >= 4112 && address <= 16383) ? inIO6 :
+        (address >= 16384 && address <= 24575) ? inIO6 :
 
         // else BRAM
         inRAM);
@@ -121,13 +121,13 @@ module Memory(
     assign loadIO2 = (address==4098) ? load : 0;
     assign loadIO3 = (address==4099) ? load : 0;
     assign loadIO4 = (address==4100) ? load : 0;
-    assign loadIO5 = (address==4101 | (address>= 4112 & address <= 16383)) ? load : 0;
-    assign loadIO6 = (address==4102 | (address>= 4112 & address <= 16383)) ? load : 0;
+    assign loadIO5 = (address==4101 || (address >= 4112 && address <= 24575)) ? load : 0;
+    assign loadIO6 = (address==4102 || (address >= 4112 && address <= 24575)) ? load : 0;
     assign loadIO7 = (address==4103) ? load : 0;
     assign loadIO8 = (address==4104) ? load : 0;
     assign loadIO9 = (address==4105) ? load : 0;
     assign loadIOA = (address==4106) ? load : 0;
-    assign loadIOB = (address==4107) ? load : 0;
+    assign loadIOB = (address==4107 || address==24576) ? load : 0;
     assign loadIOC = (address==4108) ? load : 0;
     assign loadIOD = (address==4109) ? load : 0;
     assign loadIOE = (address==4110) ? load : 0;

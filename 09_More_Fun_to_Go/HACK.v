@@ -19,7 +19,7 @@ module HACK(
     input  SPI_SDI,          // SPI Serial Data In
     output SPI_SCK,          // SPI Serial Clock
     output SPI_CSX,          // SPI Chip Select NOT
-    output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable)
+    output [17:0] SRAM_ADDR, // SRAM address 18 Bit = 256KB (64KB addressable per block)
     inout  [15:0] SRAM_DATA, // SRAM data 16 Bit
     output SRAM_WEX,         // SRAM Write Enable NOT
     output SRAM_OEX,         // SRAM Output Enable NOT
@@ -206,7 +206,7 @@ module HACK(
     // because inIO5 routes to outM can't directly use outM for any inputs here
     assign inIO5 = RST ? 16'b0 :
                 (phase==2 || phase==3) ? {3'b010, vga_addr} :
-                (phase>=4 && phase<=6 && ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
+                (phase>=4 && phase<=6 && !inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
                 (phase>=4 && phase<=6) ? addressM : // last CPU address (run mode)
                 (!inIO7[0] ? sram_a : pc); // default to instruction fetch (phase 0/1 + posedge)
 
@@ -215,7 +215,7 @@ module HACK(
     // this effectively adds 65536 offset to ~data~ addresses (VRAM, HEAP, etc)
     // data copied by boot.asm during boot mode will be read/written from/to first page
     assign SRAM_ADDR = (phase>=2 && phase<=3) ? {2'b01, inIO5} : 
-                       (inIO7[0] && phase>=2) ? {2'b01, inIO5} : 
+                       (inIO7[0] && phase>=4) ? {2'b01, inIO5} : 
                        {2'b00, inIO5};
 
     SRAM_D sram_data (
@@ -254,6 +254,7 @@ module HACK(
     reg [15:0] vga_data = 16'd0;
 
     // latch inIO6 with data from phase 3 for VGA
+    // wait until inIO6 actually stabilises before pipelining
     always @(posedge CLK) begin
         if (RST)
             vga_data <= 16'd0;
@@ -262,6 +263,8 @@ module HACK(
     end
     
     // FIXME: display appears static but still noise
+    // FIXME: addresses/data appear synced in sim
+    // FIXME: output is still not influenced by screen.asm?
     // outputs vga_addr to drive SRAM_A during phase 2:3
     // outputs hsync/vsync/rgb signals for VGA pins
     VGA vga(

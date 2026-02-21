@@ -78,6 +78,7 @@ module SRAM_D(
     reg [15:0] _out;
 
     // only update values in clk negedge to syncronize with BRAM/ROM updates (CLK for multiple updates)
+    // +1 phase latch latency vs when collected 
     always @(posedge CLK) begin
         if (~clk & (phase==1 & (mode | loadIO7)))
             // emit instruction every negedge in run mode
