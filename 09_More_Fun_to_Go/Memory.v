@@ -23,13 +23,18 @@
 // "KBD": 24576 // 48KB RAM required total
 
 // current memory layout
+
+// stack was only implicitly limited by heap starting address
+// so with HEAP on SRAM stack can use the entire remaining BRAM range
 // [BRAM] registers: 0-15 (same)
 // [BRAM] "STATIC": 16-255 incl (same)
-// [BRAM] "STACK": 256-1023 incl (smaller) // TODO: can increase back to 2047?
-// [SRAM] "HEAP": 1024-3583 incl (smaller) > 4112-16383 incl // TODO: inc to original size?
-// [SRAM] "SCREEN: nil (removed) // label only used in Fill/Rect.asm // TODO: add VRAM range/mapping
-// [VIRT] "KBD": register // label only used in Fill/Keyboard.asm
-// [VIRT] "IO": 4096-4111 (new)
+// [BRAM] "STACK": 256-3583 incl (larger)
+
+// some infrequently used labels not provided in MS assembler
+// [VIRT] "IO": 4096-4111 (new) // FUTURE: could reclaim some more heap by remapping these
+// [SRAM] "HEAP": 4112-16383 incl (smaller) >> 4112-16383 incl (smaller)
+// [SRAM] "SCREEN: 16384-24575 incl (same) // only used in Fill/Rect.asm
+// [VIRT] "KBD": 24576 (same) // only used in Fill/Keyboard.asm
 
 `default_nettype none
 module Memory(
@@ -44,7 +49,7 @@ module Memory(
     input [15:0] inIO5, // SRAM_A (4101)
     input [15:0] inIO6, // SRAM_D (4102)
     input [15:0] inIO7, // GO (4103)
-    input [15:0] inIO8, // unassigned // previously LCD8 (4104)
+    input [15:0] inIO8, // KBD (4104) // previously LCD8 (4104)
     input [15:0] inIO9, // unassigned // previously LCD16 (4105)
     input [15:0] inIOA, // unassigned // previously RTP (4106)
     input [15:0] inIOB, // DEBUG0 (4107)
@@ -87,19 +92,17 @@ module Memory(
         (address==4104) ? inIO8 :
         (address==4105) ? inIO9 :
         (address==4106) ? inIOA :
-        (address==4107) ? inIOB :
+        (address==4107 | address==24576) ? inIOB : // KBD
         (address==4108) ? inIOC :
         (address==4109) ? inIOD :
         (address==4110) ? inIOE :
         (address==4111) ? inIOF :
         
-        // route HEAP to SRAM_D as well
+        // map HEAP/VRAM to SRAM respectively
         (address>= 4112 & address <= 16383) ? inIO6 :
+        (address>= 16384 & address <= 24575) ? inIO6 :
 
-        // TODO: probably need to remap this
-        // KBD at nand2tetris standard address
-        (address==24576) ? inIO8 :
-
+        // else BRAM
         inRAM);
 
     // mux load via address (memory mapped IO or RAM)
