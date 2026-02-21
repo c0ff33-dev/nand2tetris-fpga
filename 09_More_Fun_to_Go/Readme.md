@@ -30,24 +30,34 @@ These other/similar projects may be of interest for research purposes or board a
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 
 # Jack application code can be flashed straight to offset 0x10000 as before
-# only some tests/sims ported where appropriate or changes required
+# only some tests ported where appropriate or changes required
+# OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
 $ cd ~/src/nand2tetris-fpga/04_Machine_Language && make upload # leds.asm
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/03_Sys_Test && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/01_Sys_Test && make && make upload
 
-# TODO: when VGA working
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make && make upload
+# FIXME: VGA broken - what data is being read that it changes? (more obvious with loops)
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/02_String_Test && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make upload
 
 # TODO: when implemented
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload
 
-# TODO: check in sim
-# FIXME: simplest possible Jack program not working in sim either
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/03_Sys_Test && make && cd ../../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio sim
-05_Array_Test
-06_Math_test
+# TODO: testing matrix
+✅01_GPIO_Test
+❌02_UART_Test // removed
+✅03_Sys_Test / SysTest
+⚠️04_Memory_Test / MemoryTest // TODO: need special ROM sim
+⚠️05_Array_Test / ArrayTest // TODO: need special ROM sim
+⚠️06_Math_test / MathTest // TODO: need special ROM sim
+🚧07_String_Test / StringTest // FIXME: ported but broken
+❌08_StdIO_Test // removed
+🚧09_Screen_Test / ScreenTest
+🚧10_Output_Test / OutputTest
+❌11_Touch_Test // removed
+❌12_Tetris // removed
+❌13_Touch // removed  
+🚧KeyboardTest
 ```
 
 ## Changelog
