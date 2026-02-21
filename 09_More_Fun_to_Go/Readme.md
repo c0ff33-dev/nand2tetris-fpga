@@ -30,9 +30,10 @@ These other/similar projects may be of interest for research purposes or board a
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 
 # Jack application code can be flashed straight to offset 0x10000 as before
+# only some tests/sims ported where appropriate or changes required
 $ cd ~/src/nand2tetris-fpga/04_Machine_Language && make upload # leds.asm
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload # wait() timing will be slower
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/03_Sys_Test && make && make upload
 
 # TODO: when VGA working
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make && make upload
@@ -42,7 +43,8 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make u
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload
 
 # TODO: check in sim
-# FIXME: probably not compatible with old libs? (stuck in Sys.init loop?)
+# FIXME: simplest possible Jack program not working in sim either
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/03_Sys_Test && make && cd ../../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio sim
 05_Array_Test
 06_Math_test

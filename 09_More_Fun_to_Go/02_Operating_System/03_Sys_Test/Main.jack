@@ -3,8 +3,10 @@ class Main{
     function void main() {
         while(true) {
             do GPIO.writeLed(GPIO.readLed()+1);
-            do Sys.wait(1000); // change to 1 for sim
+            // reduced to match slower CPU clock speed
+            do Sys.wait(250);
         }
         return;
     }
+
 }
