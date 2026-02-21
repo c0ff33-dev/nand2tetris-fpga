@@ -25,7 +25,7 @@ module HACK_tb();
     // init the array
     integer i;
     initial begin
-        for (i = 0; i < 65536+16383+1; i = i + 1) begin
+        for (i = 0; i < 65536+24576; i = i + 1) begin
             sram[i] = 16'd0;
         end
         // DEBUG
@@ -45,14 +45,14 @@ module HACK_tb();
         // VGA pattern words at framebuffer base (row 0, cols 128..255) in run-mode SRAM page
         // bit=0 -> white pixel, bit=1 -> black pixel
         // data page + VRAM offset
-        sram[65536+16384+8]  = 16'hAAAA;
-        sram[65536+16384+9]  = 16'hBBBB;
-        sram[65536+16384+10] = 16'hCCCC;
-        sram[65536+16384+11] = 16'hDDDD;
-        sram[65536+16384+12] = 16'hEEEE;
-        sram[65536+16384+13] = 16'hFFFF;
-        sram[65536+16384+14] = 16'h1111;
-        sram[65536+16384+15] = 16'h2222;
+        sram[65536+16384+8]  = 16'hAAAA; // 43690
+        sram[65536+16384+9]  = 16'hBBBB; // 48059
+        sram[65536+16384+10] = 16'hCCCC; // 52428
+        sram[65536+16384+11] = 16'hDDDD; // 56797
+        sram[65536+16384+12] = 16'hEEEE; // 61166
+        sram[65536+16384+13] = 16'hFFFF; // 65535
+        sram[65536+16384+14] = 16'h1111; // 4369
+        sram[65536+16384+15] = 16'h2222; // 8738
 
         sram[65536+4112] = 16'd999;
         sram[65536+5000] = 16'd123;

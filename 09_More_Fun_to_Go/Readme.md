@@ -31,6 +31,7 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hac
 # Jack application code can be flashed straight to offset 0x10000 as before
 # only some tests ported where appropriate or changes required
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload # Jack equivalent of leds.asm
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload # Jack equivalent of Blinky.v
 
 # HACK_OS sims - can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
@@ -42,7 +43,7 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
-# FIXME: VGA broken - what data is being read that it changes? (more obvious with loops)
+# FIXME: VGA broken
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make && make upload # TODO: NYI
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make && make upload # TODO: NYI (ScreenExt)

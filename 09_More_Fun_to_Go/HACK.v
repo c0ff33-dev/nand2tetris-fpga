@@ -253,23 +253,22 @@ module HACK(
     wire [3:0] vga_r, vga_g, vga_b;
     reg [15:0] vga_data = 16'd0;
 
-    // latch inIO6 during phase 3 for VGA
+    // latch inIO6 with data from phase 3 for VGA
     always @(posedge CLK) begin
         if (RST)
             vga_data <= 16'd0;
-        else if (phase==3)
+        else if (phase==4)
             vga_data <= inIO6;
     end
     
-    // FIXME: sending 16'hFFFF works as vga_data works so input/SRAM read is scuffed
-    // FIXME: vga_data stuck at 4112 (SRAM_ADDR), smh
+    // FIXME: display appears static but still noise
     // outputs vga_addr to drive SRAM_A during phase 2:3
     // outputs hsync/vsync/rgb signals for VGA pins
     VGA vga(
         .i_clk(vga_clk),
         .i_rst(RST),
         .o_addr(vga_addr),
-        .i_data(vga_data),
+        .i_data(vga_data), // vga_data // 16'hFFFF // 16'h0
         .o_vga_r(vga_r),
         .o_vga_g(vga_g),
         .o_vga_b(vga_b),
