@@ -22,8 +22,17 @@
 // "SCREEN": 16384-24575 incl
 // "KBD": 24576 // 48KB RAM required total
 
-// current memory layout
+// DONE: import original Output.jack
+// DONE: import original Screen.jack
+// DONE: import original Keyboard.jack
 
+// TODO: fork Memory.jack for new ranges (original has constants)
+// TODO: fork Sys.jack for for new/reduced classes (wait timing needs to be hw tuned)
+
+// TODO: import original string test
+// TODO: import original screen test
+
+// current memory layout
 // stack was only implicitly limited by heap starting address
 // so with HEAP on SRAM stack can use the entire remaining BRAM range
 // [BRAM] registers: 0-15 (same)

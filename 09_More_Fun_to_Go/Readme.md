@@ -4,7 +4,7 @@ In this section we will pivot back to a more classic Hack implementation using t
 
 Some changes will be needed to support writing pixel data to VRAM which was previously off loaded to `MOD-LCD2.8RTP` in the prior implementation, this board and the corresponding `LCD`/`RTP` controllers/drivers are no longer used.
 
-If a part from previous `HACK` implementation could be carried forward then it is imported as is.
+If a part/class/test from previous `HACK`/Jack implementation could be carried forward then it is imported as is.
 
 The `GateMateA1-EVB` board by Olimex could also be used here as seen in Michael Schröder's [hack-fpga](https://gitlab.com/x653/hack-fpga) project which is roughly comparable in cost to the sum of the parts described above but with far more FPGA resources. If you are seriously looking at doing a project like this yourself I would probably start there next time, there are significant constraints to `iCE40HX1K-EVB` which are abstracted away in more capable boards.
 
@@ -23,6 +23,8 @@ These other/similar projects may be of interest for research purposes or board a
 ## Upload Bitstream & Software
 
 // TODO: all asm working on sim/hw, ready to start testing Jack programs!
+// TODO: final test list for original implementation would be good too
+
 ```
 # build bootloader and copy into revised HACK directory
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
@@ -38,6 +40,12 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make u
 
 # TODO: when implemented
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload
+
+# TODO: check in sim
+# FIXME: doesn't this override boot.asm / probably not compatible with old libs?
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio sim
+05_Array_Test
+06_Math_test
 ```
 
 ## Changelog
