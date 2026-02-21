@@ -29,9 +29,6 @@
 // TODO: fork Memory.jack for new ranges (original has constants)
 // TODO: fork Sys.jack for for new/reduced classes (wait timing needs to be hw tuned)
 
-// TODO: import original string test
-// TODO: import original screen test
-
 // current memory layout
 // stack was only implicitly limited by heap starting address
 // so with HEAP on SRAM stack can use the entire remaining BRAM range

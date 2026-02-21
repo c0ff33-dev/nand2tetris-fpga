@@ -22,8 +22,7 @@ These other/similar projects may be of interest for research purposes or board a
 
 ## Upload Bitstream & Software
 
-// TODO: all asm working on sim/hw, ready to start testing Jack programs!
-// TODO: final test list for original implementation would be good too
+// FUTURE: final test list for original implementation would be good too
 
 ```
 # build bootloader and copy into revised HACK directory
