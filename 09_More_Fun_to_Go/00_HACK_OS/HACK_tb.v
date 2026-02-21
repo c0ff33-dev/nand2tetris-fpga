@@ -279,7 +279,7 @@ module HACK_tb();
         transmit_ps2_frame(ascii_to_scancode(8'h31));  // '1' = 0x16
         #100;
         
-        #700000;  // allow enough time to reach visible VGA area and capture samples
+        #1250000;  // allow enough time for Math.jack
         $display("[RESULT] VGA sampled words=%0d rgb transitions=%0d tb_mismatches=%0d",
                  vga_samples, vga_rgb_edges, vga_tb_mismatches);
         if (vga_samples != 8) begin

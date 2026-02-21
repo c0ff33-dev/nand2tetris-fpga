@@ -275,7 +275,7 @@ module HACK(
         .i_clk(clkVGA),
         .i_rst(RST),
         .o_addr(vga_addr),
-        .i_data(vga_data),
+        .i_data(vga_data), // FIXME: vga_data read is scuffed, sending 16'hFFFF works
         .o_vga_r(vga_r),
         .o_vga_g(vga_g),
         .o_vga_b(vga_b),

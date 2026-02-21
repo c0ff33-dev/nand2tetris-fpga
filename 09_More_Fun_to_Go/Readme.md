@@ -25,38 +25,46 @@ These other/similar projects may be of interest for research purposes or board a
 // FUTURE: final test list for original implementation would be good too
 
 ```
-# build bootloader and copy into revised HACK directory
+# build bootloader, copy into revised HACK directory & upload it (separately from remaining application code)
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 
 # Jack application code can be flashed straight to offset 0x10000 as before
 # only some tests ported where appropriate or changes required
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload # Jack equivalent of leds.asm
+
+# HACK_OS sims - can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
-$ cd ~/src/nand2tetris-fpga/04_Machine_Language && make upload # leds.asm
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/01_Sys_Test && make && make upload
+# some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing
+# 03_Sys_Test needs to be switched to 1ms wait in sim (4-5ms with slower CPU timing)
+
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
 # FIXME: VGA broken - what data is being read that it changes? (more obvious with loops)
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/02_String_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make && make upload # TODO: NYI
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make && make upload # TODO: NYI (ScreenExt)
 
 # TODO: when implemented
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload
 
 # TODO: testing matrix
-✅01_GPIO_Test
+✅01_GPIO_Test // hw only
 ❌02_UART_Test // removed
-✅03_Sys_Test / SysTest
-⚠️04_Memory_Test / MemoryTest // TODO: need special ROM sim
-⚠️05_Array_Test / ArrayTest // TODO: need special ROM sim
-⚠️06_Math_test / MathTest // TODO: need special ROM sim
-🚧07_String_Test / StringTest // FIXME: ported but broken
+✅03_Sys_Test / SysTest // hw + sim
+✅04_Memory_Test / MemoryTest // sim only
+✅05_Array_Test / ArrayTest // sim only
+✅06_Math_Test / MathTest // sim only
+⚠️07_String_Test / StringTest // hw only // FIXME: broken
 ❌08_StdIO_Test // removed
-🚧09_Screen_Test / ScreenTest
-🚧10_Output_Test / OutputTest
+🚧09_Screen_Test / ScreenTest // hw only // TODO: NYI
+🚧10_Output_Test / OutputTest // hw only // TODO: NYI (ScreenExt)
 ❌11_Touch_Test // removed
 ❌12_Tetris // removed
 ❌13_Touch // removed  
-🚧KeyboardTest
+🚧14_Keyboard_Test // hw only // TODO: NYI
 ```
 
 ## Changelog
