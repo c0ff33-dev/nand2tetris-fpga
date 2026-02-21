@@ -7,7 +7,7 @@
 `default_nettype none
 module Clock25_Reset20( 
     input CLK,    // external clock 100 MHz    
-    output clkVGA,// internal clock 25 MHz (VGA only)
+    output vga_clk,// internal clock 25 MHz (VGA only)
     output clk,   // internal clock 6.25 MHz (everything else)
     output reset, // reset signal ~20μs
     output reg [2:0] phase
@@ -29,7 +29,7 @@ module Clock25_Reset20(
 
     // scale down 100 MHz to 25 MHz (1/4)
     // PC itself is clocked so only one update per cycle
-    assign clkVGA = psout[1]; // demux 2nd LSB (1/4) = 25 MHz (40ns)
+    assign vga_clk = psout[1]; // demux 2nd LSB (1/4) = 25 MHz (40ns)
     assign clk = psout[3]; // demux 4th LSB (1/16) = 6.25 MHz (160ns)
 
     // Reset high for first 20μs @ 100 MHz

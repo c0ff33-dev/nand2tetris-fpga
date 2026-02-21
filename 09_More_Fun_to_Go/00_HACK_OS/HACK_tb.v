@@ -20,7 +20,7 @@ module HACK_tb();
 
     // Simulate SRAM 
     // page offset + current memory map max
-    reg [15:0] sram[0:65536+16383];
+    reg [15:0] sram[0:65536+24576];
 
     // init the array
     integer i;
@@ -44,14 +44,15 @@ module HACK_tb();
  
         // VGA pattern words at framebuffer base (row 0, cols 128..255) in run-mode SRAM page
         // bit=0 -> white pixel, bit=1 -> black pixel
-        sram[65536+8]  = 16'hAAAA;
-        sram[65536+9]  = 16'hBBBB;
-        sram[65536+10] = 16'hCCCC;
-        sram[65536+11] = 16'hDDDD;
-        sram[65536+12] = 16'hEEEE;
-        sram[65536+13] = 16'hFFFF;
-        sram[65536+14] = 16'h1111;
-        sram[65536+15] = 16'h2222;
+        // data page + VRAM offset
+        sram[65536+16384+8]  = 16'hAAAA;
+        sram[65536+16384+9]  = 16'hBBBB;
+        sram[65536+16384+10] = 16'hCCCC;
+        sram[65536+16384+11] = 16'hDDDD;
+        sram[65536+16384+12] = 16'hEEEE;
+        sram[65536+16384+13] = 16'hFFFF;
+        sram[65536+16384+14] = 16'h1111;
+        sram[65536+16384+15] = 16'h2222;
 
         sram[65536+4112] = 16'd999;
         sram[65536+5000] = 16'd123;
@@ -111,7 +112,7 @@ module HACK_tb();
     integer vga_tb_mismatches = 0;
     reg [15:0] e_vga_data = 16'h0000;
     reg [11:0] last_vga_rgb = 12'h000;
-    always @(posedge HACK.clkVGA) begin
+    always @(posedge HACK.vga_clk) begin
         if (!HACK.RST && HACK.vga.data_read &&
             (HACK.vga.o_addr >= 8) &&
             (HACK.vga.o_addr <= 15) &&
@@ -127,7 +128,7 @@ module HACK_tb();
                 13'd15: e_vga_data =  16'h2222;
                 default: e_vga_data = 16'h0000;
             endcase
-            if (sram[65536 + HACK.vga.o_addr] !== e_vga_data && sram[65536 + HACK.vga.o_addr] !== last_vga_rgb) begin
+            if (sram[65536+16384+HACK.vga.o_addr] !== e_vga_data && sram[65536+16384+HACK.vga.o_addr] !== last_vga_rgb) begin
                 $display("[ERROR] VGA testbench data mismatch addr=%0d expected=0x%04h got=0x%04h",
                          HACK.vga.o_addr, e_vga_data, sram[65536 + HACK.vga.o_addr]);
                 vga_tb_mismatches = vga_tb_mismatches + 1;

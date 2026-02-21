@@ -83,8 +83,8 @@ module SRAM_D(
             // emit instruction every negedge in run mode
             // and the preceding negedge when transitioning to run mode
             _out <= init ? dataOut : 16'bz;
-        else if (~clk & phase==3)
-            // emit VGA every negedge
+        else if (phase==3)
+            // emit VGA on both edges
             _out <= init ? dataOut : 16'bz;
         else if (phase==5)
             // emit data every negedge for regular output

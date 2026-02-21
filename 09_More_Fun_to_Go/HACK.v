@@ -33,7 +33,7 @@ module HACK(
     output VGA_VS            // VGA vertical sync
 );
     
-    wire clk,clkVGA,writeM,loadRAM,clkRST,RST;
+    wire clk,vga_clk,writeM,loadRAM,clkRST,RST;
     wire loadIO0,loadIO1,loadIO2,loadIO3,loadIO4,loadIO5,loadIO6,loadIO7,loadIO8,loadIO9,loadIOA,loadIOB,loadIOC,loadIOD,loadIOE,loadIOF;
     wire [2:0] phase;
     wire [15:0] inIO1,inIO2,inIO3,inIO4,inIO5,inIO6,inIO7,inIO8,inIO9,inIOA,inIOB,inIOC,inIOD,inIOE,inIOF,outRAM;
@@ -42,7 +42,7 @@ module HACK(
     // 25 MHz internal clock w/ 20μs initial reset period
     Clock25_Reset20 clock(
         .CLK(CLK),      // external 100 MHz clock
-        .clkVGA(clkVGA),// internal clock 25 MHz (VGA only)
+        .vga_clk(vga_clk),// internal clock 25 MHz (VGA only)
         .clk(clk),      // internal clock 6.25 MHz (everything else)
         .reset(clkRST), // reset signal ~20μs
         .phase(phase)
@@ -205,17 +205,18 @@ module HACK(
     // [phase 7] reset during boot/run transition
     // because inIO5 routes to outM can't directly use outM for any inputs here
     assign inIO5 = RST ? 16'b0 :
-                ((phase==2 | phase==3)) ? {3'b010, vga_addr} :
-                ((phase>=4 & phase<=6) & ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
-                ((phase>=4 & phase<=6)) ? addressM : // last CPU address (run mode)
-                // default to instruction fetch (phase 0/1 + posedge)
-                (~inIO7[0] ? sram_a : pc);
+                (phase==2 || phase==3) ? {3'b010, vga_addr} :
+                (phase>=4 && phase<=6 && ~inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
+                (phase>=4 && phase<=6) ? addressM : // last CPU address (run mode)
+                (!inIO7[0] ? sram_a : pc); // default to instruction fetch (phase 0/1 + posedge)
 
     // K6R4016V1D uses 18 bits but we address 16 LSB
-    // [run mode only] go_sram_addr is offset by 0x10000 (64KB data page)
+    // go_sram_addr is offset by 0x10000 (64KB data page) in run mode + all VGA reads
     // this effectively adds 65536 offset to ~data~ addresses (VRAM, HEAP, etc)
     // data copied by boot.asm during boot mode will be read/written from/to first page
-    assign SRAM_ADDR = (inIO7[0] & phase>=2) ? {2'b01, inIO5} : {2'b00, inIO5};
+    assign SRAM_ADDR = (phase>=2 && phase<=3) ? {2'b01, inIO5} : 
+                       (inIO7[0] && phase>=2) ? {2'b01, inIO5} : 
+                       {2'b00, inIO5};
 
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
@@ -247,20 +248,11 @@ module HACK(
     );
 
     // VGA - Video graphics adapter 640x480 @ 50Hz
-    // vga_addr is stable for 16 clkVGA/4 clk cycles 
+    // vga_addr is stable for 16 vga_clk/4 clk cycles 
     wire [12:0] vga_addr;
     wire [3:0] vga_r, vga_g, vga_b;
     reg [15:0] vga_data = 16'd0;
 
-    // FIXME: no effect
-    // reg [1:0] vgaPhase = 2'd0; // 4 phases, 0-3
-    // always @(posedge clk) begin
-    //     if (RST)
-    //         vgaPhase <= 2'd0;
-    //     else
-    //         vgaPhase <= vgaPhase + 2'd1;
-    // end
-    
     // latch inIO6 during phase 3 for VGA
     always @(posedge CLK) begin
         if (RST)
@@ -269,13 +261,15 @@ module HACK(
             vga_data <= inIO6;
     end
     
+    // FIXME: sending 16'hFFFF works as vga_data works so input/SRAM read is scuffed
+    // FIXME: vga_data stuck at 4112 (SRAM_ADDR), smh
     // outputs vga_addr to drive SRAM_A during phase 2:3
     // outputs hsync/vsync/rgb signals for VGA pins
     VGA vga(
-        .i_clk(clkVGA),
+        .i_clk(vga_clk),
         .i_rst(RST),
         .o_addr(vga_addr),
-        .i_data(vga_data), // FIXME: vga_data read is scuffed, sending 16'hFFFF works
+        .i_data(vga_data),
         .o_vga_r(vga_r),
         .o_vga_g(vga_g),
         .o_vga_b(vga_b),

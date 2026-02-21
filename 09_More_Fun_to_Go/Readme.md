@@ -36,7 +36,7 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upl
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
 # some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing
 # 03_Sys_Test needs to be switched to 1ms wait in sim (4-5ms with slower CPU timing)
-
+# some dead refs to UART in assembler labels but shouldn't affect anything (removed in Jack code)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
