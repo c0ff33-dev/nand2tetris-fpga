@@ -42,7 +42,7 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make u
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload
 
 # TODO: check in sim
-# FIXME: doesn't this override boot.asm / probably not compatible with old libs?
+# FIXME: probably not compatible with old libs? (stuck in Sys.init loop?)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio sim
 05_Array_Test
 06_Math_test
