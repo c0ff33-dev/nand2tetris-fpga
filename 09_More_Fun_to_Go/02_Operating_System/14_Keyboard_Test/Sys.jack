@@ -52,7 +52,7 @@ class Sys {
         // repeat outer loop duration times
         while (duration > 0) {
             // ~56 cycles from outer to inner loop
-            let count = 400;
+            let count = 100;
 
             // repeat inner loop 50 times per outer loop
             while (count > 0) {
