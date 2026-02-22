@@ -51,7 +51,7 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make && make upload # TODO: NYI (ScreenExt)
 
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make && make upload # TODO: NYI
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make && make upload
 
 # TODO: testing matrix
 ✅01_GPIO_Test // hw only
@@ -62,12 +62,12 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/01_IO_Devices/01_Keyboard && make 
 ✅06_Math_Test / MathTest // sim only
 ✅07_String_Test / StringTest // hw only
 ❌08_StdIO_Test // removed
-🚧09_Screen_Test / ScreenTest // hw only // TODO: NYI
-🚧10_Output_Test / OutputTest // hw only // TODO: NYI (ScreenExt)
+✅09_Screen_Test / ScreenTest // hw only
+🚧10_Output_Test / OutputTest // hw only
 ❌11_Touch_Test // removed
 ❌12_Tetris // removed
 ❌13_Touch // removed  
-🚧14_Keyboard_Test // hw only // TODO: NYI
+✅14_Keyboard_Test // hw only
 ```
 
 ## Changelog
