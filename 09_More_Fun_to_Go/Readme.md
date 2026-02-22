@@ -45,7 +45,7 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hac
 # FUTURE: final test list for original implementation would be good too
 # Application code can be flashed straight to offset 0x10000 as before
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload # Jack equivalent of leds.asm
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload # Jack equivalent of Blinky.v
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload # Jack equivalent of Blinky.v (note: currently Sys.wait() timing is ~4x what it should be)
 
 # HACK_OS sims: can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
