@@ -12,13 +12,6 @@ class Main {
         var String i;
         var int v;
         
-        // initialize VRAM - normally done in Screen.init()
-        let v = 16384;
-        while(v < 24576) {
-            do Memory.poke(v, 0);
-            let v = v + 1;
-        }
-        
         let s = String.new(0); // a zero-capacity string should be supported
         do s.dispose();
 

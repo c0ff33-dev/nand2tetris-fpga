@@ -147,7 +147,7 @@ module HACK(
         .out(inIO1) // memory map
     );
 
-    // FUTURE: not enough logic cells to run UartTX/RX + RTP concurrently
+    // not enough logic cells to run UartTX/RX + RTP concurrently
     // // UART_TX (4098) @ 115200 baud (~14KB/sec)
     // UartTX uartTX(
     //     .clk(clk),
@@ -173,6 +173,7 @@ module HACK(
         // original C instructions: 0x8000-0xFFFF (32K words, 8K reserved)
         // new A instructions: 0x0-0xDFFF (56k words)
         // new C instructions: 0xE000-FFFF (8K words)
+    // FUTURE: Switch out compiler / compare optimizations
 
     // SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
     SPI spi(

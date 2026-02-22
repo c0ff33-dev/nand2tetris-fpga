@@ -27,13 +27,6 @@ class Screen {
             let i = i + 1;
             let powArr[i] = powArr[i-1] + powArr[i-1];
         }
-
-        // initialize VRAM
-        let v = 16384;
-        while(v < 24576) {
-            do Memory.poke(v, 0);
-            let v = v + 1;
-        }
         return;
     }
 
@@ -203,7 +196,6 @@ class Screen {
         return;
     }
 
-    // TODO: this does not seem worth duplicating compared to drawRectangle() 
     /** Draw a horizontal line only. */
     function void _drawHorizontal(int y, int x1, int x2) {
         var int scrIdx, startWord, endWord, endAddr, rightMask, leftMask, width, minX, maxX, startBit, endBit;

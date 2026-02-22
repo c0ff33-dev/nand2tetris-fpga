@@ -8,6 +8,8 @@ If a part/class/test from previous `HACK`/Jack implementation could be carried f
 
 The `GateMateA1-EVB` board by Olimex could also be used here as seen in Michael Schröder's [hack-fpga](https://gitlab.com/x653/hack-fpga) project which is roughly comparable in cost to the sum of the parts described above but with far more FPGA resources. If you are seriously looking at doing a project like this yourself I would probably start there next time, there are significant constraints to `iCE40HX1K-EVB` which are abstracted away in more capable boards.
 
+For keyboard I was using Adafruit's 60% hybrid USB and PS/2 [Keyboard](https://adafru.it/857) but anything with PS/2 (directly or as fallback) should work, I happened to have an old monitor that will had a VGA port (sometimes also referred to as `D-sub` or `DE-15` port) but don't have any modern recommendations for that one.
+
 These other/similar projects may be of interest for research purposes or board alternatives:
 
 * https://github.com/giuseros/nand2tetris
@@ -52,6 +54,7 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test
 
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make && make upload
 ```
 
 ## Testing Matrix
@@ -70,6 +73,7 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Te
 - ❌ 12_Tetris // removed
 - ❌ 13_Touch // removed  
 - ✅ 14_Keyboard_Test // hw only
+- ✅ 03_Pong // hw only
 
 ## Changelog
 
