@@ -1,4 +1,9 @@
-// Fill VRAM with black pixels (0xFFFF)
+// Fill VRAM with an arbitrary pixel pattern.
+// SRAM memory will power on in an initially uninitialized state
+// which will look like a static pixel mosaic. Doing a soft reset 
+// or application upload is not sufficient to clear state between 
+// runs if there happen to be runtime issues that prevent VRAM from
+// being overwritten.
 
 @16383
 D=A
@@ -12,10 +17,25 @@ M=D // R0=0x3FFF (pre-increment VRAM start)
 @0
 D=A
 D=D-1 // D=0xFFFF (fill word)
+@R1
+M=D // cache fill word
 
 (LOOP)
 @R0
 AM=M+1 // inc VRAM address & jump to it
+@R1
+D=M // restore fill word
+@R0
+A=M
 M=D // write fill word
+
+// continue while current VRAM address < 24575
+D=A
+@24575
+D=D-A
 @LOOP
+D;JLT
+
+(END)
+@END
 0;JMP
