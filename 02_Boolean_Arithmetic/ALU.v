@@ -1,7 +1,7 @@
 /**
  * The ALU (Arithmetic Logic Unit).
  * Computes one of the following functions:
- * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, !x, !y,
+ * x+y, x-y, y-x, 0, 1, -1, x, y, -x, -y, ~x, ~y,
  * x+1, y+1, x-1, y-1, x&y, x|y on two 16 bit inputs, 
  * according to 6 input bits denoted zx, nx, zy, ny, f, no.
  * 
@@ -12,12 +12,12 @@
  * Implementation: the ALU logic manipulates the x and y inputs
  * and operates on the resulting values, as follows:
  * if (zx == 1) set x = 0        // 16 bit constant
- * if (nx == 1) set x = !x       // bitwise not
+ * if (nx == 1) set x = ~x       // bitwise not
  * if (zy == 1) set y = 0        // 16 bit constant
- * if (ny == 1) set y = !y       // bitwise not
+ * if (ny == 1) set y = ~y       // bitwise not
  * if (f == 1)  set out = x + y  // integer 2's complement addition
  * if (f == 0)  set out = x & y  // bitwise and
- * if (no == 1) set out = !out   // bitwise not
+ * if (no == 1) set out = ~out   // bitwise not
  * if (out == 0) set zr = 1
  * if (out < 0) set ng = 1
 */

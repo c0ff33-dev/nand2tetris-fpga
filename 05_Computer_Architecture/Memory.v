@@ -21,38 +21,38 @@ module Memory(
     input [15:0] inRAM, // RAM (0-3583)
     input [15:0] inIO0, // LED (4096)
     input [15:0] inIO1, // BUT (4097)
-    input [15:0] inIO2, // reserved (undefined)
-    input [15:0] inIO3, // reserved (undefined)
-    input [15:0] inIO4, // reserved (undefined)
-    input [15:0] inIO5, // reserved (undefined)
-    input [15:0] inIO6, // reserved (undefined)
-    input [15:0] inIO7, // reserved (undefined)
-    input [15:0] inIO8, // reserved (undefined)
-    input [15:0] inIO9, // reserved (undefined)
-    input [15:0] inIOA, // reserved (undefined)
+    input [15:0] inIO2, // UART_TX (4098)
+    input [15:0] inIO3, // UART_RX (4099)
+    input [15:0] inIO4, // SPI (4100)
+    input [15:0] inIO5, // SRAM_A (4101)
+    input [15:0] inIO6, // SRAM_D (4102)
+    input [15:0] inIO7, // GO (4103)
+    input [15:0] inIO8, // LCD8 (4104)
+    input [15:0] inIO9, // LCD16 (4105)
+    input [15:0] inIOA, // RTP (4106)
     input [15:0] inIOB, // DEBUG0 (4107)
     input [15:0] inIOC, // DEBUG1 (4108)
     input [15:0] inIOD, // DEBUG2 (4109)
     input [15:0] inIOE, // DEBUG3 (4110)
     input [15:0] inIOF, // DEBUG4 (4111)
     output [15:0] out,
-    output loadRAM, // RAM (0-3583)
-    output loadIO0, // LED (4096)
-    output loadIO1, // BUT (4097)
-    output loadIO2, // reserved (undefined)
-    output loadIO3, // reserved (undefined)
-    output loadIO4, // reserved (undefined)
-    output loadIO5, // reserved (undefined)
-    output loadIO6, // reserved (undefined)
-    output loadIO7, // reserved (undefined)
-    output loadIO8, // reserved (undefined)
-    output loadIO9, // reserved (undefined)
-    output loadIOA, // reserved (undefined)
-    output loadIOB, // DEBUG0 (4107)
-    output loadIOC, // DEBUG1 (4108)
-    output loadIOD, // DEBUG2 (4109)
-    output loadIOE, // DEBUG3 (4110)
-    output loadIOF  // DEBUG4 (4111)
+    output loadRAM,
+    output loadIO0,
+    output loadIO1,
+    output loadIO2,
+    output loadIO3,
+    output loadIO4,
+    output loadIO5,
+    output loadIO6,
+    output loadIO7,
+    output loadIO8,
+    output loadIO9,
+    output loadIOA,
+    output loadIOB,
+    output loadIOC,
+    output loadIOD,
+    output loadIOE,
+    output loadIOF 
 );
 
     // Put your code here:

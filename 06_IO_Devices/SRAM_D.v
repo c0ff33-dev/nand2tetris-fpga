@@ -9,7 +9,7 @@
  *   WEX=1, OEX=0
  *   CSX=1 (disabled) during init then 0 (enabled) afterwards
  *
- * K6R4016V1D read/write latency is 5-10ns so at 25 MHz bus should be
+ * K6R4016V1D read/write latency is ~10ns so at 25 MHz bus should be
  * stable well before it is sampled (same cycle as emitted or [t+1] 
  * from initial load=1 signal).
  */
@@ -75,7 +75,7 @@ module SRAM_D(
 
     // bidirectional data bus (combinational)
     // disconnected (high impedence) when dir=0
-    // SRAM_DATA PIN should never be driven from any other module
+    // SRAM_DATA PIN should never be driven from any other module!
     InOut io (
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
         .dataW(data), // outgoing data

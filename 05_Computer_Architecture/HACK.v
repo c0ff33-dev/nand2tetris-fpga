@@ -43,41 +43,41 @@ module HACK(
     Memory mem(
         .address(addressM),
         .load(writeM),
-        .inRAM(outRAM),// RAM (0-3583)
-        .inIO0(outLED),// LED (4096)
-        .inIO1(inIO1), // BUT (4097)
-        .inIO2(resIn), // reserved (undefined)
-        .inIO3(resIn), // reserved (undefined)
-        .inIO4(resIn), // reserved (undefined)
-        .inIO5(resIn), // reserved (undefined)
-        .inIO6(resIn), // reserved (undefined)
-        .inIO7(resIn), // reserved (undefined)
-        .inIO8(resIn), // reserved (undefined)
-        .inIO9(resIn), // reserved (undefined)
-        .inIOA(resIn), // reserved (undefined)
-        .inIOB(inIOB), // DEBUG0 (4107)
-        .inIOC(inIOC), // DEBUG1 (4108)
-        .inIOD(inIOD), // DEBUG2 (4109)
-        .inIOE(inIOE), // DEBUG3 (4110)
-        .inIOF(inIOF), // DEBUG4 (4111)
+        .inRAM(outRAM), // RAM (0-3583)
+        .inIO0(outLED), // LED (4096)
+        .inIO1(inIO1),  // BUT (4097)
+        .inIO2(resIn),  // reserved (undefined)
+        .inIO3(resIn),  // reserved (undefined)
+        .inIO4(resIn),  // reserved (undefined)
+        .inIO5(resIn),  // reserved (undefined)
+        .inIO6(resIn),  // reserved (undefined)
+        .inIO7(resIn),  // reserved (undefined)
+        .inIO8(resIn),  // reserved (undefined)
+        .inIO9(resIn),  // reserved (undefined)
+        .inIOA(resIn),  // reserved (undefined)
+        .inIOB(inIOB),  // DEBUG0 (4107)
+        .inIOC(inIOC),  // DEBUG1 (4108)
+        .inIOD(inIOD),  // DEBUG2 (4109)
+        .inIOE(inIOE),  // DEBUG3 (4110)
+        .inIOF(inIOF),  // DEBUG4 (4111)
         .out(inM),
-        .loadRAM(loadRAM), // RAM (0-3583)
-        .loadIO0(loadIO0), // LED (4096)
-        .loadIO1(loadIO1), // BUT (4097)
-        .loadIO2(resLoad), // reserved (undefined)
-        .loadIO3(resLoad), // reserved (undefined)
-        .loadIO4(resLoad), // reserved (undefined)
-        .loadIO5(resLoad), // reserved (undefined)
-        .loadIO6(resLoad), // reserved (undefined)
-        .loadIO7(resLoad), // reserved (undefined)
-        .loadIO8(resLoad), // reserved (undefined)
-        .loadIO9(resLoad), // reserved (undefined)
-        .loadIOA(resLoad), // reserved (undefined)
-        .loadIOB(loadIOB), // DEBUG0 (4107)
-        .loadIOC(loadIOC), // DEBUG1 (4108)
-        .loadIOD(loadIOD), // DEBUG2 (4109)
-        .loadIOE(loadIOE), // DEBUG3 (4110)
-        .loadIOF(loadIOF)  // DEBUG4 (4111)
+        .loadRAM(loadRAM),
+        .loadIO0(loadIO0),
+        .loadIO1(loadIO1),
+        .loadIO2(resLoad),
+        .loadIO3(resLoad),
+        .loadIO4(resLoad),
+        .loadIO5(resLoad),
+        .loadIO6(resLoad),
+        .loadIO7(resLoad),
+        .loadIO8(resLoad),
+        .loadIO9(resLoad),
+        .loadIOA(resLoad),
+        .loadIOB(loadIOB),
+        .loadIOC(loadIOC),
+        .loadIOD(loadIOD),
+        .loadIOE(loadIOE),
+        .loadIOF(loadIOF) 
     );
 
     // ROM (simulated), 256 x 16 bit words

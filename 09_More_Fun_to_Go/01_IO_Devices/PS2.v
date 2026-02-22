@@ -1,0 +1,42 @@
+/**
+ * PS/2 Keyboard controller
+ * Reads the keyboard and presents the last 3 received bytes.
+ */
+
+`default_nettype none
+module PS2(
+    input             i_clk,
+    input             i_rst,
+    input             i_ps2_data,
+    input             i_ps2_clk,
+    output reg [23:0] o_data
+);
+
+// buffer the last two bits
+wire _edge;
+reg[1:0] ps2_clock = 0;
+
+always @(posedge i_clk)
+    ps2_clock <= {ps2_clock[0],i_ps2_clk};
+
+assign _edge = (ps2_clock == 2'b01); // detect posedge from low to high
+
+// buffer the last 11 bits
+wire stop;
+reg [10:0] bits;
+
+always @(posedge i_clk)
+    if (i_rst | stop)
+        bits <= 11'b11111111111;
+    else if (_edge)
+        bits <= {i_ps2_data,bits[10:1]};
+
+assign stop = (bits[0]==1'b0); // stop after last bit (number 10)
+
+always @(posedge i_clk)
+    if (i_rst)
+        o_data <= 0;
+    else if (stop)
+        o_data <= {o_data[15:0],bits[8:1]};
+
+endmodule

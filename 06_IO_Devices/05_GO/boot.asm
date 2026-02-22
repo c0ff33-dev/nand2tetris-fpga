@@ -1,4 +1,5 @@
-// Bootloader: loads 64K words of HACK code starting at SPI address 0x10000 (64K) into SRAM.
+// Bootloader: loads 64K words of HACK code starting at ROM address 0x10000 (64K) 
+// into first page of SRAM memory (0x0000-0xFFFF) via SPI interface.
 
 // Put your code here:
 // R0=jmp_target, R1=spi_byte, R2=outer_loop, R3=write_idx, R4=odd_even, R5=spi_sum, R6=inner_idx
@@ -134,6 +135,8 @@ D=A
 @R0
 M=D // R0=read0
 
+// sim may be unhappy with accesses to uninit'd memory values in some cases
+// not an issue on hardware but make sure it is all init'd nonetheless
 @R1
 M=0 // init spi_byte=0x0
 @R2
@@ -145,6 +148,8 @@ M=0 // init write_idx, start at 0x0
 M=0 // init odd_even
 @R5
 M=0 // init spi_sum
+@R6
+M=0 // init inner_idx
 
 @wait
 0;JMP // wait for SPI
@@ -222,13 +227,13 @@ M=D // SRAM_A=write_idx
 
 @R5
 D=M // D=spi_sum
-@SRAM_D 
+@SRAM_D
 M=D // SRAM[write_idx]=spi_sum
 
 @R3 // will overflow ALU so don't use in cmp
 M=M+1 // write_idx++ (still works all the way to 0xFFFF)
 @R6 // reset at 0x7FFF (15 bits for ALU cmp)
-M=M+1 // inner_idx++
+M=M+1 // inner_idx++ 
 D=M // copy inner_idx
 
 @R4

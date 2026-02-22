@@ -19,10 +19,10 @@ module CPU(
     assign outM = instruction[6]?(instruction[7]?~(x+y):~(x&y)):(instruction[7]?(x+y):(x&y));
     wire comp;
     wire jmp;
-    assign comp = instruction[15] && instruction[14] && instruction[13];
+    assign comp = instruction[15] & instruction[14] & instruction[13];
     assign zr = (outM==0);
     assign ng = outM[15];
-    assign jmp = comp && ((ng&&instruction[2])||(zr&&instruction[1])||(~(ng|zr)&&instruction[0]));
+    assign jmp = comp & ((ng&instruction[2])|(zr&instruction[1])|(~(ng|zr)&instruction[0]));
     
     always @(posedge clk) begin
         addressM <= comp?(instruction[5]?outM:addressM) : instruction;
