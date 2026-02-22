@@ -264,6 +264,7 @@ module HACK(
     
     // FIXME: display appears static but still noise
     // FIXME: addresses/data appear synced in sim
+    // FIXME: timing is tight at ~6 MHz clk but no change down to ~1.5 MHz
     // FIXME: output is still not influenced by screen.asm?
     // outputs vga_addr to drive SRAM_A during phase 2:3
     // outputs hsync/vsync/rgb signals for VGA pins
@@ -281,8 +282,8 @@ module HACK(
 
     // trim LSB for RGB as iCE40HX1K-EVB only uses 3 bit RGB
     assign VGA_R = vga_r[2:0];
-    assign VGA_G = vga_r[2:0];
-    assign VGA_B = vga_r[2:0];
+    assign VGA_G = vga_g[2:0];
+    assign VGA_B = vga_b[2:0];
 
     // PS2 - Keyboard controller
     wire [23:0] ps2_data;

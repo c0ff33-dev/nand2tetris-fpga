@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.3.116 (w)1999-2023 BSI
-[*] Sat Feb 21 13:36:48 2026
+[*] Sun Feb 22 01:32:18 2026
 [*]
 [dumpfile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_HACK_OS/HACK_tb.vcd"
-[dumpfile_mtime] "Sat Feb 21 13:34:24 2026"
-[dumpfile_size] 449018653
+[dumpfile_mtime] "Sun Feb 22 01:31:11 2026"
+[dumpfile_size] 384350140
 [savefile] "/home/veris/src/nand2tetris-fpga/09_More_Fun_to_Go/00_HACK_OS/HACK_tb.gtkw"
-[timestart] 5063393000
+[timestart] 3295281100
 [size] 2560 1345
-[pos] 562 -23
-*-19.189342 5064400000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[pos] 562 0
+*-15.589343 4815000000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
 [treeopen] HACK_tb.
 [treeopen] HACK_tb.HACK.
 [treeopen] HACK_tb.HACK.ram.ram0.
@@ -38,9 +38,8 @@ HACK_tb.HACK.vga.o_addr[12:0]
 HACK_tb.HACK.vga.o_vga_r[3:0]
 HACK_tb.HACK.vga.o_vga_g[3:0]
 HACK_tb.HACK.vga.o_vga_b[3:0]
-@25
-HACK_tb.HACK.vga_addr[12:0]
 @24
+HACK_tb.HACK.vga_addr[12:0]
 HACK_tb.HACK.vga_data[15:0]
 @28
 HACK_tb.HACK.vga_clk
@@ -58,6 +57,8 @@ HACK_tb.HACK.PS2_CLK
 HACK_tb.HACK.PS2_DATA
 @200
 -SRAM
+@29
+HACK_tb.HACK.CLK
 @28
 HACK_tb.HACK.clk
 @24
