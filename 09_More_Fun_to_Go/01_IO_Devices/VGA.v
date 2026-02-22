@@ -68,23 +68,28 @@ wire vga_frame_in1 = (r_v >= v_tb) & (r_v< v_bb) & (r_h >= h_lb-1) & (r_h < h_rb
 
 // 224 736 800
 // Hack video frame is inside the VGA frame with 112 pixel border on top/bottom and 64 pixel border on the left/right side
-// The signal must be computed 3 cycles in advance:
-//   - 1 cycle show address
-//   - read memory
-//   - shift data to vga signal
+// The signal must be computed 4 cycles in advance:
+//   - 1 cycle present address on o_addr
+//   - 1 cycle SRAM read + cross-domain latch (phase 2:3 → SRAM_D → vga_data)
+//   - 1 cycle load shift register from i_data
+//   - 1 cycle output pixel to RGB register
 wire [10:0] f_row = (r_v-v_tb-112);
-wire [10:0] f_col_in3 = (r_h-h_lb-64+3);
-wire hack_frame_in3 = (f_row<256) & (f_col_in3<512);
-wire strobe = hack_frame_in3 & (f_col_in3[3:0]==4'h0);
+wire [10:0] f_col_in4 = (r_h-h_lb-64+4);
+wire hack_frame_in4 = (f_row<256) & (f_col_in4<512);
+wire strobe = hack_frame_in4 & (f_col_in4[3:0]==4'h0);
 
+reg data_read_d;
 reg data_read;
 always @(posedge i_clk)
-    data_read <= strobe;
+    begin
+        data_read_d <= strobe;
+        data_read <= data_read_d;
+    end
 
 reg [14:0] r_addr;
 always @(posedge i_clk)
     if (i_rst) r_addr <= 0;
-    else if (strobe) r_addr <={f_row[9:0],f_col_in3[8:4]};
+    else if (strobe) r_addr <={f_row[9:0],f_col_in4[8:4]};
 
 reg [15:0] r_data;
 always @(posedge i_clk)
