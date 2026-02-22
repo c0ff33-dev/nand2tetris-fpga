@@ -3,7 +3,7 @@
 
 // KBD is mapped to address 24576 (nand2tetris standard)
 // When a key is pressed on the PS/2 keyboard, its ASCII
-// value appears at @KBD. When no key is pressed, KBD == 0.
+// value appears at 24576 (KBD). When no key is pressed, KBD == 0.
 
 // This program polls the keyboard for the 'a' key (ASCII 97)
 // and turns on LED1/2 when detected.
