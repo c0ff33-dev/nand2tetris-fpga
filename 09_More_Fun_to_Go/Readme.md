@@ -22,6 +22,8 @@ These other/similar projects may be of interest for research purposes or board a
 
 ## Upload Bitstream & Software
 
+Non-exhaustive list of tests below, for several modules there are more specific `asm` tests for debugging but in general this should do for validation.
+
 // FUTURE: final test list for original implementation would be good too
 
 ```
@@ -33,7 +35,7 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hac
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload # Jack equivalent of leds.asm
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload # Jack equivalent of Blinky.v
 
-# HACK_OS sims - can uncomment additional debug registers in HACK where necessary
+# HACK_OS sims: can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
 # some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing
 # 03_Sys_Test needs to be switched to 1ms wait in sim (4-5ms with slower CPU timing)
@@ -43,9 +45,9 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
-# VGA tests
+# VGA tests: normal for initial read to be unitialized, SRAM data will carry over during soft reboots & uploads if not overwritten
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make && make upload # TODO: NYI
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make && make upload # TODO: NYI (ScreenExt)
 
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
