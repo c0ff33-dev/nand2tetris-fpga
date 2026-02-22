@@ -11,13 +11,11 @@ class Sys {
     /** Performs all the initializations required by the OS. */
     function void init() {
         do GPIO.init();
-        do UART.init();
         do Memory.init();
         do Math.init();
-        do Screen.init();
-        do ScreenExt.init();
         do Output.init();
-        do Touch.init();
+        do Screen.init();
+        do Keyboard.init();
         do Main.main();
         do Sys.halt();
         return;
