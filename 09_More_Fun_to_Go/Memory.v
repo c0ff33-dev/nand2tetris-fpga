@@ -22,13 +22,6 @@
 // "SCREEN": 16384-24575 incl
 // "KBD": 24576 // 48KB RAM required total
 
-// DONE: import original Output.jack
-// DONE: import original Screen.jack
-// DONE: import original Keyboard.jack
-
-// TODO: fork Memory.jack for new ranges (original has constants)
-// TODO: fork Sys.jack for for new/reduced classes (wait timing needs to be hw tuned)
-
 // current memory layout
 // stack was only implicitly limited by heap starting address
 // so with HEAP on SRAM stack can use the entire remaining BRAM range
@@ -36,8 +29,8 @@
 // [BRAM] "STATIC": 16-255 incl (same)
 // [BRAM] "STACK": 256-3583 incl (larger)
 
-// some infrequently used labels not provided in MS assembler
-// [VIRT] "IO": 4096-4111 (new) // FUTURE: could reclaim some more heap by remapping these
+// FUTURE: some infrequently used labels not implemented in current assembler
+// [VIRT] "IO": 4096-4111 (new) // FUTURE: could reclaim some more heap + improve ABI compatibility by remapping these
 // [SRAM] "HEAP": 4112-16383 incl (smaller) >> 4112-16383 incl (smaller)
 // [SRAM] "SCREEN: 16384-24575 incl (same) // only used in Fill/Rect.asm
 // [VIRT] "KBD": 24576 (same) // only used in Fill/Keyboard.asm

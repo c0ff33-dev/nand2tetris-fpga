@@ -247,7 +247,7 @@ module HACK(
         .out(inIO7) // output run mode
     );
 
-    // VGA - Video graphics adapter 640x480 @ 50Hz
+    // VGA controller: 640x480 @ 50Hz and 12 bit colour depth
     // vga_addr is stable for 16 vga_clk/4 clk cycles 
     wire [12:0] vga_addr;
     wire [3:0] vga_r, vga_g, vga_b;
@@ -268,7 +268,7 @@ module HACK(
         .i_clk(vga_clk),
         .i_rst(RST),
         .o_addr(vga_addr),
-        .i_data(vga_data), // vga_data // 16'hFFFF // 16'h0
+        .i_data(vga_data),
         .o_vga_r(vga_r),
         .o_vga_g(vga_g),
         .o_vga_b(vga_b),
@@ -281,7 +281,7 @@ module HACK(
     assign VGA_G = vga_g[2:0];
     assign VGA_B = vga_b[2:0];
 
-    // PS2 - Keyboard controller
+    // PS/2 controller
     wire [23:0] ps2_data;
     PS2 ps2(
         .i_clk(clk),
@@ -291,7 +291,7 @@ module HACK(
         .o_data(ps2_data)
     );
 
-    // Keyboard - PS2 to ASCII converter
+    // Keyboard: convert PS/2 scancodes to ASCII
     wire [15:0] _kbd;
     Keyboard kbd(
         .i_clk(clk),
@@ -300,7 +300,7 @@ module HACK(
         .o_data(_kbd)
     );
 
-    // KBD (4104)
+    // Keyboard (KBD/4104/24576)
     Register kbd_r(
         .clk(clk),
         .in(_kbd),

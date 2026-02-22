@@ -174,6 +174,7 @@ module HACK(
         // new A instructions: 0x0-0xDFFF (56k words)
         // new C instructions: 0xE000-FFFF (8K words)
     // FUTURE: Switch out compiler / compare optimizations
+    // FUTURE: Update assembler with complete list of labels
 
     // SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
     SPI spi(

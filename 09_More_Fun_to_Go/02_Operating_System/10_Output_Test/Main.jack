@@ -14,7 +14,6 @@ class Main {
     	let s = String.new(1);
     	do s.appendChar(String.doubleQuote());
         
-        // FIXME: error in VGA causing B/D cell coords to wrap unexpectedly?
         do Output.moveCursor(0, 63); // top right
         do Output.printChar(66); // B
         do Output.moveCursor(22, 0); // bottom left
