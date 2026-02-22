@@ -6,10 +6,13 @@
 // value appears at @KBD. When no key is pressed, KBD == 0.
 
 // This program polls the keyboard for the 'a' key (ASCII 97)
-// and turns on LED1 when detected.
+// and turns on LED1/2 when detected.
+
+@LED
+M=1 // LED1 on (program started)
 
 (LOOP)
-@KBD
+@24576 // KBD label not implemented in assembler
 D=M // read keyboard
 
 @97
@@ -21,8 +24,10 @@ D;JEQ
 0;JMP
 
 (BREAK)
-@4096
-M=1 // LED1 on
+@3
+D=A
+@LED
+M=D // LED1/2 on (keystroke detected)
 
 (HALT)
 @HALT

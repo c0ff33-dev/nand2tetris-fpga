@@ -2,6 +2,10 @@ PYTHON = python3.11
 
 all: jack vm asm bin sim
 
+kbd:
+	$(PYTHON) ../../../tools/Assembler/assembler.pyc keyboard.asm
+	$(PYTHON) ../../../tools/AsciiToBin.py keyboard.hack
+	cp -f keyboard.bin out.bin
 jack:
 	$(PYTHON) ../../../tools/JackCompiler/JackCompiler.pyc ./
 vm:

@@ -5,8 +5,7 @@ all: jack vm asm bin sim
 screen:
 	$(PYTHON) ../../../tools/Assembler/assembler.pyc screen.asm
 	$(PYTHON) ../../../tools/AsciiToBin.py screen.hack
-	rm -f out.bin
-	mv screen.bin out.bin
+	cp -f screen.bin out.bin
 jack:
 	$(PYTHON) ../../../tools/JackCompiler/JackCompiler.pyc ./
 vm:
@@ -16,7 +15,7 @@ asm:
 bin:
 	$(PYTHON) ../../../tools/AsciiToBin.py out.hack
 sim:
-	cp out.hack ../../00_HACK/ROM.hack
+	cp out.hack ../../00_HACK_OS/ROM.hack
 upload:
 	iceprogduino -o 64k -w out.bin
 clean:

@@ -57,7 +57,7 @@ module HACK(
     // ALU is combinational but A/D/PC are clocked
     // i.e. inputs are finalized at end of current cycle
     wire sram_access;
-    assign sram_access = (addressM==4102 | (addressM>=4112 & addressM!=24576));
+    assign sram_access = (addressM==4102 || (addressM >=4112 && addressM != 24576));
     CPU cpu(
         .clk(clk),
         .inM(sram_access ? snap_inM_pos : inM), // only use cached data for SRAM accesses
@@ -332,15 +332,15 @@ module HACK(
         .out(inIOD)
     );
 
-    // DEBUG3 (4110)
-    Register debug3(
-        .clk(clk),
-        .in(outM),
-        .load(loadIOE),
-        .out(inIOE)
-    );
-
     // ran out of LCs, check DEBUG usage
+    // // DEBUG3 (4110)
+    // Register debug3(
+    //     .clk(clk),
+    //     .in(outM),
+    //     .load(loadIOE),
+    //     .out(inIOE)
+    // );
+    
     // DEBUG4 (4111)
     // Register debug4(
     //     .clk(clk),

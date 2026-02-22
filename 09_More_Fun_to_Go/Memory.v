@@ -95,10 +95,10 @@ module Memory(
         (address==4101) ? inIO5 :
         (address==4102) ? inIO6 :
         (address==4103) ? inIO7 :
-        (address==4104) ? inIO8 :
+        (address==4104 || address==24576) ? inIO8 : // KBD
         (address==4105) ? inIO9 :
         (address==4106) ? inIOA :
-        (address==4107 || address==24576) ? inIOB : // KBD
+        (address==4107) ? inIOB : 
         (address==4108) ? inIOC :
         (address==4109) ? inIOD :
         (address==4110) ? inIOE :
@@ -127,8 +127,8 @@ module Memory(
     assign loadIO8 = (address==4104) ? load : 0;
     assign loadIO9 = (address==4105) ? load : 0;
     assign loadIOA = (address==4106) ? load : 0;
-    assign loadIOB = (address==4107 || address==24576) ? load : 0;
-    assign loadIOC = (address==4108) ? load : 0;
+    assign loadIOB = (address==4107) ? load : 0;
+    assign loadIOC = (address==4108 || address==24576) ? load : 0;
     assign loadIOD = (address==4109) ? load : 0;
     assign loadIOE = (address==4110) ? load : 0;
     assign loadIOF = (address==4111) ? load : 0;
