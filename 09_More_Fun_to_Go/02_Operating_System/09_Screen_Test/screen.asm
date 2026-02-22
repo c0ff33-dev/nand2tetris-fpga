@@ -1,4 +1,7 @@
-// Fill VRAM with an arbitrary pixel pattern.
+// Fill VRAM with an arbitrary pixel pattern (in this case all black).
+// The letterboxing is an artifact of VGA being locked to 640x480 resolution
+// which is larger than the original nand2tetris SCREEN, see VGA.v for details.
+
 // SRAM memory will power on in an initially uninitialized state
 // which will look like a static pixel mosaic. Doing a soft reset 
 // or application upload is not sufficient to clear state between 

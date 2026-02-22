@@ -19,8 +19,8 @@ class Memory {
     /** Initializes the class. */
     function void init() {
         let ram = 0; // manually assign pointer value as zero
-        let startHeap = 1024; // og: 2048
-        let endHeap = 3583; // new: BRAM, og: 16383
+        let startHeap = 4112; // og: 2048, v1: 1024 (BRAM), v2: SRAM
+        let endHeap = 16383; // og: 16383, v1: 3583 (BRAM), v2: SRAM
         let ram[startHeap] = endHeap-startHeap-1; // blockSize (init=1 max size free block)
         let ram[startHeap+1] = startHeap+2; // *nextPtr = &blockData
         // ram[startHeap+2] = 0; // &blockData

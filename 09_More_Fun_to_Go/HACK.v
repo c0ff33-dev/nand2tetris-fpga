@@ -262,10 +262,6 @@ module HACK(
             vga_data <= inIO6;
     end
     
-    // FIXME: display appears static but still noise
-    // FIXME: addresses/data appear synced in sim
-    // FIXME: timing is tight at ~6 MHz clk but no change down to ~1.5 MHz
-    // FIXME: output is still not influenced by screen.asm?
     // outputs vga_addr to drive SRAM_A during phase 2:3
     // outputs hsync/vsync/rgb signals for VGA pins
     VGA vga(
@@ -336,16 +332,16 @@ module HACK(
         .out(inIOD)
     );
 
+    // DEBUG3 (4110)
+    Register debug3(
+        .clk(clk),
+        .in(outM),
+        .load(loadIOE),
+        .out(inIOE)
+    );
+
     // ran out of LCs, check DEBUG usage
-    // // DEBUG3 (4110)
-    // Register debug3(
-    //     .clk(clk),
-    //     .in(outM),
-    //     .load(loadIOE),
-    //     .out(inIOE)
-    // );
-    
-    // // DEBUG4 (4111)
+    // DEBUG4 (4111)
     // Register debug4(
     //     .clk(clk),
     //     .in(outM),

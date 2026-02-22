@@ -10,6 +10,15 @@ class Main {
     function void main() {
         var String s;
         var String i;
+        var int v;
+        
+        // TODO: properly init the screen somewhere
+        let v = 16384;
+        while(v < 24576) {
+            do Memory.poke(v, 0);
+            let v = v + 1;
+        }
+        do GPIO.writeLed(GPIO.readBut()); // DEBUG: check program starts / hasn't crashed
         
         let s = String.new(0); // a zero-capacity string should be supported
         do s.dispose();
