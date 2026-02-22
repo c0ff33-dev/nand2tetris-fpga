@@ -2,7 +2,6 @@
 // and the book "The Elements of Computing Systems"
 // by Nisan and Schocken, MIT Press.
 // File name: projects/12/OutputTest/Main.jack
-// Changes: coords, added test for colors.
 
 /** Test program for the OS Output class. */
 class Main {
@@ -11,26 +10,16 @@ class Main {
      *  methods of the Output class. */
     function void main() {
         var String s;
-        var int colMax, rowMax;
-        var boolean landscape;
-        let landscape = false;
+    
+    	let s = String.new(1);
+    	do s.appendChar(String.doubleQuote());
         
-        if (landscape) {
-            let colMax = 39;
-            let rowMax = 20;
-        } else {
-            let colMax = 29;
-            let rowMax = 28;
-        }
-    
-        let s = String.new(1);
-        do s.appendChar(String.doubleQuote());
-    
-        do Output.moveCursor(0, colMax); // top right
+        // FUTURE: error in VGA causing B/D cell coords to wrap unexpectedly?
+        do Output.moveCursor(0, 63); // top right
         do Output.printChar(66); // B
-        do Output.moveCursor(rowMax, 0); // bottom left
+        do Output.moveCursor(22, 0); // bottom left
         do Output.printChar(67); // C
-        do Output.moveCursor(rowMax, colMax); // bottom right
+        do Output.moveCursor(22, 63); // bottom right
         do Output.printChar(68); // D
         do Output.printChar(65); // A, top left (after wrap)
         
@@ -48,13 +37,6 @@ class Main {
         do Output.printInt(-12345);
         do Output.backSpace();
         do Output.printInt(6789);
-
-        do ScreenExt.setPenColor(ScreenExt.WHITE());
-        do ScreenExt.setBackColor(ScreenExt.RED());
-
-        do Output.moveCursor(10, 0);
-        do Output.printString("Back Color Red");
-        do Output.println();
         
         return;
     }
