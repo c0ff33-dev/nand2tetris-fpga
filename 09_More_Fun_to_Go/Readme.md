@@ -15,6 +15,8 @@ These other/similar projects may be of interest for research purposes or board a
 * https://github.com/giuseros/nand2tetris
 * https://github.com/gunnerson/hack-fpga
 
+![](./hack_classic.jpg)
+
 ## Major Changes
 
 - Added `PS/2` and `VGA` & keyboard controllers.
