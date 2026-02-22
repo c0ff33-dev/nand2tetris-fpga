@@ -24,10 +24,7 @@ $ sudo apt install python3.11 python3.11-venv
 ```
 $ sudo apt install git
 $ mkdir src && cd src
-$ git clone git@gitlab.com:gcpd88/nand2tetris-fpga.git # requires ssh config
-$ git clone git@github.com:c0ff33-dev/nand2tetris.git
-$ git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
-$ git clone https://github.com/OLIMEX/MOD-LCD2.8RTP.git
+$ git clone git@github.com:c0ff33-dev/nand2tetris-fpga.git
 ```
 
 ### Install apio + dependencies
@@ -87,6 +84,8 @@ $ sudo chmod a+rw /dev/ttyACM0
 
 ### Flash the programmer
 
+If having trouble with disconnects here in WSL may need to use a full VM with USB passthrough:
+
 ```
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/veris/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
@@ -124,4 +123,12 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio
 
 ```
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make && make upload
+```
+
+### Check LC utilization & timing
+
+```
+$ apio clean && apio build --verbose-pnr > log.txt
+$ grep -ie "ICESTORM_LC:  " log.txt
+$ grep -ie "frequency" log.txt
 ```

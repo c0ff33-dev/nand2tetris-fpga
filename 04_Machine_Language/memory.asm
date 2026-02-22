@@ -8,8 +8,8 @@ D=A
 M=D // LED=1 (01 = LED1 on/LED2 off, program has started)
 
 @0
-M=A // RAM[0] = 0 (init)
-M=M+1 // RAM[0]++
+M=A // BRAM[0] = 0 (init)
+M=M+1 // BRAM[0]++
 M=M+1
 M=M+1
 M=M+1
@@ -18,10 +18,10 @@ M=M+1
 M=M+1
 M=M+1
 M=M+1
-M=M+1 // RAM[0] = 10
+M=M+1 // BRAM[0] = 10
 
 // Check result and HALT
-D=M // D = RAM[0] (result)
+D=M // D = BRAM[0] (result)
 @10 // (expected)
 D=D-A // D = result - expected
 @OK

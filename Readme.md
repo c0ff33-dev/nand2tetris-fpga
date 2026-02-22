@@ -1,4 +1,4 @@
-# nand2tetris-fpga (v3.0)
+# nand2tetris-fpga (v3.1)
 
 ## Disclaimer
 
@@ -92,6 +92,10 @@ Finally you can compile and run Tetris!
 ### [08 3D Printer](08_3D_Printer)
 
 We provide construction files to print a little case and development jig for your `HACK` computer with a 3D printer.
+
+### [09 More Fun to Go](09_More_Fun_to_Go)
+
+A "classic" `HACK` implementation which adds `PS/2` & `VGA` support via `iCE40-IO`.
 
 ## Credits
 

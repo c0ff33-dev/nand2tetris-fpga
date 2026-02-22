@@ -59,10 +59,10 @@ module Xor(
     input b,
     output out
 );
-    wire nota;        //new wire must be declared (as wire)
+    wire nota;        // new wire must be declared (as wire)
     wire notb;
-    Not NOT1(.in(a), .out(nota));    //Every chip has an instance name (NOT1)
-    Not NOT2(.in(b), .out(notb));    //this chip is named NOT2
+    Not NOT1(.in(a), .out(nota)); // every chip has an instance name (NOT1)
+    Not NOT2(.in(b), .out(notb)); // this chip is named NOT2
 
     wire w1;
     wire w2;

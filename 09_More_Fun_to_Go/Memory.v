@@ -1,0 +1,129 @@
+/**
+ * The complete address space of the Hack computer's memory,
+ * including RAM and memory-mapped I/O. 
+ * The chip facilitates read and write operations, as follows:
+ *     Read:  out(t) = Memory[address(t)](t)
+ *     Write: if load(t-1) then Memory[address(t-1)](t) = in(t-1)
+ * The chip always outputs the value stored at the memory 
+ * location specified by address. If load==1, the in value is loaded 
+ * into the memory location specified by address. This value becomes 
+ * available through the out output from the next time step onward.
+ * Address space rules:
+ * RAM 0x0000 - 0x0DFF (3584 words)
+ * IO  0x1000 - 0x100F (maps to 16 different devices)
+ * The behavior of IO addresses is described in 06_IO_Devices
+ */
+
+// nand2tetris spec memory layout
+// registers: 0-15
+// "STATIC": 16-255 incl
+// "STACK": 256-2047 incl
+// "HEAP": 2048-16383 incl
+// "SCREEN": 16384-24575 incl
+// "KBD": 24576 // 48KB RAM required total
+
+// current memory layout
+// stack was only implicitly limited by heap starting address
+// so with HEAP on SRAM stack can use the entire remaining BRAM range
+// [BRAM] registers: 0-15 (same)
+// [BRAM] "STATIC": 16-255 incl (same)
+// [BRAM] "STACK": 256-3583 incl (larger)
+
+// FUTURE: some infrequently used labels not implemented in current assembler
+// [VIRT] "IO": 4096-4111 (new) // FUTURE: could reclaim some more heap + improve ABI compatibility by remapping these
+// [SRAM] "HEAP": 4112-16383 incl (smaller) >> 4112-16383 incl (smaller)
+// [SRAM] "SCREEN: 16384-24575 incl (same) // only used in Fill/Rect.asm
+// [VIRT] "KBD": 24576 (same) // only used in Fill/Keyboard.asm
+
+`default_nettype none
+module Memory(
+    input [15:0] address,
+    input load,
+    input [15:0] inRAM, // BRAM (0-3583)
+    input [15:0] inIO0, // LED (4096)
+    input [15:0] inIO1, // BUT (4097)
+    input [15:0] inIO2, // unassigned // previously UART_TX (4098)
+    input [15:0] inIO3, // unassigned // previously UART_RX (4099)
+    input [15:0] inIO4, // SPI (4100)
+    input [15:0] inIO5, // SRAM_A (4101)
+    input [15:0] inIO6, // SRAM_D (4102)
+    input [15:0] inIO7, // GO (4103)
+    input [15:0] inIO8, // KBD (4104) // previously LCD8 (4104)
+    input [15:0] inIO9, // unassigned // previously LCD16 (4105)
+    input [15:0] inIOA, // unassigned // previously RTP (4106)
+    input [15:0] inIOB, // DEBUG0 (4107)
+    input [15:0] inIOC, // DEBUG1 (4108)
+    input [15:0] inIOD, // DEBUG2 (4109)
+    input [15:0] inIOE, // DEBUG3 (4110)
+    input [15:0] inIOF, // DEBUG4 (4111)
+    output [15:0] out,
+    output loadRAM,
+    output loadIO0,
+    output loadIO1,
+    output loadIO2,
+    output loadIO3,
+    output loadIO4,
+    output loadIO5,
+    output loadIO6,
+    output loadIO7,
+    output loadIO8,
+    output loadIO9,
+    output loadIOA,
+    output loadIOB,
+    output loadIOC,
+    output loadIOD,
+    output loadIOE,
+    output loadIOF
+);
+
+    // map adressses to wires for RAM3584 and the IO registers
+    // mux input via address (memory mapped IO or RAM)
+    // read SRAM_DATA directly during data phases
+    assign out = (
+        (address==4096) ? inIO0 :
+        (address==4097) ? inIO1 :
+        (address==4098) ? inIO2 :
+        (address==4099) ? inIO3 :
+        (address==4100) ? inIO4 :
+        (address==4101) ? inIO5 :
+        (address==4102) ? inIO6 :
+        (address==4103) ? inIO7 :
+        (address==4104 || address==24576) ? inIO8 : // KBD
+        (address==4105) ? inIO9 :
+        (address==4106) ? inIOA :
+        (address==4107) ? inIOB : 
+        (address==4108) ? inIOC :
+        (address==4109) ? inIOD :
+        (address==4110) ? inIOE :
+        (address==4111) ? inIOF :
+        
+        // map HEAP/VRAM to SRAM respectively
+        (address >= 4112 && address <= 16383) ? inIO6 :
+        (address >= 16384 && address <= 24575) ? inIO6 :
+
+        // else BRAM
+        inRAM);
+
+    // mux load via address (memory mapped IO or RAM)
+    // BRAM limits may vary depending on implementation
+    // loadIO5 (SRAM_ADDR) needs to be written multiple times per cycle
+    // loadIO6 (SRAM_DATA) is cross-checked by phase in SRAM_D.v so no harm in leaving it enabled
+    assign loadRAM = (address<=4095) ? load : 0;
+    assign loadIO0 = (address==4096) ? load : 0;
+    assign loadIO1 = (address==4097) ? load : 0;
+    assign loadIO2 = (address==4098) ? load : 0;
+    assign loadIO3 = (address==4099) ? load : 0;
+    assign loadIO4 = (address==4100) ? load : 0;
+    assign loadIO5 = (address==4101 || (address >= 4112 && address <= 24575)) ? load : 0;
+    assign loadIO6 = (address==4102 || (address >= 4112 && address <= 24575)) ? load : 0;
+    assign loadIO7 = (address==4103) ? load : 0;
+    assign loadIO8 = (address==4104) ? load : 0;
+    assign loadIO9 = (address==4105) ? load : 0;
+    assign loadIOA = (address==4106) ? load : 0;
+    assign loadIOB = (address==4107) ? load : 0;
+    assign loadIOC = (address==4108 || address==24576) ? load : 0;
+    assign loadIOD = (address==4109) ? load : 0;
+    assign loadIOE = (address==4110) ? load : 0;
+    assign loadIOF = (address==4111) ? load : 0;
+
+endmodule
