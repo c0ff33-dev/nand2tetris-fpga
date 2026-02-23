@@ -28,7 +28,8 @@ module SRAM_D(
     output OEX,  // Output Enable NOT
     output WEX,  // Write Enable NOT,
     input [2:0] phase,
-    input reset
+    input reset,
+    input vram_init // VRAM initialization: write 0 during phase 2-3
 );
     // removed input/output registers/syncronization to be fully combinational
     wire _load;
@@ -37,13 +38,17 @@ module SRAM_D(
     // control wires 
     // [phase 0:1] run mode: enable read (instruction fetch)
     // [phase 0:1] boot mode: do nothing, data read/write in SRAM phase
-    // [phase 2:3] vga: enable read (VRAM)
+    // [phase 2:3] vga: enable read (VRAM), or write 0 during vram_init
     // [phase 4:5] enable data write to SRAM on load, else read
     // [phase 6:7] <unused>
     // enable write flag in relevant phase else default to read
     // only update values in clk negedge to syncronize with BRAM/ROM updates
-    assign OEX = ((~clk & (phase==4 | phase==5) & _load) ? 1'b1 : 1'b0);
-    assign WEX = ((~clk & (phase==4 | phase==5) & _load) ? 1'b0 : 1'b1);
+    wire write_active = ~clk & (
+        ((phase==4 | phase==5) & _load) |
+        ((phase==2 | phase==3) & vram_init)
+    );
+    assign OEX = write_active;
+    assign WEX = ~write_active;
 
     // set and forget
     reg init = 0;
@@ -61,9 +66,9 @@ module SRAM_D(
     // SRAM_DATA PIN should never be driven from any other module!
     InOut io (
         .PIN(DATA), // inout=dataW when dir=1, else 16'bz
-        .dataW(in), // outgoing data
+        .dataW(vram_init ? 16'b0 : in), // outgoing data (0 during VRAM init)
         .dataR(dataOut), // incoming data
-        .dir(_load & ~WEX) // 1=write data to SRAM, else read
+        .dir((_load | vram_init) & ~WEX) // 1=write data to SRAM, else read
     );
 
     assign _load = init ? load : 1'b0;

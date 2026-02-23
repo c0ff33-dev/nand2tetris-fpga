@@ -42,6 +42,15 @@ module HACK_tb();
         sram[2] = 16'h0002; // 2
         sram[3] = 16'hEA87; // 60039
  
+        sram[65536+4112] = 16'd999;
+        sram[65536+5000] = 16'd123;
+    end
+
+    // VGA test pattern: loaded after hardware VRAM init clears the range
+    initial begin
+        wait(HACK.vram_init_done);
+        #10;
+
         // VGA pattern words at framebuffer base (row 0, cols 128..255) in run-mode SRAM page
         // bit=0 -> white pixel, bit=1 -> black pixel
         // data page + VRAM offset
@@ -53,9 +62,6 @@ module HACK_tb();
         sram[65536+16384+13] = 16'hFFFF; // 65535
         sram[65536+16384+14] = 16'h1111; // 4369
         sram[65536+16384+15] = 16'h2222; // 8738
-
-        sram[65536+4112] = 16'd999;
-        sram[65536+5000] = 16'd123;
     end
 
     always @(posedge CLK)
@@ -267,8 +273,9 @@ module HACK_tb();
         // Initialize PS2_CLK to idle (high)
         PS2_CLK_OUT = 1'b1;
         
-        // Wait for system reset and stabilization (20 µs at 10ns timescale = 2000 units)
-        #2100;
+        // Wait for system reset + VRAM init to complete (~1.33ms)
+        wait(!HACK.RST);
+        #100;
         
         // Inject test characters: 'a', 'b', '1'
         transmit_ps2_frame(ascii_to_scancode(8'h61));  // 'a' = 0x1C

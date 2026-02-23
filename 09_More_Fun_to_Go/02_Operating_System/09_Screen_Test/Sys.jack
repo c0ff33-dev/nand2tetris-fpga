@@ -9,21 +9,11 @@
 class Sys {
     /** Performs all the initializations required by the OS */
     function void init() {
-        var int v;
-
         do GPIO.init();
         do Memory.init();
         do Math.init();
         do Output.init();
         do Screen.init();
-
-        // initialize VRAM
-        let v = 16384;
-        while(v < 24576) {
-            do Memory.poke(v, 0);
-            let v = v + 1;
-        }
-        
         do Main.main();
         do Sys.halt();
         return;

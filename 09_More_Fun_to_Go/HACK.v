@@ -48,10 +48,26 @@ module HACK(
         .phase(phase)
     );
 
+    // VRAM initialization: clear 8192 VRAM words (16384-24575) during reset
+    // Uses phase 2-3 SRAM time slot (VGA inactive during reset)
+    // Extends RST until all VRAM addresses have been written to 0
+    reg [12:0] vram_init_addr = 0;
+    reg vram_init_done = 0;
+    wire vram_init_active = ~clkRST & ~vram_init_done;
+
+    always @(posedge CLK) begin
+        if (vram_init_active & ~clk & phase == 3) begin
+            if (vram_init_addr == 13'd8191)
+                vram_init_done <= 1'b1;
+            else
+                vram_init_addr <= vram_init_addr + 13'd1;
+        end
+    end
+
     // reset PC during init & in [t+1] when GO load=1, both the load
     // and reset signal will shift high when the instruction is read
     // this mimics but is not the same as the iCE40 POR signal
-    assign RST = clkRST | loadIO7;
+    assign RST = clkRST | loadIO7 | vram_init_active;
 
     // CPU (ALU, A, D, PC)
     // ALU is combinational but A/D/PC are clocked
@@ -200,12 +216,14 @@ module HACK(
    
     // resolve SRAM_ADDR for current phase
     // [phase 0:1] fetch instruction according to boot/run mode driver(s)
-    // [phase 2:3] driven by VGA controller, offset by 0x4000 so its within the VRAM range (same page)
+    // [phase 2:3] driven by VGA controller (run) or VRAM init counter (init),
+    //             offset by 0x4000 so its within the VRAM range (same page)
     // [phase 4:6] driven either by explicit SRAM_A writes (boot mode) or memory accesses (run mode)
     // [phase 7] reset during boot/run transition
     // because inIO5 routes to outM can't directly use outM for any inputs here
-    assign inIO5 = RST ? 16'b0 :
-                (phase==2 || phase==3) ? {3'b010, vga_addr} :
+    assign inIO5 = vram_init_active ? ((phase==2 || phase==3) ? {3'b010, vram_init_addr} : 16'b0) :
+                (clkRST || loadIO7) ? 16'b0 : // otherwise hold at zero during reset
+                (phase==2 || phase==3) ? {3'b010, vga_addr} : // regular VGA read
                 (phase>=4 && phase<=6 && !inIO7[0]) ? sram_a : // use last SRAM_A in boot mode (both edges)
                 (phase>=4 && phase<=6) ? addressM : // last CPU address (run mode)
                 (!inIO7[0] ? sram_a : pc); // default to instruction fetch (phase 0/1 + posedge)
@@ -221,7 +239,7 @@ module HACK(
     SRAM_D sram_data (
         .CLK(CLK),         // external 100 MHz clock
         .clk(clk),         // internal 6.25 MHz clock
-        .load(loadIO6),    // 1=write enabled, else read enabled
+        .load(vram_init_active ? 1'b0 : loadIO6), // disable CPU writes during VRAM init
         .loadIO7(loadIO7), // 1=run mode starting
         .in(outM),         // input data (ignored on read)
         .out(inIO6),       // data out (instruction/VGA/RAM)
@@ -231,7 +249,8 @@ module HACK(
         .OEX(SRAM_OEX),    // Output Enable NOT
         .WEX(SRAM_WEX),    // Write Enable NOT
         .phase(phase),
-        .reset(RST)
+        .reset(RST),
+        .vram_init(vram_init_active) // VRAM clearing active
     );
 
     // GO (4103): emit instruction from BRAM/SRAM
