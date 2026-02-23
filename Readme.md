@@ -95,7 +95,7 @@ We provide construction files to print a little case and development jig for you
 
 ### [09 More Fun to Go](09_More_Fun_to_Go)
 
-A "classic" `HACK` implementation which adds `PS/2` & `VGA` support via `iCE40-IO`.
+A classic `HACK` implementation which adds `PS/2` & `VGA` support via `iCE40-IO` for the Jack `Keyboard` and `Screen` interfaces.
 
 ## Credits
 

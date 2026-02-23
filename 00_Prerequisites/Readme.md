@@ -48,8 +48,6 @@ To build Projects 1-5 any FPGA board will work. If you want to run serious appli
 * Programmer: [olimexino-32u4](https://www.olimex.com/Products/Duino/AVR/OLIMEXINO-32U4/open-source-hardware)
 * 2.8 Inch `LCD` color screen with `RTP`: [MOD-LCD2.8RTP](https://www.olimex.com/Products/Modules/LCD/MOD-LCD2-8RTP)
 
-Check the bill of material and consider to buy at Olimex Ltd., the company with the highest number of registered OSHW-projects.
-
 ![](BOM.png)
 
 ### Prepare the development environment

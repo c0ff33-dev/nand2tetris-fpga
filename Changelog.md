@@ -1,9 +1,13 @@
-# Version v3.1 (Fork)
+# Version v3.1.1: Minor update
 
-* Major update in [09 More Fun to Go](./09_More_Fun_to_Go/Readme.md) which forks an additional variant for `VGA` and `PS/2` support, adds new test bench emulators & where feasible imports original nand2tetris Jack libraries to restore API compatibility.
+* Continued refining documentation.
+
+# Version v3.1: Classic HACK
+
+* Major update in [09 More Fun to Go](./09_More_Fun_to_Go/Readme.md) which forks an additional `HACK` variant with `VGA` and `PS/2` support, adds new test bench emulators & where feasible imports original nand2tetris Jack libraries to restore API compatibility.
 * Added additional check for heap overflow in `Memory.jack`.
 
-# Version v3.0 (Fork)
+# Version v3.0: Fork
 
 ### Base content changes
 
