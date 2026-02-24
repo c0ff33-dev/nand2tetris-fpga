@@ -7,7 +7,7 @@ reg  [1:0] BUT = 3;
 wire [1:0] LED;
 wire RX,TX;
 wire LCD_DCX,LCD_SDO,LCD_SCK,LCD_CSX;
-// wire RTP_SDI,RTP_SCK,RTP_SDO;
+// wire RTP_SDI,RTP_SCK,RTP_SDO; // AR1021 wires
 
 HACK HACK(
     .CLK(CLK),
@@ -19,6 +19,8 @@ HACK HACK(
     .LCD_SDO(LCD_SDO),
     .LCD_SCK(LCD_SCK),
     .LCD_CSX(LCD_CSX)
+
+    // AR1021 wires
     // .RTP_SDO(RTP_SDO),
     // .RTP_SDI(RTP_SDI),
     // .RTP_SCK(RTP_SCK)

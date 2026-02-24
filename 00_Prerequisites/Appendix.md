@@ -134,23 +134,36 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio
 Jack tests:
 
 ```
-# FIXME: test with make clean
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
+
+# swap RTP for UART in 06_IO_Devices\HACK.v (LC budget)
+# also ensure iceprog_UART.ino sketch is flashed (from VM) and olimexino is in bridge mode (green) when transmitting
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
+
+# change delay to 1 for sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+# ...and revert for hardware
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
+
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+# ctrl+t, l to clear tio output & reset FPGA (not olimexino)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make clean && make && make upload && tio /dev/ttyACM0
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/08_StdIO_Test && make clean && make && make upload && tio /dev/ttyACM0
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make clean && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+# swap UART for RTP in 06_IO_Devices\HACK.v -- don't forget to flash the hardware as well
+# FIXME: why didn't AR1021 sim work - wires connected but clock never started?
+# sim only available for AR1021 emulation only: see 06_IO_Devices/Readme.md for full list of refs
+# $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make clean && make && make upload
 ```

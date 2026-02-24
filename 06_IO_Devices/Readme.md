@@ -72,11 +72,10 @@ Create symlinks to instantiate the relevant template:
 ```
 sudo ln -sf RTP_AR1021.v RTP.v
 sudo ln -sf 07A_RTP_AR1021 07_RTP
+sudo ln -sf ../07_Operating_System/13_Touch/Touch_AR1021.jack ../07_Operating_System/Touch.jack
 
 sudo ln -sf RTP_NS2009.v RTP.v
 sudo ln -sf 07B_RTP_NS2009 07_RTP
-
-sudo ln -sf ../07_Operating_System/13_Touch/Touch_AR1021.jack ../07_Operating_System/Touch.jack
 sudo ln -sf ../07_Operating_System/13_Touch/Touch_NS2009.jack ../07_Operating_System/Touch.jack
 ```
 
@@ -135,10 +134,11 @@ Update [07_Operating_System/00_HACK/HACK_tb.v](../07_Operating_System/00_HACK/HA
 * `NS2009` is not currently implemented in this test bench so comment out the following blocks if `AR2021` is not present/implemented:
 
   ```
-  // wire RTP_SDI,RTP_SCK,RTP_SDO;
+  // wire RTP_SDI,RTP_SCK,RTP_SDO; // AR1021 wires
 
   // ...
 
+  // AR1021 wires
   // .RTP_SDO(RTP_SDO),
   // .RTP_SDI(RTP_SDI),
   // .RTP_SCK(RTP_SCK)
