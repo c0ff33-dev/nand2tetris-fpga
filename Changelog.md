@@ -1,6 +1,7 @@
-# Version v3.1.1: Minor update
+# Version v3.1.1-3.1.2: Minor updates
 
 * VRAM is now initialized during power on in hardware instead of software.
+* Restored missing `GPIO.jack` in Pong.
 * Continued refining documentation.
 
 # Version v3.1: Classic HACK
