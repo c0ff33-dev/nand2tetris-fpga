@@ -87,7 +87,7 @@ $ sudo chmod a+rw /dev/ttyACM0
 If having trouble with disconnects here in WSL may need to use a full VM with USB passthrough:
 
 ```
-$ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4 firmware/iceprog"
+$ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog"
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/veris/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
 ```
 
@@ -134,24 +134,39 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio
 Jack tests:
 
 ```
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make && make upload && tio /dev/ttyACM0
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make && make upload && tio /dev/ttyACM0
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/08_StdIO_Test && make && make upload && tio /dev/ttyACM0
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make && cd ../00_HACK && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make && make upload
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
+
+# swap RTP for UART in 06_IO_Devices\HACK.v (LC budget)
+# also ensure iceprog_UART.ino sketch is flashed (from VM) and olimexino is in bridge mode (green) when transmitting
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
+
+# change delay to 1 for sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+# ...and revert for hardware
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
+
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+# ctrl+t, l to clear tio output & reset FPGA (not olimexino)
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/07_String_Test && make clean && make && make upload && tio /dev/ttyACM0
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/08_StdIO_Test && make clean && make && make upload && tio /dev/ttyACM0
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make clean && make && make upload
+
+# swap UART for RTP in 06_IO_Devices\HACK.v -- don't forget to flash the hardware as well
+# sim only available for AR1021 emulation only: see 06_IO_Devices/Readme.md for full list of refs
+# if disabling Screen/ScreenExt/Output.init() for speed need to also disable the Output.print*() calls in test!
+# $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make clean && make && make upload
 ```
 
 ### Classic HACK
@@ -167,25 +182,25 @@ Jack tests:
 
 ```
 # Application code can be flashed straight to offset 0x10000 as before
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && make upload
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
 
 # HACK_OS sims: can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
 # some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing
 # 03_Sys_Test needs to be switched to 1ms wait in sim (4-5ms with slower CPU timing)
 # some dead refs to UART in assembler labels but shouldn't affect anything (removed in Jack code)
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+$ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
-# VGA tests: normal for initial read to be unitialized, SRAM data will carry over during soft reboots & uploads if not overwritten
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make && make upload
+# VGA tests
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make clean && make && make upload
 
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make && make upload
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make clean && make && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 ```
