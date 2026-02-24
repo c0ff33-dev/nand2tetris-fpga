@@ -41,7 +41,7 @@ Send a write operation to select the register for the x, y and z (touch pressure
 
 * Test in simulation (`AR1021` only):
 
-  **Attention:** May need a longer simulation time or temporarily disabling compute intensive `init()` calls like `Screen`/`ScreenExt`/`Output` - only `Touch.getEvent()` needs to be reachable for this test.
+  **Attention:** May need a longer simulation time or temporarily disabling compute intensive `init()` calls like `Screen`/`ScreenExt`/`Output` - only `Touch.getEvent()` needs to be reachable for the core functionality of this test. If disabling `Output.init()` then any `Output.print*()` calls should be disabled as well.
   
   ```
   $ cd 11_Touch_Test

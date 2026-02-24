@@ -161,9 +161,10 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make clean && make && make upload
 
 # swap UART for RTP in 06_IO_Devices\HACK.v -- don't forget to flash the hardware as well
-# FIXME: why didn't AR1021 sim work - wires connected but clock never started?
 # sim only available for AR1021 emulation only: see 06_IO_Devices/Readme.md for full list of refs
+# if disabling Screen/ScreenExt/Output.init() for speed need to also disable the Output.print*() calls in test!
 # $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
+
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make clean && make && make upload
 ```

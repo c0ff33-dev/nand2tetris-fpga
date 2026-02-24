@@ -238,16 +238,6 @@ module HACK(
     assign inIO8 = lcdBusy;
     assign inIO9 = lcdBusy;
 
-    // RTP (4106): Resistive Touch Panel NS2009
-    RTP rtp(
-        .clk(clk),
-        .load(loadIOA),
-        .in(outM),
-        .out(inIOA),
-        .SDA(RTP_SDA),
-        .SCL(RTP_SCL)
-    );
-
     // RTP (4106): Resistive Touch Panel AR1021 (sim only)
     // RTP rtp(
     //     .clk(clk),
@@ -258,6 +248,16 @@ module HACK(
     //     .SDO(RTP_SDO),   // RTP serial Data Out
     //     .SCK(RTP_SCK)    // RTP Serial Clock
     // );
+
+    // RTP (4106): Resistive Touch Panel NS2009
+    RTP rtp(
+        .clk(clk),
+        .load(loadIOA),
+        .in(outM),
+        .out(inIOA),
+        .SDA(RTP_SDA),
+        .SCL(RTP_SCL)
+    );
 
     // DEBUG0 (4107)
     Register debug0(
