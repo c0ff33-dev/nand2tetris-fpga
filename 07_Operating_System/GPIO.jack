@@ -2,14 +2,14 @@
  * This library provides access to BUT and LED.
  */
 class GPIO {
-    static int LED, BUT, DEBUG0;
+    static Array LED, BUT, DEBUG0;
  
     /** Initialize LED and BUT. LED is memory mapped to addr
      *  and BUT is memory mapped to addr+1. */
     function void init() {
-        let LED = 4096;
-        let BUT = 4097;
-        let DEBUG0 = 4107; // DEBUG0-4 (4107-4111)
+        let LED[0] = 4096;
+        let BUT[0] = 4097;
+        let DEBUG0[0] = 4107; // DEBUG0-4 (4107-4111)
         return;
     }
 
