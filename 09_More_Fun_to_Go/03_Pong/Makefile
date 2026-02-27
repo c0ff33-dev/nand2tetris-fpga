@@ -16,5 +16,8 @@ upload:
 	iceprogduino -o 64k -w out.bin
 clean:
 	rm -f *.vm *.asm *.hack *.bin *~
-
+pong:
+	rm -f *.vm *.asm *.hack *.bin *~
+	cp ../../../nand2tetris/projects/13/Pong/Pong.hack ./out.hack
+	$(PYTHON) ../../tools/AsciiToBin.py out.hack
 .PHONY: all clean
