@@ -6,7 +6,7 @@ all: jack vm asm bin sim
 jack:
 	$(PYTHON) ../../../tools/JackCompiler/JackCompiler.pyc ./
 vm:
-	$(PYTHON) ../../../tools/VMTranslator/VMTranslator.pyc ./
+	$(PYTHON12) ../../../tools/VMTranslator/VMTranslator.pyc ./
 asm:
 	$(PYTHON) ../../../tools/Assembler/assembler.pyc out.asm
 bin:

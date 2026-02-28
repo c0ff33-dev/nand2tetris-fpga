@@ -207,3 +207,10 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && m
 # Test compiler from original nand2tetris project
 cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
 ```
+
+## Update compiler/translator/assembler binaries
+
+```
+cd ~/src/nand2tetris/interpreter && python -m compileall .
+cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/VMTranslator.pyc
+```
