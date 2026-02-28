@@ -141,11 +141,6 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && ma
 # also ensure iceprog_UART.ino sketch is flashed (from VM) and olimexino is in bridge mode (green) when transmitting
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
-
-# change delay to 1 for sim
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
-
-# ...and revert for hardware
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
@@ -187,15 +182,9 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && mak
 
 # HACK_OS sims: can uncomment additional debug registers in HACK where necessary
 # OS tests are too large to be sim'd without using a larger/non-uploadable ROM part (i.e. as done in original 07_Operating_System)
-# some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing
-# 03_Sys_Test needs to be switched to 1ms wait in sim (4-5ms with slower CPU timing)
-# some dead refs to UART in assembler labels but shouldn't affect anything (removed in Jack code)
-$ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
+# some need a longer simulation time up to ~1.25 million ticks to complete on the slower CPU timing for the full program
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
-
-# FIXME: no DEBUG emitted w/ new translator > assembler
-# FIXME: this is really thoroughly tested in interpreter but we use RAM[8000]+ there not 4107+ (DEBUG0-4) 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
 # VGA tests
@@ -208,7 +197,7 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Te
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 
 # Test compiler from original nand2tetris project
-cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
 ```
 
 ## Update compiler/translator/assembler binaries
