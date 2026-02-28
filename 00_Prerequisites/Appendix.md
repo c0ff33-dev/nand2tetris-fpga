@@ -10,13 +10,13 @@ Cliff notes for environment setup/installation.
 
 ## Install dependencies
 
-### Python 3.11
+### Python 3.11/12
 
 ```
 $ sudo apt update
 $ sudo apt install software-properties-common
 $ sudo add-apt-repository ppa:deadsnakes/ppa
-$ sudo apt install python3.11 python3.11-venv
+$ sudo apt install python3.11 python3.11-venv python3.12 python3.12-venv
 ```
 
 ### git and repos
@@ -194,11 +194,11 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && mak
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/04_Memory_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/05_Array_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
-# FIXME: no DEBUG w/ new translator (assembler error: M|D)
+# FIXME: no DEBUG emitted w/ new translator > assembler
+# FIXME: this is really thoroughly tested in interpreter but we use RAM[8000]+ there not 4107+ (DEBUG0-4) 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/06_Math_Test && make clean && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK_OS && cd ../../09_More_Fun_to_Go/00_HACK_OS && apio clean && apio sim
 
 # VGA tests
-# FIXME: next 5 all broken w/ new translator (assembler error: M|D)
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/07_String_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/09_Screen_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test && make clean && make && make upload
@@ -207,7 +207,6 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 
-# FIXME: this works though, need to replace assembler too
 # Test compiler from original nand2tetris project
 cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
 ```
@@ -215,6 +214,7 @@ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
 ## Update compiler/translator/assembler binaries
 
 ```
-cd ~/src/nand2tetris/interpreter && python -m compileall .
-cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/VMTranslator.pyc
+cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python -m compileall .
+cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/translator.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/assembler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/Assembler/assembler.pyc
 ```

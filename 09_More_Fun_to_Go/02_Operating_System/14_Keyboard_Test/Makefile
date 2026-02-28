@@ -4,15 +4,15 @@ PYTHON12 = python3.12
 all: jack vm asm bin sim
 
 kbd:
-	$(PYTHON) ../../../tools/Assembler/assembler.pyc keyboard.asm
+	$(PYTHON12) ../../../tools/Assembler/assembler.pyc keyboard.asm
 	$(PYTHON) ../../../tools/AsciiToBin.py keyboard.hack
 	cp -f keyboard.bin out.bin
 jack:
 	$(PYTHON) ../../../tools/JackCompiler/JackCompiler.pyc ./
 vm:
-	$(PYTHON12) ../../../tools/VMTranslator/VMTranslator.pyc ./
+	$(PYTHON12) ../../../tools/VMTranslator/translator.pyc ./
 asm:
-	$(PYTHON) ../../../tools/Assembler/assembler.pyc out.asm
+	$(PYTHON12) ../../../tools/Assembler/assembler.pyc out.asm
 bin:
 	$(PYTHON) ../../../tools/AsciiToBin.py out.hack
 sim:
