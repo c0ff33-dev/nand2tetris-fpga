@@ -214,7 +214,7 @@ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
 ## Update compiler/translator/assembler binaries
 
 ```
-cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python -m compileall .
+cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python3.12 -m compileall .
 cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/translator.pyc
 cp ~/src/nand2tetris/interpreter/__pycache__/assembler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/Assembler/assembler.pyc
 ```

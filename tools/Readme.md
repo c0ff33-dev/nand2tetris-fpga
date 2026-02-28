@@ -27,7 +27,7 @@ Compiles Jack classes (single file or all `*.jack` files in directory) to VM cod
 
 Translates VM code (single file or all files with ending `*.vm` in directory) to assembly.
 
-`usage: ./VMTranslator/translator.pyc [filename.vm] or [dir]`
+`usage: ./VMTranslator/translator.pyc [dir]`
 
 ## AsciiToBin.py
 
