@@ -1,4 +1,5 @@
-PYTHON = /bin/python3.11
+PYTHON = python3.11
+PYTHON12 = python3.12
 
 NAME = hello
 
