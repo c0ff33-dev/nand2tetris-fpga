@@ -164,10 +164,7 @@ module HACK(
     //     .RX(UART_RX), // serial rx bit (pin)
     //     .out(inIO3) // memory map 
     // );
-
-    // In the following component descriptions only 64KB or 
-    // 32K x 16 bit words is addressable in current spec.
-    
+   
     // SPI (4100) controller for W25Q16BV (2MB flash @ 50/100 MHz read/write)
     SPI spi(
         .clk(clk),

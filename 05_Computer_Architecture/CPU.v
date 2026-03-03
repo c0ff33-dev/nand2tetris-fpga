@@ -41,11 +41,20 @@ module CPU(
     wire jmp;
     wire load_a, load_d;
 
+    // special note on addressing
+    // ~~~~~~~~~~~~~~~~~~~~~~~~~~
+    // A instructions (e.g. `@<value>`) can be be misinterpred by the CPU in the 
+    // 56K+ (0xE000+) range, but C instructions i.e. `A=D` or similar where 
+    // D >= 56K are all valid and will consume the entire 16 bit operand.
+    // That is why, with careful coding, the full 64K word range is actually 
+    // usable for cases like SRAM which also consumes a full 16 bit address input.
+    // See also "special note on ALU overflows" in boot.asm for handling 16 bit counters.
+
     // [15] = MSB, [15:13] = opcode
-    // 0xxx xxxx xxxx xxxx = A instruction (original, 32k words)
-    // 110x xxxx xxxx xxxx = A instruction (new, 56k words)
-    // 111x xxxx xxxx xxxx = C instruction (original)
-    // 1--x xxxx xxxx xxxx = C instruction (new, same bits after first 3)
+    // 0xxx xxxx xxxx xxxx = A instruction (original, 0x0-0x7FFF, 32K words)
+    // 110x xxxx xxxx xxxx = A instruction (new, 0x0-0xDFFF, 56K words)
+    // 1xxx xxxx xxxx xxxx = C instruction (original, 0x8000-FFFF, 32K words)
+    // 111x xxxx xxxx xxxx = C instruction (new, 0xE000-FFFF, 8K words)
 
     // [12] = A/M bit (0=A, 1=M)
     // [11:6] = comp bits
