@@ -195,9 +195,6 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
-
-# Test compiler from original nand2tetris project
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 ```
 
 ## Update compiler/translator/assembler binaries
