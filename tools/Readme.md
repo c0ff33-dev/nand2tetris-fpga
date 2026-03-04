@@ -19,9 +19,13 @@ Assembler translates `HACK` assembly files to machine code. Outputs the machine 
 
 ## JackCompiler
 
-Compiles Jack classes (single file or all `*.jack` files in directory) to VM code.
+Compiles Jack classes (single file or all `*.jack` files in directory) to VM code via a 3-step pipeline: tokenizer → analyzer → compiler.
 
-`usage: ./JackCompiler/JackCompiler.pyc [filename.jack] or [dir]`
+```
+usage: ./JackCompiler/tokenizer.pyc [filename.jack] or [dir]
+       ./JackCompiler/analyzer.pyc [filename.jack] or [dir]
+       ./JackCompiler/compiler.pyc [filename.jack] or [dir]
+```
 
 ## VMTranslator
 

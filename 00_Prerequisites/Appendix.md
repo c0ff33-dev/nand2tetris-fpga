@@ -197,13 +197,17 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Te
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 
 # Test compiler from original nand2tetris project
-$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make pong && make upload
+$ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
 ```
 
 ## Update compiler/translator/assembler binaries
 
 ```
 cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python3.12 -m compileall .
+cp ~/src/nand2tetris/interpreter/__pycache__/tokenizer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/tokenizer.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/analyzer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/analyzer.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/compiler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/compiler.pyc
 cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/translator.pyc
 cp ~/src/nand2tetris/interpreter/__pycache__/assembler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/Assembler/assembler.pyc
+cd ~/src/nand2tetris-fpga
 ```
