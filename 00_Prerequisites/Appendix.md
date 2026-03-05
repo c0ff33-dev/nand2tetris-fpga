@@ -122,6 +122,18 @@ $ grep -ie "frequency" log.txt
 
 ## Testing & Validation
 
+## Update compiler/translator/assembler binaries
+
+```
+cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python3.12 -m compileall .
+cp ~/src/nand2tetris/interpreter/__pycache__/tokenizer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/tokenizer.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/analyzer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/analyzer.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/compiler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/compiler.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/translator.pyc
+cp ~/src/nand2tetris/interpreter/__pycache__/assembler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/Assembler/assembler.pyc
+cd ~/src/nand2tetris-fpga
+```
+
 ### Original HACK
 
 Flash the "UART" sketch (from VM):
@@ -150,7 +162,7 @@ Jack tests:
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
 
-# swap RTP for UART in 06_IO_Devices\HACK.v (LC budget)
+# swap RTP for UART in 06_IO_Devices\HACK.v (LC budget) & reflash the hardware bitstream
 # ensure olimexino is in bridge mode (green) when transmitting
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
@@ -168,7 +180,7 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make clean && make && make upload
 
-# swap UART for RTP in 06_IO_Devices\HACK.v -- don't forget to flash the hardware as well
+# swap UART for RTP in 06_IO_Devices\HACK.v & re-flash the hardware bitstream
 # sim only available for AR1021 emulation only: see 06_IO_Devices/Readme.md for full list of refs
 # if disabling Screen/ScreenExt/Output.init() for speed need to also disable the Output.print*() calls in test!
 # $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
@@ -221,16 +233,4 @@ $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/10_Output_Test
 # Keyboard tests: dedicated power supply required for PS/2 (5v)
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/02_Operating_System/14_Keyboard_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make clean && make && make upload
-```
-
-## Update compiler/translator/assembler binaries
-
-```
-cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python3.12 -m compileall .
-cp ~/src/nand2tetris/interpreter/__pycache__/tokenizer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/tokenizer.pyc
-cp ~/src/nand2tetris/interpreter/__pycache__/analyzer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/analyzer.pyc
-cp ~/src/nand2tetris/interpreter/__pycache__/compiler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/compiler.pyc
-cp ~/src/nand2tetris/interpreter/__pycache__/translator.cpython-312.pyc ~/src/nand2tetris-fpga/tools/VMTranslator/translator.pyc
-cp ~/src/nand2tetris/interpreter/__pycache__/assembler.cpython-312.pyc ~/src/nand2tetris-fpga/tools/Assembler/assembler.pyc
-cd ~/src/nand2tetris-fpga
 ```
