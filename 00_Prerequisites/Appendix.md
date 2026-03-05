@@ -124,6 +124,19 @@ $ grep -ie "frequency" log.txt
 
 ### Original HACK
 
+Flash the "UART" sketch (from VM):
+
+```sh
+cd ~/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog2 && sudo ln -sf ../src/iceprog_UART.ino iceprog2.ino
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/<user>/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog2"
+```
+
+If using WSL, reattach the port:
+
+```
+usbipd attach --wsl --busid <busid>
+```
+
 Upload bootloader + bitstream:
 
 ```
@@ -138,7 +151,7 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && ma
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
 
 # swap RTP for UART in 06_IO_Devices\HACK.v (LC budget)
-# also ensure iceprog_UART.ino sketch is flashed (from VM) and olimexino is in bridge mode (green) when transmitting
+# ensure olimexino is in bridge mode (green) when transmitting
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
@@ -165,6 +178,19 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/12_Tetris && make clean && make 
 ```
 
 ### Classic HACK
+
+Flash the "NoUART" sketch (from VM):
+
+```sh
+cd ~/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog2 && sudo ln -sf ../src/iceprog_NoUART.ino iceprog2.ino
+arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/<user>/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog2"
+```
+
+If using WSL, reattach the port:
+
+```
+usbipd attach --wsl --busid <busid>
+```
 
 Upload bootloader + bitstream:
 
