@@ -2,7 +2,7 @@
  * Library that provides character based access to UART_TX and UART_RX
  */
 class UART {
-    static int UART_TX, UART_RX;
+    static Array UART_TX, UART_RX;
 
     /** Initializes UART. UART_TX is memory mapped at addr,
      *  UART_RX is memory mapped at addr+1. */

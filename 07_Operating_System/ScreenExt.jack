@@ -9,7 +9,8 @@
 * to be driven high when the current batch of transactions is finished.
 */
 class ScreenExt {
-    static int LCD, LCD_WAIT, fgcolor, bgcolor;
+    static Array LCD;
+    static int LCD_WAIT, fgcolor, bgcolor;
     static Array powArr; // power of 2 array
 
     /** Initializes the Screen. */

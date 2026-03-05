@@ -2,7 +2,8 @@
  * NS2009. */
 
 class Touch{
-    static int RTP, x_coord, y_coord, z_coord, pen, x_max, y_max, adc_max, touch_threshold;
+    static Array RTP;
+    static int x_coord, y_coord, z_coord, pen, x_max, y_max, adc_max, touch_threshold;
     static int set_x_reg, set_y_reg, set_z_reg, read_cmd;
 
     /** Initializes the library. */
