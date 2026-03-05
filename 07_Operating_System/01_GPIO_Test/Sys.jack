@@ -12,7 +12,7 @@ class Sys {
         return;
     }
 
-    function void wait() {
+    function void wait(int duration) {
         // stubbed to satisfy compiler
         return;
     }
