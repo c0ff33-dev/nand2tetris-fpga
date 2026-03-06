@@ -1,3 +1,10 @@
+# Version v4.0.0: Update compiler toolchain
+
+* Compiler toolchain has now been totally replaced with the one from the original [nand2tetris](https://github.com/c0ff33-dev/nand2tetris) project @ xxx, see xxx for full details.
+  * Although great pains have been taken to ensure compatibility updating the compiler is always a risky operation, there have been no other functional updates so consider reverting to the previous release if necessary.
+* Removed unused/unmaintained tools & vim profiles.
+* Continued refining documentation.
+
 # Version v3.1.1-3.1.2: Minor updates
 
 * VRAM is now initialized during power on in hardware instead of software.
