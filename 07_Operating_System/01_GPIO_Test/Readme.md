@@ -27,7 +27,7 @@ class Sys {
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 01_GPIO_Test
   $ make
   $ cd ../00_HACK
@@ -44,7 +44,7 @@ class Sys {
 
   First prepare the bootloader and any hardware updates. In future tests this will be considered implicit and doesn't need to be repeated unless there are changes to either.
   
-  ```
+  ```sh
   $ cd ../../06_IO_Devices/05_GO
   $ make
   $ cd ../00_HACK
@@ -54,7 +54,7 @@ class Sys {
 
   Then compile & upload the test application:
 
-  ```
+  ```sh
   $ cd ../../07_Operating_System/01_GPIO_Test
   $ make
   $ make upload

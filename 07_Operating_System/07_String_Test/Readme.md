@@ -18,7 +18,7 @@ Represents character strings. In addition for constructing and disposing strings
   do Memory.poke(4107,data);
   ```
  
-  ```
+  ```sh
   $ cd 07_String_Test
   $ make
   $ cd ../00_HACK
@@ -30,7 +30,7 @@ Represents character strings. In addition for constructing and disposing strings
 
 * Run `String_Test` on real hardware on `iCE40HX1K-EVB` using a terminal program connected to `UART`.
 
-  ```
+  ```sh
   $ cd 07_String_Test
   $ make
   $ make upload

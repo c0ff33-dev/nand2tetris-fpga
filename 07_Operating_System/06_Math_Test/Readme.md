@@ -14,7 +14,7 @@ A library of commonly used mathematical functions.
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 06_Math_Test
   $ make
   $ cd ../00_HACK

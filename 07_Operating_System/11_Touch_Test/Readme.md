@@ -43,7 +43,7 @@ Send a write operation to select the register for the x, y and z (touch pressure
 
   **Attention:** May need a longer simulation time or temporarily disabling compute intensive `init()` calls like `Screen`/`ScreenExt`/`Output` - only `Touch.getEvent()` needs to be reachable for the core functionality of this test. If disabling `Output.init()` then any `Output.print*()` calls should be disabled as well.
   
-  ```
+  ```sh
   $ cd 11_Touch_Test
   $ make
   $ cd ../00_HACK
@@ -65,7 +65,7 @@ Send a write operation to select the register for the x, y and z (touch pressure
 
 * Run `Touch_Test` on real hardware on `iCE40HX1K-EVB`. Create some touch events on the resistive touch panel `RTP` and check the messages printed to the screen.
  
-  ```
+  ```sh
   $ cd 11_Touch_Test
   $ make
   $ make upload

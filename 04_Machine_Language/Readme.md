@@ -68,13 +68,13 @@ M=D
 
 * Put your code in the skeleton file `<filename>.asm`. To build the `.hack` binary file, which can than be preloaded to the instruction ROM of `HACK` in `05_Computer_Architecture/04_HACK`, just type:
   
-  ```
+  ```sh
   $ make leds
   ```
   
   or
   
-  ```
+  ```sh
   $ make mult
   ```
   

@@ -12,7 +12,7 @@ Keep in mind the following remarks:
 
 * Test your chip implementation with:
   
-  ```
+  ```sh
   $ cd <XX_chip>
   $ apio clean
   $ apio sim

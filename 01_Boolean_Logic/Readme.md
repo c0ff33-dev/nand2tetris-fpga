@@ -76,7 +76,7 @@ module Xor(
 
 For every chip wie provide a test folder e.g. `05_Xor`, in which you find a so called test bench (`Xor_tb.v`). To run the test bench cd into the test directory and run apio:
 
-```
+```sh
 $ cd 05_Xor
 $ apio clean        (used to remove older implementation from cache)
 $ apio sim
@@ -115,7 +115,7 @@ set_io LED2 51    # LED2
 
 * Now you can build and upload  the chip `Xor` to `iCE40HX1K-EVB` with:
   
-```
+```sh
 $ apio clean
 $ apio build
 $ apio upload

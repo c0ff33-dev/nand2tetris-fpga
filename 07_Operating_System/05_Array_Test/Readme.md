@@ -12,7 +12,7 @@ Represents an array. In the Jack language, arrays are instances of the `Array` c
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 05_Array_Test
   $ make
   $ cd ../00_HACK

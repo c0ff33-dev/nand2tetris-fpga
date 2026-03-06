@@ -22,7 +22,7 @@ The heap starts at address 1024 with `do Memory.init()` in the `Sys.init()`. Thi
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 04_Memory_Test
   $ make
   $ cd ../00_HACK

@@ -69,7 +69,7 @@ The test bench of `04_HACK` will:
 
 * Implement the chips `CPU`, `Memory` and `Clock25_Reset20` and simulate with the corresponding test benches:
   
-  ```
+  ```sh
   $ cd <0X_chip>
   $ apio clean
   $ apio sim
@@ -85,7 +85,7 @@ The test bench of `04_HACK` will:
 
 * Implement `HACK` and test with `leds.asm`:
   
-  ```
+  ```sh
   $ cd ../04_Machine_Language
   $ make leds
   $ cd ../05_Computer_Architecture/04_HACK
@@ -99,7 +99,7 @@ The test bench of `04_HACK` will:
 
 * Test `HACK` with `mult.asm`:
   
-  ```
+  ```sh
   $ cd ../04_Machine_Language
   $ make mult
   $ cd ../05_Computer_Architecture/04_HACK
@@ -113,7 +113,7 @@ The test bench of `04_HACK` will:
 
 * Finally upload the complete `HACK` design with `leds.asm` pre-loaded into instruction ROM and run on real hardware!
   
-  ```
+  ```sh
   $ cd ../04_Machine_Language
   $ make leds
   $ cd ../05_Computer_Architecture/04_HACK

@@ -27,7 +27,7 @@ class Sys {
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 02_UART_Test
   $ make
   $ cd ../00_HACK
@@ -41,7 +41,7 @@ class Sys {
 
 * Run on real hardware with `HACK`, build and upload `UART_Test` to `iCE40HX1K-EVB` with:
   
-  ```
+  ```sh
   $ ../02_UART_Test
   $ make
   $ make upload
@@ -49,6 +49,6 @@ class Sys {
 
 * Connect `HACK` with your computer over UART, open a terminal program and type some chars. Check if `HACK` can echo them:
   
-  ```
+  ```sh
   $ tio /dev/ttyACM0
   ```

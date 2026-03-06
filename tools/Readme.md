@@ -6,7 +6,7 @@ This folder contains the toolchain for `HACK`/Jack development.
 
 vim configuration file to highlight syntax of jack/hack-files, when editing with vim. Copy the content of the subfolders into the appropriate vim configuration directory situated in your home directory  `~/.vim`.
 
-```
+```sh
 $ cp vim/syntax/* ~/.vim/syntax/
 $ cp vim/ftdetect/* ~/.vim/ftdetect/
 ```

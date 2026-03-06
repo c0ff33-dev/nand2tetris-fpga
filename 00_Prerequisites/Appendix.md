@@ -12,7 +12,7 @@ Cliff notes for environment setup/installation.
 
 ### Python 3.11/12
 
-```
+```sh
 $ sudo apt update
 $ sudo apt install software-properties-common
 $ sudo add-apt-repository ppa:deadsnakes/ppa
@@ -21,7 +21,7 @@ $ sudo apt install python3.11 python3.11-venv python3.12 python3.12-venv
 
 ### git and repos
 
-```
+```sh
 $ sudo apt install git
 $ mkdir src && cd src
 $ git clone git@github.com:c0ff33-dev/nand2tetris-fpga.git
@@ -29,7 +29,7 @@ $ git clone git@github.com:c0ff33-dev/nand2tetris-fpga.git
 
 ### Install apio + dependencies
 
-```
+```sh
 $ cd nand2tetris-fpga
 $ python3.11 -m venv .venv
 $ source .venv/bin/activate
@@ -44,7 +44,7 @@ $ sudo apt install xvfb # not needed on wsl
 
 ### Build + install the programmer
 
-```
+```sh
 $ cd ../iCE40HX1K-EVB/programmer/iceprogduino
 $ sudo apt install build-essential unzip
 $ make
@@ -53,7 +53,7 @@ $ sudo make install
 
 ### Arduino dependencies
 
-```
+```sh
 $ cd ~ && curl -fsSL https://raw.githubusercontent.com/arduino/arduino-cli/master/install.sh | sh
 $ sudo ln -sf ~/bin/arduino-cli /usr/local/bin/arduino-cli
 $ arduino-cli core install arduino:avr
@@ -64,7 +64,7 @@ $ unzip SPIMemory-2.2.0.zip -d ~/Arduino/libraries/
 
 ### WSL: Install usbipd to bridge usb
 
-```
+```sh
 $ winget install --interactive --exact dorssel.usbipd-win # restart shell
 $ usbipd list
 $ usbipd bind --busid 1-3 # USB Serial Device (COM3)
@@ -78,7 +78,7 @@ $ usbipd unbind --all
 
 ### Enable write perms on the serial port
 
-```
+```sh
 $ sudo chmod a+rw /dev/ttyACM0
 ```
 
@@ -86,14 +86,14 @@ $ sudo chmod a+rw /dev/ttyACM0
 
 If having trouble with disconnects here in WSL may need to use a full VM with USB passthrough:
 
-```
+```sh
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/veris/src/nand2tetris-fpga/tools/olimexino-32u4/iceprog"
 $ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo /home/veris/src/MOD-LCD2.8RTP/SOFTWARE/Arduino/graphicstest_olimex_NS2009
 ```
 
 ### Upload test program
 
-```
+```sh
 $ cd ~/src/nand2tetris-fpga
 $ apio examples -d iCE40-HX1K-EVB/leds
 $ cd iCE40-HX1K-EVB/leds
@@ -114,7 +114,7 @@ roman-lukash.nand2tetris-jack-language-server
 
 ### Check LC utilization & timing
 
-```
+```sh
 $ apio clean && apio build --verbose-pnr > log.txt
 $ grep -ie "ICESTORM_LC:  " log.txt
 $ grep -ie "frequency" log.txt
@@ -124,7 +124,7 @@ $ grep -ie "frequency" log.txt
 
 ## Update compiler/translator/assembler binaries
 
-```
+```sh
 cd ~/src/nand2tetris/interpreter && rm ./__pycache__/*.pyc && python3.12 -m compileall .
 cp ~/src/nand2tetris/interpreter/__pycache__/tokenizer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/tokenizer.pyc
 cp ~/src/nand2tetris/interpreter/__pycache__/analyzer.cpython-312.pyc ~/src/nand2tetris-fpga/tools/JackCompiler/analyzer.pyc
@@ -145,20 +145,20 @@ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/
 
 If using WSL, reattach the port:
 
-```
+```sh
 usbipd attach --wsl --busid <busid>
 ```
 
 Upload bootloader + bitstream:
 
-```
+```sh
 $ source ~/src/nand2tetris-fpga/.venv/bin/activate
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cd ../00_HACK && apio clean && apio upload
 ```
 
 Jack tests:
 
-```
+```sh
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
 
@@ -202,20 +202,20 @@ arduino-cli compile --upload -p /dev/ttyACM0 --fqbn arduino:avr:leonardo "/home/
 
 If using WSL, reattach the port:
 
-```
+```sh
 usbipd attach --wsl --busid <busid>
 ```
 
 Upload bootloader + bitstream:
 
-```
+```sh
 $ source ~/src/nand2tetris-fpga/.venv/bin/activate
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 ```
 
 Jack tests:
 
-```
+```sh
 # Application code can be flashed straight to offset 0x10000 as before
 # 07_Operating_System tests use original Sys.jack so runs at 1/4 timing for Sys.wait() calls (i.e. slower)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload

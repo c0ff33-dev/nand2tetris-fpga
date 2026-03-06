@@ -51,7 +51,7 @@ M=D   // 0xE308
 
 * Implement `boot.asm` (read the first 12 bytes / 6 words) and run the test bench:
   
-  ```
+  ```sh
   $ cd ../05_GO
   $ make
   $ cd ../00_HACK
@@ -71,7 +71,7 @@ M=D   // 0xE308
 
 * Preload `SPI` flash ROM with the `HACK` program `leds.asm`:
   
-  ```
+  ```sh
   $ cd ../../04_Machine_Language
   $ make leds
   $ make upload
@@ -79,7 +79,7 @@ M=D   // 0xE308
 
 * Upload `HACK` with bootloader to `iCE40HX1K-EVB`:
   
-  ```
+  ```sh
   $ cd ../06_IO_Devices/05_GO
   $ make
   $ cd ../00_HACK

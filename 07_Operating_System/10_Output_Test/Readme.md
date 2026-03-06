@@ -14,7 +14,7 @@ The `HACK` physical screen consists of 320 rows of 240 pixels each. The library 
 
 * Test on real hardware:
 
-  ```
+  ```sh
   $ cd 10_Output_Test
   $ make
   $ make upload

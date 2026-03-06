@@ -72,7 +72,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * Implement `UartTX` and simulate with test bench:
   
-  ```
+  ```sh
   $ cd 01_UartTX
   $ apio clean
   $ apio sim
@@ -86,7 +86,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * Implement `hello.asm` and run in simulation:
   
-  ```
+  ```sh
   $ cd 01_UartTX
   $ make
   $ cd ../00_HACK
@@ -106,7 +106,7 @@ set_io UART_TX 37    # PIO2_9/TxD connected to pin 4 of UEXT (PGM)
 
 * Press `RST` button on `iCE40HX1K-EVB` and see if you can recieve "Hi" on your computer.
 
-  ```
+  ```sh
   $ cd 00_HACK
   $ apio clean
   $ apio upload
