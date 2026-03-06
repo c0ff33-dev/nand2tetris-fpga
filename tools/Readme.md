@@ -2,15 +2,6 @@
 
 This folder contains the toolchain for `HACK`/Jack development.
 
-## vim
-
-vim configuration file to highlight syntax of jack/hack-files, when editing with vim. Copy the content of the subfolders into the appropriate vim configuration directory situated in your home directory  `~/.vim`.
-
-```sh
-$ cp vim/syntax/* ~/.vim/syntax/
-$ cp vim/ftdetect/* ~/.vim/ftdetect/
-```
-
 ## Assembler
 
 Assembler translates `HACK` assembly files to machine code. Outputs the machine code to `filename.hack`.
