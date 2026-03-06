@@ -1,10 +1,15 @@
-# nand2tetris-fpga (v4.0.0)
+# nand2tetris-fpga (v4.0.1)
 
 ## Disclaimer
 
-This is both a complete implementation & fork of Michael Schröder's [course](https://gitlab.com/x653/nand2tetris-fpga). I have made my own revisions, extensions and corrections to update it for modern tooling, current hardware revisions of the relevant boards and in general to make it a more complete & polished experience. 
+This is both a complete implementation & fork of Michael Schröder's [course](https://gitlab.com/x653/nand2tetris-fpga). I have made my own revisions, extensions and corrections to:
 
-Please see the [Changelog](./Changelog.md) for details.
+* Update the code for modern tooling.
+* Update virtually all of the documentation for readability, accuracy & completeness.
+* Update the architecture to support current hardware revisions of the relevant boards.
+* Replace the original tools with a more sophisticated & optimized Jack compiler toolchain.
+
+Please see the [Changelog.md](./Changelog.md) for details.
 
 ***
 
