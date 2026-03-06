@@ -16,7 +16,7 @@ The folder `08_Blinky` contains a project to test the counter `PC` on real hardw
 
 * For every chip we provide a test bench in the dedicated folder:
   
-  ```
+  ```sh
   $ cd <0X_chip>
   $ apio clean
   $ apio sim
@@ -24,7 +24,7 @@ The folder `08_Blinky` contains a project to test the counter `PC` on real hardw
 
 * Run Blinky in simulation:
   
-  ```
+  ```sh
   $ cd 08_Blinky
   $ apio clean
   $ apio sim
@@ -40,7 +40,7 @@ The folder `08_Blinky` contains a project to test the counter `PC` on real hardw
 
 * Upload the project to `iCE40HX1K-EVB` end test on real hardware:
   
-  ```
+  ```sh
   $ cd 08_Blinky
   $ apio clean
   $ apio upload

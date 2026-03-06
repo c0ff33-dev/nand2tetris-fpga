@@ -48,7 +48,7 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
 
 * Test in simulation:
   
-  ```
+  ```sh
   $ cd 09_Screen_Test
   $ make
   $ cd ../00_HACK
@@ -67,7 +67,7 @@ Sends a 16 bit RGB value to paint the next pixel in the window defined by `setWi
 
 * Run `Screen_Test` on real hardware on `iCE40HX1K-EVB` with `MOD-LCD2.8RTP` connected as described in `06_IO_Devices/LCD`.
   
-  ```
+  ```sh
   $ cd 09_Screen_Test
   $ make
   $ make upload

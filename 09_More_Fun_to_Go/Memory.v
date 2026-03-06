@@ -29,7 +29,6 @@
 // [BRAM] "STATIC": 16-255 incl (same)
 // [BRAM] "STACK": 256-3583 incl (larger)
 
-// FUTURE: some infrequently used labels not implemented in current assembler
 // [VIRT] "IO": 4096-4111 (new) // FUTURE: could reclaim some more heap + improve ABI compatibility by remapping these
 // [SRAM] "HEAP": 4112-16383 incl (smaller) >> 4112-16383 incl (smaller)
 // [SRAM] "SCREEN: 16384-24575 incl (same) // only used in Fill/Rect.asm

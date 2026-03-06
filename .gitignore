@@ -10,6 +10,8 @@
 out.asm
 out.hack
 .*
+*.xml
+*.cc
 venv/*
 abc.history
 hardware.rpt

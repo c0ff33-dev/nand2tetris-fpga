@@ -83,7 +83,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 * Implement special function register `RTP` and test with test bench:
   
-  ```
+  ```sh
   $ cd 07_RTP
   $ apio clean
   $ apio sim
@@ -95,7 +95,7 @@ set_io RTP_SCK 9        # PIO3_5A connected to pin 17 of GPIO1
 
 * Add special function register `RTP` to `HACK` at memory addresses 4106 and upload to `iCE40HX1K-EVB` with bootloader `boot.asm` preloaded into ROM (build test only, no test bench data for `RTP`).
   
-  ```
+  ```sh
   $ cd ../05_GO
   $ make
   $ cd ../00_HACK

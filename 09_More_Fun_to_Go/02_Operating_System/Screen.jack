@@ -15,7 +15,7 @@ class Screen {
 
     /** Initializes the Screen. */
     function void init() {
-        var int i, v;
+        var int i;
 
         let scrArr = 16384; // base VRAM address
         let color = true;

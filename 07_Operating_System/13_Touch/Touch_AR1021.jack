@@ -2,7 +2,8 @@
  * AR1021.*/
 
 class Touch{
-    static int RTP, x_coord, y_coord, pen;
+    static Array RTP;
+    static int x_coord, y_coord, pen;
 
     /** Initializes the library. */
     function void init() {

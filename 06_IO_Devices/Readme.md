@@ -33,7 +33,7 @@ For every special function register we will need the appropriate software to tal
 
 + Copy `HACK.v` from `05_Computer_Architecture` into `06_IO_Devices` and add one I/O device at time at the designated memory mapped address. Implement the corresponding special function register and run the test bench.
   
-  ```
+  ```sh
   $ cd <0X_device>
   $ apio clean
   $ apio sim
@@ -41,7 +41,7 @@ For every special function register we will need the appropriate software to tal
 
 + Implement the designated assembler program, install the binary into `00_HACK` and run the test bench:
   
-  ```
+  ```sh
   $ cd <0X_device>
   $ make
   $ cd ../00_HACK
@@ -51,7 +51,7 @@ For every special function register we will need the appropriate software to tal
 
 * Run `HACK` on real hardware on `iCE40HX1K-EVB` with the device attached:
   
-  ```
+  ```sh
   $ cd 00_HACK
   $ apio clean
   $ apio upload
@@ -69,7 +69,7 @@ Once you have identified which chip is installed comment/uncomment the relevant 
 
 Create symlinks to instantiate the relevant template:
 
-```
+```sh
 sudo ln -sf RTP_AR1021.v RTP.v
 sudo ln -sf 07A_RTP_AR1021 07_RTP # remove 07_RTP folder first if replacing
 sudo ln -sf ../07_Operating_System/13_Touch/Touch_AR1021.jack ../07_Operating_System/Touch.jack

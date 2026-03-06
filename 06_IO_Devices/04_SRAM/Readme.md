@@ -121,7 +121,7 @@ set_io SRAM_DATA[15] 52 # SD15
 
 * Implement `SRAM_D.v` and simulate with test bench:
   
-  ```
+  ```sh
   $ cd 04_SRAM
   $ apio clean
   $ apio sim
@@ -137,7 +137,7 @@ set_io SRAM_DATA[15] 52 # SD15
 
 * Implement `buffer.asm` and test with the test bench:
   
-  ```
+  ```sh
   $ cd 04_SRAM
   $ make
   $ cd ../00_HACK
@@ -161,7 +161,7 @@ To run on real hardware:
 
 * Press `RST` button on `iCE40HX1K-EVB` and see if wou can receive the preloaded text file on your computer.
   
-  ```
+  ```sh
   $ echo SPI! > spi.txt
   $ iceprogduino -o 256k -w spi.txt
   $ cd 04_SRAM

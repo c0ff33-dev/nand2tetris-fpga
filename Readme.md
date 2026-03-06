@@ -1,4 +1,4 @@
-# nand2tetris-fpga (v3.1.2)
+# nand2tetris-fpga (v4.0.0)
 
 ## Disclaimer
 

@@ -45,7 +45,7 @@ To test `HACK` with `UartRX` we need a little machine language program `echo.asm
 
 * Implement `UartRX.v` and simulate with test bench:
   
-  ```
+  ```sh
   $ cd 02_UartRX
   $ apio clean
   $ apio sim
@@ -59,7 +59,7 @@ To test `HACK` with `UartRX` we need a little machine language program `echo.asm
 
 * Implement `echo.asm` and run in simulation:
   
-  ```
+  ```sh
   $ cd 02_UartRX
   $ make
   $ cd ../00_HACK
@@ -79,7 +79,7 @@ To test `HACK` with `UartRX` we need a little machine language program `echo.asm
 
 * Type chars in the terminal and see if they are echoed by `HACK`. `tio` doesn't echo the local input by default unless passing `-e` so any chars returned are from `HACK`.
   
-  ```
+  ```sh
   $ cd 00_HACK
   $ apio clean
   $ apio upload

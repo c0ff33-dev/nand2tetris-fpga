@@ -69,7 +69,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
 
 * Implement `LCD.v` and test with test bench:
   
-  ```
+  ```sh
   $ cd 06_LCD
   $ apio clean
   $ apio sim
@@ -81,7 +81,7 @@ set_io LCD_CSX 4        # PIO3_2B connected to pin 11 of GPIO1
 
 * Add special function register `LCD` to `HACK` at memory addresses 4104/4105 and upload to `iCE40HX1K-EVB` with the bootloader `boot.asm` preloaded into ROM (this is to validate the build, no change from last uploaded boot/application code):
   
-  ```
+  ```sh
   $ cd ../05_GO
   $ make
   $ cd ../00_HACK

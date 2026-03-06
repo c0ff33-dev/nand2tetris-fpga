@@ -2,7 +2,7 @@
  * This library provides access to BUT and LED.
  */
 class GPIO {
-    static int LED, BUT, DEBUG0;
+    static Array LED, BUT, DEBUG0;
  
     /** Initialize LED and BUT. LED is memory mapped to addr
      *  and BUT is memory mapped to addr+1. */

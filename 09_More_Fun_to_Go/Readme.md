@@ -36,7 +36,7 @@ These other/similar projects may be of interest for research purposes or board a
 
 Build bootloader, copy into revised HACK directory & upload it (separately from remaining application code):
 
-```
+```sh
 $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hack ../../09_More_Fun_to_Go/00_HACK && cd ../../09_More_Fun_to_Go/00_HACK && apio clean && apio upload
 ```
 
@@ -44,6 +44,6 @@ $ cd ~/src/nand2tetris-fpga/06_IO_Devices/05_GO && make && cp ../00_HACK/ROM.hac
 
 See [Appendix.md](../00_Prerequisites/Appendix.md) for complete list of Jack tests.
 
-```
+```sh
 $ cd ~/src/nand2tetris-fpga/09_More_Fun_to_Go/03_Pong && make && make upload
 ```

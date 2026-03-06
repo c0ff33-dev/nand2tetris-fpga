@@ -68,13 +68,13 @@ Apio is a multiplatform toolbox, with static pre-built packages, project configu
 * Signal visualizer: [gtkwave](http://gtkwave.sourceforge.net/)
   * The `gtkwave` package that is installable via `apio` is Windows-only but should be available in your preferred package manager for Linux.
 
-```
+```sh
 $ pip install -U apio
 ```
 
  To learn usage of apio do the example projects provided by apio.
 
-```
+```sh
 $ apio install oss-cad-suite
 $ apio install examples
 $ apio examples -d iCE40-HX1K-EVB/leds
@@ -90,7 +90,7 @@ If you go with Olimex boards you additionally have to install the programmer sof
 
 Additionally you have to install the program iceprogduino on your computer:
 
-```
+```sh
 $ git clone https://github.com/OLIMEX/iCE40HX1K-EVB.git
 $ cd iCE40HX1K-EVB/programmer/iceprogduino
 $ make

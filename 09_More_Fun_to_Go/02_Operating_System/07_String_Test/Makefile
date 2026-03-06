@@ -1,13 +1,16 @@
 PYTHON = python3.11
+PYTHON12 = python3.12
 
 all: jack vm asm bin sim
 
 jack:
-	$(PYTHON) ../../../tools/JackCompiler/JackCompiler.pyc ./
+	$(PYTHON12) ../../../tools/JackCompiler/tokenizer.pyc ./
+	$(PYTHON12) ../../../tools/JackCompiler/analyzer.pyc ./
+	$(PYTHON12) ../../../tools/JackCompiler/compiler.pyc ./
 vm:
-	$(PYTHON) ../../../tools/VMTranslator/VMTranslator.pyc ./
+	$(PYTHON12) ../../../tools/VMTranslator/translator.pyc ./
 asm:
-	$(PYTHON) ../../../tools/Assembler/assembler.pyc out.asm
+	$(PYTHON12) ../../../tools/Assembler/assembler.pyc out.asm
 bin:
 	$(PYTHON) ../../../tools/AsciiToBin.py out.hack
 sim:
@@ -15,6 +18,6 @@ sim:
 upload:
 	iceprogduino -o 64k -w out.bin
 clean:
-	rm -f *.vm *.asm *.hack *.bin *~
+	rm -f *.xml *.vm *.asm *.hack *.bin *~
 
 .PHONY: all clean

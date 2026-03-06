@@ -2,15 +2,6 @@
 
 This folder contains the toolchain for `HACK`/Jack development.
 
-## vim
-
-vim configuration file to highlight syntax of jack/hack-files, when editing with vim. Copy the content of the subfolders into the appropriate vim configuration directory situated in your home directory  `~/.vim`.
-
-```
-$ cp vim/syntax/* ~/.vim/syntax/
-$ cp vim/ftdetect/* ~/.vim/ftdetect/
-```
-
 ## Assembler
 
 Assembler translates `HACK` assembly files to machine code. Outputs the machine code to `filename.hack`.
@@ -19,15 +10,19 @@ Assembler translates `HACK` assembly files to machine code. Outputs the machine 
 
 ## JackCompiler
 
-Compiles Jack classes (single file or all `*.jack` files in directory) to VM code.
+Compiles Jack classes (single file or all `*.jack` files in directory) to VM code via a 3-step pipeline: tokenizer → analyzer → compiler.
 
-`usage: ./JackCompiler/JackCompiler.pyc [filename.jack] or [dir]`
+```
+usage: ./JackCompiler/tokenizer.pyc [filename.jack] or [dir]
+       ./JackCompiler/analyzer.pyc [filename.jack] or [dir]
+       ./JackCompiler/compiler.pyc [filename.jack] or [dir]
+```
 
 ## VMTranslator
 
 Translates VM code (single file or all files with ending `*.vm` in directory) to assembly.
 
-`usage: ./VMTranslator/VMTranslator.pyc [filename.vm] or [dir]`
+`usage: ./VMTranslator/translator.pyc [dir]`
 
 ## AsciiToBin.py
 

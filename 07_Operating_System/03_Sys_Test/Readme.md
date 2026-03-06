@@ -25,7 +25,7 @@ A library that supports various program execution services.
 
 * Test in simulation. Change the delay time in `Main.jack` to 1ms.
   
-  ```
+  ```sh
   $ cd 03_Sys_Test
   $ make
   $ cd ../00_HACK
@@ -41,7 +41,7 @@ A library that supports various program execution services.
 
 * Set the delay to 1000ms with `Sys.wait(1000)` in `Main.main()`:
   
-  ```
+  ```sh
   $ cd 03_Sys_Test
   $ make
   $ make upload

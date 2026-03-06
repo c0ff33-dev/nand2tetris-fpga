@@ -92,7 +92,7 @@ Unlike `AR1021` no other hardware changes are required to support this configura
 
 * Implement special function register `RTP` and test with test bench:
   
-  ```
+  ```sh
   $ cd 07_RTP
   $ apio clean
   $ apio sim
@@ -104,7 +104,7 @@ Unlike `AR1021` no other hardware changes are required to support this configura
 
 * Add special function register `RTP` to `HACK` at memory addresses 4106 and upload to `iCE40HX1K-EVB` with bootloader `boot.asm` preloaded into ROM (build/pnr test only, no test bench data for `RTP`):
   
-  ```
+  ```sh
   $ cd ../05_GO
   $ make
   $ cd ../00_HACK

@@ -70,7 +70,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
 
 * Implement `SPI.v` and test with test bench:
   
-  ```
+  ```sh
   $ cd 03_SPI
   $ apio clean
   $ apio sim
@@ -84,7 +84,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
 
 * Implement `cat.asm` and test in simulation:
   
-  ```
+  ```sh
   $ cd 03_SPI
   $ make
   $ cd ../00_HACK
@@ -108,7 +108,7 @@ set_io SPI_CSX 49 # iCE40-SS_B
 
 * Build and upload `HACK` with `cat.asm` in `ROM.BIN` to `iCE40HX1K-EVB`.
   
-  ```
+  ```sh
   $ echo SPI! > spi.txt
   $ iceprogduino -o 256k -w spi.txt
   $ cd 00_HACK

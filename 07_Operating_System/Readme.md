@@ -14,7 +14,7 @@ The folder `00_HACK` contains a simulation of `HACK` similar to the one in `06_I
 
 Use `00_HACK` of `07_Operating_System` to test your Jack OS classes in simulation.
 
-```
+```sh
 $ cd <XX_Class_Test>
 $ make
 $ cd ../00_HACK
@@ -26,7 +26,7 @@ $ apio sim
 
 To test Jack OS on real hardware `iCE40HX1K-EVB` use the design of `HACK` developed in `06_IO_Devices` with the bootloader of `05_GO`. Attach `iCE40HX1K-EVB` to your computer and run the following commands:
 
-```
+```sh
 $ cd <XX_Class_Test>
 $ make
 $ make upload
@@ -42,7 +42,7 @@ Finally you can run Tetris!
 
 For completeness here is the full list of class files to link per project:
 
-```
+```sh
 # Sys.jack uses slightly modified copies in 1-10
 sudo ln -sf ../GPIO.jack ./01_GPIO_Test/GPIO.jack
 sudo ln -sf ../UART.jack ./02_UART_Test/UART.jack
