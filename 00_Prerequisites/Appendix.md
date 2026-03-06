@@ -163,7 +163,8 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && ma
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
 
 # swap RTP for UART in 06_IO_Devices\HACK.v (LC budget) & reflash the hardware bitstream
-# ensure olimexino is in bridge mode (green) when transmitting
+# ensure olimexino is in bridge mode (green) when transmitting & regular (yellow) when programming
+# for LEDs near USB port on olimexino, yellow = rx (from PC) & green = tx (from FPGA)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/02_UART_Test && make clean && make && make upload && tio /dev/ttyACM0
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
@@ -180,7 +181,8 @@ $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && 
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/09_Screen_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/10_Output_Test && make clean && make && make upload
 
-# swap UART for RTP in 06_IO_Devices\HACK.v & re-flash the hardware bitstream
+# swap UART for RTP in 06_IO_Devices\HACK.v & re-flash the hardware bitstream!
+
 # sim only available for AR1021 emulation only: see 06_IO_Devices/Readme.md for full list of refs
 # if disabling Screen/ScreenExt/Output.init() for speed need to also disable the Output.print*() calls in test!
 # $ cd ~/src/nand2tetris-fpga/07_Operating_System/11_Touch_Test && make clean && make && cd ../00_HACK && apio clean && apio sim
@@ -215,6 +217,7 @@ Jack tests:
 
 ```
 # Application code can be flashed straight to offset 0x10000 as before
+# 07_Operating_System tests use original Sys.jack so runs at 1/4 timing for Sys.wait() calls (i.e. slower)
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/01_GPIO_Test && make clean && make && make upload
 $ cd ~/src/nand2tetris-fpga/07_Operating_System/03_Sys_Test && make clean && make && make upload
 
