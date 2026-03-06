@@ -1,3 +1,7 @@
+# Version v4.0.1: Minor updates
+
+* Minor documentation edits.
+
 # Version v4.0.0: Update compiler toolchain
 
 * Compiler toolchain has now been totally replaced with the one from the original [nand2tetris](https://github.com/c0ff33-dev/nand2tetris) project @ **v1.0.0**.
